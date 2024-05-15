@@ -446,6 +446,8 @@ protected Q_SLOTS:
   void showSeriesContextMenu(const QPoint& point);
   /// Called when clicking patients tab menu
   void onPatientsTabMenuToolButtonClicked();
+  /// Called when patient widget update is finished
+  void onPatientUpdateGUIFinished();
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMVisualBrowserWidget);

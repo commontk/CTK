@@ -571,7 +571,6 @@ bool ctkDICOMQuery::queryPatients()
       {
         logger.warn(QString("ctkDICOMQuery: the number of responses of the query task at patients level "
                             "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery));
-
         break;
       }
       DcmDataset *dataset = (*it)->m_dataset;

@@ -62,7 +62,7 @@ public:
 
   void init();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
-  void createThumbnail(ctkDICOMJobDetail td, bool queryRetrieve = true);
+  void createThumbnail(ctkDICOMJobDetail td);
   void drawModalityThumbnail();
   void drawThumbnail(const QString& file, int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
@@ -101,6 +101,9 @@ public:
   int NumberOfDownloads;
   QImage ThumbnailImage;
   bool isThumbnailDocument;
+
+  bool QueryOn;
+  bool RetrieveOn;
 };
 
 //----------------------------------------------------------------------------
@@ -133,6 +136,9 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
+
+  this->QueryOn = true;
+  this->RetrieveOn = true;
 }
 
 //----------------------------------------------------------------------------
@@ -197,7 +203,7 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool queryRetrieve)
+void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
 {
   if (!this->DicomDatabase)
   {
@@ -301,7 +307,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
         (jobType == ctkDICOMJobResponseSet::JobType::None ||
          jobType == ctkDICOMJobResponseSet::JobType::QueryInstances))
     {
-      if (queryRetrieve)
+      if (this->RetrieveOn)
       {
         this->Scheduler->retrieveSOPInstance(this->PatientID,
                                              this->StudyInstanceUID,
@@ -326,7 +332,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
         this->Scheduler->getJobsByDICOMUIDs({},
                                             {},
                                             {this->SeriesInstanceUID});
-      if (jobs.count() == 0 && queryRetrieve)
+      if (jobs.count() == 0 && this->RetrieveOn)
       {
         this->Scheduler->retrieveSeries(this->PatientID,
                                         this->StudyInstanceUID,
@@ -417,7 +423,6 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
   font.setPixelSize(textSize);
 
   QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
-  resultPixmap.fill(Qt::transparent);
 
   ctkDICOMThumbnailGenerator thumbnailGenerator;
   thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
@@ -425,7 +430,8 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
   bool thumbnailGenerated = true;
   bool emptyThumbnailGenerated = false;
   QPainter painter;
-  if (this->ThumbnailImage.width() != scaledThumbnailSizePixel)
+
+  if (this->ThumbnailImage.isNull())
   {
     if (!thumbnailGenerator.generateThumbnail(file, this->ThumbnailImage))
     {
@@ -443,11 +449,12 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
         painter.end();
       }
     }
-    else
-    {
+  }
+
+  if (thumbnailGenerated)
+  {
     QColor firstPixelColor = this->ThumbnailImage.pixelColor(0, 0);
     resultPixmap.fill(firstPixelColor);
-    }
   }
 
   if (thumbnailGenerated && !this->isThumbnailDocument)
@@ -456,7 +463,6 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
     {
       painter.setRenderHint(QPainter::Antialiasing, true);
       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-      painter.setRenderHint(QPainter::LosslessImageRendering, true);
       painter.setFont(font);
 
       QRectF rect = resultPixmap.rect();
@@ -770,11 +776,11 @@ void ctkDICOMSeriesItemWidget::forceRetrieve()
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
-  d->IsCloud = true;
+  d->IsCloud = false;
   d->RetrieveFailed = false;
   d->StopJobs = false;
-  ctkDICOMJobDetail td;
-  d->createThumbnail(td);
+  d->DicomDatabase->removeSeries(d->SeriesInstanceUID, false, false);
+  this->generateInstances(true);
 }
 
 //----------------------------------------------------------------------------
@@ -862,7 +868,7 @@ void ctkDICOMSeriesItemWidget::setDicomDatabase(QSharedPointer<ctkDICOMDatabase>
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::generateInstances(bool queryRetrieve)
+void ctkDICOMSeriesItemWidget::generateInstances(bool query, bool retrieve)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   if (!d->DicomDatabase)
@@ -871,10 +877,14 @@ void ctkDICOMSeriesItemWidget::generateInstances(bool queryRetrieve)
     return;
   }
 
+  d->QueryOn = query;
+  d->RetrieveOn = retrieve;
+
   ctkDICOMJobDetail td;
-  d->createThumbnail(td, queryRetrieve);
+  d->createThumbnail(td);
+
   QStringList instancesList = d->DicomDatabase->instancesForSeries(d->SeriesInstanceUID);
-  if (queryRetrieve && !d->StopJobs &&
+  if (query && !d->StopJobs &&
       instancesList.count() == 0 &&
       d->Scheduler &&
       d->Scheduler->queryRetrieveServersCount() > 0)

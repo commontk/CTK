@@ -70,7 +70,7 @@ public:
   QString formatDate(const QString&);
   bool isStudyItemAlreadyAdded(const QString& studyItem);
   void clearLayout(QLayout* layout, bool deleteWidgets = true);
-  void createStudies(bool queryRetrieve = true);
+  void createStudies();
   void updateAllowedServersUIFromDB();
   void setAllDeniedServerEnabledStatus(bool enabled);
   void saveAllowedServersStringListFromUI();
@@ -100,6 +100,8 @@ public:
   QStringList AllowedServers = QStringList();
 
   bool IsGUIUpdating;
+  bool QueryOn;
+  bool RetrieveOn;
 };
 
 //----------------------------------------------------------------------------
@@ -125,6 +127,8 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->StudiesListVerticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
 
   this->IsGUIUpdating = false;
+  this->QueryOn = true;
+  this->RetrieveOn = true;
 }
 
 //----------------------------------------------------------------------------
@@ -233,7 +237,7 @@ void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteW
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidgetPrivate::createStudies(bool queryRetrieve)
+void ctkDICOMPatientItemWidgetPrivate::createStudies()
 {
   Q_Q(ctkDICOMPatientItemWidget);
   if (this->IsGUIUpdating)
@@ -269,6 +273,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies(bool queryRetrieve)
   QStringList studiesList = this->DicomDatabase->studiesForPatient(this->PatientItem);
   if (studiesList.count() == 0)
   {
+    q->emit updateGUIFinished();
     return;
   }
 
@@ -369,7 +374,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies(bool queryRetrieve)
     if (cont < this->NumberOfStudiesPerPatient)
     {
       studyItemWidget->setCollapsed(false);
-      studyItemWidget->generateSeries(queryRetrieve);
+      studyItemWidget->generateSeries(this->QueryOn, this->RetrieveOn);
     }
     cont++;
 
@@ -388,6 +393,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies(bool queryRetrieve)
   studiesListWidgetLayout->addItem(this->StudiesListVerticalSpacer);
 
   this->IsGUIUpdating = false;
+  q->emit updateGUIFinished();
 }
 
 //----------------------------------------------------------------------------
@@ -761,6 +767,8 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
                 this, SLOT(onSeriesItemClicked()));
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemSelectionChanged()),
                 this, SLOT(raiseSelectedSeriesJobsPriority()));
+  this->connect(studyItemWidget, SIGNAL(updateGUIFinished()),
+                this, SIGNAL(updateGUIFinished()));
 
   d->StudyItemWidgetsList.append(studyItemWidget);
 }
@@ -830,12 +838,14 @@ void ctkDICOMPatientItemWidget::updateAllowedServersUIFromDB()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::generateStudies(bool queryRetrieve)
+void ctkDICOMPatientItemWidget::generateStudies(bool query, bool retrieve)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
-  d->createStudies(queryRetrieve);
-  if (queryRetrieve && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
+  d->QueryOn = query;
+  d->RetrieveOn = retrieve;
+  d->createStudies();
+  if (query && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
   {
     d->Scheduler->queryStudies(d->PatientID,
                                QThread::NormalPriority,
