@@ -50,7 +50,7 @@ CREATE TABLE 'Patients' (
   'DisplayedPatientsName' VARCHAR(255) NULL ,
   'DisplayedNumberOfStudies' INT NULL ,
   'DisplayedLastStudyDate' DATE NULL ,
-  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL,
+  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
   'Connections' VARCHAR(2048) NULL
 );
 
