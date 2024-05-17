@@ -376,6 +376,10 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
       studyItemWidget->setCollapsed(false);
       studyItemWidget->generateSeries(this->QueryOn, this->RetrieveOn);
     }
+    else
+    {
+      studyItemWidget->generateSeries(this->QueryOn, false);
+    }
     cont++;
 
     QString studyItem = studyItemWidget->studyItem();
