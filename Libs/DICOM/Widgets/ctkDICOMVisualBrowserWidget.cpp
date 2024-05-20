@@ -157,9 +157,9 @@ public:
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
   void removeAllPatientItemWidgets();
-  QString findPatientItemFromPatientInfo(const QString& patientID,
-                                         const QString& patientName,
-                                         const QString& patientBirthDate);
+  QString findPatientItemFromPatientInfo(const QString& patientID = "",
+                                         const QString& patientName = "",
+                                         const QString& patientBirthDate = "");
   int findPatientTabIndexFromPatientItem(const QString& patientItem);
   void updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget);
   QStringList getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
@@ -415,6 +415,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
 
   QObject::connect(this->PatientsTabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onPatientItemChanged(int)));
+
+  QObject::connect(this->PatientsTabWidget, SIGNAL(tabBarClicked(int)),
+                   q, SLOT(onOperationStatusTabBarItemClicked(int)));
 
   QObject::connect(this->ServerNodeWidget, SIGNAL(serversSettingsChanged()),
                    q, SLOT(onServersSettingsChanged()));
@@ -1134,6 +1137,11 @@ QString ctkDICOMVisualBrowserWidgetPrivate::findPatientItemFromPatientInfo(const
                                                                            const QString &patientBirthDate)
 {
   QString patientItem;
+  if (patientID.isEmpty() && patientName.isEmpty() && patientBirthDate.isEmpty())
+  {
+    return patientItem;
+  }
+
   for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
   {
     ctkDICOMPatientItemWidget* patientItemWidget =
@@ -1142,12 +1150,12 @@ QString ctkDICOMVisualBrowserWidgetPrivate::findPatientItemFromPatientInfo(const
     {
       continue;
     }
-    if (patientItemWidget->patientID() == patientID &&
-      patientItemWidget->patientName() == patientName &&
-      patientItemWidget->patientBirthDate() == patientBirthDate)
+
+    if ((patientID.isEmpty() || patientItemWidget->patientID() == patientID) &&
+      (patientName.isEmpty() || patientItemWidget->patientName() == patientName) &&
+      (patientBirthDate.isEmpty() || patientItemWidget->patientBirthDate() == patientBirthDate))
     {
-      patientItem = this->PatientsTabWidget->tabWhatsThis(index);
-      break;
+      return this->PatientsTabWidget->tabWhatsThis(index);
     }
   }
 
@@ -2953,11 +2961,27 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(const QVariant& data)
   Q_D(ctkDICOMVisualBrowserWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+  if (td.JobUID.isEmpty())
+  {
+    return;
+  }
+
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
   {
     d->updateFiltersWarnings();
     d->SearchMenuButton->setIcon(QIcon(":/Icons/wait.svg"));
+  }
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+  {
+    QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
+    int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
+    ctkDICOMPatientItemWidget* patientItemWidget =
+      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
+    if (patientItemWidget)
+    {
+      patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::InProgress);
+    }
+    d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_pending.svg"));
   }
 }
 
@@ -2967,11 +2991,27 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(const QVariant& data)
   Q_D(ctkDICOMVisualBrowserWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+  if (td.JobUID.isEmpty())
+  {
+    return;
+  }
+
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
   {
     d->updateFiltersWarnings();
     d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+  }
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+  {
+    QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
+    int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
+    ctkDICOMPatientItemWidget* patientItemWidget =
+      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
+    if (patientItemWidget)
+    {
+      patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Failed);
+    }
+    d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_failed.svg"));
   }
 }
 
@@ -2981,20 +3021,30 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(const QVariant& data)
   Q_D(ctkDICOMVisualBrowserWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
-  {
-    d->updateFiltersWarnings();
-    d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-  }
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
+  if (td.JobUID.isEmpty())
   {
     return;
   }
 
-  d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
-  d->WarningPushButton->show();
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+  {
+    d->updateFiltersWarnings();
+    d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+    d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
+    d->WarningPushButton->show();
+  }
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+  {
+    QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
+    int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
+    ctkDICOMPatientItemWidget* patientItemWidget =
+      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
+    if (patientItemWidget)
+    {
+      patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Failed);
+    }
+    d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_failed.svg"));
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -3003,11 +3053,27 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(const QVariant& data)
   Q_D(ctkDICOMVisualBrowserWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+  if (td.JobUID.isEmpty())
+  {
+    return;
+  }
+
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
   {
     d->updateFiltersWarnings();
     d->SearchMenuButton->setIcon(QIcon(":/Icons/query_success.svg"));
+  }
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+  {
+    QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
+    int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
+    ctkDICOMPatientItemWidget* patientItemWidget =
+      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
+    if (patientItemWidget)
+    {
+      patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Completed);
+    }
+    d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_success.svg"));
   }
 }
 
@@ -3023,6 +3089,34 @@ void ctkDICOMVisualBrowserWidget::onPatientItemChanged(int index)
   }
 
   patientItem->generateStudies();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  ctkDICOMPatientItemWidget* patientItemWidget =
+    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(index));
+  if (!patientItemWidget)
+  {
+    return;
+  }
+
+  ctkDICOMPatientItemWidget::OperationStatus status = patientItemWidget->operationStatus();
+  if (status == ctkDICOMPatientItemWidget::InProgress)
+  {
+    d->Scheduler->stopJobsByDICOMUIDs(QStringList(patientItemWidget->patientID()));
+  }
+  else if (status == ctkDICOMPatientItemWidget::Failed)
+  {
+    ctkDICOMJobDetail queryJobDetail;
+    queryJobDetail.JobClass = "ctkDICOMQueryJob";
+    queryJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Studies;
+    queryJobDetail.PatientID = patientItemWidget->patientID();
+
+    d->Scheduler->runJob(queryJobDetail, patientItemWidget->allowedServers());
+  }
+
 }
 
 //------------------------------------------------------------------------------

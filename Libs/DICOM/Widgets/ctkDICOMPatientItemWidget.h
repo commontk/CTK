@@ -50,6 +50,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
 
 public:
   typedef QWidget Superclass;
@@ -187,6 +188,21 @@ public:
   void setAllowedServers(const QStringList& allowedServers);
   QStringList allowedServers() const;
   Q_INVOKABLE void updateAllowedServersUIFromDB();
+  ///@}
+
+  enum OperationStatus
+  {
+    NoOperation = 0,
+    InProgress,
+    Completed,
+    Failed,
+  };
+
+  ///@{
+  /// Set the operation status
+  /// NoOperation by default
+  void setOperationStatus(const OperationStatus& status);
+  OperationStatus operationStatus() const;
   ///@}
 
 public Q_SLOTS:
