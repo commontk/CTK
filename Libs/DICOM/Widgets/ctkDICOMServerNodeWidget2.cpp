@@ -282,8 +282,8 @@ public:
   QPushButton* CancelButton;
   QPalette DefaultPalette;
   QPalette ModifiedPalette;
-  QPalette ServerSuccesPalette;
-  QPalette ServerProgresPalette;
+  QPalette ServerSuccessPalette;
+  QPalette ServerProgressPalette;
   QPalette ServerFailedPalette;
 };
 
@@ -299,10 +299,10 @@ ctkDICOMServerNodeWidget2Private::ctkDICOMServerNodeWidget2Private(ctkDICOMServe
   this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
   this->ModifiedPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ModifiedColor);
   this->ModifiedPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ModifiedColor);
-  this->ServerSuccesPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerSuccesColor);
-  this->ServerSuccesPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerSuccesColor);
-  this->ServerProgresPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerProgressColor);
-  this->ServerProgresPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerProgressColor);
+  this->ServerSuccessPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerSuccesColor);
+  this->ServerSuccessPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerSuccesColor);
+  this->ServerProgressPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerProgressColor);
+  this->ServerProgressPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerProgressColor);
   this->ServerFailedPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerFailedColor);
   this->ServerFailedPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerFailedColor);
 }
@@ -399,8 +399,8 @@ void ctkDICOMServerNodeWidget2Private::disconnectScheduler()
 
   ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                         q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                                        q, SLOT(onJobCanceled(QVariant)));
+  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
+                                        q, SLOT(onJobUserStopped(QVariant)));
   ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
                                         q, SLOT(onJobFinished(QVariant)));
   ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
@@ -418,8 +418,8 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
 
   ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                      q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                                     q, SLOT(onJobCanceled(QVariant)));
+  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
+                                     q, SLOT(onJobUserStopped(QVariant)));
   ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
                                      q, SLOT(onJobFinished(QVariant)));
   ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
@@ -900,11 +900,11 @@ void ctkDICOMServerNodeWidget2Private::updateServerVerification(const ctkDICOMJo
   QPalette palette;
   if (status == ctkDICOMServerNodeWidget2::tr("success"))
   {
-    palette = this->ServerSuccesPalette;
+    palette = this->ServerSuccessPalette;
   }
-  else if (status == ctkDICOMServerNodeWidget2::tr("in progress"))
+  else if (status == ctkDICOMServerNodeWidget2::tr("in-progress"))
   {
-    palette = this->ServerProgresPalette;
+    palette = this->ServerProgressPalette;
   }
   else
   {
@@ -1208,16 +1208,16 @@ void ctkDICOMServerNodeWidget2::onJobStarted(QVariant data)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("in progress")));
+  d->updateServerVerification(td, QString(tr("in-progress")));
   this->updateGUIState();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::onJobCanceled(QVariant data)
+void ctkDICOMServerNodeWidget2::onJobUserStopped(QVariant data)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("canceled")));
+  d->updateServerVerification(td, QString(tr("user-stopped")));
   this->updateGUIState();
 }
 

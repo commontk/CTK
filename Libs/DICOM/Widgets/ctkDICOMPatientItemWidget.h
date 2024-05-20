@@ -75,6 +75,18 @@ public:
   ///@}
 
   ///@{
+  /// Patient Birth Date
+  void setPatientBirthDate(const QString& patientBirthDate);
+  QString patientBirthDate() const;
+  ///@}
+
+  ///@{
+  /// Patient Sex
+  void setPatientSex(const QString& patientSex);
+  QString patientSex() const;
+  ///@}
+
+  ///@{
   /// Query Filters
   /// Empty by default
   void setFilteringStudyDescription(const QString& filteringStudyDescription);

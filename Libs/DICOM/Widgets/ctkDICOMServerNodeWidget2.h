@@ -111,7 +111,7 @@ public Q_SLOTS:
   void onVerifyCurrentServerNode();
 
   void onJobStarted(QVariant);
-  void onJobCanceled(QVariant);
+  void onJobUserStopped(QVariant);
   void onJobFailed(QVariant);
   void onJobFinished(QVariant);
 
