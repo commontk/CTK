@@ -369,7 +369,10 @@ public Q_SLOTS:
   ///@{
   /// update GUI after query/retrieve operations
   void updateGUIFromScheduler(const QVariant&);
+  void onJobStarted(const QVariant&);
+  void onJobUserStopped(const QVariant&);
   void onJobFailed(const QVariant&);
+  void onJobFinished(const QVariant&);
   ///@}
 
   /// stops all the operations
