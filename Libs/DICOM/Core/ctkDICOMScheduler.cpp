@@ -845,74 +845,82 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMScheduler::runJob(const ctkDICOMJobDetail& jd, const QStringList& allowedSeversForPatient)
+{
+  QStringList allowedSevers = QStringList(jd.ConnectionName);
+  allowedSevers.append(allowedSeversForPatient);
+  if (jd.JobClass == "ctkDICOMQueryJob")
+  {
+    switch (jd.DICOMLevel)
+    {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+      break;
+      case ctkDICOMJob::DICOMLevels::Patients:
+        this->queryPatients();
+      break;
+      case ctkDICOMJob::DICOMLevels::Studies:
+        this->queryStudies(jd.PatientID,
+                           QThread::NormalPriority,
+                           allowedSevers);
+      break;
+      case ctkDICOMJob::DICOMLevels::Series:
+        this->querySeries(jd.PatientID,
+                          jd.StudyInstanceUID,
+                          QThread::NormalPriority,
+                          allowedSevers);
+      break;
+      case ctkDICOMJob::DICOMLevels::Instances:
+        this->queryInstances(jd.PatientID,
+                             jd.StudyInstanceUID,
+                             jd.SeriesInstanceUID,
+                             QThread::NormalPriority,
+                             allowedSevers);
+      break;
+    }
+  }
+  else if (jd.JobClass == "ctkDICOMRetrieveJob")
+  {
+    switch (jd.DICOMLevel)
+    {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        break;
+      case ctkDICOMJob::DICOMLevels::Patients:
+        logger.warn("Retrieve Patient is not implemented");
+      break;
+      case ctkDICOMJob::DICOMLevels::Studies:
+        this->retrieveStudy(jd.PatientID,
+                            jd.StudyInstanceUID,
+                            QThread::NormalPriority,
+                            allowedSevers);
+      break;
+      case ctkDICOMJob::DICOMLevels::Series:
+        this->retrieveSeries(jd.PatientID,
+                             jd.StudyInstanceUID,
+                             jd.SeriesInstanceUID,
+                             QThread::NormalPriority,
+                             allowedSevers);
+      break;
+      case ctkDICOMJob::DICOMLevels::Instances:
+        this->retrieveSOPInstance(jd.PatientID,
+                                  jd.StudyInstanceUID,
+                                  jd.SeriesInstanceUID,
+                                  jd.SOPInstanceUID,
+                                  QThread::NormalPriority,
+                                  allowedSevers);
+      break;
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetails)
 {
   for(QString jobUID : jobDetails.keys())
   {
     ctkDICOMJobDetail jd = jobDetails.value(jobUID);
-    if (jd.JobClass == "ctkDICOMQueryJob")
-    {
-      switch (jd.DICOMLevel)
-      {
-        case ctkDICOMJob::DICOMLevels::None:
-          logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
-        break;
-        case ctkDICOMJob::DICOMLevels::Patients:
-          this->queryPatients();
-        break;
-        case ctkDICOMJob::DICOMLevels::Studies:
-          this->queryStudies(jd.PatientID,
-                             QThread::NormalPriority,
-                             QStringList(jd.ConnectionName));
-        break;
-        case ctkDICOMJob::DICOMLevels::Series:
-          this->querySeries(jd.PatientID,
-                            jd.StudyInstanceUID,
-                            QThread::NormalPriority,
-                            QStringList(jd.ConnectionName));
-        break;
-        case ctkDICOMJob::DICOMLevels::Instances:
-          this->queryInstances(jd.PatientID,
-                               jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID,
-                               QThread::NormalPriority,
-                               QStringList(jd.ConnectionName));
-        break;
-      }
-    }
-    else if (jd.JobClass == "ctkDICOMRetrieveJob")
-    {
-      switch (jd.DICOMLevel)
-      {
-        case ctkDICOMJob::DICOMLevels::None:
-          logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
-          break;
-        case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("Retrieve Patient is not implemented");
-        break;
-        case ctkDICOMJob::DICOMLevels::Studies:
-          this->retrieveStudy(jd.PatientID,
-                              jd.StudyInstanceUID,
-                              QThread::NormalPriority,
-                              QStringList(jd.ConnectionName));
-        break;
-        case ctkDICOMJob::DICOMLevels::Series:
-          this->retrieveSeries(jd.PatientID,
-                               jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID,
-                               QThread::NormalPriority,
-                               QStringList(jd.ConnectionName));
-        break;
-        case ctkDICOMJob::DICOMLevels::Instances:
-          this->retrieveSOPInstance(jd.PatientID,
-                                    jd.StudyInstanceUID,
-                                    jd.SeriesInstanceUID,
-                                    jd.SOPInstanceUID,
-                                    QThread::NormalPriority,
-                                    QStringList(jd.ConnectionName));
-        break;
-      }
-    }
+    this->runJob(jd);
   }
 }
 

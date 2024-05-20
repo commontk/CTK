@@ -187,6 +187,7 @@ public:
                                                                        const QStringList& seriesInstanceUIDs = {},
                                                                        const QStringList& sopInstanceUIDs = {});
 
+  Q_INVOKABLE void runJob(const ctkDICOMJobDetail& jobDetails, const QStringList& allowedSeversForPatient = QStringList());
   Q_INVOKABLE void runJobs(const QMap<QString, ctkDICOMJobDetail>& jobDetails);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);

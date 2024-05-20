@@ -22,6 +22,7 @@
 #define __ctkThumbnailLabel_h
 
 // Qt includes
+#include <QIcon>
 #include <QWidget>
 #include <QModelIndex>
 
@@ -56,6 +57,10 @@ class CTK_WIDGETS_EXPORT ctkThumbnailLabel : public QWidget
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
   /// Progress bar status.
   Q_PROPERTY(int operationProgress READ operationProgress WRITE setOperationProgress)
+  /// Operation status.
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus)
+  /// Set status icon.
+  Q_PROPERTY(QIcon statusIcon READ statusIcon WRITE setStatusIcon)
   /// Controls the quality of the resizing of the pixmap.
   /// Qt::FastTransformation by default
   Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode)
@@ -88,6 +93,19 @@ public:
   void setOperationProgress(const int& progress);
   int operationProgress()const;
 
+  enum OperationStatus{
+    NoOperation = 0,
+    InProgress = 1,
+    Completed = 2,
+    Failed = 3
+  };
+
+  void setOperationStatus(const OperationStatus& status);
+  OperationStatus operationStatus()const;
+
+  void setStatusIcon(const QIcon& icon);
+  QIcon statusIcon()const;
+
   Qt::TransformationMode transformationMode()const;
   void setTransformationMode(Qt::TransformationMode mode);
 
@@ -117,6 +135,7 @@ private:
 Q_SIGNALS:
   void selected(const ctkThumbnailLabel& widget);
   void doubleClicked(const ctkThumbnailLabel& widget);
+  void statusPushButtonClicked(bool);
 };
 
 #endif

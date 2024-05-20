@@ -2908,7 +2908,7 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
   d->updateFiltersWarnings();
   if (td.NumberOfDataSets == 0)
   {
-    d->WarningPushButton->setText(tr("The query provided no results. Please refine your filters."));
+    d->WarningPushButton->setText(tr("The patients query provided no results. Please refine your filters."));
     d->WarningPushButton->show();
   }
   else
@@ -2924,16 +2924,18 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
   if (td.JobClass == "ctkDICOMQueryJob")
   {
     d->updateFiltersWarnings();
     d->SearchMenuButton->setIcon(QIcon(":/Icons/query.svg"));
   }
 
-  QString job = td.JobClass.replace("ctkDICOM", "").replace("Job", "");
-  d->WarningPushButton->setText(tr("%1 job failed."
-                                   "\nFor more information open the Jobs section. \n").arg(job));
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
+  {
+    return;
+  }
+
+  d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
   d->WarningPushButton->show();
 }
 

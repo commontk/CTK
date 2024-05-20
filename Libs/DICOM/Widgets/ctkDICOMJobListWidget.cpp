@@ -901,6 +901,7 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
     QString jobUID = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobUID).data().toString();
+
     if (status != ctkDICOMJobListWidget::tr("failed") && status != ctkDICOMJobListWidget::tr("user-stopped"))
     {
       continue;
@@ -944,6 +945,8 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
       (row, QCenteredItemModel::Columns::SeriesInstanceUID).data().toString();
     jobDetail.SOPInstanceUID = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::SOPInstanceUID).data().toString();
+    jobDetail.ConnectionName = this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::Connection).data().toString();
     jobsUIDsToRetry.insert(jobUID, jobDetail);
   }
 
@@ -968,7 +971,8 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
           td.PatientID == filteredTD.PatientID &&
           td.StudyInstanceUID == filteredTD.StudyInstanceUID &&
           td.SeriesInstanceUID == filteredTD.SeriesInstanceUID &&
-          td.SOPInstanceUID == filteredTD.SOPInstanceUID)
+          td.SOPInstanceUID == filteredTD.SOPInstanceUID &&
+          td.ConnectionName == filteredTD.ConnectionName)
       {
         duplicate = true;
         break;
