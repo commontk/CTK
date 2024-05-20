@@ -176,6 +176,7 @@ public Q_SLOTS:
   void onJobUserStopped(const QVariant& data);
   void onJobFailed(const QVariant& data);
   void onJobFinished(const QVariant& data);
+  void onStatusPushButtonClicked(bool);
 
 protected:
   QScopedPointer<ctkDICOMSeriesItemWidgetPrivate> d_ptr;

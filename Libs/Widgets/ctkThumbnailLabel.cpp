@@ -55,6 +55,7 @@ public:
   QModelIndex SourceIndex;
   QPixmap OriginalThumbnail;
   Qt::TransformationMode TransformationMode;
+  ctkThumbnailLabel::OperationStatus Status;
 
   // Redraw thumbnail
   void updateThumbnail();
@@ -73,6 +74,7 @@ ctkThumbnailLabelPrivate::ctkThumbnailLabelPrivate(ctkThumbnailLabel* parent)
   this->SelectedColor = q->palette().color(QPalette::Highlight);
   this->TextPosition = Qt::AlignTop | Qt::AlignHCenter;
   this->TransformationMode = Qt::FastTransformation;
+  this->Status = ctkThumbnailLabel::OperationStatus::NoOperation;
 }
 
 //----------------------------------------------------------------------------
@@ -89,6 +91,9 @@ void ctkThumbnailLabelPrivate::setupUi(QWidget* widget)
   // no text by default
   q->setText(QString());
   this->OperationProgressBar->hide();
+
+  QObject::connect(this->TextPushButton, SIGNAL(clicked(bool)),
+                   q, SIGNAL(statusPushButtonClicked(bool)));
 }
 
 //----------------------------------------------------------------------------
@@ -185,11 +190,9 @@ QProgressBar *ctkThumbnailLabel::operationProgressBar()
 void ctkThumbnailLabel::setText(const QString &text)
 {
   Q_D(ctkThumbnailLabel);
-
   d->TextPushButton->setText(text);
-  d->TextPushButton->setVisible(!text.isEmpty() &&
-    ! (d->TextPosition & Qt::AlignHCenter &&
-       d->TextPosition & Qt::AlignVCenter) );
+  d->TextPushButton->setVisible((!text.isEmpty() || !d->TextPushButton->icon().isNull())  &&
+    ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter) );
 }
 
 //----------------------------------------------------------------------------
@@ -282,6 +285,34 @@ int ctkThumbnailLabel::operationProgress() const
 {
   Q_D(const ctkThumbnailLabel);
   return d->OperationProgressBar->value();
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailLabel::setOperationStatus(const OperationStatus &status)
+{
+  Q_D(ctkThumbnailLabel);
+  d->Status = status;
+}
+
+//----------------------------------------------------------------------------
+ctkThumbnailLabel::OperationStatus ctkThumbnailLabel::operationStatus() const
+{
+  Q_D(const ctkThumbnailLabel);
+  return d->Status;
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailLabel::setStatusIcon(const QIcon &icon)
+{
+  Q_D(ctkThumbnailLabel);
+  d->TextPushButton->setIcon(icon);
+}
+
+//----------------------------------------------------------------------------
+QIcon ctkThumbnailLabel::statusIcon() const
+{
+  Q_D(const ctkThumbnailLabel);
+  return d->TextPushButton->icon();
 }
 
 //----------------------------------------------------------------------------
