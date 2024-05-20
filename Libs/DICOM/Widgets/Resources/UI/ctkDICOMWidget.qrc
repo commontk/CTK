@@ -28,5 +28,6 @@
         <file>Icons/reset.svg</file>
         <file>Icons/error_red.svg</file>
         <file>Icons/select_all.svg</file>
+        <file>Icons/select_none.svg</file>
     </qresource>
 </RCC>

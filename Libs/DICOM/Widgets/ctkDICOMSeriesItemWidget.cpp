@@ -61,6 +61,8 @@ public:
   ~ctkDICOMSeriesItemWidgetPrivate();
 
   void init();
+  void connectScheduler();
+  void disconnectScheduler();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
   void createThumbnail(ctkDICOMJobDetail td);
   void drawModalityThumbnail();
@@ -76,8 +78,6 @@ public:
   void updateRetrieveUIOnStarted();
   void updateRetrieveUIOnFailed();
   void updateRetrieveUIOnFinished();
-  void connectScheduler();
-  void disconnectScheduler();
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -684,6 +684,11 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFinished()
 void ctkDICOMSeriesItemWidgetPrivate::connectScheduler()
 {
   Q_Q(ctkDICOMSeriesItemWidget);
+  if (!this->Scheduler)
+  {
+    return;
+  }
+
   QObject::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                    q, SLOT(updateGUIFromScheduler(QVariant)));
   QObject::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
@@ -704,6 +709,11 @@ void ctkDICOMSeriesItemWidgetPrivate::connectScheduler()
 void ctkDICOMSeriesItemWidgetPrivate::disconnectScheduler()
 {
   Q_Q(ctkDICOMSeriesItemWidget);
+  if (!this->Scheduler)
+  {
+    return;
+  }
+
   QObject::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                       q, SLOT(updateGUIFromScheduler(QVariant)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
@@ -815,34 +825,18 @@ QSharedPointer<ctkDICOMScheduler> ctkDICOMSeriesItemWidget::schedulerShared() co
 void ctkDICOMSeriesItemWidget::setScheduler(ctkDICOMScheduler& scheduler)
 {
   Q_D(ctkDICOMSeriesItemWidget);
-  if (d->Scheduler)
-  {
-    d->disconnectScheduler();
-  }
-
+  d->disconnectScheduler();
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&scheduler, skipDelete);
-
-  if (d->Scheduler)
-  {
-    d->connectScheduler();
-  }
+  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler)
 {
   Q_D(ctkDICOMSeriesItemWidget);
-  if (d->Scheduler)
-  {
-    d->disconnectScheduler();
-  }
-
+  d->disconnectScheduler();
   d->Scheduler = scheduler;
-
-  if (d->Scheduler)
-  {
-    d->connectScheduler();
-  }
+  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
@@ -952,9 +946,8 @@ void ctkDICOMSeriesItemWidget::onJobStarted(const QVariant &data)
   Q_D(ctkDICOMSeriesItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
   if (!td.JobUID.isEmpty() &&
-      (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+      (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
@@ -982,7 +975,7 @@ void ctkDICOMSeriesItemWidget::onJobUserStopped(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
   if (!td.JobUID.isEmpty() &&
-      (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+      (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
@@ -1010,7 +1003,7 @@ void ctkDICOMSeriesItemWidget::onJobFailed(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
   if (!td.JobUID.isEmpty() &&
-      (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+      (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
@@ -1099,15 +1092,15 @@ void ctkDICOMSeriesItemWidget::onStatusPushButtonClicked(bool)
   ctkThumbnailLabel::OperationStatus status = d->SeriesThumbnail->operationStatus();
   if (status == ctkThumbnailLabel::InProgress)
   {
-    d->Scheduler->stopJobsByDICOMUIDs(QStringList(d->PatientID),
-                                      QStringList(d->StudyInstanceUID),
+    d->Scheduler->stopJobsByDICOMUIDs(QStringList(),
+                                      QStringList(),
                                       QStringList(d->SeriesInstanceUID));
   }
   else if (status == ctkThumbnailLabel::Failed)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";
-    queryJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Series;
+    queryJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Instances;
     queryJobDetail.PatientID = d->PatientID;
     queryJobDetail.StudyInstanceUID = d->StudyInstanceUID;
     queryJobDetail.SeriesInstanceUID = d->SeriesInstanceUID;

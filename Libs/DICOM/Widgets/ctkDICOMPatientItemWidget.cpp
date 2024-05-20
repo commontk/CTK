@@ -312,11 +312,15 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
 
     QString studyDateString = this->DicomDatabase->fieldForStudy("StudyDate", studyItem);
     studyDateString.replace(QString("-"), QString(""));
-    QString studyDescription = this->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
-
     if (studyDateString.isEmpty())
     {
       studyDateString = QDate::currentDate().toString("yyyyMMdd");
+    }
+
+    QString studyDescription = this->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
+    if (studyDescription.isEmpty())
+    {
+      studyDescription = q->tr("UNDEFINED");
     }
 
     if ((!this->FilteringStudyDescription.isEmpty() &&
@@ -738,7 +742,10 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   QString studyDate = d->DicomDatabase->fieldForStudy("StudyDate", studyItem);
   QString formattedStudyDate = d->formatDate(studyDate);
   QString studyDescription = d->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
-
+  if (studyDescription.isEmpty())
+  {
+    studyDescription = this->tr("UNDEFINED");
+  }
   ctkDICOMStudyItemWidget* studyItemWidget = new ctkDICOMStudyItemWidget(d->VisualDICOMBrowser.data());
   studyItemWidget->setStudyItem(studyItem);
   studyItemWidget->setPatientID(d->PatientID);
