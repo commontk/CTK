@@ -907,6 +907,7 @@ void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(const QVariant& data)
       (td.JobType != ctkDICOMJobResponseSet::JobType::QueryInstances &&
        td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance&&
        td.JobType != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
+      td.PatientID != d->PatientID ||
       td.StudyInstanceUID != d->StudyInstanceUID ||
       td.SeriesInstanceUID != d->SeriesInstanceUID)
   {
@@ -925,6 +926,7 @@ void ctkDICOMSeriesItemWidget::updateSeriesProgressBar(const QVariant& data)
   if (td.JobUID.isEmpty() ||
       (td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
        td.JobType != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
+      td.PatientID != d->PatientID ||
       td.StudyInstanceUID != d->StudyInstanceUID ||
       td.SeriesInstanceUID != d->SeriesInstanceUID)
   {
@@ -950,6 +952,7 @@ void ctkDICOMSeriesItemWidget::onJobStarted(const QVariant &data)
       (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {
@@ -978,6 +981,7 @@ void ctkDICOMSeriesItemWidget::onJobUserStopped(const QVariant &data)
       (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {
@@ -1006,6 +1010,7 @@ void ctkDICOMSeriesItemWidget::onJobFailed(const QVariant &data)
       (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {
@@ -1036,6 +1041,7 @@ void ctkDICOMSeriesItemWidget::onJobFinished(const QVariant &data)
 
   if ((td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
       td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance) &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID &&
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {

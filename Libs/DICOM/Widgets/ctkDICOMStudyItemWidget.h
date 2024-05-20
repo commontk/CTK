@@ -211,11 +211,11 @@ public:
 
 public Q_SLOTS:
   void generateSeries(bool query = true, bool retrieve = true);
-  void updateGUIFromScheduler(const QVariant& data);
-  void onJobStarted(const QVariant& data);
-  void onJobUserStopped(const QVariant& data);
-  void onJobFailed(const QVariant& data);
-  void onJobFinished(const QVariant& data);
+  void updateGUIFromScheduler(const QVariant&);
+  void onJobStarted(const QVariant&);
+  void onJobUserStopped(const QVariant&);
+  void onJobFailed(const QVariant&);
+  void onJobFinished(const QVariant&);
   void onStudySelectionClicked(bool);
   void onOperationStatusClicked(bool);
 

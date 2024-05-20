@@ -792,6 +792,7 @@ void ctkDICOMStudyItemWidget::onJobStarted(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (!td.JobUID.isEmpty() &&
       td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::InProgress;
@@ -808,6 +809,7 @@ void ctkDICOMStudyItemWidget::onJobUserStopped(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (!td.JobUID.isEmpty() &&
       td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::Failed;
@@ -823,6 +825,7 @@ void ctkDICOMStudyItemWidget::onJobFailed(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (!td.JobUID.isEmpty() &&
       td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::Failed;
@@ -838,6 +841,7 @@ void ctkDICOMStudyItemWidget::onJobFinished(const QVariant &data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (!td.JobUID.isEmpty() &&
       td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      td.PatientID == d->PatientID &&
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::Completed;
