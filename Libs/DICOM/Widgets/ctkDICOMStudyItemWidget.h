@@ -62,6 +62,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
   Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
 
 public:
   typedef QWidget Superclass;
@@ -154,6 +155,21 @@ public:
   QStringList allowedServers() const;
   ///@}
 
+  enum OperationStatus
+  {
+    NoOperation = 0,
+    InProgress,
+    Completed,
+    Failed,
+  };
+
+  ///@{
+  /// Set the operation status
+  /// NoOperation by default
+  void setOperationStatus(const OperationStatus& status);
+  OperationStatus operationStatus() const;
+  ///@}
+
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
   /// Return the scheduler as a shared pointer
@@ -196,7 +212,12 @@ public:
 public Q_SLOTS:
   void generateSeries(bool query = true, bool retrieve = true);
   void updateGUIFromScheduler(const QVariant& data);
+  void onJobStarted(const QVariant& data);
+  void onJobUserStopped(const QVariant& data);
+  void onJobFailed(const QVariant& data);
+  void onJobFinished(const QVariant& data);
   void onStudySelectionClicked(bool);
+  void onOperationStatusClicked(bool);
 
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.

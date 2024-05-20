@@ -87,12 +87,6 @@ public:
   void setTextPosition(const Qt::Alignment& alignment);
   Qt::Alignment textPosition()const;
 
-  void setPixmap(const QPixmap& pixmap);
-  const QPixmap* pixmap()const;
-
-  void setOperationProgress(const int& progress);
-  int operationProgress()const;
-
   enum OperationStatus{
     NoOperation = 0,
     InProgress = 1,
@@ -105,6 +99,12 @@ public:
 
   void setStatusIcon(const QIcon& icon);
   QIcon statusIcon()const;
+
+  void setOperationProgress(const int& progress);
+  int operationProgress()const;
+
+  void setPixmap(const QPixmap& pixmap);
+  const QPixmap* pixmap()const;
 
   Qt::TransformationMode transformationMode()const;
   void setTransformationMode(Qt::TransformationMode mode);

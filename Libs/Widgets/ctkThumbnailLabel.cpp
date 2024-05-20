@@ -191,8 +191,8 @@ void ctkThumbnailLabel::setText(const QString &text)
 {
   Q_D(ctkThumbnailLabel);
   d->TextPushButton->setText(text);
-  d->TextPushButton->setVisible((!text.isEmpty() || !d->TextPushButton->icon().isNull())  &&
-    ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter) );
+  d->TextPushButton->setVisible((!d->TextPushButton->text().isEmpty() || !d->TextPushButton->icon().isNull())  &&
+    ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter));
 }
 
 //----------------------------------------------------------------------------
@@ -264,30 +264,6 @@ Qt::Alignment ctkThumbnailLabel::textPosition()const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailLabel::setPixmap(const QPixmap &pixmap)
-{
-  Q_D(ctkThumbnailLabel);
-
-  d->OriginalThumbnail = pixmap;
-  d->updateThumbnail();
-}
-
-//----------------------------------------------------------------------------
-const QPixmap* ctkThumbnailLabel::pixmap()const
-{
-  Q_D(const ctkThumbnailLabel);
-
-  return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
-}
-
-//----------------------------------------------------------------------------
-int ctkThumbnailLabel::operationProgress() const
-{
-  Q_D(const ctkThumbnailLabel);
-  return d->OperationProgressBar->value();
-}
-
-//----------------------------------------------------------------------------
 void ctkThumbnailLabel::setOperationStatus(const OperationStatus &status)
 {
   Q_D(ctkThumbnailLabel);
@@ -306,6 +282,8 @@ void ctkThumbnailLabel::setStatusIcon(const QIcon &icon)
 {
   Q_D(ctkThumbnailLabel);
   d->TextPushButton->setIcon(icon);
+  d->TextPushButton->setVisible((!d->TextPushButton->text().isEmpty() || !d->TextPushButton->icon().isNull())  &&
+    ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter));
 }
 
 //----------------------------------------------------------------------------
@@ -316,10 +294,34 @@ QIcon ctkThumbnailLabel::statusIcon() const
 }
 
 //----------------------------------------------------------------------------
+int ctkThumbnailLabel::operationProgress() const
+{
+  Q_D(const ctkThumbnailLabel);
+  return d->OperationProgressBar->value();
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailLabel::setOperationProgress(const int &progress)
 {
   Q_D(ctkThumbnailLabel);
   d->OperationProgressBar->setValue(progress);
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailLabel::setPixmap(const QPixmap &pixmap)
+{
+  Q_D(ctkThumbnailLabel);
+
+  d->OriginalThumbnail = pixmap;
+  d->updateThumbnail();
+}
+
+//----------------------------------------------------------------------------
+const QPixmap* ctkThumbnailLabel::pixmap()const
+{
+  Q_D(const ctkThumbnailLabel);
+
+  return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
 }
 
 //----------------------------------------------------------------------------
