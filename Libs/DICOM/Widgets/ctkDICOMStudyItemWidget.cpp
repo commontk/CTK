@@ -813,7 +813,7 @@ void ctkDICOMStudyItemWidget::onJobUserStopped(const QVariant &data)
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::Failed;
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error.svg"));
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
   }
 }
 
@@ -829,7 +829,7 @@ void ctkDICOMStudyItemWidget::onJobFailed(const QVariant &data)
       td.StudyInstanceUID == d->StudyInstanceUID)
   {
     d->Status = ctkDICOMStudyItemWidget::Failed;
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error.svg"));
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
   }
 }
 

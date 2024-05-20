@@ -388,6 +388,9 @@ public Q_SLOTS:
   /// user change patient selection
   void onPatientItemChanged(int);
 
+  /// user clicked on patient tab item
+  void onOperationStatusTabBarItemClicked(int);
+
   /// server settings have been changed
   void onServersSettingsChanged();
 

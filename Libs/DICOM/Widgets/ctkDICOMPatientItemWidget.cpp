@@ -99,7 +99,8 @@ public:
   QMap<QString, QMetaObject::Connection> StudyItemWidgetsConnectionMap;
   QSpacerItem* StudiesListVerticalSpacer;
 
-  QStringList AllowedServers = QStringList();
+  QStringList AllowedServers;
+  ctkDICOMPatientItemWidget::OperationStatus Status;
 
   bool IsGUIUpdating;
   bool QueryOn;
@@ -130,6 +131,9 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->VisualDICOMBrowser = nullptr;
 
   this->StudiesListVerticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
+
+  this->AllowedServers = QStringList();
+  this->Status = ctkDICOMPatientItemWidget::NoOperation;
 
   this->IsGUIUpdating = false;
   this->QueryOn = true;
@@ -580,6 +584,8 @@ ctkDICOMPatientItemWidget::~ctkDICOMPatientItemWidget()
 //------------------------------------------------------------------------------
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QStringList&, setAllowedServers, AllowedServers);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QStringList, allowedServers, AllowedServers);
+CTK_SET_CPP(ctkDICOMPatientItemWidget, const OperationStatus&, setOperationStatus, Status);
+CTK_GET_CPP(ctkDICOMPatientItemWidget, ctkDICOMPatientItemWidget::OperationStatus, operationStatus, Status);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientItem, PatientItem);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientID, PatientID);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientID, PatientID);

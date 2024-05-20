@@ -986,7 +986,7 @@ void ctkDICOMSeriesItemWidget::onJobUserStopped(const QVariant &data)
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {
     d->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::Failed);
-    d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/error.svg"));
+    d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/error_red.svg"));
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
     {
@@ -1015,7 +1015,7 @@ void ctkDICOMSeriesItemWidget::onJobFailed(const QVariant &data)
       td.SeriesInstanceUID == d->SeriesInstanceUID)
   {
     d->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::Failed);
-    d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/error.svg"));
+    d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/error_red.svg"));
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
     {
