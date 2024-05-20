@@ -156,6 +156,9 @@ public:
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
   void removeAllPatientItemWidgets();
+  QString findPatientItemFromPatientInfo(const QString& patientID,
+                                         const QString& patientName,
+                                         const QString& patientBirthDate);
   int findPatientTabIndexFromPatientItem(const QString& patientItem);
   void updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget);
   QStringList getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
@@ -463,6 +466,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->ServerNodeWidget->setScheduler(this->Scheduler);
   this->JobListWidget->setScheduler(this->Scheduler);
   this->connectScheduler();
+
+  q->connect(this->JobListWidget, SIGNAL(patientSelected(QString, QString, QString)),
+             q, SLOT(patientSelectedOnJobList(QString, QString, QString)));
 
   q->connect(this->ProgressCancelButton, SIGNAL(clicked()), this->Indexer.data(), SLOT(cancel()));
   q->connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
@@ -1092,6 +1098,32 @@ void ctkDICOMVisualBrowserWidgetPrivate::removeAllPatientItemWidgets()
     patientIndex--;
   }
   this->PatientsTabWidget->blockSignals(wasBlocking);
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMVisualBrowserWidgetPrivate::findPatientItemFromPatientInfo(const QString &patientID,
+                                                                           const QString &patientName,
+                                                                           const QString &patientBirthDate)
+{
+  QString patientItem;
+  for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
+  {
+    ctkDICOMPatientItemWidget* patientItemWidget =
+      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(index));
+    if (!patientItemWidget)
+    {
+      continue;
+    }
+    if (patientItemWidget->patientID() == patientID &&
+      patientItemWidget->patientName() == patientName &&
+      patientItemWidget->patientBirthDate() == patientBirthDate)
+    {
+      patientItem = this->PatientsTabWidget->tabWhatsThis(index);
+      break;
+    }
+  }
+
+  return patientItem;
 }
 
 //----------------------------------------------------------------------------
@@ -1936,6 +1968,10 @@ int ctkDICOMVisualBrowserWidget::addPatientItemWidget(const QString& patientItem
   QString patientName = d->DicomDatabase->fieldForPatient("PatientsName", patientItem);
   patientName.replace(R"(^)", R"( )");
   QString patientID = d->DicomDatabase->fieldForPatient("PatientID", patientItem);
+  QString date = d->DicomDatabase->fieldForPatient("PatientsBirthDate", patientItem);
+  date.replace(QString("-"), QString(""));
+  date = QDate::fromString(date, "yyyyMMdd").toString();
+  QString sex = d->DicomDatabase->fieldForPatient("PatientsSex", patientItem);
 
   ctkDICOMPatientItemWidget* patientItemWidget = new ctkDICOMPatientItemWidget(this);
   patientItemWidget->setDicomDatabase(d->DicomDatabase);
@@ -1943,6 +1979,8 @@ int ctkDICOMVisualBrowserWidget::addPatientItemWidget(const QString& patientItem
   patientItemWidget->setPatientItem(patientItem);
   patientItemWidget->setPatientID(patientID);
   patientItemWidget->setPatientName(patientName);
+  patientItemWidget->setPatientBirthDate(date);
+  patientItemWidget->setPatientSex(sex);
   patientItemWidget->setFilteringStudyDescription(d->FilteringStudyDescription);
   patientItemWidget->setFilteringDate(d->FilteringDate);
   patientItemWidget->setFilteringSeriesDescription(d->FilteringSeriesDescription);
@@ -2929,6 +2967,20 @@ void ctkDICOMVisualBrowserWidget::onServersSettingsChanged()
 
     patientItemWidget->updateAllowedServersUIFromDB();
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::patientSelectedOnJobList(const QString& patientID,
+                                                           const QString& patientName,
+                                                           const QString& patientBirthDate)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  QString patientItem = d->findPatientItemFromPatientInfo(patientID, patientName, patientBirthDate);
+  int selectedIndex = d->findPatientTabIndexFromPatientItem(patientItem);
+  int wasBlocking = d->PatientsTabWidget->blockSignals(true);
+  d->PatientsTabWidget->setCurrentIndex(selectedIndex);
+  d->PatientsTabWidget->blockSignals(wasBlocking);
 }
 
 //------------------------------------------------------------------------------

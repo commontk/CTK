@@ -686,8 +686,8 @@ void ctkDICOMSeriesItemWidgetPrivate::connectScheduler()
                    q, SLOT(updateSeriesProgressBar(QVariant)));
   QObject::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                    q, SLOT(onJobStarted(QVariant)));
-  QObject::connect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                   q, SLOT(onJobCanceled(QVariant)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
+                   q, SLOT(onJobUserStopped(QVariant)));
   QObject::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
                    q, SLOT(onJobFailed(QVariant)));
   QObject::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
@@ -704,8 +704,8 @@ void ctkDICOMSeriesItemWidgetPrivate::disconnectScheduler()
                       q, SLOT(updateSeriesProgressBar(QVariant)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                       q, SLOT(onJobStarted(QVariant)));
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                      q, SLOT(onJobCanceled(QVariant)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
+                      q, SLOT(onJobUserStopped(QVariant)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
                       q, SLOT(onJobFailed(QVariant)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
@@ -959,7 +959,7 @@ void ctkDICOMSeriesItemWidget::onJobStarted(const QVariant &data)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::onJobCanceled(const QVariant &data)
+void ctkDICOMSeriesItemWidget::onJobUserStopped(const QVariant &data)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 

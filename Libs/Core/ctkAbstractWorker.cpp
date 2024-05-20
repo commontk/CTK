@@ -127,11 +127,15 @@ void ctkAbstractWorker::onJobCanceled(const bool& wasCanceled)
       timer.start(this->Job->retryDelay());
 
       this->startNextJob();
+      this->Job->setStatus(ctkAbstractJob::JobStatus::AttemptFailed);
     }
-    this->Job->setStatus(ctkAbstractJob::JobStatus::Failed);
+    else
+    {
+      this->Job->setStatus(ctkAbstractJob::JobStatus::Failed);
+    }
   }
   else
   {
-    this->Job->setStatus(ctkAbstractJob::JobStatus::Stopped);
+    this->Job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
   }
 }

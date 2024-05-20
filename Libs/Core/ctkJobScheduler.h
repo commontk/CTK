@@ -110,15 +110,17 @@ Q_SIGNALS:
   void jobInitialized(QVariant data);
   void jobQueued(QVariant data);
   void jobStarted(QVariant data);
+  void jobUserStopped(QVariant data);
   void jobFinished(QVariant data);
-  void jobCanceled(QVariant data);
+  void jobAttemptFailed(QVariant data);
   void jobFailed(QVariant data);
   void progressJobDetail(QVariant data);
 
 public Q_SLOTS:
   virtual void onJobStarted();
+  virtual void onJobUserStopped();
   virtual void onJobFinished();
-  virtual void onJobCanceled();
+  virtual void onJobAttemptFailed();
   virtual void onJobFailed();
 
 protected:

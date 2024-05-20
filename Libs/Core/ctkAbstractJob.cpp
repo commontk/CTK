@@ -91,9 +91,13 @@ void ctkAbstractJob::setStatus(JobStatus status)
   {
     emit this->started();
   }
-  else if (this->Status == JobStatus::Stopped)
+  else if (this->Status == JobStatus::UserStopped)
   {
-    emit this->canceled();
+    emit this->userStopped();
+  }
+  else if (this->Status == JobStatus::AttemptFailed)
+  {
+    emit this->attemptFailed();
   }
   else if (this->Status == JobStatus::Failed)
   {

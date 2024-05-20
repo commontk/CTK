@@ -86,6 +86,8 @@ public:
   QString PatientItem;
   QString PatientID;
   QString PatientName;
+  QString PatientBirthDate;
+  QString PatientSex;
 
   QString FilteringStudyDescription;
   ctkDICOMPatientItemWidget::DateType FilteringDate;
@@ -117,6 +119,9 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->PatientItem = "";
   this->PatientID = "";
   this->PatientName = "";
+  this->PatientBirthDate = "";
+  this->PatientSex = "";
+
   this->FilteringStudyDescription = "";
   this->FilteringSeriesDescription = "";
 
@@ -262,12 +267,10 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
   }
   else
   {
-    QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", this->PatientItem);
-    patientName.replace(R"(^)", R"( )");
-    this->PatientNameValueLabel->setText(patientName);
-    this->PatientIDValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientID", this->PatientItem));
-    this->PatientSexValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientsSex", this->PatientItem));
-    this->PatientBirthDateValueLabel->setText(this->formatDate(this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientItem)));
+    this->PatientNameValueLabel->setText(this->PatientName);
+    this->PatientIDValueLabel->setText(this->PatientID);
+    this->PatientSexValueLabel->setText(this->PatientSex);
+    this->PatientBirthDateValueLabel->setText(this->PatientBirthDate);
   }
 
   QStringList studiesList = this->DicomDatabase->studiesForPatient(this->PatientItem);
@@ -578,6 +581,10 @@ CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientID, PatientID);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientID, PatientID);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientName, PatientName);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientName, PatientName);
+CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientBirthDate, PatientBirthDate);
+CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientBirthDate, PatientBirthDate);
+CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientSex, PatientSex);
+CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientSex, PatientSex);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setFilteringStudyDescription, FilteringStudyDescription);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, filteringStudyDescription, FilteringStudyDescription);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const ctkDICOMPatientItemWidget::DateType&, setFilteringDate, FilteringDate);

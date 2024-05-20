@@ -239,7 +239,7 @@ public:
   ///@}
 
   ///@{
-  /// Set if cancel action on right click context menu is available
+  /// Set if delete action on right click context menu is available
   /// true by default
   void setDeleteActionVisible(bool visible);
   bool isDeleteActionVisible() const;
@@ -387,6 +387,9 @@ public Q_SLOTS:
 
   /// server settings have been changed
   void onServersSettingsChanged();
+
+  /// user selected a job in the job list widget
+  void patientSelectedOnJobList(const QString&, const QString&, const QString&);
 
 Q_SIGNALS:
   /// Emitted when directory is changed

@@ -58,8 +58,9 @@ public Q_SLOTS:
   void onJobInitialized(QVariant);
   void onJobQueued(QVariant);
   void onJobStarted(QVariant);
-  void onJobCanceled(QVariant);
+  void onJobAttemptFailed(QVariant);
   void onJobFailed(QVariant);
+  void onJobUserStopped(QVariant);
   void onJobFinished(QVariant);
   void onProgressJobDetail(QVariant);
 
@@ -74,6 +75,10 @@ public Q_SLOTS:
   void onShowCompletedButtonToggled(bool);
   void onClearCompletedButtonClicked();
   void onClearAllButtonClicked();
+
+Q_SIGNALS:
+  /// Emitted when a job row is selected
+  void patientSelected(const QString&, const QString&, const QString&);
 
 protected:
   QScopedPointer<ctkDICOMJobListWidgetPrivate> d_ptr;

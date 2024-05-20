@@ -173,7 +173,7 @@ public Q_SLOTS:
   void updateGUIFromScheduler(const QVariant& data);
   void updateSeriesProgressBar(const QVariant& data);
   void onJobStarted(const QVariant& data);
-  void onJobCanceled(const QVariant& data);
+  void onJobUserStopped(const QVariant& data);
   void onJobFailed(const QVariant& data);
   void onJobFinished(const QVariant& data);
 

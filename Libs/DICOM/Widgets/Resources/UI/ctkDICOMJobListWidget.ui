@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
+    <width>878</width>
     <height>498</height>
    </rect>
   </property>
@@ -25,8 +25,8 @@
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -79,12 +79,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="ctkPushButton" name="RetryButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="toolTip">
           <string>Retry selected canceled or failed jobs</string>
          </property>
@@ -99,12 +93,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="ctkPushButton" name="StopButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="toolTip">
           <string>Stop selected in-progress jobs</string>
          </property>
@@ -114,6 +102,20 @@ p, li { white-space: pre-wrap; }
          <property name="icon">
           <iconset resource="ctkDICOMWidget.qrc">
            <normaloff>:/Icons/stop.svg</normaloff>:/Icons/stop.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkPushButton" name="ClearAllPushButton">
+         <property name="toolTip">
+          <string>Stop all the in-progress jobs and clear all entries in the table</string>
+         </property>
+         <property name="text">
+          <string>Clear all</string>
+         </property>
+         <property name="icon">
+          <iconset resource="ctkDICOMWidget.qrc">
+           <normaloff>:/Icons/delete.svg</normaloff>:/Icons/delete.svg</iconset>
          </property>
         </widget>
        </item>
@@ -145,7 +147,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="3">
+          <item row="4" column="1" colspan="3">
            <widget class="ctkPushButton" name="ResetFiltersPushButton">
             <property name="toolTip">
              <string>Reset all filters to default</string>
@@ -159,23 +161,20 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="4" column="1" colspan="3">
-           <widget class="ctkPushButton" name="ClearCompletedCompletedButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="2" column="1" colspan="3">
+           <widget class="ctkPushButton" name="ShowCompletedButton">
             <property name="toolTip">
-             <string>Clear the completed jobs</string>
+             <string>Show completed jobs</string>
             </property>
             <property name="text">
-             <string>Clear completed</string>
+             <string>Show completed</string>
             </property>
             <property name="icon">
              <iconset resource="ctkDICOMWidget.qrc">
-              <normaloff>:/Icons/cleaning.svg</normaloff>:/Icons/cleaning.svg</iconset>
+              <normaloff>:/Icons/visible_on.svg</normaloff>:/Icons/visible_on.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -198,40 +197,17 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="2" column="1" colspan="3">
-           <widget class="ctkPushButton" name="ShowCompletedButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="3" column="1" colspan="3">
+           <widget class="ctkPushButton" name="ClearCompletedCompletedButton">
             <property name="toolTip">
-             <string>Show completed jobs</string>
+             <string>Clear the completed jobs</string>
             </property>
             <property name="text">
-             <string>Show completed</string>
+             <string>Clear completed</string>
             </property>
             <property name="icon">
              <iconset resource="ctkDICOMWidget.qrc">
-              <normaloff>:/Icons/visible_on.svg</normaloff>:/Icons/visible_on.svg</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" colspan="3">
-           <widget class="ctkPushButton" name="ClearAllPushButton">
-            <property name="toolTip">
-             <string>Stop all the in-progress jobs and clear all entries in the table</string>
-            </property>
-            <property name="text">
-             <string>Clear all</string>
-            </property>
-            <property name="icon">
-             <iconset resource="ctkDICOMWidget.qrc">
-              <normaloff>:/Icons/delete.svg</normaloff>:/Icons/delete.svg</iconset>
+              <normaloff>:/Icons/cleaning.svg</normaloff>:/Icons/cleaning.svg</iconset>
             </property>
            </widget>
           </item>

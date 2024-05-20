@@ -71,16 +71,20 @@ public:
   ///@{
   /// Status
   /// Initialized: the object has been created and inserted in the JobsQueue map in the ctkJobScheduler
-  /// Queued: a worker is associated to the job and the worker has been inserted in the queue list of the QThreadPool (object owned by the ctkJobScheduler) with a priority
+  /// Queued: a worker is associated to the job and the worker has been inserted in the queue list of
+  ///         the QThreadPool (object owned by the ctkJobScheduler) with a priority
   /// Running: the job is running in another thread by the associated worker.
-  /// Stopped: the job has been stopped externally (a cancel request from the worker)
+  /// UserStopped: the job has been stopped externally (a cancel request from the worker)
+  /// AttemptFailed: the job encountered an internal failure, however, the task will be reattempted
+  ///                by a different job (as the logic returned false).
   /// Failed: the job failed internally (logic returns false).
   /// Finished: the job has been run successfully (logic returns true).
   enum JobStatus {
     Initialized = 0,
     Queued,
     Running,
-    Stopped,
+    UserStopped,
+    AttemptFailed,
     Failed,
     Finished,
   };
@@ -161,7 +165,8 @@ public:
 
 Q_SIGNALS:
   void started();
-  void canceled();
+  void userStopped();
+  void attemptFailed();
   void failed();
   void finished();
 
