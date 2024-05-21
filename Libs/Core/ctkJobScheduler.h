@@ -64,7 +64,8 @@ public:
   QSharedPointer<ctkAbstractJob> getJobSharedByUID(const QString& jobUID);
   Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
 
-  Q_INVOKABLE void waitForFinish(bool waitForPersistentJobs = false);
+  Q_INVOKABLE void waitForFinish(bool waitForPersistentJobs = false,
+                                 bool processEvents = false);
   Q_INVOKABLE void waitForDone(int msec = -1);
 
   Q_INVOKABLE void stopAllJobs(bool stopPersistentJobs = false);
@@ -117,11 +118,11 @@ Q_SIGNALS:
   void progressJobDetail(QVariant data);
 
 public Q_SLOTS:
-  virtual void onJobStarted();
-  virtual void onJobUserStopped();
-  virtual void onJobFinished();
-  virtual void onJobAttemptFailed();
-  virtual void onJobFailed();
+  virtual void onJobStarted(ctkAbstractJob* job);
+  virtual void onJobUserStopped(ctkAbstractJob* job);
+  virtual void onJobFinished(ctkAbstractJob* job);
+  virtual void onJobAttemptFailed(ctkAbstractJob* job);
+  virtual void onJobFailed(ctkAbstractJob* job);
 
 protected:
   QScopedPointer<ctkJobSchedulerPrivate> d_ptr;

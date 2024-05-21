@@ -44,7 +44,7 @@ protected:
   ctkJobScheduler* const q_ptr;
 
 Q_SIGNALS:
-  void queueJobs();
+  void queueJobsInThreadPool();
 
 public Q_SLOTS:
   virtual void onQueueJobsInThreadPool();
@@ -71,6 +71,7 @@ public:
 
   QSharedPointer<QThreadPool> ThreadPool;
   QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
+  QMap<QString, QMap<QString, QMetaObject::Connection>> JobsConnections;
   QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
 };
 
