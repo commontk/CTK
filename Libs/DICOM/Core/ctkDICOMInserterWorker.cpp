@@ -125,7 +125,6 @@ void ctkDICOMInserterWorker::run()
   {
     emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
   }
-
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
 }
 

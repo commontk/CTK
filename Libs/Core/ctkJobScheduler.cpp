@@ -53,7 +53,7 @@ ctkJobSchedulerPrivate::~ctkJobSchedulerPrivate() = default;
 //---------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::init()
 {
-  QObject::connect(this, SIGNAL(queueJobs()),
+  QObject::connect(this, SIGNAL(queueJobsInThreadPool()),
                    this, SLOT(onQueueJobsInThreadPool()));
 
   this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool());
@@ -64,7 +64,6 @@ void ctkJobSchedulerPrivate::init()
 void ctkJobSchedulerPrivate::onQueueJobsInThreadPool()
 {
   Q_Q(ctkJobScheduler);
-
   {
     QMutexLocker locker(&this->QueueMutex);
     if (this->FreezeJobsScheduling)
@@ -130,17 +129,35 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
     .arg(job->className())
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
-  QObject::connect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
-  QObject::connect(job.data(), SIGNAL(userStopped()), q, SLOT(onJobUserStopped()));
-  QObject::connect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
-  QObject::connect(job.data(), SIGNAL(attemptFailed()), q, SLOT(onJobAttemptFailed()));
-  QObject::connect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
+  QMetaObject::Connection startedConnection = QObject::connect(job.data(), &ctkAbstractJob::started, q, [q, job](){
+    q->onJobStarted(job.data());
+  });
+  QMetaObject::Connection userStoppedConnection = QObject::connect(job.data(), &ctkAbstractJob::userStopped, q, [q, job](){
+    q->onJobUserStopped(job.data());
+  });
+  QMetaObject::Connection finishedConnection = QObject::connect(job.data(), &ctkAbstractJob::finished, q, [q, job](){
+    q->onJobFinished(job.data());
+  });
+  QMetaObject::Connection attemptFailedConnection = QObject::connect(job.data(), &ctkAbstractJob::attemptFailed, q, [q, job](){
+    q->onJobAttemptFailed(job.data());
+  });
+  QMetaObject::Connection failedConnection = QObject::connect(job.data(), &ctkAbstractJob::failed, q, [q, job](){
+    q->onJobFailed(job.data());
+  });
+  QMap<QString, QMetaObject::Connection> connections = {
+    {"started", startedConnection},
+    {"userStopped", userStoppedConnection},
+    {"finished", finishedConnection},
+    {"attemptFailed", attemptFailedConnection},
+    {"failed", failedConnection}
+  };
   QObject::connect(job.data(), SIGNAL(progressJobDetail(QVariant)),
                    q, SIGNAL(progressJobDetail(QVariant)));
 
   {
     QMutexLocker locker(&this->QueueMutex);
     this->JobsQueue.insert(job->jobUID(), job);
+    this->JobsConnections.insert(job->jobUID(), connections);
   }
 
   emit q->jobInitialized(job->toVariant());
@@ -155,8 +172,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
     return false;
     }
 
-  emit this->queueJobs();
-
+  emit this->queueJobsInThreadPool();
   return true;
 }
 
@@ -172,23 +188,25 @@ bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
   {
     QMutexLocker locker(&this->QueueMutex);
     QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
-    if (!job)
+    if (!job || !this->JobsConnections.contains(jobUID))
     {
       return false;
     }
 
-    QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
-    QObject::disconnect(job.data(), SIGNAL(userStopped()), q, SLOT(onJobUserStopped()));
-    QObject::disconnect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
-    QObject::disconnect(job.data(), SIGNAL(attemptFailed()), q, SLOT(onJobAttemptFailed()));
-    QObject::disconnect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
-    QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
+    QMap<QString, QMetaObject::Connection> connections = this->JobsConnections.value(jobUID);
+    QObject::disconnect(connections.value("started"));
+    QObject::disconnect(connections.value("userStopped"));
+    QObject::disconnect(connections.value("finished"));
+    QObject::disconnect(connections.value("attemptFailed"));
+    QObject::disconnect(connections.value("failed"));
+    QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)),
+                        q, SIGNAL(progressJobDetail(QVariant)));
 
+    this->JobsConnections.remove(jobUID);
     this->JobsQueue.remove(jobUID);
   }
 
-  emit this->queueJobs();
-
+  emit this->queueJobsInThreadPool();
   return true;
 }
 
@@ -206,20 +224,22 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
     foreach (QString jobUID, jobUIDs)
     {
       QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
-      if (!job)
+      if (!job || !this->JobsConnections.contains(jobUID))
       {
         continue;
       }
 
       datas.append(job->toVariant());
 
-      QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
-      QObject::disconnect(job.data(), SIGNAL(userStopped()), q, SLOT(onJobUserStopped()));
-      QObject::disconnect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
-      QObject::disconnect(job.data(), SIGNAL(attemptFailed()), q, SLOT(onJobAttemptFailed()));
-      QObject::disconnect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
+      QMap<QString, QMetaObject::Connection> connections = this->JobsConnections.value(jobUID);
+      QObject::disconnect(connections.value("started"));
+      QObject::disconnect(connections.value("userStopped"));
+      QObject::disconnect(connections.value("finished"));
+      QObject::disconnect(connections.value("attemptFailed"));
+      QObject::disconnect(connections.value("failed"));
       QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
 
+      this->JobsConnections.remove(jobUID);
       this->JobsQueue.remove(jobUID);
     }
   }
@@ -241,14 +261,27 @@ void ctkJobSchedulerPrivate::removeAllJobs()
     QMutexLocker locker(&this->QueueMutex);
     foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
     {
-      QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
-      QObject::disconnect(job.data(), SIGNAL(userStopped()), q, SLOT(onJobUserStopped()));
-      QObject::disconnect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
-      QObject::disconnect(job.data(), SIGNAL(attemptFailed()), q, SLOT(onJobAttemptFailed()));
-      QObject::disconnect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
+      if (!job)
+      {
+        continue;
+      }
+
+      QString jobUID = job->jobUID();
+      if (!this->JobsConnections.contains(jobUID))
+      {
+        continue;
+      }
+
+      QMap<QString, QMetaObject::Connection> connections = this->JobsConnections.value(jobUID);
+      QObject::disconnect(connections.value("started"));
+      QObject::disconnect(connections.value("userStopped"));
+      QObject::disconnect(connections.value("finished"));
+      QObject::disconnect(connections.value("attemptFailed"));
+      QObject::disconnect(connections.value("failed"));
       QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
 
-      this->JobsQueue.remove(job->jobUID());
+      this->JobsConnections.remove(jobUID);
+      this->JobsQueue.remove(jobUID);
     }
   }
 }
@@ -305,7 +338,6 @@ ctkJobScheduler::ctkJobScheduler(ctkJobSchedulerPrivate* pimpl, QObject* parent)
 // --------------------------------------------------------------------------
 ctkJobScheduler::~ctkJobScheduler()
 {
-  Q_D(ctkJobScheduler);
   this->setFreezeJobsScheduling(true);
   this->stopAllJobs(true);
   // stopAllJobs is not main thread blocking. Therefore we need actually
@@ -371,7 +403,7 @@ int ctkJobScheduler::numberOfRunningJobs()
     QMutexLocker locker(&d->QueueMutex);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      if (job->status() == ctkAbstractJob::JobStatus::Running)
+      if (job->status() <= ctkAbstractJob::JobStatus::Running)
       {
         numberOfRunningJobs++;
       }
@@ -444,18 +476,28 @@ ctkAbstractJob* ctkJobScheduler::getJobByUID(const QString& jobUID)
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs)
+void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs,
+                                    bool processEvents)
 {
-  Q_D(ctkJobScheduler);
+  this->waitForDone(500);
+  if (processEvents)
+  {
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+  }
 
   int numberOfPersistentJobs = this->numberOfPersistentJobs();
   if (waitForPersistentJobs)
   {
     numberOfPersistentJobs = 0;
   }
+
   while (this->numberOfRunningJobs() > numberOfPersistentJobs)
   {
     this->waitForDone(500);
+    if (processEvents)
+    {
+      qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    }
   }
 }
 
@@ -490,15 +532,22 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
         continue;
       }
 
+      QString jobUID = job->jobUID();
+      if (!d->JobsConnections.contains(jobUID))
+      {
+        continue;
+      }
+
       // For this job, a worker has not beed started yet and the job is still in the main thread.
       // There is no worry that it will be started in meanwhile,
       // because only jobs with status Initialized will be started by the scheduler.
       // Therefore we set the status as stopped, because effettivelty the job has been stopped.
       // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
       // instead of using the signal
-      QObject::disconnect(job.data(), SIGNAL(userStopped()), this, SLOT(onJobUserStopped()));
+      QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
+      QObject::disconnect(connections.value("userStopped"));
       job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
-      initializedStoppedJobsUIDs.append(job->jobUID());
+      initializedStoppedJobsUIDs.append(jobUID);
     }
 
     // Try to stop jobs with a worker, but still not running.
@@ -511,12 +560,19 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
         continue;
       }
 
+      QString jobUID = job->jobUID();
+      if (!d->JobsConnections.contains(jobUID))
+      {
+        continue;
+      }
+
       // trytake stops workers not already running
       // these corresponds to jobs with status Queued
       if (d->ThreadPool->tryTake(worker.data()))
       {
         this->deleteWorker(job->jobUID());
-        QObject::disconnect(job.data(), SIGNAL(userStopped()), this, SLOT(onJobUserStopped()));
+        QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
+        QObject::disconnect(connections.value("userStopped"));
         job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
         initializedStoppedJobsUIDs.append(job->jobUID());
       }
@@ -567,18 +623,23 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
         continue;
       }
 
-      if ((!job->jobUID().isEmpty() && jobUIDs.contains(job->jobUID())))
+      QString jobUID = job->jobUID();
+      if (jobUID.isEmpty() || !jobUIDs.contains(jobUID) ||
+        !d->JobsConnections.contains(jobUID))
       {
-        // For this job, a worker has not beed started yet and the job is still in the main thread.
-        // There is no worry that it will be started in meanwhile,
-        // because only jobs with status Initialized will be started by the scheduler.
-        // Therefore we set the status as stopped, because effettivelty the job has been stopped.
-        // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
-        // instead of using the signal
-        QObject::disconnect(job.data(), SIGNAL(userStopped()), this, SLOT(onJobUserStopped()));
-        job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
-        initializedStoppedJobsUIDs.append(job->jobUID());
+        continue;
       }
+
+      // For this job, a worker has not beed started yet and the job is still in the main thread.
+      // There is no worry that it will be started in meanwhile,
+      // because only jobs with status Initialized will be started by the scheduler.
+      // Therefore we set the status as stopped, because effettivelty the job has been stopped.
+      // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
+      // instead of using the signal
+      QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
+      QObject::disconnect(connections.value("userStopped"));
+      job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
+      initializedStoppedJobsUIDs.append(job->jobUID());
     }
 
     // Try to stop jobs with a worker, but still not running.
@@ -591,17 +652,22 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
         continue;
       }
 
-      if ((!job->jobUID().isEmpty() && jobUIDs.contains(job->jobUID())))
+      QString jobUID = job->jobUID();
+      if (jobUID.isEmpty() || !jobUIDs.contains(jobUID) ||
+        !d->JobsConnections.contains(jobUID))
       {
-        // trytake stops workers not already running,
-        // these corresponds to jobs with status Queued
-        if (d->ThreadPool->tryTake(worker.data()))
-        {
-          this->deleteWorker(job->jobUID());
-          QObject::disconnect(job.data(), SIGNAL(userStopped()), this, SLOT(onJobUserStopped()));
-          job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
-          initializedStoppedJobsUIDs.append(job->jobUID());
-        }
+        continue;
+      }
+
+      // trytake stops workers not already running,
+      // these corresponds to jobs with status Queued
+      if (d->ThreadPool->tryTake(worker.data()))
+      {
+        this->deleteWorker(job->jobUID());
+        QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
+        QObject::disconnect(connections.value("userStopped"));
+        job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
+        initializedStoppedJobsUIDs.append(job->jobUID());
       }
     }
   }
@@ -654,9 +720,8 @@ QSharedPointer<QThreadPool> ctkJobScheduler::threadPoolShared() const
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onJobStarted()
+void ctkJobScheduler::onJobStarted(ctkAbstractJob* job)
 {
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
   {
     return;
@@ -667,13 +732,13 @@ void ctkJobScheduler::onJobStarted()
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onJobUserStopped()
+void ctkJobScheduler::onJobUserStopped(ctkAbstractJob* job)
 {
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
   {
     return;
   }
+
   logger.debug(job->loggerReport(tr("user stopped")));
 
   QVariant data = job->toVariant();
@@ -685,9 +750,8 @@ void ctkJobScheduler::onJobUserStopped()
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onJobFinished()
+void ctkJobScheduler::onJobFinished(ctkAbstractJob* job)
 {
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
   {
     return;
@@ -704,13 +768,13 @@ void ctkJobScheduler::onJobFinished()
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onJobAttemptFailed()
+void ctkJobScheduler::onJobAttemptFailed(ctkAbstractJob* job)
 {
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
   {
     return;
   }
+
   logger.debug(job->loggerReport(tr("attempt failed")));
 
   QVariant data = job->toVariant();
@@ -722,9 +786,8 @@ void ctkJobScheduler::onJobAttemptFailed()
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onJobFailed()
+void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
 {
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
   {
     return;
