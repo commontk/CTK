@@ -53,11 +53,17 @@ ctkJobSchedulerPrivate::~ctkJobSchedulerPrivate() = default;
 //---------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::init()
 {
+  Q_Q(ctkJobScheduler);
   QObject::connect(this, SIGNAL(queueJobsInThreadPool()),
                    this, SLOT(onQueueJobsInThreadPool()));
 
-  this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool());
+  this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool(this));
   this->ThreadPool->setMaxThreadCount(20);
+  this->ThrottleTimer = QSharedPointer<QTimer>(new QTimer(this));
+  this->ThrottleTimer->setSingleShot(true);
+
+  QObject::connect(this->ThrottleTimer.data(), SIGNAL(timeout()),
+                   q, SLOT(emitThrottledSignals()));
 }
 
 //------------------------------------------------------------------------------
@@ -144,15 +150,19 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
   QMetaObject::Connection failedConnection = QObject::connect(job.data(), &ctkAbstractJob::failed, q, [q, job](){
     q->onJobFailed(job.data());
   });
-  QMap<QString, QMetaObject::Connection> connections = {
+  QMetaObject::Connection progressConnection =
+    QObject::connect(job.data(), SIGNAL(progressJobDetail(QVariant)),
+                     q, SLOT(onProgressJobDetail(QVariant)));
+
+  QMap<QString, QMetaObject::Connection> connections =
+  {
     {"started", startedConnection},
     {"userStopped", userStoppedConnection},
     {"finished", finishedConnection},
     {"attemptFailed", attemptFailedConnection},
-    {"failed", failedConnection}
+    {"failed", failedConnection},
+    {"progress", progressConnection},
   };
-  QObject::connect(job.data(), SIGNAL(progressJobDetail(QVariant)),
-                   q, SIGNAL(progressJobDetail(QVariant)));
 
   {
     QMutexLocker locker(&this->QueueMutex);
@@ -179,8 +189,6 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 //------------------------------------------------------------------------------
 bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
-  Q_Q(ctkJobScheduler);
-
   logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
@@ -199,8 +207,7 @@ bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
     QObject::disconnect(connections.value("finished"));
     QObject::disconnect(connections.value("attemptFailed"));
     QObject::disconnect(connections.value("failed"));
-    QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)),
-                        q, SIGNAL(progressJobDetail(QVariant)));
+    QObject::disconnect(connections.value("progress"));
 
     this->JobsConnections.remove(jobUID);
     this->JobsQueue.remove(jobUID);
@@ -237,24 +244,19 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
       QObject::disconnect(connections.value("finished"));
       QObject::disconnect(connections.value("attemptFailed"));
       QObject::disconnect(connections.value("failed"));
-      QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
+      QObject::disconnect(connections.value("progress"));
 
       this->JobsConnections.remove(jobUID);
       this->JobsQueue.remove(jobUID);
     }
   }
 
-  foreach (QVariant data, datas)
-  {
-    emit q->jobUserStopped(data);
-  }
+  emit q->jobUserStopped(datas);
 }
 
 //------------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::removeAllJobs()
 {
-  Q_Q(ctkJobScheduler);
-
   {
     // The QMutexLocker is enclosed within brackets to restrict its scope and
     // prevent conflicts with other QMutexLockers within the scheduler's methods.
@@ -278,7 +280,7 @@ void ctkJobSchedulerPrivate::removeAllJobs()
       QObject::disconnect(connections.value("finished"));
       QObject::disconnect(connections.value("attemptFailed"));
       QObject::disconnect(connections.value("failed"));
-      QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
+      QObject::disconnect(connections.value("progress"));
 
       this->JobsConnections.remove(jobUID);
       this->JobsQueue.remove(jobUID);
@@ -312,6 +314,17 @@ int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPoi
 QString ctkJobSchedulerPrivate::generateUniqueJobUID()
 {
   return QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
+}
+
+//------------------------------------------------------------------------------
+void ctkJobSchedulerPrivate::clearBactchedJobsLists()
+{
+  this->BatchedJobsStarted.clear();
+  this->BatchedJobsUserStopped.clear();
+  this->BatchedJobsFinished.clear();
+  this->BatchedJobsAttemptFailed.clear();
+  this->BatchedJobsFailed.clear();
+  this->BatchedJobsProgress.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -592,6 +605,8 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
 
     worker->requestCancel();
   }
+
+  d->clearBactchedJobsLists();
 }
 
 //----------------------------------------------------------------------------
@@ -722,18 +737,25 @@ QSharedPointer<QThreadPool> ctkJobScheduler::threadPoolShared() const
 //----------------------------------------------------------------------------
 void ctkJobScheduler::onJobStarted(ctkAbstractJob* job)
 {
+  Q_D(ctkJobScheduler);
   if (!job)
   {
     return;
   }
 
   logger.debug(job->loggerReport(tr("started")));
-  emit this->jobStarted(job->toVariant());
+
+  d->BatchedJobsStarted.append(job->toVariant());
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkJobScheduler::onJobUserStopped(ctkAbstractJob* job)
 {
+  Q_D(ctkJobScheduler);
   if (!job)
   {
     return;
@@ -746,12 +768,17 @@ void ctkJobScheduler::onJobUserStopped(ctkAbstractJob* job)
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobUserStopped(data);
+  d->BatchedJobsUserStopped.append(job->toVariant());
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkJobScheduler::onJobFinished(ctkAbstractJob* job)
 {
+  Q_D(ctkJobScheduler);
   if (!job)
   {
     return;
@@ -764,12 +791,17 @@ void ctkJobScheduler::onJobFinished(ctkAbstractJob* job)
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobFinished(data);
+  d->BatchedJobsFinished.append(job->toVariant());
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkJobScheduler::onJobAttemptFailed(ctkAbstractJob* job)
 {
+  Q_D(ctkJobScheduler);
   if (!job)
   {
     return;
@@ -782,12 +814,17 @@ void ctkJobScheduler::onJobAttemptFailed(ctkAbstractJob* job)
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobAttemptFailed(data);
+  d->BatchedJobsAttemptFailed.append(job->toVariant());
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
 {
+  Q_D(ctkJobScheduler);
   if (!job)
   {
     return;
@@ -800,5 +837,36 @@ void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobFailed(data);
+  d->BatchedJobsFailed.append(job->toVariant());
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkJobScheduler::onProgressJobDetail(QVariant data)
+{
+  Q_D(ctkJobScheduler);
+
+  d->BatchedJobsProgress.append(data);
+  if (!d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkJobScheduler::emitThrottledSignals()
+{
+  Q_D(ctkJobScheduler);
+
+  emit this->jobStarted(d->BatchedJobsStarted);
+  emit this->jobUserStopped(d->BatchedJobsUserStopped);
+  emit this->jobFinished(d->BatchedJobsFinished);
+  emit this->jobAttemptFailed(d->BatchedJobsAttemptFailed);
+  emit this->jobFailed(d->BatchedJobsFailed);
+  emit this->progressJobDetail(d->BatchedJobsProgress);
+
+  d->clearBactchedJobsLists();
 }

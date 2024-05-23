@@ -57,12 +57,12 @@ public:
 public Q_SLOTS:
   void onJobInitialized(QVariant);
   void onJobQueued(QVariant);
-  void onJobStarted(QVariant);
-  void onJobAttemptFailed(QVariant);
-  void onJobFailed(QVariant);
-  void onJobUserStopped(QVariant);
-  void onJobFinished(QVariant);
-  void onProgressJobDetail(QVariant);
+  void onJobStarted(QList<QVariant>);
+  void onJobAttemptFailed(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
+  void onProgressJobDetail(QList<QVariant>);
 
   void onFilterTextChanged(QString);
   void onFilterColumnChanged(QString);

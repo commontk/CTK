@@ -79,7 +79,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
   Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
   Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID);
   Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
-  Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
+  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
@@ -220,8 +220,8 @@ public:
   ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
-  void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
-  int numberOfStudiesPerPatient() const;
+  void setNumberOfOpenedStudiesPerPatient(int numberOfOpenedStudiesPerPatient);
+  int numberOfOpenedStudiesPerPatient() const;
   ///@}
 
   ///@{
@@ -368,11 +368,11 @@ public Q_SLOTS:
 
   ///@{
   /// update GUI after query/retrieve operations
-  void updateGUIFromScheduler(const QVariant&);
-  void onJobStarted(const QVariant&);
-  void onJobUserStopped(const QVariant&);
-  void onJobFailed(const QVariant&);
-  void onJobFinished(const QVariant&);
+  void updateGUIFromScheduler(QList<QVariant>);
+  void onJobStarted(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
   ///@}
 
   /// stops all the operations

@@ -720,18 +720,18 @@ void ctkDICOMJobListWidgetPrivate::disconnectScheduler()
                                     q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                     q, SLOT(onJobQueued(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                    q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
-                                    q, SLOT(onJobUserStopped(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                    q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QVariant)),
-                                    q, SLOT(onJobAttemptFailed(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                    q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                    q, SLOT(onProgressJobDetail(QVariant)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                                    q, SLOT(onJobStarted(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                                    q, SLOT(onJobUserStopped(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                                    q, SLOT(onJobFinished(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                                    q, SLOT(onJobAttemptFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                                    q, SLOT(onJobFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                                    q, SLOT(onProgressJobDetail(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -747,18 +747,18 @@ void ctkDICOMJobListWidgetPrivate::connectScheduler()
                                  q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                  q, SLOT(onJobQueued(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                 q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
-                                 q, SLOT(onJobUserStopped(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                 q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QVariant)),
-                                 q, SLOT(onJobAttemptFailed(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                 q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                 q, SLOT(onProgressJobDetail(QVariant)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                                 q, SLOT(onJobStarted(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                                 q, SLOT(onJobUserStopped(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                                 q, SLOT(onJobFinished(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                                 q, SLOT(onJobAttemptFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                                 q, SLOT(onJobFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                                 q, SLOT(onProgressJobDetail(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -1108,95 +1108,113 @@ void ctkDICOMJobListWidget::onJobQueued(QVariant data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
   if(td.JobClass.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->dataModel->updateJobStatus(td, QCenteredItemModel::Queued);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobStarted(QVariant data)
+void ctkDICOMJobListWidget::onJobStarted(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Running);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Running);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobFinished(QVariant data)
+void ctkDICOMJobListWidget::onJobFinished(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Completed);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Completed);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onProgressJobDetail(QVariant data)
+void ctkDICOMJobListWidget::onProgressJobDetail(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobType == ctkDICOMJobResponseSet::JobType::None)
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateProgressBar(td, d->Scheduler->dicomDatabase());
+    if(td.JobType == ctkDICOMJobResponseSet::JobType::None)
+    {
+      continue;
+    }
+
+    d->dataModel->updateProgressBar(td, d->Scheduler->dicomDatabase());
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobAttemptFailed(QVariant data)
+void ctkDICOMJobListWidget::onJobAttemptFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::AttemptFailed);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::AttemptFailed);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobFailed(QVariant data)
+void ctkDICOMJobListWidget::onJobFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Failed);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Failed);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobUserStopped(QVariant data)
+void ctkDICOMJobListWidget::onJobUserStopped(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::UserStopped);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::UserStopped);
+  }
 }
 
 //----------------------------------------------------------------------------

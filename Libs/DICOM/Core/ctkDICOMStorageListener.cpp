@@ -123,6 +123,8 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
       reqDataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesUID);
       OFString studyUID;
       reqDataset->findAndGetOFString(DCM_StudyInstanceUID, studyUID);
+      OFString patientID;
+      reqDataset->findAndGetOFString(DCM_PatientID, patientID);
       emit this->listener->progress(
           ctkDICOMStorageListener::tr("Got STORE request for %1").arg(instanceUID.c_str()));
       emit this->listener->progress(0);
@@ -131,6 +133,7 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
         QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
             QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
         jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
+        jobResponseSet->setPatientID(patientID.c_str());
         jobResponseSet->setStudyInstanceUID(studyUID.c_str());
         jobResponseSet->setSeriesInstanceUID(seriesUID.c_str());
         jobResponseSet->setSOPInstanceUID(instanceUID.c_str());

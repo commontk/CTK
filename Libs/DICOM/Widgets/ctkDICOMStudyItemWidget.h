@@ -40,6 +40,8 @@ class ctkDICOMScheduler;
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
+
+class ctkDICOMPatientItemWidget;
 class ctkDICOMSeriesItemWidget;
 class ctkDICOMStudyItemWidgetPrivate;
 
@@ -66,7 +68,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMStudyItemWidget(QWidget* parent = nullptr);
+  explicit ctkDICOMStudyItemWidget(ctkDICOMPatientItemWidget* top = nullptr,
+                                   QWidget* parent = nullptr);
   virtual ~ctkDICOMStudyItemWidget();
 
   ///@{
@@ -222,6 +225,12 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.
   void updateGUIFinished();
+  /// Propagate jobs signals to the tree
+  void jobStarted(QVariant);
+  void jobUserStopped(QVariant);
+  void jobFinished(QVariant);
+  void jobFailed(QVariant);
+  void progressJobDetail(QVariant);
 
 protected:
   QScopedPointer<ctkDICOMStudyItemWidgetPrivate> d_ptr;

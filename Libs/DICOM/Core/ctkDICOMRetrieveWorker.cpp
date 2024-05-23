@@ -250,6 +250,7 @@ void ctkDICOMRetrieveWorker::run()
     newJob->setRetryCounter(0);
     newJob->setServer(*proxyServer);
     scheduler->addJob(newJob);
+    retrieveJob->setReferenceInserterJobUID("Proxy");
   }
   else if (d->Retrieve->jobResponseSetsShared().count() > 0 &&
     server->retrieveProtocol() == ctkDICOMServer::RetrieveProtocol::CGET)
