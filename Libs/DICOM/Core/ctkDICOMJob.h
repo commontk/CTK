@@ -140,7 +140,6 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
 
   explicit ctkDICOMJobDetail(const ctkDICOMJob& job) : ctkJobDetail(job)
   {
-
     this->DICOMLevel = job.dicomLevel();
     this->JobType = job.getJobType();
     this->PatientID = job.patientID();

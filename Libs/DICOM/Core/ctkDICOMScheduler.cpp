@@ -40,9 +40,68 @@
 
 // dcmtk includes
 #include <dcmtk/dcmdata/dcdeftag.h>
-
+#include <dcmtk/oflog/layout.h>
+#include <dcmtk/oflog/oflog.h>
+#include "dcmtk/oflog/spi/logevent.h"
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMScheduler" );
+
+//------------------------------------------------------------------------------
+// JobAppender class (custom DCMTK Appender)
+
+//------------------------------------------------------------------------------
+class ctkDICOMJobsAppender : public dcmtk::log4cplus::Appender {
+public:
+  ctkDICOMJobsAppender() {};
+
+  virtual void close() {};
+
+  QMap<QString, QString> messagesPerThread() const
+  {
+    return this->MessagesPerThread;
+  }
+
+  QString messageByThreadID(QString threadID)
+  {
+    if (!this->MessagesPerThread.contains(threadID))
+    {
+      return "";
+    }
+
+    return this->MessagesPerThread.take(threadID);
+  }
+
+  void clearMessagesPerThread()
+  {
+    this->MessagesPerThread.clear();
+  }
+
+protected:
+  void append(const dcmtk::log4cplus::spi::InternalLoggingEvent& event)
+  {
+    dcmtk::log4cplus::PatternLayout *layout =
+      dynamic_cast<dcmtk::log4cplus::PatternLayout*>(this->getLayout());
+    if (!layout)
+    {
+      return;
+    }
+
+    dcmtk::log4cplus::tostringstream oss;
+    layout->formatAndAppend(oss, event);
+
+    QString message = QString::fromLatin1(oss.str().c_str());
+    if (message.isEmpty())
+    {
+      return;
+    }
+
+    QString messageThread = event.getThread().c_str();
+    this->MessagesPerThread[messageThread] += message;
+  }
+
+private:
+  QMap<QString, QString> MessagesPerThread;
+};
 
 //------------------------------------------------------------------------------
 // ctkDICOMSchedulerPrivate methods
@@ -52,6 +111,14 @@ ctkDICOMSchedulerPrivate::ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj)
   : ctkJobSchedulerPrivate(obj)
 {
   ctk::setDICOMLogLevel(ctkErrorLogLevel::Warning);
+
+  OFunique_ptr<dcmtk::log4cplus::Layout> layout(new dcmtk::log4cplus::PatternLayout("%D{%Y-%m-%d %H:%M:%S.%q} %5p: %m%n"));
+  this->Appender = (new ctkDICOMJobsAppender());
+  this->Appender->setLayout(OFmove(layout));
+  this->Appender->setThreshold(ctk::dicomLogLevel());
+
+  dcmtk::log4cplus::Logger rootLog = dcmtk::log4cplus::Logger::getRoot();
+  rootLog.addAppender(this->Appender);
 }
 
 //------------------------------------------------------------------------------
@@ -59,6 +126,12 @@ ctkDICOMSchedulerPrivate::~ctkDICOMSchedulerPrivate()
 {
   Q_Q(ctkDICOMScheduler);
   q->removeAllServers();
+
+  if (this->Appender)
+  {
+    dcmtk::log4cplus::Logger rootLog = dcmtk::log4cplus::Logger::getRoot();
+    rootLog.removeAppender(this->Appender);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1012,4 +1085,99 @@ bool ctkDICOMScheduler::isStorageListenerActive()
     return true;
   }
   return false;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobStarted(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    QString loggedText = appender->messageByThreadID(job->runningThreadID());
+    job->setLoggedText(loggedText);
+  }
+
+  ctkJobScheduler::onJobStarted(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobUserStopped(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    QString loggedText = appender->messageByThreadID(job->runningThreadID());
+    job->setLoggedText(loggedText);
+  }
+
+  ctkJobScheduler::onJobUserStopped(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobFinished(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    QString loggedText = appender->messageByThreadID(job->runningThreadID());
+    job->setLoggedText(loggedText);
+  }
+
+  ctkJobScheduler::onJobFinished(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobAttemptFailed(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    QString loggedText = appender->messageByThreadID(job->runningThreadID());
+    job->setLoggedText(loggedText);
+  }
+
+  ctkJobScheduler::onJobAttemptFailed(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobFailed(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    QString loggedText = appender->messageByThreadID(job->runningThreadID());
+    job->setLoggedText(loggedText);
+  }
+
+  ctkJobScheduler::onJobFailed(job);
 }

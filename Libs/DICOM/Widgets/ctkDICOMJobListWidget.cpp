@@ -108,7 +108,9 @@ public:
     SOPInstanceUID,
     Connection,
     JobUID,
-    JobClass
+    JobClass,
+    JobThread,
+    JobLogging,
   }; Q_ENUM(Columns);
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -270,6 +272,8 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 
   this->setData(this->index(row, Columns::JobUID), td.JobUID);
   this->setData(this->index(row, Columns::JobClass), td.JobClass);
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID);
+  this->setData(this->index(row, Columns::JobLogging), td.Logging);
 }
 
 //----------------------------------------------------------------------------
@@ -281,70 +285,76 @@ void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobS
   }
 
   QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
-  if (!list.empty())
+  if (list.empty())
   {
-    int row = list.first()->row();
-    QIcon statusIcon;
-    QString statusText;
-    if (status == Queued)
+    return;
+  }
+
+  int row = list.first()->row();
+  QIcon statusIcon;
+  QString statusText;
+  if (status == Queued)
+  {
+    statusIcon = QIcon(":/Icons/pending.svg");
+    statusText = tr("queued");
+  }
+  else if (status == Running)
+  {
+    statusIcon = QIcon(":/Icons/pending.svg");
+    statusText = tr("in-progress");
+    if (td.JobClass == "ctkDICOMQueryJob")
     {
-      statusIcon = QIcon(":/Icons/pending.svg");
-      statusText = tr("queued");
-    }
-    else if (status == Running)
-    {
-      statusIcon = QIcon(":/Icons/pending.svg");
-      statusText = tr("in-progress");
-      if (td.JobClass == "ctkDICOMQueryJob")
-      {
-        QList<QVariant> data;
-        data.append(20);
-        data.append(100);
-        this->setData(this->index(row, Columns::Progress), data);
-      }
-    }
-    else if (status == Failed)
-    {
-      statusIcon = QIcon(":/Icons/error.svg");
-      statusText = tr("failed");
-    }
-    else if (status == UserStopped)
-    {
-      statusIcon = QIcon(":/Icons/error.svg");
-      statusText = tr("user-stopped");
-    }
-    else if (status == AttemptFailed)
-    {
-      statusIcon = QIcon(":/Icons/error.svg");
-      statusText = tr("attempt-failed");
-    }
-    else if (status == Completed)
-    {
-      statusIcon = QIcon(":/Icons/accept.svg");
-      statusText = tr("completed");
       QList<QVariant> data;
-      data.append(100);
+      data.append(20);
       data.append(100);
       this->setData(this->index(row, Columns::Progress), data);
     }
-
-    QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
-    statusItem->setIcon(statusIcon);
-    this->setItem(row, Columns::Status, statusItem);
-    this->setData(this->index(row, Columns::Status), statusText);
-    this->setData(this->index(row, Columns::Status), statusText, Qt::ToolTipRole);
-
-    if (status == Running)
-    {
-      this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime);
-      this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime, Qt::ToolTipRole);
-    }
-    else
-    {
-      this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime);
-      this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime, Qt::ToolTipRole);
-    }
   }
+  else if (status == Failed)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = tr("failed");
+  }
+  else if (status == UserStopped)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = tr("user-stopped");
+  }
+  else if (status == AttemptFailed)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = tr("attempt-failed");
+  }
+  else if (status == Completed)
+  {
+    statusIcon = QIcon(":/Icons/accept.svg");
+    statusText = tr("completed");
+    QList<QVariant> data;
+    data.append(100);
+    data.append(100);
+    this->setData(this->index(row, Columns::Progress), data);
+  }
+
+  QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
+  statusItem->setIcon(statusIcon);
+  this->setItem(row, Columns::Status, statusItem);
+  this->setData(this->index(row, Columns::Status), statusText);
+  this->setData(this->index(row, Columns::Status), statusText, Qt::ToolTipRole);
+
+  if (status == Running)
+  {
+    this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime);
+    this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime, Qt::ToolTipRole);
+  }
+  else
+  {
+    this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime);
+    this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime, Qt::ToolTipRole);
+  }
+
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID);
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID, Qt::ToolTipRole);
+  this->setData(this->index(row, Columns::JobLogging), td.Logging);
 }
 
 //----------------------------------------------------------------------------
@@ -501,6 +511,14 @@ QCenteredItemModel::Columns QCenteredItemModel::getColumnIndexFromString(QString
   {
     return Columns::JobClass;
   }
+  else if (columnString == QCenteredItemModel::tr("Thread"))
+  {
+    return Columns::JobThread;
+  }
+  else if (columnString == QCenteredItemModel::tr("Logging"))
+  {
+    return Columns::JobLogging;
+  }
   else
   {
     return Columns::JobClass;
@@ -544,6 +562,10 @@ QString QCenteredItemModel::getColumnStringFromIndex(Columns columnIndex)
       return QCenteredItemModel::tr("Job UID");
     case Columns::JobClass:
       return QCenteredItemModel::tr("Class");
+    case Columns::JobThread:
+      return QCenteredItemModel::tr("Thread");
+    case Columns::JobLogging:
+      return QCenteredItemModel::tr("Logging");
     default:
       return QCenteredItemModel::tr("");
   }
@@ -626,6 +648,8 @@ void ctkDICOMJobListWidgetPrivate::init()
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
+  allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobThread));
+  allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobLogging));
 
   this->dataModel = QSharedPointer<QCenteredItemModel>(new QCenteredItemModel(0, allColumnNames.count(), q));
   this->dataModel->setHorizontalHeaderLabels(allColumnNames);
@@ -649,6 +673,8 @@ void ctkDICOMJobListWidgetPrivate::init()
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::SOPInstanceUID, true);
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobUID, true);
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobClass, true);
+  this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobThread, true);
+  this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobLogging, true);
 
   QObject::connect(this->JobsView->selectionModel(), &QItemSelectionModel::selectionChanged,
                    q, &ctkDICOMJobListWidget::onJobsViewSelectionChanged);
@@ -762,7 +788,7 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
   {
     if (count != 0)
     {
-      detailsText.append(QString("\n ================================================================== \n"));
+      detailsText.append(QString("\n =============================================================== \n"));
     }
 
     int row = rowIndex.row();
@@ -796,85 +822,96 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
       (row, QCenteredItemModel::Columns::JobUID).data().toString();
     QString jobClass = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
+    QString thread = this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::JobThread).data().toString();
+    QString logging = this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::JobLogging).data().toString();
 
     if (!jobType.isEmpty())
     {
       detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobType));
-      detailsText.append(QString(": ") + jobType + QString(" \n"));
+      detailsText.append(QString(": ") + jobType + QString("\n"));
     }
     if (!jobUID.isEmpty())
     {
       detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
-      detailsText.append(QString(": ") + jobUID + QString(" \n"));
+      detailsText.append(QString(": ") + jobUID + QString("\n"));
     }
     if (!jobClass.isEmpty())
     {
       detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
-      detailsText.append(QString(": ") + jobClass + QString(" \n"));
+      detailsText.append(QString(": ") + jobClass + QString("\n"));
     }
     if (!connection.isEmpty())
     {
       detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
-      detailsText.append(QString(": ") + connection + QString(" \n"));
+      detailsText.append(QString(": ") + connection + QString("\n"));
     }
     if (!status.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Status));
-    detailsText.append(QString(": ") + status + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Status));
+      detailsText.append(QString(": ") + status + QString("\n"));
     }
     if (!creationDateTime.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CreationDateTime));
-    detailsText.append(QString(": ") + creationDateTime + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CreationDateTime));
+      detailsText.append(QString(": ") + creationDateTime + QString("\n"));
     }
     if (!startDateTime.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StartDateTime));
-    detailsText.append(QString(" : ") + startDateTime + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StartDateTime));
+      detailsText.append(QString(": ") + startDateTime + QString("\n"));
     }
     if (!completionDateTime.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CompletionDateTime));
-    detailsText.append(QString(": ") + completionDateTime + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CompletionDateTime));
+      detailsText.append(QString(": ") + completionDateTime + QString("\n"));
     }
     if (!dicomLevel.isEmpty() && dicomLevel != "None")
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::DICOMLevel));
-    detailsText.append(QString(": ") + dicomLevel + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::DICOMLevel));
+      detailsText.append(QString(": ") + dicomLevel + QString("\n"));
     }
     if (!patientID.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientID));
-    detailsText.append(QString(": ") + patientID + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientID));
+      detailsText.append(QString(": ") + patientID + QString("\n"));
     }
     if (!patientName.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientName));
-    detailsText.append(QString(": ") + patientName + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientName));
+      detailsText.append(QString(": ") + patientName + QString("\n"));
     }
     if (!patientBirthDate.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientBirthDate));
-    detailsText.append(QString(": ") + patientBirthDate + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientBirthDate));
+      detailsText.append(QString(": ") + patientBirthDate + QString("\n"));
     }
     if (!studyInstanceUID.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StudyInstanceUID));
-    detailsText.append(QString(": ") + studyInstanceUID + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StudyInstanceUID));
+      detailsText.append(QString(": ") + studyInstanceUID + QString("\n"));
     }
     if (!seriesInstanceUID.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SeriesInstanceUID));
-    detailsText.append(QString(": ") + seriesInstanceUID + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SeriesInstanceUID));
+      detailsText.append(QString(": ") + seriesInstanceUID + QString("\n"));
     }
     if (!sopInstanceUID.isEmpty())
     {
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SOPInstanceUID));
-    detailsText.append(QString(" : ") + sopInstanceUID + QString(" \n"));
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SOPInstanceUID));
+      detailsText.append(QString(": ") + sopInstanceUID + QString("\n"));
     }
-
-    //detailsText.append(QString("Logger: ") + QString(" \n"));
-    // To Do: get DCMTK logging stream per job
+    if (!thread.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobThread));
+      detailsText.append(QString(": ") + thread + QString("\n"));
+    }
+    if (!logging.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobLogging));
+      detailsText.append(QString(":\n") + logging + QString("\n"));
+    }
 
     if (count == 0)
     {

@@ -57,6 +57,7 @@ public:
   QString SeriesInstanceUID;
   QString SOPInstanceUID;
   QString ConnectionName;
+  QString RunningThreadID;
   QMap<QString, QSharedPointer<ctkDICOMItem>> Datasets;
 };
 

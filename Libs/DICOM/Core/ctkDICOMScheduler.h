@@ -206,6 +206,13 @@ public:
   Q_INVOKABLE bool isStorageListenerActive();
   ///@}
 
+public Q_SLOTS:
+  virtual void onJobStarted(ctkAbstractJob* job);
+  virtual void onJobUserStopped(ctkAbstractJob* job);
+  virtual void onJobFinished(ctkAbstractJob* job);
+  virtual void onJobAttemptFailed(ctkAbstractJob* job);
+  virtual void onJobFailed(ctkAbstractJob* job);
+
 protected:
   ctkDICOMScheduler(ctkDICOMSchedulerPrivate* pimpl, QObject* parent);
 
