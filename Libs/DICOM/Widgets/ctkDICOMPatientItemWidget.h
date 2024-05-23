@@ -47,7 +47,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
-  Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
+  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
   Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
@@ -133,8 +133,8 @@ public:
   ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
-  void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
-  int numberOfStudiesPerPatient() const;
+  void setNumberOfOpenedStudiesPerPatient(int numberOfOpenedStudiesPerPatient);
+  int numberOfOpenedStudiesPerPatient() const;
   ///@}
 
   ///@{
@@ -208,7 +208,11 @@ public:
 public Q_SLOTS:
   void generateStudies(bool query = true, bool retrieve = true);
   void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
-  void updateGUIFromScheduler(const QVariant& data);
+  void updateGUIFromScheduler(QList<QVariant>);
+  void onJobStarted(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
   void onPatientServersCheckableComboBoxChanged();
@@ -216,6 +220,12 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a studies query.
   void updateGUIFinished();
+  /// Propagate jobs signals to the tree
+  void jobStarted(QVariant);
+  void jobUserStopped(QVariant);
+  void jobFinished(QVariant);
+  void jobFailed(QVariant);
+  void progressJobDetail(QVariant);
 
 protected:
   QScopedPointer<ctkDICOMPatientItemWidgetPrivate> d_ptr;

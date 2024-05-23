@@ -110,10 +110,10 @@ public Q_SLOTS:
   /// Verify the current selected row (different from the checked rows)
   void onVerifyCurrentServerNode();
 
-  void onJobStarted(QVariant);
-  void onJobUserStopped(QVariant);
-  void onJobFailed(QVariant);
-  void onJobFinished(QVariant);
+  void onJobStarted(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
 
   void readSettings();
   void saveSettings();

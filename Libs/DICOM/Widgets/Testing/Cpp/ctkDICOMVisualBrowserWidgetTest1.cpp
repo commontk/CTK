@@ -63,7 +63,7 @@ int ctkDICOMVisualBrowserWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(browser.filteringSeriesDescription(), "");
   CHECK_QSTRING(browser.filteringModalities().at(0), "Any");
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
-  CHECK_INT(browser.numberOfStudiesPerPatient(), 2);
+  CHECK_INT(browser.numberOfOpenedStudiesPerPatient(), 2);
   CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
   CHECK_BOOL(browser.isSendActionVisible(), false);
   CHECK_BOOL(browser.isDeleteActionVisible(), true);
@@ -145,8 +145,8 @@ int ctkDICOMVisualBrowserWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(browser.filteringModalities().at(0), "CT");
   browser.setFilteringDate(ctkDICOMPatientItemWidget::DateType::LastYear);
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
-  browser.setNumberOfStudiesPerPatient(6);
-  CHECK_INT(browser.numberOfStudiesPerPatient(), 6);
+  browser.setNumberOfOpenedStudiesPerPatient(6);
+  CHECK_INT(browser.numberOfOpenedStudiesPerPatient(), 6);
   browser.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
   CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
   browser.setSendActionVisible(true);

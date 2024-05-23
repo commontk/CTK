@@ -65,7 +65,8 @@ public:
   ~ctkDICOMPatientItemWidgetPrivate();
 
   void init(QWidget* parentWidget);
-
+  void connectScheduler();
+  void disconnectScheduler();
   QString getPatientItemFromPatientID(const QString& patientID);
   QString formatDate(const QString&);
   bool isStudyItemAlreadyAdded(const QString& studyItem);
@@ -80,7 +81,7 @@ public:
   QSharedPointer<ctkDICOMScheduler> Scheduler;
   QSharedPointer<QWidget> VisualDICOMBrowser;
 
-  int NumberOfStudiesPerPatient;
+  int NumberOfOpenedStudiesPerPatient;
   ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
 
   QString PatientItem;
@@ -115,7 +116,7 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   : q_ptr(&obj)
 {
   this->FilteringDate = ctkDICOMPatientItemWidget::DateType::Any;
-  this->NumberOfStudiesPerPatient = 2;
+  this->NumberOfOpenedStudiesPerPatient = 2;
   this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
   this->PatientItem = "";
   this->PatientID = "";
@@ -162,6 +163,48 @@ void ctkDICOMPatientItemWidgetPrivate::init(QWidget* parentWidget)
 
   q->connect(this->PatientServersCheckableComboBox, SIGNAL(checkedIndexesChanged()),
              q, SLOT(onPatientServersCheckableComboBoxChanged()));
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::connectScheduler()
+{
+  Q_Q(ctkDICOMPatientItemWidget);
+  if (!this->Scheduler)
+  {
+    return;
+  }
+
+  QObject::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                   q, SLOT(updateGUIFromScheduler(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                   q, SLOT(onJobStarted(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                   q, SLOT(onJobUserStopped(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                   q, SLOT(onJobFailed(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                   q, SLOT(onJobFinished(QList<QVariant>)));
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::disconnectScheduler()
+{
+  Q_Q(ctkDICOMPatientItemWidget);
+  if (!this->Scheduler)
+  {
+    return;
+  }
+
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                      q, SLOT(updateGUIFromScheduler(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                      q, SLOT(onJobStarted(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                      q, SLOT(onJobUserStopped(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                      q, SLOT(onJobFailed(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                      q, SLOT(onJobFinished(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -382,7 +425,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, studiesMap)
   {
     studiesListWidgetLayout->addWidget(studyItemWidget);
-    if (cont < this->NumberOfStudiesPerPatient)
+    if (cont < this->NumberOfOpenedStudiesPerPatient)
     {
       studyItemWidget->setCollapsed(false);
       studyItemWidget->generateSeries(this->QueryOn, this->RetrieveOn);
@@ -603,8 +646,8 @@ CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setFilteringSeriesDescrip
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QStringList&, setFilteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QStringList, filteringModalities, FilteringModalities);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, int, setNumberOfStudiesPerPatient, NumberOfStudiesPerPatient);
-CTK_GET_CPP(ctkDICOMPatientItemWidget, int, numberOfStudiesPerPatient, NumberOfStudiesPerPatient);
+CTK_SET_CPP(ctkDICOMPatientItemWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
+CTK_GET_CPP(ctkDICOMPatientItemWidget, int, numberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
 
@@ -634,38 +677,18 @@ QSharedPointer<ctkDICOMScheduler> ctkDICOMPatientItemWidget::schedulerShared() c
 void ctkDICOMPatientItemWidget::setScheduler(ctkDICOMScheduler& scheduler)
 {
   Q_D(ctkDICOMPatientItemWidget);
-  if (d->Scheduler)
-  {
-    QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                        this, SLOT(updateGUIFromScheduler(QVariant)));
-  }
-
+  d->disconnectScheduler();
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&scheduler, skipDelete);
-
-  if (d->Scheduler)
-  {
-    QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                     this, SLOT(updateGUIFromScheduler(QVariant)));
-  }
+  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMPatientItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler)
 {
   Q_D(ctkDICOMPatientItemWidget);
-  if (d->Scheduler)
-  {
-    QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                        this, SLOT(updateGUIFromScheduler(QVariant)));
-  }
-
+  d->disconnectScheduler();
   d->Scheduler = scheduler;
-
-  if (d->Scheduler)
-  {
-    QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                     this, SLOT(updateGUIFromScheduler(QVariant)));
-  }
+  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
@@ -752,7 +775,8 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   {
     studyDescription = this->tr("UNDEFINED");
   }
-  ctkDICOMStudyItemWidget* studyItemWidget = new ctkDICOMStudyItemWidget(d->VisualDICOMBrowser.data());
+  ctkDICOMStudyItemWidget* studyItemWidget =
+    new ctkDICOMStudyItemWidget(this, d->VisualDICOMBrowser.data());
   studyItemWidget->setStudyItem(studyItem);
   studyItemWidget->setPatientID(d->PatientID);
   studyItemWidget->setStudyInstanceUID(studyInstanceUID);
@@ -896,24 +920,142 @@ void ctkDICOMPatientItemWidget::generateSeriesAtToggle(bool toggled, const QStri
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::updateGUIFromScheduler(const QVariant& data)
+void ctkDICOMPatientItemWidget::updateGUIFromScheduler(QList<QVariant> datas)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (td.JobUID.isEmpty())
+  bool updateStudies = false;
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    if (td.JobUID.isEmpty())
+    {
+      d->createStudies();
+      continue;
+    }
+
+    if (td.PatientID != d->PatientID)
+    {
+      continue;
+    }
+
+    emit this->progressJobDetail(data);
+
+    if (td.JobType != ctkDICOMJobResponseSet::JobType::QueryStudies)
+    {
+      continue;
+    }
+
+    updateStudies = true;
+  }
+
+  if (updateStudies)
   {
     d->createStudies();
   }
+}
 
-  if (td.JobUID.isEmpty() ||
-      td.JobType != ctkDICOMJobResponseSet::JobType::QueryStudies ||
-      td.PatientID != d->PatientID)
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::onJobStarted(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->createStudies();
+    if (td.JobUID.isEmpty() ||
+        td.PatientID != d->PatientID)
+    {
+      continue;
+    }
+
+    emit this->jobStarted(data);
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::onJobUserStopped(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+
+    if (td.JobUID.isEmpty() ||
+        td.PatientID != d->PatientID)
+    {
+      continue;
+    }
+
+    emit this->jobUserStopped(data);
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::onJobFailed(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+
+    if (td.JobUID.isEmpty() ||
+        td.PatientID != d->PatientID)
+    {
+      continue;
+    }
+
+    emit this->jobFailed(data);
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::onJobFinished(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::Inserter)
+    {
+      foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
+      {
+        if (!studyItemWidget)
+        {
+          continue;
+        }
+
+        QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
+        for (int row = 0; row < seriesListTableWidget->rowCount(); row++)
+        {
+          for (int column = 0; column < seriesListTableWidget->columnCount(); column++)
+          {
+            ctkDICOMSeriesItemWidget* seriesItemWidget =
+              qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
+            if (!seriesItemWidget)
+            {
+              continue;
+            }
+            if (seriesItemWidget->referenceSeriesInserterJobUID() == td.JobUID ||
+                seriesItemWidget->referenceInstanceInserterJobUID() == td.JobUID ||
+                seriesItemWidget->referenceSeriesInserterJobUID() == "StorageListener" ||
+                seriesItemWidget->referenceInstanceInserterJobUID() == "StorageListener")
+            {
+              seriesItemWidget->onJobFinished(data);
+            }
+          }
+        }
+      }
+    }
+
+    if (td.JobUID.isEmpty() ||
+        td.PatientID != d->PatientID)
+    {
+      continue;
+    }
+
+    emit this->jobFinished(data);
+  }
 }
 
 //------------------------------------------------------------------------------

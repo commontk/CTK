@@ -397,14 +397,14 @@ void ctkDICOMServerNodeWidget2Private::disconnectScheduler()
     return;
   }
 
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                        q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
-                                        q, SLOT(onJobUserStopped(QVariant)));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                        q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                        q, SLOT(onJobFailed(QVariant)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                      q, SLOT(onJobStarted(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                      q, SLOT(onJobUserStopped(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                      q, SLOT(onJobFinished(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                      q, SLOT(onJobFailed(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -416,14 +416,14 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
     return;
   }
 
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                     q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
-                                     q, SLOT(onJobUserStopped(QVariant)));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                     q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                     q, SLOT(onJobFailed(QVariant)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                   q, SLOT(onJobStarted(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                   q, SLOT(onJobUserStopped(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                   q, SLOT(onJobFinished(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                   q, SLOT(onJobFailed(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -1204,38 +1204,50 @@ void ctkDICOMServerNodeWidget2::onVerifyCurrentServerNode()
 
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::onJobStarted(QVariant data)
+void ctkDICOMServerNodeWidget2::onJobStarted(QList<QVariant> datas)
 {
   Q_D(ctkDICOMServerNodeWidget2);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("in-progress")));
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    d->updateServerVerification(td, QString(tr("in-progress")));
+  }
   this->updateGUIState();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::onJobUserStopped(QVariant data)
+void ctkDICOMServerNodeWidget2::onJobUserStopped(QList<QVariant> datas)
 {
   Q_D(ctkDICOMServerNodeWidget2);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("user-stopped")));
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    d->updateServerVerification(td, QString(tr("user-stopped")));
+  }
   this->updateGUIState();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::onJobFailed(QVariant data)
+void ctkDICOMServerNodeWidget2::onJobFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMServerNodeWidget2);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("failed")));
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    d->updateServerVerification(td, QString(tr("failed")));
+  }
   this->updateGUIState();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::onJobFinished(QVariant data)
+void ctkDICOMServerNodeWidget2::onJobFinished(QList<QVariant> datas)
 {
   Q_D(ctkDICOMServerNodeWidget2);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  d->updateServerVerification(td, QString(tr("success")));
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    d->updateServerVerification(td, QString(tr("success")));
+  }
   this->updateGUIState();
 }
 

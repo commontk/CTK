@@ -34,7 +34,9 @@ class ctkDICOMScheduler;
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMWidgetsExport.h"
+
 class ctkDICOMSeriesItemWidgetPrivate;
+class ctkDICOMStudyItemWidget;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
@@ -49,6 +51,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription);
   Q_PROPERTY(bool isCloud READ isCloud);
   Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed);
+  Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID);
+  Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID);
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
@@ -56,7 +60,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMSeriesItemWidget(QWidget* parent = nullptr);
+  explicit ctkDICOMSeriesItemWidget(ctkDICOMStudyItemWidget* top = nullptr,
+                                   QWidget* parent = nullptr);
   virtual ~ctkDICOMSeriesItemWidget();
 
   ///@{
@@ -124,6 +129,12 @@ public:
   /// in case the retrieve job failed
   void setRetrieveFailed(bool retrieveFailed);
   bool retrieveFailed() const;
+  ///@}
+
+  ///@{
+  /// Return the referenceInserterJobUID
+  QString referenceSeriesInserterJobUID() const;
+  QString referenceInstanceInserterJobUID() const;
   ///@}
 
   /// Series has been loaded by the parent widget

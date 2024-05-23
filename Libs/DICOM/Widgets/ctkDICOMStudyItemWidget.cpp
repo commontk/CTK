@@ -37,6 +37,7 @@
 #include "ctkDICOMScheduler.h"
 
 // ctkDICOMWidgets includes
+#include "ctkDICOMPatientItemWidget.h"
 #include "ctkDICOMStudyItemWidget.h"
 #include "ui_ctkDICOMStudyItemWidget.h"
 
@@ -64,9 +65,9 @@ public:
   ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItemWidget& obj);
   ~ctkDICOMStudyItemWidgetPrivate();
 
-  void init(QWidget* parentWidget);
-  void connectScheduler();
-  void disconnectScheduler();
+  void init(ctkDICOMPatientItemWidget* parent, QWidget* root);
+  void connectToTop();
+  void disconnectFromTop();
   void updateColumnsWidths();
   void createSeries();
   int getScreenWidth();
@@ -83,7 +84,9 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
+  QSharedPointer<ctkDICOMPatientItemWidget> PatientWidget;
   QSharedPointer<QWidget> VisualDICOMBrowser;
+  QMap<QString, QMetaObject::Connection> Connections;
 
   ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
   int ThumbnailSizePixel;
@@ -127,8 +130,7 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
 //----------------------------------------------------------------------------
 ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
 {
-  Q_Q(ctkDICOMStudyItemWidget);
-
+  this->disconnectFromTop();
   for (int row = 0; row < this->SeriesListTableWidget->rowCount(); row++)
   {
     for (int column = 0; column < this->SeriesListTableWidget->columnCount(); column++)
@@ -140,19 +142,21 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
         continue;
       }
 
-      q->disconnect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                    this->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
+      QObject::disconnect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
+                          this->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parentWidget)
+void ctkDICOMStudyItemWidgetPrivate::init(ctkDICOMPatientItemWidget* top, QWidget* parent)
 {
   Q_Q(ctkDICOMStudyItemWidget);
   this->setupUi(q);
 
-  this->VisualDICOMBrowser = QSharedPointer<QWidget>(parentWidget, skipDelete);
+  this->PatientWidget = QSharedPointer<ctkDICOMPatientItemWidget>(top, skipDelete);
+  this->connectToTop();
+  this->VisualDICOMBrowser = QSharedPointer<QWidget>(parent, skipDelete);
 
   this->StudyDescriptionTextBrowser->hide();
   this->StudyDescriptionTextBrowser->setReadOnly(true);
@@ -160,52 +164,54 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parentWidget)
 
   this->OperationStatusPushButton->hide();
 
-  q->connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
-             q, SLOT(onStudySelectionClicked(bool)));
-  q->connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
-             q, SLOT(onOperationStatusClicked(bool)));
+  QObject::connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
+                   q, SLOT(onStudySelectionClicked(bool)));
+  QObject::connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
+                   q, SLOT(onOperationStatusClicked(bool)));
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::connectScheduler()
+void ctkDICOMStudyItemWidgetPrivate::connectToTop()
 {
   Q_Q(ctkDICOMStudyItemWidget);
-  if (!this->Scheduler)
+  if (!this->PatientWidget)
   {
     return;
   }
 
-  QObject::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
+  QMetaObject::Connection progressConnection =
+    QObject::connect(this->PatientWidget.data(), SIGNAL(progressJobDetail(QVariant)),
                    q, SLOT(updateGUIFromScheduler(QVariant)));
-  QObject::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                   q, SLOT(onJobStarted(QVariant)));
-  QObject::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
+  QMetaObject::Connection startedConnection =
+    QObject::connect(this->PatientWidget.data(), SIGNAL(jobStarted(QVariant)),
+                     q, SLOT(onJobStarted(QVariant)));
+  QMetaObject::Connection userStoppedConnection =
+    QObject::connect(this->PatientWidget.data(), SIGNAL(jobUserStopped(QVariant)),
                    q, SLOT(onJobUserStopped(QVariant)));
-  QObject::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                   q, SLOT(onJobFailed(QVariant)));
-  QObject::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                   q, SLOT(onJobFinished(QVariant)));
+  QMetaObject::Connection failedConnection =
+    QObject::connect(this->PatientWidget.data(), SIGNAL(jobFailed(QVariant)),
+                     q, SLOT(onJobFailed(QVariant)));
+  QMetaObject::Connection finishedConnection =
+    QObject::connect(this->PatientWidget.data(), SIGNAL(jobFinished(QVariant)),
+                     q, SLOT(onJobFinished(QVariant)));
+  this->Connections =
+  {
+    {"progress", progressConnection},
+    {"started", startedConnection},
+    {"userStopped", userStoppedConnection},
+    {"finished", finishedConnection},
+    {"failed", failedConnection}
+  };
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::disconnectScheduler()
+void ctkDICOMStudyItemWidgetPrivate::disconnectFromTop()
 {
-  Q_Q(ctkDICOMStudyItemWidget);
-  if (!this->Scheduler)
-  {
-    return;
-  }
-
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                      q, SLOT(updateGUIFromScheduler(QVariant)));
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                      q, SLOT(onJobStarted(QVariant)));
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QVariant)),
-                      q, SLOT(onJobUserStopped(QVariant)));
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                      q, SLOT(onJobFailed(QVariant)));
-  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                      q, SLOT(onJobFinished(QVariant)));
+  QObject::disconnect(this->Connections.value("progress"));
+  QObject::disconnect(this->Connections.value("started"));
+  QObject::disconnect(this->Connections.value("userStopped"));
+  QObject::disconnect(this->Connections.value("finished"));
+  QObject::disconnect(this->Connections.value("failed"));
 }
 
 //------------------------------------------------------------------------------
@@ -446,12 +452,12 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdd
 // ctkDICOMStudyItemWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(QWidget* parentWidget)
-  : Superclass(parentWidget)
+ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(ctkDICOMPatientItemWidget* top, QWidget* parent)
+  : Superclass(parent)
   , d_ptr(new ctkDICOMStudyItemWidgetPrivate(*this))
 {
   Q_D(ctkDICOMStudyItemWidget);
-  d->init(parentWidget);
+  d->init(top, parent);
 }
 
 //----------------------------------------------------------------------------
@@ -587,18 +593,14 @@ QSharedPointer<ctkDICOMScheduler> ctkDICOMStudyItemWidget::schedulerShared() con
 void ctkDICOMStudyItemWidget::setScheduler(ctkDICOMScheduler& scheduler)
 {
   Q_D(ctkDICOMStudyItemWidget);
-  d->disconnectScheduler();
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&scheduler, skipDelete);
-  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMStudyItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler)
 {
   Q_D(ctkDICOMStudyItemWidget);
-  d->disconnectScheduler();
   d->Scheduler = scheduler;
-  d->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
@@ -675,7 +677,7 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidget::addSeriesItemWidget(int table
   }
 
   QString seriesNumber = d->DicomDatabase->fieldForSeries("SeriesNumber", seriesItem);
-  ctkDICOMSeriesItemWidget* seriesItemWidget = new ctkDICOMSeriesItemWidget;
+  ctkDICOMSeriesItemWidget* seriesItemWidget = new ctkDICOMSeriesItemWidget(this);
   seriesItemWidget->setSeriesItem(seriesItem);
   seriesItemWidget->setPatientID(d->PatientID);
   seriesItemWidget->setStudyInstanceUID(d->StudyInstanceUID);
@@ -771,12 +773,17 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(const QVariant& data)
   if (td.JobUID.isEmpty())
   {
     d->createSeries();
+    return;
   }
 
-  if (td.JobUID.isEmpty() ||
-      td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries ||
-      td.PatientID != d->PatientID ||
-      td.StudyInstanceUID != d->StudyInstanceUID)
+  if (td.StudyInstanceUID != d->StudyInstanceUID)
+  {
+    return;
+  }
+
+  emit this->progressJobDetail(data);
+
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
     return;
   }
@@ -790,15 +797,22 @@ void ctkDICOMStudyItemWidget::onJobStarted(const QVariant &data)
   Q_D(ctkDICOMStudyItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
-      td.PatientID == d->PatientID &&
-      td.StudyInstanceUID == d->StudyInstanceUID)
+  if (td.JobUID.isEmpty() ||
+      td.StudyInstanceUID != d->StudyInstanceUID)
   {
-    d->Status = ctkDICOMStudyItemWidget::InProgress;
-    d->OperationStatusPushButton->show();
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/pending.svg"));
+    return;
   }
+
+  emit this->jobStarted(data);
+
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  {
+    return;
+  }
+
+  d->Status = ctkDICOMStudyItemWidget::InProgress;
+  d->OperationStatusPushButton->show();
+  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/pending.svg"));
 }
 
 //------------------------------------------------------------------------------
@@ -807,14 +821,21 @@ void ctkDICOMStudyItemWidget::onJobUserStopped(const QVariant &data)
   Q_D(ctkDICOMStudyItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
-      td.PatientID == d->PatientID &&
-      td.StudyInstanceUID == d->StudyInstanceUID)
+  if (td.JobUID.isEmpty() ||
+      td.StudyInstanceUID != d->StudyInstanceUID)
   {
-    d->Status = ctkDICOMStudyItemWidget::Failed;
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+    return;
   }
+
+  emit this->jobUserStopped(data);
+
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  {
+    return;
+  }
+
+  d->Status = ctkDICOMStudyItemWidget::Failed;
+  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
 }
 
 //------------------------------------------------------------------------------
@@ -823,14 +844,21 @@ void ctkDICOMStudyItemWidget::onJobFailed(const QVariant &data)
   Q_D(ctkDICOMStudyItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
-      td.PatientID == d->PatientID &&
-      td.StudyInstanceUID == d->StudyInstanceUID)
+  if (td.JobUID.isEmpty() ||
+      td.StudyInstanceUID != d->StudyInstanceUID)
   {
-    d->Status = ctkDICOMStudyItemWidget::Failed;
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+    return;
   }
+
+  emit this->jobFailed(data);
+
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  {
+    return;
+  }
+
+  d->Status = ctkDICOMStudyItemWidget::Failed;
+  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
 }
 
 //------------------------------------------------------------------------------
@@ -839,14 +867,21 @@ void ctkDICOMStudyItemWidget::onJobFinished(const QVariant &data)
   Q_D(ctkDICOMStudyItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (!td.JobUID.isEmpty() &&
-      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
-      td.PatientID == d->PatientID &&
-      td.StudyInstanceUID == d->StudyInstanceUID)
+  if (td.JobUID.isEmpty() ||
+      td.StudyInstanceUID != d->StudyInstanceUID)
   {
-    d->Status = ctkDICOMStudyItemWidget::Completed;
-    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/accept.svg"));
+    return;
   }
+
+  emit this->jobFinished(data);
+
+  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  {
+    return;
+  }
+
+  d->Status = ctkDICOMStudyItemWidget::Completed;
+  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/accept.svg"));
 }
 
 //------------------------------------------------------------------------------

@@ -106,21 +106,23 @@ public:
   QSharedPointer<QThreadPool> threadPoolShared() const;
 
 Q_SIGNALS:
-  void jobInitialized(QVariant data);
-  void jobQueued(QVariant data);
-  void jobStarted(QVariant data);
-  void jobUserStopped(QVariant data);
-  void jobFinished(QVariant data);
-  void jobAttemptFailed(QVariant data);
-  void jobFailed(QVariant data);
-  void progressJobDetail(QVariant data);
+  void jobInitialized(QVariant);
+  void jobQueued(QVariant);
+  void jobStarted(QList<QVariant>);
+  void jobUserStopped(QList<QVariant>);
+  void jobFinished(QList<QVariant>);
+  void jobAttemptFailed(QList<QVariant>);
+  void jobFailed(QList<QVariant>);
+  void progressJobDetail(QList<QVariant>);
 
 public Q_SLOTS:
-  virtual void onJobStarted(ctkAbstractJob* job);
-  virtual void onJobUserStopped(ctkAbstractJob* job);
-  virtual void onJobFinished(ctkAbstractJob* job);
-  virtual void onJobAttemptFailed(ctkAbstractJob* job);
-  virtual void onJobFailed(ctkAbstractJob* job);
+  virtual void onJobStarted(ctkAbstractJob*);
+  virtual void onJobUserStopped(ctkAbstractJob*);
+  virtual void onJobFinished(ctkAbstractJob*);
+  virtual void onJobAttemptFailed(ctkAbstractJob*);
+  virtual void onJobFailed(ctkAbstractJob*);
+  virtual void onProgressJobDetail(QVariant);
+  virtual void emitThrottledSignals();
 
 protected:
   QScopedPointer<ctkJobSchedulerPrivate> d_ptr;

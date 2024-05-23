@@ -24,6 +24,7 @@
 // Qt includes
 #include <QMutex>
 #include <QSharedPointer>
+#include <QTimer>
 class QThreadPool;
 
 // ctkCore includes
@@ -62,6 +63,7 @@ public:
   virtual void removeAllJobs();
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
   QString generateUniqueJobUID();
+  void clearBactchedJobsLists();
 
   QMutex QueueMutex;
 
@@ -73,6 +75,14 @@ public:
   QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
   QMap<QString, QMap<QString, QMetaObject::Connection>> JobsConnections;
   QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
+  QList<QVariant> BatchedJobsStarted;
+  QList<QVariant> BatchedJobsUserStopped;
+  QList<QVariant> BatchedJobsFinished;
+  QList<QVariant> BatchedJobsAttemptFailed;
+  QList<QVariant> BatchedJobsFailed;
+  QList<QVariant> BatchedJobsProgress;
+  QSharedPointer<QTimer> ThrottleTimer;
+  int ThrottleTimeInterval{300};
 };
 
 #endif
