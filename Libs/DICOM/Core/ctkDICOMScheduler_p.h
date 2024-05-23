@@ -67,6 +67,8 @@ public:
   QMap<QString, QVariant> Filters;
 
   int MaximumPatientsQuery{25};
+
+  dcmtk::log4cplus::SharedAppenderPtr Appender;
 };
 
 #endif

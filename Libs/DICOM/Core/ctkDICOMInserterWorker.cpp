@@ -32,6 +32,9 @@
 #include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMJobResponseSet.h"
 
+// DCMTK includes
+#include <dcmtk/oflog/spi/logevent.h>
+
 static ctkLogger logger ("org.commontk.dicom.DICOMInserterWorker");
 
 //------------------------------------------------------------------------------
@@ -99,6 +102,9 @@ void ctkDICOMInserterWorker::run()
   {
     return;
   }
+
+  QString currentThread = dcmtk::log4cplus::thread::getCurrentThreadName().c_str();
+  inserterJob->setRunningThreadID(currentThread);
 
   if (d->Inserter->wasCanceled())
   {

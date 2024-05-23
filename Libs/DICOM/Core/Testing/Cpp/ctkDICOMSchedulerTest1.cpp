@@ -137,8 +137,6 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
   QStringList urls = database.urlsForSeries(seriesIstanceUID);
   urls.removeAll(QString(""));
 
-
-
   CHECK_INT(instances.count(), numberOfImages);
   CHECK_INT(files.count(), 0);
   CHECK_INT(urls.count(), numberOfImages);

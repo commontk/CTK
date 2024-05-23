@@ -54,6 +54,8 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
   Q_PROPERTY(QDateTime startDateTime READ startDateTime);
   Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
+  Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
+  Q_PROPERTY(QString loggedText READ loggedText WRITE setLoggedText);
 
 public:
   explicit ctkAbstractJob();
@@ -133,18 +135,30 @@ public:
   ///@}
 
   ///@{
-  /// CreationDateTime
+  /// Creation Date Time
   QDateTime creationDateTime() const;
   ///@}
 
   ///@{
-  /// StartDateTime
+  /// Start Date Time
   QDateTime startDateTime() const;
   ///@}
 
   ///@{
-  /// CompletionDateTime
+  /// Completion Date Time
   QDateTime completionDateTime() const;
+  ///@}
+
+  ///@{
+  /// Running ThreadID
+  QString runningThreadID() const;
+  void setRunningThreadID(QString runningThreadID);
+  ///@}
+
+  ///@{
+  /// Logged Text
+  QString loggedText() const;
+  void setLoggedText(QString loggedText);
   ///@}
 
   /// Generate worker for job
@@ -182,6 +196,8 @@ protected:
   QDateTime CreationDateTime;
   QDateTime StartDateTime;
   QDateTime CompletionDateTime;
+  QString RunningThreadID;
+  QString LoggedText;
 
 private:
   Q_DISABLE_COPY(ctkAbstractJob)
@@ -198,6 +214,8 @@ struct CTK_CORE_EXPORT ctkJobDetail {
     this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->RunningThreadID = job.runningThreadID();
+    this->Logging = job.loggedText();
   }
   virtual ~ctkJobDetail() = default;
 
@@ -206,6 +224,8 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   QString CreationDateTime;
   QString StartDateTime;
   QString CompletionDateTime;
+  QString RunningThreadID;
+  QString Logging;
 };
 Q_DECLARE_METATYPE(ctkJobDetail);
 

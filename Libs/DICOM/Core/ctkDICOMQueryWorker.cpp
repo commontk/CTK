@@ -30,6 +30,9 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
+// DCMTK includes
+#include <dcmtk/oflog/spi/logevent.h>
+
 static ctkLogger logger ("org.commontk.dicom.DICOMQueryWorker");
 
 //------------------------------------------------------------------------------
@@ -108,6 +111,9 @@ void ctkDICOMQueryWorker::run()
   {
     return;
   }
+
+  QString currentThread = dcmtk::log4cplus::thread::getCurrentThreadName().c_str();
+  queryJob->setRunningThreadID(currentThread);
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
     qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
