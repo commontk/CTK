@@ -21,6 +21,8 @@ import sys
 import py_compile
 import struct
 
+from pathlib import Path
+
 
 def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
     \"\"\"Byte-compile one file.

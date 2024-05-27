@@ -22,6 +22,7 @@ cmake_minimum_required(VERSION 3.0)
 
 foreach(p
   CMP0054 # CMake 3.1
+  CMP0077 # CMake 3.13
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
@@ -743,6 +744,12 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
 ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
                   CTK_LIB_Scripting/Python/Core)
 mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
+
+include(CMakeDependentOption)
+cmake_dependent_option(
+  CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC "Remove .py scripts from destination directory after compiling to .pyc" OFF
+  "CTK_ENABLE_Python_Wrapping" OFF)
+mark_as_superbuild(CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC)
 
 # Build examples
 # Create the logical expression containing the minimum set of required options
