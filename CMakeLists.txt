@@ -18,10 +18,9 @@
 #
 ###########################################################################
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.16.3)
 
 foreach(p
-  CMP0054 # CMake 3.1
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
