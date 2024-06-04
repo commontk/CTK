@@ -316,6 +316,8 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
 //----------------------------------------------------------------------------
 ctkDICOMVisualBrowserWidgetPrivate::~ctkDICOMVisualBrowserWidgetPrivate()
 {
+  this->ImportDialog->deleteLater();
+  this->MetadataDialog->deleteLater();
   this->removeAllPatientItemWidgets();
 }
 
@@ -968,6 +970,33 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
 
   this->IsLoading = true;
 
+  // Get only the selected series widgets
+  QList<ctkDICOMSeriesItemWidget*> selectedSeriesWidgetsList;
+  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
+  {
+    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
+    QModelIndexList indexList = seriesListTableWidget->selectionModel()->selectedIndexes();
+    foreach (QModelIndex index, indexList)
+    {
+      ctkDICOMSeriesItemWidget* seriesItemWidget = qobject_cast<ctkDICOMSeriesItemWidget*>
+        (seriesListTableWidget->cellWidget(index.row(), index.column()));
+      if (!seriesItemWidget)
+      {
+        continue;
+      }
+
+      selectedSeriesWidgetsList.append(seriesItemWidget);
+    }
+  }
+
+  if (selectedSeriesWidgetsList.count() == 0)
+  {
+    this->IsLoading = false;
+    return;
+  }
+
+  // Get all series widgets
   QList<ctkDICOMSeriesItemWidget*> seriesWidgetsList;
   for (int patientIndex = 0; patientIndex < this->PatientsTabWidget->count(); ++patientIndex)
   {
@@ -999,31 +1028,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
     }
   }
 
-  QList<ctkDICOMSeriesItemWidget*> selectedSeriesWidgetsList;
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QModelIndexList indexList = seriesListTableWidget->selectionModel()->selectedIndexes();
-    foreach (QModelIndex index, indexList)
-    {
-      ctkDICOMSeriesItemWidget* seriesItemWidget = qobject_cast<ctkDICOMSeriesItemWidget*>
-        (seriesListTableWidget->cellWidget(index.row(), index.column()));
-      if (!seriesItemWidget)
-      {
-        continue;
-      }
-
-      selectedSeriesWidgetsList.append(seriesItemWidget);
-    }
-  }
-
-  if (selectedSeriesWidgetsList.count() == 0)
-  {
-    this->IsLoading = false;
-    return;
-  }
-
+  // Update UI
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   bool deleteActionWasVisible = this->DeleteActionVisible;
@@ -1032,8 +1037,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
   bool queryPatientButtonWasEnabled = this->SearchMenuButton->isEnabled();
   this->SearchMenuButton->setEnabled(false);
 
+  // Set a flag in non selected series widget to stop any jobs creation
+  // and stop all the jobs connected to the widgets
   QStringList seriesInstanceUIDsToStop;
-  QStringList selectedSeriesInstanceUIDs;
   foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesWidgetsList)
   {
     if (!seriesItemWidget)
@@ -1046,23 +1052,58 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
       seriesItemWidget->setStopJobs(true);
       seriesInstanceUIDsToStop.append(seriesItemWidget->seriesInstanceUID());
     }
-    else
+  }
+
+  this->Scheduler->stopJobsByDICOMUIDs({}, {}, seriesInstanceUIDsToStop);
+  this->Scheduler->waitForDone(300);
+
+  // Check all the selected series widgets. If any widgets is not fully retrieved or the retrieve failed,
+  // and no jobs are running for the series, force the retrieve.
+  foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
+  {
+    if (!seriesItemWidget)
     {
-      selectedSeriesInstanceUIDs.append(seriesItemWidget->seriesInstanceUID());
+      continue;
+    }
+
+    if (!seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
+    {
+      continue;
+    }
+
+    if (this->Scheduler->getJobsByDICOMUIDs({}, {}, {seriesItemWidget->seriesInstanceUID()}).count() == 0)
+    {
+      seriesItemWidget->forceRetrieve();
     }
   }
 
-  this->Scheduler->stopJobsByDICOMUIDs({},
-                                       {},
-                                       seriesInstanceUIDsToStop);
+  // Create a progress dialog to show the progress of the retrieve
+  QProgressDialog loadSeriesProgress(
+    ctkDICOMVisualBrowserWidget::tr("Retrieving and processing selected series..."),
+    ctkDICOMVisualBrowserWidget::tr("Cancel"), 0, 100, q);
+  loadSeriesProgress.setWindowModality(Qt::ApplicationModal);
+  loadSeriesProgress.setMinimumDuration(1000);
 
-  this->Scheduler->waitForDone(300);
+  QProgressBar *bar = new QProgressBar(&loadSeriesProgress);
+  bar->setTextVisible(false);
+  loadSeriesProgress.setBar(bar);
+  loadSeriesProgress.setValue(0);
 
+  // Wait for the selected series widgets to be fully retrieved
   bool wait = true;
+  int progress = 0;
   while (wait)
   {
-    QCoreApplication::processEvents();
+    qApp->processEvents();
     this->Scheduler->waitForDone(300);
+
+    progress++;
+    if (progress == 99)
+    {
+      progress = 0;
+    }
+    loadSeriesProgress.setValue(progress);
+
     wait = false;
     foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
     {
@@ -1071,17 +1112,76 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
         continue;
       }
 
+      if (loadSeriesProgress.wasCanceled())
+      {
+        break;
+      }
+
       if (seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
       {
         wait = true;
         break;
       }
     }
+
+    if (loadSeriesProgress.wasCanceled())
+    {
+      break;
+    }
   }
 
+  // Update UI
   this->updateFiltersWarnings();
   this->configureSearchIcon();
 
+  this->IsLoading = false;
+  this->DeleteActionVisible = deleteActionWasVisible;
+  this->SearchMenuButton->setEnabled(queryPatientButtonWasEnabled);
+  QApplication::restoreOverrideCursor();
+
+
+  // Finalize the retrieve
+  QStringList selectedSeriesInstanceUIDs;
+  if (loadSeriesProgress.wasCanceled())
+    {
+    // It was canceled -> stop the jobs connected to the selected series widgets
+    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
+    {
+      if (!seriesItemWidget)
+      {
+        continue;
+      }
+
+      selectedSeriesInstanceUIDs.append(seriesItemWidget->seriesInstanceUID());
+    }
+
+    this->Scheduler->stopJobsByDICOMUIDs({}, {}, selectedSeriesInstanceUIDs);
+    this->Scheduler->waitForDone(300);
+    }
+  else
+    {
+    loadSeriesProgress.close();
+    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
+    {
+      // If the series was not fully retrieved or the retrieve failed -> skip
+      if (!seriesItemWidget || seriesItemWidget->isCloud() || seriesItemWidget->retrieveFailed())
+      {
+        continue;
+      }
+
+      // If the series has only metadata -> skip
+      if (this->DicomDatabase->instancesForSeries(seriesItemWidget->seriesInstanceUID()).count() == 0)
+      {
+        continue;
+      }
+
+      selectedSeriesInstanceUIDs.append(seriesItemWidget->seriesInstanceUID());
+    }
+
+    q->emit seriesRetrieved(selectedSeriesInstanceUIDs);
+  }
+
+  // Re-allow all seriesItemWidgets to run jobs
   foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesWidgetsList)
   {
     if (!seriesItemWidget)
@@ -1091,13 +1191,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
 
     seriesItemWidget->setStopJobs(false);
   }
-
-  q->emit seriesRetrieved(selectedSeriesInstanceUIDs);
-
-  this->IsLoading = false;
-  this->DeleteActionVisible = deleteActionWasVisible;
-  this->SearchMenuButton->setEnabled(queryPatientButtonWasEnabled);
-  QApplication::restoreOverrideCursor();
 }
 
 //----------------------------------------------------------------------------
@@ -1697,13 +1790,7 @@ ctkDICOMVisualBrowserWidget::ctkDICOMVisualBrowserWidget(QWidget* parentWidget)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget()
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  d->ImportDialog->deleteLater();
-  d->MetadataDialog->deleteLater();
-}
+ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget() = default;
 
 //----------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectory, DatabaseDirectory);

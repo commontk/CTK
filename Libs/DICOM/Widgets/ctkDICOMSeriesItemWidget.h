@@ -60,8 +60,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMSeriesItemWidget(ctkDICOMStudyItemWidget* top = nullptr,
-                                   QWidget* parent = nullptr);
+  explicit ctkDICOMSeriesItemWidget(QWidget* top = nullptr,
+                                    QWidget* parent = nullptr);
   virtual ~ctkDICOMSeriesItemWidget();
 
   ///@{
