@@ -176,7 +176,7 @@ void ctkDICOMSeriesItemWidgetPrivate::init(ctkDICOMStudyItemWidget* top)
   this->SeriesThumbnail->setSelectedColor(QColor::Invalid);
 
   QObject::connect(this->SeriesThumbnail, SIGNAL(statusPushButtonClicked(bool)),
-                 q, SLOT(onStatusPushButtonClicked(bool)));
+                 q, SLOT(onOperationStatusButtonClicked(bool)));
 }
 
 //----------------------------------------------------------------------------
@@ -758,7 +758,7 @@ ctkDICOMSeriesItemWidget::~ctkDICOMSeriesItemWidget()
   Q_D(ctkDICOMSeriesItemWidget);
 
   QObject::disconnect(d->SeriesThumbnail, SIGNAL(statusPushButtonClicked(bool)),
-                      this, SLOT(onStatusPushButtonClicked(bool)));
+                      this, SLOT(onOperationStatusButtonClicked(bool)));
 }
 
 //------------------------------------------------------------------------------
@@ -1091,7 +1091,7 @@ void ctkDICOMSeriesItemWidget::onJobFinished(const QVariant &data)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::onStatusPushButtonClicked(bool)
+void ctkDICOMSeriesItemWidget::onOperationStatusButtonClicked(bool)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
@@ -1102,7 +1102,8 @@ void ctkDICOMSeriesItemWidget::onStatusPushButtonClicked(bool)
                                       QStringList(),
                                       QStringList(d->SeriesInstanceUID));
   }
-  else if (status == ctkThumbnailLabel::Failed)
+  else if (status == ctkThumbnailLabel::Failed ||
+    status == ctkThumbnailLabel::Completed)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";

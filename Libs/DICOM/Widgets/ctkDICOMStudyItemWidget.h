@@ -220,7 +220,7 @@ public Q_SLOTS:
   void onJobFailed(const QVariant&);
   void onJobFinished(const QVariant&);
   void onStudySelectionClicked(bool);
-  void onOperationStatusClicked(bool);
+  void onOperationStatusButtonClicked(bool);
 
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.
