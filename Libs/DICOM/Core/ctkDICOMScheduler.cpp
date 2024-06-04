@@ -899,15 +899,10 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
         continue;
       }
 
-      ctkDICOMInserterJob* inserterJob = qobject_cast<ctkDICOMInserterJob*>(job.data());
       if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
           (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
           (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
           (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-      {
-        jobsUIDs.append(dicomJob->jobUID());
-      }
-      else if (inserterJob)
       {
         jobsUIDs.append(dicomJob->jobUID());
       }

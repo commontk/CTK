@@ -37,7 +37,6 @@
 #include "ctkDICOMScheduler.h"
 
 // ctkDICOMWidgets includes
-#include "ctkDICOMPatientItemWidget.h"
 #include "ctkDICOMStudyItemWidget.h"
 #include "ui_ctkDICOMStudyItemWidget.h"
 
@@ -65,7 +64,7 @@ public:
   ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItemWidget& obj);
   ~ctkDICOMStudyItemWidgetPrivate();
 
-  void init(ctkDICOMPatientItemWidget* parent, QWidget* root);
+  void init(QWidget* top, QWidget* parent);
   void connectToTop();
   void disconnectFromTop();
   void updateColumnsWidths();
@@ -84,7 +83,7 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
-  QSharedPointer<ctkDICOMPatientItemWidget> PatientWidget;
+  QSharedPointer<QWidget> PatientWidget;
   QSharedPointer<QWidget> VisualDICOMBrowser;
   QMap<QString, QMetaObject::Connection> Connections;
 
@@ -149,12 +148,12 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::init(ctkDICOMPatientItemWidget* top, QWidget* parent)
+void ctkDICOMStudyItemWidgetPrivate::init(QWidget* top, QWidget* parent)
 {
   Q_Q(ctkDICOMStudyItemWidget);
   this->setupUi(q);
 
-  this->PatientWidget = QSharedPointer<ctkDICOMPatientItemWidget>(top, skipDelete);
+  this->PatientWidget = QSharedPointer<QWidget>(top, skipDelete);
   this->connectToTop();
   this->VisualDICOMBrowser = QSharedPointer<QWidget>(parent, skipDelete);
 
@@ -453,7 +452,7 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdd
 // ctkDICOMStudyItemWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(ctkDICOMPatientItemWidget* top, QWidget* parent)
+ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(QWidget* top, QWidget* parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMStudyItemWidgetPrivate(*this))
 {

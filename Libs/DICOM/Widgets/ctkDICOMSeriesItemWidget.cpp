@@ -40,7 +40,6 @@
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMScheduler.h"
-#include "ctkDICOMStudyItemWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
 
 // ctkDICOMWidgets includes
@@ -69,7 +68,7 @@ public:
   ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesItemWidget& obj);
   ~ctkDICOMSeriesItemWidgetPrivate();
 
-  void init(ctkDICOMStudyItemWidget* top);
+  void init(QWidget* top);
   void connectToTop();
   void disconnectFromTop();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
@@ -90,7 +89,7 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
-  QSharedPointer<ctkDICOMStudyItemWidget> StudyWidget;
+  QSharedPointer<QWidget> StudyWidget;
   QMap<QString, QMetaObject::Connection> Connections;
   QStringList AllowedServers;
 
@@ -163,12 +162,12 @@ ctkDICOMSeriesItemWidgetPrivate::~ctkDICOMSeriesItemWidgetPrivate()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::init(ctkDICOMStudyItemWidget* top)
+void ctkDICOMSeriesItemWidgetPrivate::init(QWidget* top)
 {
   Q_Q(ctkDICOMSeriesItemWidget);
   this->setupUi(q);
 
-  this->StudyWidget = QSharedPointer<ctkDICOMStudyItemWidget>(top, skipDelete);
+  this->StudyWidget = QSharedPointer<QWidget>(top, skipDelete);
   this->connectToTop();
 
   this->SeriesThumbnail->setTransformationMode(Qt::TransformationMode::SmoothTransformation);
@@ -744,7 +743,7 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFinished()
 // ctkDICOMSeriesItemWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMSeriesItemWidget::ctkDICOMSeriesItemWidget(ctkDICOMStudyItemWidget* top, QWidget* parent)
+ctkDICOMSeriesItemWidget::ctkDICOMSeriesItemWidget(QWidget* top, QWidget* parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMSeriesItemWidgetPrivate(*this))
 {
@@ -810,7 +809,7 @@ void ctkDICOMSeriesItemWidget::forceRetrieve()
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
-  d->IsCloud = false;
+  d->IsCloud = true;
   d->RetrieveFailed = false;
   d->StopJobs = false;
   d->DicomDatabase->removeSeries(d->SeriesInstanceUID, false, false);

@@ -41,7 +41,6 @@ class ctkDICOMScheduler;
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
 
-class ctkDICOMPatientItemWidget;
 class ctkDICOMSeriesItemWidget;
 class ctkDICOMStudyItemWidgetPrivate;
 
@@ -68,7 +67,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMStudyItemWidget(ctkDICOMPatientItemWidget* top = nullptr,
+  explicit ctkDICOMStudyItemWidget(QWidget* top = nullptr,
                                    QWidget* parent = nullptr);
   virtual ~ctkDICOMStudyItemWidget();
 
