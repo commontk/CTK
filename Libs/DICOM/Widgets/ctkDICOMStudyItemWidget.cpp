@@ -507,34 +507,33 @@ void ctkDICOMStudyItemWidget::setDescription(const QString& description)
   if (description.isEmpty())
   {
     d->StudyDescriptionTextBrowser->hide();
+    return;
+  }
+
+  QFontMetrics metrics(d->StudyDescriptionTextBrowser->font());
+  int textWidth = metrics.horizontalAdvance(description);
+  int widgetWidth = this->width();
+  if (textWidth > widgetWidth)
+  {
+    int length = 0;
+    while (length < description.length() && metrics.horizontalAdvance(description.mid(0, length)) <= widgetWidth)
+    {
+      length++;
+    }
+
+    QString wrappedText = description;
+    if (length < description.length())
+    {
+      wrappedText.insert(length, "\n");
+    }
+    d->StudyDescriptionTextBrowser->setCollapsibleText(wrappedText);
   }
   else
   {
-    QFontMetrics metrics(d->StudyDescriptionTextBrowser->font());
-    int textWidth = metrics.horizontalAdvance(description);
-    int widgetWidth = this->width();
-    if (textWidth > widgetWidth)
-    {
-      int length = 0;
-      while (length < description.length() && metrics.horizontalAdvance(description.mid(0, length)) <= widgetWidth)
-      {
-        length++;
-      }
-
-      QString wrappedText = description;
-      if (length < description.length())
-      {
-        wrappedText.insert(length, "\n");
-      }
-      d->StudyDescriptionTextBrowser->setCollapsibleText(wrappedText);
-    }
-    else
-    {
-      d->StudyDescriptionTextBrowser->setPlainText(description);
-    }
-
-    d->StudyDescriptionTextBrowser->show();
+    d->StudyDescriptionTextBrowser->setPlainText(description);
   }
+
+  d->StudyDescriptionTextBrowser->show();
 }
 
 //------------------------------------------------------------------------------
