@@ -558,7 +558,7 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
       // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
       // instead of using the signal
       QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
-      QObject::disconnect(connections.value("userStopped"));
+      //QObject::disconnect(connections.value("userStopped"));
       job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
       initializedStoppedJobsUIDs.append(jobUID);
     }
@@ -585,7 +585,7 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
       {
         this->deleteWorker(job->jobUID());
         QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
-        QObject::disconnect(connections.value("userStopped"));
+        //QObject::disconnect(connections.value("userStopped"));
         job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
         initializedStoppedJobsUIDs.append(job->jobUID());
       }
@@ -605,8 +605,6 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
 
     worker->requestCancel();
   }
-
-  d->clearBactchedJobsLists();
 }
 
 //----------------------------------------------------------------------------
@@ -652,7 +650,7 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
       // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
       // instead of using the signal
       QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
-      QObject::disconnect(connections.value("userStopped"));
+      //QObject::disconnect(connections.value("userStopped"));
       job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
       initializedStoppedJobsUIDs.append(job->jobUID());
     }
@@ -680,7 +678,7 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
       {
         this->deleteWorker(job->jobUID());
         QMap<QString, QMetaObject::Connection> connections = d->JobsConnections.value(jobUID);
-        QObject::disconnect(connections.value("userStopped"));
+        //QObject::disconnect(connections.value("userStopped"));
         job->setStatus(ctkAbstractJob::JobStatus::UserStopped);
         initializedStoppedJobsUIDs.append(job->jobUID());
       }
@@ -861,12 +859,51 @@ void ctkJobScheduler::emitThrottledSignals()
 {
   Q_D(ctkJobScheduler);
 
-  emit this->jobStarted(d->BatchedJobsStarted);
-  emit this->jobUserStopped(d->BatchedJobsUserStopped);
-  emit this->jobFinished(d->BatchedJobsFinished);
-  emit this->jobAttemptFailed(d->BatchedJobsAttemptFailed);
-  emit this->jobFailed(d->BatchedJobsFailed);
-  emit this->progressJobDetail(d->BatchedJobsProgress);
+  int totalEmitted = 0;
+  if (!d->BatchedJobsStarted.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
+  {
+    int count = qMin(d->MaximumBatchedSignalsForTimeInterval - totalEmitted, d->BatchedJobsStarted.size());
+    emit this->jobStarted(d->BatchedJobsStarted.mid(0, count));
+    d->BatchedJobsStarted = d->BatchedJobsStarted.mid(count);
+    totalEmitted += count;
+  }
+  if (!d->BatchedJobsUserStopped.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
+  {
+    int count = qMin(d->MaximumBatchedSignalsForTimeInterval - totalEmitted, d->BatchedJobsUserStopped.size());
+    emit this->jobUserStopped(d->BatchedJobsUserStopped.mid(0, count));
+    d->BatchedJobsUserStopped = d->BatchedJobsUserStopped.mid(count);
+    totalEmitted += count;
+  }
+  if (!d->BatchedJobsFinished.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
+  {
+    int count = qMin(d->MaximumBatchedSignalsForTimeInterval - totalEmitted, d->BatchedJobsFinished.size());
+    emit this->jobFinished(d->BatchedJobsFinished.mid(0, count));
+    d->BatchedJobsFinished = d->BatchedJobsFinished.mid(count);
+    totalEmitted += count;
+  }
+  if (!d->BatchedJobsAttemptFailed.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
+  {
+    int count = qMin(d->MaximumBatchedSignalsForTimeInterval - totalEmitted, d->BatchedJobsAttemptFailed.size());
+    emit this->jobAttemptFailed(d->BatchedJobsAttemptFailed.mid(0, count));
+    d->BatchedJobsAttemptFailed = d->BatchedJobsAttemptFailed.mid(count);
+    totalEmitted += count;
+  }
+  if (!d->BatchedJobsFailed.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
+  {
+    int count = qMin(d->MaximumBatchedSignalsForTimeInterval - totalEmitted, d->BatchedJobsFailed.size());
+    emit this->jobFailed(d->BatchedJobsFailed.mid(0, count));
+    d->BatchedJobsFailed = d->BatchedJobsFailed.mid(count);
+    totalEmitted += count;
+  }
 
-  d->clearBactchedJobsLists();
+  emit this->progressJobDetail(d->BatchedJobsProgress);
+  d->BatchedJobsProgress.clear();
+
+  int numberOfSignalsNotSent = d->BatchedJobsStarted.size() + d->BatchedJobsUserStopped.size() +
+    d->BatchedJobsFinished.size() + d->BatchedJobsAttemptFailed.size() +
+    d->BatchedJobsFailed.size();
+  if (numberOfSignalsNotSent != 0 && !d->ThrottleTimer->isActive())
+  {
+    d->ThrottleTimer->start(d->ThrottleTimeInterval);
+  }
 }

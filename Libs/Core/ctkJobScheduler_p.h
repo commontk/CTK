@@ -83,6 +83,7 @@ public:
   QList<QVariant> BatchedJobsProgress;
   QSharedPointer<QTimer> ThrottleTimer;
   int ThrottleTimeInterval{300};
+  int MaximumBatchedSignalsForTimeInterval{20};
 };
 
 #endif
