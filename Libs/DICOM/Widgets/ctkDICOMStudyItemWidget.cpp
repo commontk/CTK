@@ -160,6 +160,7 @@ void ctkDICOMStudyItemWidgetPrivate::init(ctkDICOMPatientItemWidget* top, QWidge
 
   this->StudyDescriptionTextBrowser->hide();
   this->StudyDescriptionTextBrowser->setReadOnly(true);
+  this->StudyDescriptionTextBrowser->setDisableMouseScroll(true);
   this->StudyItemCollapsibleGroupBox->setCollapsed(false);
 
   this->OperationStatusPushButton->hide();
@@ -167,7 +168,7 @@ void ctkDICOMStudyItemWidgetPrivate::init(ctkDICOMPatientItemWidget* top, QWidge
   QObject::connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
                    q, SLOT(onStudySelectionClicked(bool)));
   QObject::connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
-                   q, SLOT(onOperationStatusClicked(bool)));
+                   q, SLOT(onOperationStatusButtonClicked(bool)));
 }
 
 //------------------------------------------------------------------------------
@@ -509,7 +510,29 @@ void ctkDICOMStudyItemWidget::setDescription(const QString& description)
   }
   else
   {
-    d->StudyDescriptionTextBrowser->setText(description);
+    QFontMetrics metrics(d->StudyDescriptionTextBrowser->font());
+    int textWidth = metrics.horizontalAdvance(description);
+    int widgetWidth = this->width();
+    if (textWidth > widgetWidth)
+    {
+      int length = 0;
+      while (length < description.length() && metrics.horizontalAdvance(description.mid(0, length)) <= widgetWidth)
+      {
+        length++;
+      }
+
+      QString wrappedText = description;
+      if (length < description.length())
+      {
+        wrappedText.insert(length, "\n");
+      }
+      d->StudyDescriptionTextBrowser->setCollapsibleText(wrappedText);
+    }
+    else
+    {
+      d->StudyDescriptionTextBrowser->setPlainText(description);
+    }
+
     d->StudyDescriptionTextBrowser->show();
   }
 }
@@ -891,7 +914,7 @@ void ctkDICOMStudyItemWidget::onStudySelectionClicked(bool toggled)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::onOperationStatusClicked(bool)
+void ctkDICOMStudyItemWidget::onOperationStatusButtonClicked(bool)
 {
   Q_D(ctkDICOMStudyItemWidget);
 
@@ -901,7 +924,8 @@ void ctkDICOMStudyItemWidget::onOperationStatusClicked(bool)
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(),
                                       QStringList(d->StudyInstanceUID));
   }
-  else if (status == ctkDICOMStudyItemWidget::Failed)
+  else if (status == ctkDICOMStudyItemWidget::Failed ||
+    status == ctkDICOMStudyItemWidget::Completed)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";

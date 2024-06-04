@@ -42,14 +42,20 @@ class ctkFittedTextBrowserPrivate;
 class CTK_WIDGETS_EXPORT ctkFittedTextBrowser : public QTextBrowser
 {
   Q_OBJECT
+  Q_PROPERTY(bool disableMouseScroll READ disableMouseScroll WRITE setDisableMouseScroll)
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
   Q_PROPERTY(QString showDetailsText READ showDetailsText WRITE setShowDetailsText)
   Q_PROPERTY(QString hideDetailsText READ hideDetailsText WRITE setHideDetailsText)
 
-
 public:
   ctkFittedTextBrowser(QWidget* parent = 0);
   virtual ~ctkFittedTextBrowser();
+
+  /// Disable mouse scroll is false by default.
+  /// If set to true, the mouse wheel event is ignored.
+  void setDisableMouseScroll(bool disableMouseScroll);
+  /// return if mouse scroll is disabled
+  bool disableMouseScroll() const;
 
   /// Show only first line/the full text.
   /// Only has effect if collapsible = true.
@@ -73,11 +79,11 @@ public:
   Q_INVOKABLE QString collapsibleText() const;
 
   /// Reimplemented for internal reasons
-  virtual QSize sizeHint() const;
+  virtual QSize sizeHint() const override;
   /// Reimplemented for internal reasons
-  virtual QSize minimumSizeHint() const;
+  virtual QSize minimumSizeHint() const override;
   /// Reimplemented for internal reasons
-  virtual int heightForWidth(int width) const;
+  virtual int heightForWidth(int width) const override;
 
 public Q_SLOTS:
 
@@ -111,7 +117,8 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkFittedTextBrowserPrivate> d_ptr;
 
-  virtual void resizeEvent(QResizeEvent* e);
+  virtual void resizeEvent(QResizeEvent* event) override;
+  void wheelEvent(QWheelEvent *event) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkFittedTextBrowser);

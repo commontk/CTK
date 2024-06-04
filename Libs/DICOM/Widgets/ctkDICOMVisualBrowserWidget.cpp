@@ -3128,7 +3128,8 @@ void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
   {
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(patientItemWidget->patientID()));
   }
-  else if (status == ctkDICOMPatientItemWidget::Failed)
+  else if (status == ctkDICOMPatientItemWidget::Failed ||
+    status == ctkDICOMPatientItemWidget::Completed)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";
@@ -3137,7 +3138,6 @@ void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
 
     d->Scheduler->runJob(queryJobDetail, patientItemWidget->allowedServers());
   }
-
 }
 
 //------------------------------------------------------------------------------

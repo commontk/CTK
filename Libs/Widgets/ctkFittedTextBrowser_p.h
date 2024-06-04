@@ -49,6 +49,7 @@ public:
   QString collapseLinkText() const;
 
   bool Collapsed;
+  bool DisableMouseScroll;
 
   QString ShowDetailsText;
   QString HideDetailsText;

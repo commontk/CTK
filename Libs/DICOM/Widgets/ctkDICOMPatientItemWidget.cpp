@@ -780,24 +780,22 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   studyItemWidget->setStudyItem(studyItem);
   studyItemWidget->setPatientID(d->PatientID);
   studyItemWidget->setStudyInstanceUID(studyInstanceUID);
-  if (formattedStudyDate.isEmpty() && studyID.isEmpty())
+
+  QString fullDescription = tr("Study");
+  if (!studyID.isEmpty())
   {
-    studyItemWidget->setTitle(tr("Study"));
+    fullDescription += tr(" ID %1").arg(studyID);
   }
-  else if (formattedStudyDate.isEmpty())
+  if (!formattedStudyDate.isEmpty())
   {
-    studyItemWidget->setTitle(tr("Study ID %1").arg(studyID));
+    fullDescription += tr("  -  %1").arg(formattedStudyDate);
   }
-  else if (studyID.isEmpty())
+  if (!studyDescription.isEmpty())
   {
-    studyItemWidget->setTitle(tr("Study --- %1").arg(formattedStudyDate));
-  }
-  else
-  {
-    studyItemWidget->setTitle(tr("Study ID  %1  ---  %2").arg(studyID).arg(formattedStudyDate));
+    fullDescription += tr("  -  %1").arg(studyDescription);
   }
 
-  studyItemWidget->setDescription(studyDescription);
+  studyItemWidget->setDescription(fullDescription);
   studyItemWidget->setThumbnailSize(d->ThumbnailSize);
   studyItemWidget->setFilteringSeriesDescription(d->FilteringSeriesDescription);
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
