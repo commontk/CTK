@@ -50,6 +50,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
+#include "ctkDICOMThumbnailGenerator.h"
 #include "ctkUtils.h"
 
 // ctkDICOMWidgets includes
@@ -227,6 +228,7 @@ public:
   QString DatabaseDirectory;
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
+  QSharedPointer<ctkDICOMThumbnailGenerator> ThumbnailGenerator;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
   QSharedPointer<ctkDICOMIndexer> Indexer;
 
@@ -262,7 +264,10 @@ CTK_SET_CPP(ctkDICOMVisualBrowserWidget, const QString&, setDatabaseDirectoryBas
 ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMVisualBrowserWidget& obj)
   : q_ptr(&obj)
 {
+  this->ThumbnailGenerator = QSharedPointer<ctkDICOMThumbnailGenerator>(new ctkDICOMThumbnailGenerator);
+
   this->DicomDatabase = QSharedPointer<ctkDICOMDatabase>(new ctkDICOMDatabase);
+  this->DicomDatabase->setThumbnailGenerator(ThumbnailGenerator.data());
 
   this->Scheduler = QSharedPointer<ctkDICOMScheduler>(new ctkDICOMScheduler);
   this->Scheduler->setDicomDatabase(this->DicomDatabase);
@@ -3215,8 +3220,7 @@ void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
   {
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(patientItemWidget->patientID()));
   }
-  else if (status == ctkDICOMPatientItemWidget::Failed ||
-    status == ctkDICOMPatientItemWidget::Completed)
+  else if (status > ctkDICOMPatientItemWidget::InProgress)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";

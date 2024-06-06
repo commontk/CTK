@@ -27,6 +27,8 @@
 #include <QDebug>
 #include <QDir>
 #include <QImage>
+#include <QPainter>
+#include <QtSvg/QSvgRenderer>
 
 // DCMTK includes
 #include "dcmtk/dcmimgle/dcmimage.h"
@@ -189,25 +191,27 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath, QVector<int> color)
 {
   QImage image;
   if (this->generateThumbnail(dcmImage, image))
   {
-    return image.save(path,"PNG");
+    return image.save(thumbnailPath, "PNG");
   }
+
+  this->generateDocumentThumbnail(thumbnailPath, color);
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, QImage& image)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, QImage& image)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
   return this->generateThumbnail(&dcmImage, image);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, const QString& thumbnailPath)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
   return this->generateThumbnail(&dcmImage, thumbnailPath);
@@ -222,4 +226,22 @@ void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor co
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
   }
   image.fill(color);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::generateDocumentThumbnail(const QString &thumbnailPath, QVector<int> color)
+{
+  QImage image;
+  this->generateBlankThumbnail(image, QColor(color[0], color[1], color[2]));
+  QPixmap pixmap = QPixmap::fromImage(image);
+  QPainter painter;
+  if (painter.begin(&pixmap))
+  {
+    painter.setRenderHint(QPainter::Antialiasing);
+    QSvgRenderer renderer(QString(":Icons/text_document.svg"));
+    renderer.render(&painter);
+    painter.end();
+  }
+  image = pixmap.toImage();
+  image.save(thumbnailPath, "PNG");
 }

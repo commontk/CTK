@@ -751,7 +751,7 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
     bool wait = true;
     while (wait)
     {
-      QCoreApplication::processEvents();
+      qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
       d->ThreadPool->waitForDone(300);
 
       wait = false;
@@ -833,7 +833,7 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        logger.debug("ctkDICOMScheduler::getJobsByDICOMUIDs: unexpected type of job.");
         continue;
       }
 
@@ -875,7 +875,7 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
 
   if (numberOfInputLists == 0)
   {
-    logger.warn("ctkDICOMScheduler::stopJobsByDICOMUIDs failed: all the provided lists with UIDs are empty.");
+    logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: all the provided lists with UIDs are empty.");
     return;
   }
 
@@ -895,7 +895,7 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: unexpected type of job.");
         continue;
       }
 
@@ -1017,7 +1017,7 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        logger.debug("ctkDICOMScheduler::raiseJobsPriorityForSeries: unexpected type of job.");
         continue;
       }
 

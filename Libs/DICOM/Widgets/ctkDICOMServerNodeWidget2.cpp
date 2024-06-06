@@ -375,7 +375,7 @@ void ctkDICOMServerNodeWidget2Private::init()
   QObject::connect(this->RestoreDefaultPushButton, SIGNAL(clicked()),
                    q, SLOT(onRestoreDefaultServers()));
   this->SaveButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Save);
-  this->SaveButton->setText(ctkDICOMServerNodeWidget2::tr("Apply changes"));
+  this->SaveButton->setText(ctkDICOMServerNodeWidget2::tr("Apply changes  "));
   this->SaveButton->setIcon(QIcon(":/Icons/save.svg"));
   this->CancelButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Discard);
   this->CancelButton->setText(ctkDICOMServerNodeWidget2::tr("Discard changes"));

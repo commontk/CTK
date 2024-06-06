@@ -857,34 +857,6 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::storeThumbnailFile(const QString& originalFilePath,
-  const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID)
-{
-  Q_Q(ctkDICOMDatabase);
-  if (!this->ThumbnailGenerator)
-  {
-    return false;
-  }
-  // Create thumbnail here
-  QString thumbnailPath = q->databaseDirectory() +
-    "/thumbs/" + this->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".png";
-  QFileInfo thumbnailInfo(thumbnailPath);
-  if (thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(originalFilePath).lastModified()))
-  {
-    // thumbnail already exists and up-to-date
-    return true;
-  }
-  QDir destinationDir(thumbnailInfo.dir());
-  if (!destinationDir.exists())
-  {
-    destinationDir.mkpath(".");
-  }
-  DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
-  return this->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
-}
-
-
-//------------------------------------------------------------------------------
 bool ctkDICOMDatabasePrivate::uidsForDataSet(const ctkDICOMItem& dataset,
   QString& patientsName, QString& patientID, QString& studyInstanceUID, QString& seriesInstanceUID)
 {
@@ -1036,7 +1008,7 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
     }
     if (generateThumbnail)
     {
-      this->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
+      q->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
     }
   }
   if (q->isInMemory() && databaseWasChanged)
@@ -2376,6 +2348,72 @@ QDateTime ctkDICOMDatabase::insertDateTimeForInstance(QString sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::thumbnailPathForInstance(const QString &studyInstanceUID,
+                                                   const QString &seriesInstanceUID,
+                                                   const QString &sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QString thumbnailPath = this->databaseDirectory() +
+    "/thumbs/" + d->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".png";
+
+  QFileInfo thumbnailInfo(thumbnailPath);
+  if (thumbnailInfo.exists())
+  {
+    // thumbnail exists
+    return thumbnailPath;
+  }
+  else
+  {
+    return "";
+  }
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
+                                          const QString &studyInstanceUID,
+                                          const QString &seriesInstanceUID,
+                                          const QString &sopInstanceUID,
+                                          const QString& modality,
+                                          QVector<int> color)
+{
+  Q_D(ctkDICOMDatabase);
+  if (!d->ThumbnailGenerator)
+  {
+    return false;
+  }
+
+  QString thumbnailPath = this->databaseDirectory() +
+    "/thumbs/" + d->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".png";
+
+  QFileInfo thumbnailInfo(thumbnailPath);
+  if (thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(originalFilePath).lastModified()))
+  {
+    // thumbnail already exists and it is up-to-date
+    return true;
+  }
+
+  QDir destinationDir(thumbnailInfo.dir());
+  if (!destinationDir.exists())
+  {
+    destinationDir.mkpath(".");
+  }
+
+  if (modality == "SEG")
+  {
+    // NOTE: currently SEG objects are not fully supported by ctkDICOMThumbnailGenerator,
+    // The rendering will fail and in addition SEG object can be very large and
+    // loading the file can be slow. For now, we will just create a blank thumbnail with a document svg.
+    d->ThumbnailGenerator->generateDocumentThumbnail(thumbnailPath, color);
+    return true;
+  }
+  else
+  {
+    DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
+    return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath, color);
+  }
+}
+
+//------------------------------------------------------------------------------
 int ctkDICOMDatabase::patientsCount()
 {
   Q_D(ctkDICOMDatabase);
@@ -2848,7 +2886,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 
       if (generateThumbnail)
       {
-        d->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
+        this->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
       }
     }
   }
@@ -3116,7 +3154,7 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
         }
         if (generateThumbnail)
         {
-          d->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
+          this->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
         }
       }
     }

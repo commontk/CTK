@@ -182,6 +182,10 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
   {
     return QCenteredItemModel::tr("Echo server");
   }
+  else if (jobClass == "ctkDICOMInserterJob")
+  {
+    return QCenteredItemModel::tr("Inserter");
+  }
 
   return QCenteredItemModel::tr("");
 }
@@ -191,11 +195,6 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
                                 ctkDICOMDatabase *database)
 {
   if (!database)
-  {
-    return;
-  }
-
-  if (td.JobClass == "ctkDICOMInserterJob")
   {
     return;
   }
@@ -279,11 +278,6 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 //----------------------------------------------------------------------------
 void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status)
 {
-  if (td.JobClass == "ctkDICOMInserterJob")
-  {
-    return;
-  }
-
   QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
   if (list.empty())
   {
