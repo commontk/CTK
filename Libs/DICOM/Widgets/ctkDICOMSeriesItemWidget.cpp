@@ -440,21 +440,17 @@ QImage ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
   font.setBold(true);
   font.setPixelSize(textSize);
 
-  QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
-  resultPixmap.fill(Qt::transparent);
   ctkDICOMThumbnailGenerator thumbnailGenerator;
   thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
   thumbnailGenerator.setHeight(scaledThumbnailSizePixel);
-
   QImage thumbnailImage;
-  QPainter painter;
-
   QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
   thumbnailGenerator.generateBlankThumbnail(thumbnailImage, backgroundColor);
-  resultPixmap = QPixmap::fromImage(thumbnailImage);
+  QPixmap resultPixmap = QPixmap::fromImage(thumbnailImage);
+  QPainter painter;
   if (painter.begin(&resultPixmap))
   {
-    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform, true);
     QRect rect = resultPixmap.rect();
     int x = int(rect.width() * 0.5);
     int y = int(rect.height() * 0.5);
@@ -462,6 +458,7 @@ QImage ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
     painter.end();
   }
 
+  resultPixmap.setDevicePixelRatio(scalingFactor);
   this->SeriesThumbnail->setPixmap(resultPixmap);
   return resultPixmap.toImage();
 }
@@ -484,43 +481,42 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath
 
   if (dicomFilePath.isEmpty())
   {
-    logger.error("drawThumbnail failed, dicomFilePath is empty. \n");
+    logger.debug("drawThumbnail failed, dicomFilePath is empty. \n");
     return;
   }
 
   if (studyInstanceUID.isEmpty())
   {
-    logger.error("drawThumbnail failed, studyInstanceUID is empty. \n");
+    logger.debug("drawThumbnail failed, studyInstanceUID is empty. \n");
     return;
   }
 
   if (seriesInstanceUID.isEmpty())
   {
-    logger.error("drawThumbnail failed, seriesInstanceUID is empty. \n");
+    logger.debug("drawThumbnail failed, seriesInstanceUID is empty. \n");
     return;
   }
 
   if (sopInstanceUID.isEmpty())
   {
-    logger.error("drawThumbnail failed, sopInstanceUID is empty. \n");
+    logger.debug("drawThumbnail failed, sopInstanceUID is empty. \n");
     return;
   }
 
   if (modality.isEmpty())
   {
-    logger.error("drawThumbnail failed, modality is empty. \n");
+    logger.debug("drawThumbnail failed, modality is empty. \n");
     return;
   }
 
   qreal scalingFactor = q->devicePixelRatioF();
   int scaledThumbnailSizePixel = this->ThumbnailSizePixel * scalingFactor;
-  int margin = floor(scaledThumbnailSizePixel / 50.);
-  int iconSize = floor(scaledThumbnailSizePixel / 6.);
-  int textSize = floor(scaledThumbnailSizePixel / 12.);
+  int margin = floor(this->ThumbnailSizePixel / 50.);
+  int iconSize = floor(this->ThumbnailSizePixel / 6.);
+  int textSize = floor(this->ThumbnailSizePixel / 12.);
   QFont font = this->SeriesThumbnail->font();
   font.setBold(true);
   font.setPixelSize(textSize);
-  QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
 
   if (this->ThumbnailImage.isNull())
   {
@@ -545,14 +541,14 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath
     }
   }
 
+  QPixmap resultPixmap(this->ThumbnailSizePixel, this->ThumbnailSizePixel);
   QColor firstPixelColor = this->ThumbnailImage.pixelColor(0, 0);
   resultPixmap.fill(firstPixelColor);
 
   QPainter painter;
   if (painter.begin(&resultPixmap))
   {
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform, true);
     painter.setFont(font);
 
     QRectF rect = resultPixmap.rect();
@@ -617,12 +613,14 @@ void ctkDICOMSeriesItemWidgetPrivate::drawTextWithShadow(QPainter *painter,
                                                          Qt::Alignment alignment,
                                                          const QString &text)
 {
+  Q_Q(ctkDICOMSeriesItemWidget);
+
   QColor textColor(60, 164, 255, 225);
   QGraphicsDropShadowEffect* dropShadowEffect = new QGraphicsDropShadowEffect;
   dropShadowEffect->setXOffset(1);
   dropShadowEffect->setYOffset(1);
   dropShadowEffect->setBlurRadius(1);
-  dropShadowEffect->setColor(Qt::gray);
+  dropShadowEffect->setColor(Qt::darkGray);
   QLabel textLabel;
   textLabel.setObjectName("ctkDrawTextWithShadowQLabel");
   QPalette palette = textLabel.palette();
@@ -633,7 +631,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawTextWithShadow(QPainter *painter,
   textLabel.setText(text);
   QPixmap textPixMap = textLabel.grab();
   QRect rect = textPixMap.rect();
-  qreal scalingFactor = textLabel.devicePixelRatioF();
+  qreal scalingFactor = q->devicePixelRatioF();
   int textWidth = rect.width() / scalingFactor;
   int textHeight = rect.height() / scalingFactor;
 
