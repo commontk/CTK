@@ -73,8 +73,13 @@ public:
   void disconnectFromTop();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
   void createThumbnail(ctkDICOMJobDetail td);
-  void drawModalityThumbnail();
-  void drawThumbnail(const QString& file, int numberOfFrames);
+  QImage drawModalityThumbnail();
+  void drawThumbnail(const QString& dicomFilePath,
+                     const QString& studyInstanceUID,
+                     const QString& seriesInstanceUID,
+                     const QString& sopInstanceUID,
+                     const QString& modality,
+                     int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
                           const QFont &font,
                           int x,
@@ -112,7 +117,6 @@ public:
   int ThumbnailSizePixel;
   int NumberOfDownloads;
   QImage ThumbnailImage;
-  bool isThumbnailDocument;
 
   bool QueryOn;
   bool RetrieveOn;
@@ -142,7 +146,6 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->IsVisible = false;
   this->StopJobs = false;
   this->RaiseJobsPriority = false;
-  this->isThumbnailDocument = false;
   this->ThumbnailSizePixel = 200;
   this->NumberOfDownloads = 0;
 
@@ -383,7 +386,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
                                            this->StudyInstanceUID,
                                            this->SeriesInstanceUID,
                                            this->CentralFrameSOPInstanceUID,
-                                           this->RaiseJobsPriority ? QThread::HighestPriority : QThread::HighPriority,
+                                           this->RaiseJobsPriority ? QThread::HighPriority : QThread::HighPriority,
                                            this->AllowedServers);
       this->RetrieveSeries = true;
       return;
@@ -399,15 +402,9 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
       this->Scheduler->retrieveSeries(this->PatientID,
                                       this->StudyInstanceUID,
                                       this->SeriesInstanceUID,
-                                      this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority,
+                                      this->RaiseJobsPriority ? QThread::HighPriority : QThread::LowPriority,
                                       this->AllowedServers);
     }
-  }
-
-  file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
-  if (file.isEmpty())
-  {
-    return;
   }
 
   if (jobSopInstanceUID.isEmpty() ||
@@ -416,19 +413,24 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
        jobSopInstanceUID == this->CentralFrameSOPInstanceUID) ||
       renderThumbnail)
   {
-    this->drawThumbnail(file, numberOfFrames);
+    this->drawThumbnail(this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID),
+                        this->StudyInstanceUID,
+                        this->SeriesInstanceUID,
+                        this->CentralFrameSOPInstanceUID,
+                        this->Modality,
+                        numberOfFrames);
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
+QImage ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
 {
   Q_Q(ctkDICOMSeriesItemWidget);
 
   if (!this->DicomDatabase)
   {
-    logger.error("drawThumbnail failed, no DICOM Database has been set. \n");
-    return;
+    logger.error("drawModalityThumbnail failed, no DICOM Database has been set. \n");
+    return QImage();
   }
 
   qreal scalingFactor = q->devicePixelRatioF();
@@ -461,16 +463,52 @@ void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
   }
 
   this->SeriesThumbnail->setPixmap(resultPixmap);
+  return resultPixmap.toImage();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int numberOfFrames)
+void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath,
+                                                    const QString& studyInstanceUID,
+                                                    const QString& seriesInstanceUID,
+                                                    const QString& sopInstanceUID,
+                                                    const QString& modality,
+                                                    int numberOfFrames)
 {
   Q_Q(ctkDICOMSeriesItemWidget);
 
   if (!this->DicomDatabase)
   {
     logger.error("drawThumbnail failed, no DICOM Database has been set. \n");
+    return;
+  }
+
+  if (dicomFilePath.isEmpty())
+  {
+    logger.error("drawThumbnail failed, dicomFilePath is empty. \n");
+    return;
+  }
+
+  if (studyInstanceUID.isEmpty())
+  {
+    logger.error("drawThumbnail failed, studyInstanceUID is empty. \n");
+    return;
+  }
+
+  if (seriesInstanceUID.isEmpty())
+  {
+    logger.error("drawThumbnail failed, seriesInstanceUID is empty. \n");
+    return;
+  }
+
+  if (sopInstanceUID.isEmpty())
+  {
+    logger.error("drawThumbnail failed, sopInstanceUID is empty. \n");
+    return;
+  }
+
+  if (modality.isEmpty())
+  {
+    logger.error("drawThumbnail failed, modality is empty. \n");
     return;
   }
 
@@ -482,102 +520,93 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
   QFont font = this->SeriesThumbnail->font();
   font.setBold(true);
   font.setPixelSize(textSize);
-
   QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
-
-  ctkDICOMThumbnailGenerator thumbnailGenerator;
-  thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
-  thumbnailGenerator.setHeight(scaledThumbnailSizePixel);
-  bool thumbnailGenerated = true;
-  bool emptyThumbnailGenerated = false;
-  QPainter painter;
 
   if (this->ThumbnailImage.isNull())
   {
-    if (!thumbnailGenerator.generateThumbnail(file, this->ThumbnailImage))
+    ctkDICOMThumbnailGenerator thumbnailGenerator;
+    thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
+    thumbnailGenerator.setHeight(scaledThumbnailSizePixel);
+
+    QString thumbnailPath = this->DicomDatabase->thumbnailPathForInstance(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
+    if (thumbnailPath.isEmpty())
     {
-      thumbnailGenerated = false;
-      emptyThumbnailGenerated = true;
-      this->isThumbnailDocument = true;
       QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
-      thumbnailGenerator.generateBlankThumbnail(this->ThumbnailImage, backgroundColor);
-      resultPixmap = QPixmap::fromImage(this->ThumbnailImage);
-      if (painter.begin(&resultPixmap))
-      {
-        painter.setRenderHint(QPainter::Antialiasing);
-        QSvgRenderer renderer(QString(":Icons/text_document.svg"));
-        renderer.render(&painter);
-        painter.end();
-      }
+      QVector<int> colorVector = {backgroundColor.red(), backgroundColor.green(), backgroundColor.blue()};
+      this->DicomDatabase->storeThumbnailFile(dicomFilePath, studyInstanceUID, seriesInstanceUID,
+                                              sopInstanceUID, modality, colorVector);
+      thumbnailPath = this->DicomDatabase->thumbnailPathForInstance(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
     }
-  }
 
-  if (thumbnailGenerated)
-  {
-    QColor firstPixelColor = this->ThumbnailImage.pixelColor(0, 0);
-    resultPixmap.fill(firstPixelColor);
-  }
-
-  if (thumbnailGenerated && !this->isThumbnailDocument)
-  {
-    if (painter.begin(&resultPixmap))
+    if (!this->ThumbnailImage.load(thumbnailPath))
     {
-      painter.setRenderHint(QPainter::Antialiasing, true);
-      painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-      painter.setFont(font);
-
-      QRectF rect = resultPixmap.rect();
-      int x = int((rect.width() * 0.5) - (this->ThumbnailImage.rect().width() * 0.5));
-      int y = int((rect.height() * 0.5) - (this->ThumbnailImage.rect().height() * 0.5));
-
-      QPixmap thumbnailPixmap = QPixmap::fromImage(this->ThumbnailImage);
-      painter.drawPixmap(x, y, thumbnailPixmap);
-
-      QString topLeftString = ctkDICOMSeriesItemWidget::tr("Series: %1\n%2").arg(this->SeriesNumber).arg(this->Modality);
-      this->drawTextWithShadow(&painter, font, margin, margin, Qt::AlignTop | Qt::AlignLeft, topLeftString);
-      QString rows = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0010");
-      QString columns = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0011");
-      QString bottomLeftString = rows + "x" + columns + "x" + QString::number(numberOfFrames);
-      this->drawTextWithShadow(&painter, font, margin, rect.height() - margin * 2,
-                               Qt::AlignBottom | Qt::AlignLeft, bottomLeftString);
-      QSvgRenderer renderer;
-
-      if (this->RetrieveFailed)
-      {
-        renderer.load(QString(":Icons/error_red.svg"));
-      }
-      else if (this->IsCloud)
-      {
-        if (this->NumberOfDownloads > 0)
-        {
-          renderer.load(QString(":Icons/downloading.svg"));
-        }
-        else
-        {
-          renderer.load(QString(":Icons/cloud.svg"));
-        }
-      }
-      else if (this->IsVisible)
-      {
-        renderer.load(QString(":Icons/visible.svg"));
-      }
-      else if (this->IsLoaded)
-      {
-        renderer.load(QString(":Icons/loaded.svg"));
-      }
-
-      QPointF topRight = rect.topRight();
-      QRectF bounds(topRight.x() - iconSize - margin, topRight.y() + margin, iconSize, iconSize);
-      renderer.render(&painter, bounds);
-      painter.end();
+      logger.error("drawThumbnail failed, could not load png file. \n");
+      return;
     }
   }
 
-  if ((thumbnailGenerated && !this->isThumbnailDocument) || emptyThumbnailGenerated)
+  QColor firstPixelColor = this->ThumbnailImage.pixelColor(0, 0);
+  resultPixmap.fill(firstPixelColor);
+
+  QPainter painter;
+  if (painter.begin(&resultPixmap))
   {
-    resultPixmap.setDevicePixelRatio(scalingFactor);
-    this->SeriesThumbnail->setPixmap(resultPixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setFont(font);
+
+    QRectF rect = resultPixmap.rect();
+    int x = int((rect.width() * 0.5) - (this->ThumbnailImage.rect().width() * 0.5));
+    int y = int((rect.height() * 0.5) - (this->ThumbnailImage.rect().height() * 0.5));
+
+    QPixmap thumbnailPixmap = QPixmap::fromImage(this->ThumbnailImage);
+    painter.drawPixmap(x, y, thumbnailPixmap);
+
+    QString topLeftString = ctkDICOMSeriesItemWidget::tr("Series: %1\n%2").arg(this->SeriesNumber).arg(this->Modality);
+    if (modality == "SEG")
+    {
+      topLeftString = ctkDICOMSeriesItemWidget::tr("Series: %1").arg(this->SeriesNumber);
+    }
+    this->drawTextWithShadow(&painter, font, margin, margin, Qt::AlignTop | Qt::AlignLeft, topLeftString);
+    QString rows = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0010");
+    QString columns = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0011");
+    QString bottomLeftString = rows + "x" + columns + "x" + QString::number(numberOfFrames);
+    this->drawTextWithShadow(&painter, font, margin, rect.height() - margin * 2,
+                             Qt::AlignBottom | Qt::AlignLeft, bottomLeftString);
+    QSvgRenderer renderer;
+
+    if (this->RetrieveFailed)
+    {
+      renderer.load(QString(":Icons/error_red.svg"));
+    }
+    else if (this->IsCloud)
+    {
+      if (this->NumberOfDownloads > 0)
+      {
+        renderer.load(QString(":Icons/downloading.svg"));
+      }
+      else
+      {
+        renderer.load(QString(":Icons/cloud.svg"));
+      }
+    }
+    else if (this->IsVisible)
+    {
+      renderer.load(QString(":Icons/visible.svg"));
+    }
+    else if (this->IsLoaded)
+    {
+      renderer.load(QString(":Icons/loaded.svg"));
+    }
+
+    QPointF topRight = rect.topRight();
+    QRectF bounds(topRight.x() - iconSize - margin, topRight.y() + margin, iconSize, iconSize);
+    renderer.render(&painter, bounds);
+    painter.end();
   }
+
+  resultPixmap.setDevicePixelRatio(scalingFactor);
+  this->SeriesThumbnail->setPixmap(resultPixmap);
 }
 
 //----------------------------------------------------------------------------
@@ -666,10 +695,12 @@ void ctkDICOMSeriesItemWidgetPrivate::updateThumbnailProgressBar()
     this->SeriesThumbnail->operationProgressBar()->show();
     // change icons
     QString file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
-    if (!file.isEmpty())
-    {
-      this->drawThumbnail(file, numberOfFrames);
-    }
+    this->drawThumbnail(file,
+                        this->StudyInstanceUID,
+                        this->SeriesInstanceUID,
+                        this->CentralFrameSOPInstanceUID,
+                        this->Modality,
+                        numberOfFrames);
   }
 }
 
@@ -703,7 +734,12 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFailed()
   QStringList instancesList = this->DicomDatabase->instancesForSeries(this->SeriesInstanceUID);
   int numberOfFrames = instancesList.count();
 
-  this->drawThumbnail(file, numberOfFrames);
+  this->drawThumbnail(file,
+                      this->StudyInstanceUID,
+                      this->SeriesInstanceUID,
+                      this->CentralFrameSOPInstanceUID,
+                      this->Modality,
+                      numberOfFrames);
 }
 
 //----------------------------------------------------------------------------
@@ -728,13 +764,12 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFinished()
     this->SeriesThumbnail->operationProgressBar()->hide();
   }
 
-  QString file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
-  if (file.isEmpty())
-  {
-    return;
-  }
-
-  this->drawThumbnail(file, numberOfFrames);
+  this->drawThumbnail(this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID),
+                      this->StudyInstanceUID,
+                      this->SeriesInstanceUID,
+                      this->CentralFrameSOPInstanceUID,
+                      this->Modality,
+                      numberOfFrames);
   this->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::Completed);
   this->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/accept.svg"));
 }
@@ -813,6 +848,7 @@ void ctkDICOMSeriesItemWidget::forceRetrieve()
   d->RetrieveFailed = false;
   d->StopJobs = false;
   d->DicomDatabase->removeSeries(d->SeriesInstanceUID, false, false);
+  d->ThumbnailImage = QImage();
   this->generateInstances(true);
 }
 
@@ -897,7 +933,7 @@ void ctkDICOMSeriesItemWidget::generateInstances(bool query, bool retrieve)
     d->Scheduler->queryInstances(d->PatientID,
                                  d->StudyInstanceUID,
                                  d->SeriesInstanceUID,
-                                 d->RaiseJobsPriority ? QThread::HighestPriority : QThread::NormalPriority,
+                                 d->RaiseJobsPriority ? QThread::HighPriority : QThread::NormalPriority,
                                  d->AllowedServers);
   }
 }
@@ -1101,8 +1137,7 @@ void ctkDICOMSeriesItemWidget::onOperationStatusButtonClicked(bool)
                                       QStringList(),
                                       QStringList(d->SeriesInstanceUID));
   }
-  else if (status == ctkThumbnailLabel::Failed ||
-    status == ctkThumbnailLabel::Completed)
+  else if (status > ctkThumbnailLabel::InProgress)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";
@@ -1111,25 +1146,5 @@ void ctkDICOMSeriesItemWidget::onOperationStatusButtonClicked(bool)
     queryJobDetail.StudyInstanceUID = d->StudyInstanceUID;
     queryJobDetail.SeriesInstanceUID = d->SeriesInstanceUID;
     d->Scheduler->runJob(queryJobDetail, d->AllowedServers);
-
-    if (!d->CentralFrameSOPInstanceUID.isEmpty())
-    {
-      ctkDICOMJobDetail retrieveInstanceJobDetail;
-      retrieveInstanceJobDetail.JobClass = "ctkDICOMRetrieveJob";
-      retrieveInstanceJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Instances;
-      retrieveInstanceJobDetail.PatientID = d->PatientID;
-      retrieveInstanceJobDetail.StudyInstanceUID = d->StudyInstanceUID;
-      retrieveInstanceJobDetail.SeriesInstanceUID = d->SeriesInstanceUID;
-      retrieveInstanceJobDetail.SOPInstanceUID = d->CentralFrameSOPInstanceUID;
-      d->Scheduler->runJob(retrieveInstanceJobDetail, d->AllowedServers);
-    }
-
-    ctkDICOMJobDetail retrieveSeriesJobDetail;
-    retrieveSeriesJobDetail.JobClass = "ctkDICOMRetrieveJob";
-    retrieveSeriesJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Series;
-    retrieveSeriesJobDetail.PatientID = d->PatientID;
-    retrieveSeriesJobDetail.StudyInstanceUID = d->StudyInstanceUID;
-    retrieveSeriesJobDetail.SeriesInstanceUID = d->SeriesInstanceUID;
-    d->Scheduler->runJob(retrieveSeriesJobDetail, d->AllowedServers);
   }
 }

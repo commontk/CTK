@@ -208,6 +208,15 @@ public:
   Q_INVOKABLE QString seriesForFile(QString fileName);
   Q_INVOKABLE QString instanceForFile(const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString fileName);
+  Q_INVOKABLE QString thumbnailPathForInstance(const QString& studyInstanceUID,
+                                               const QString& seriesInstanceUID,
+                                               const QString& sopInstanceUID);
+  Q_INVOKABLE bool storeThumbnailFile(const QString& originalFilePath,
+                                      const QString& studyInstanceUID,
+                                      const QString& seriesInstanceUID,
+                                      const QString& sopInstanceUID,
+                                      const QString& modality = "",
+                                      QVector<int> color = QVector<int>{169, 169, 169});
 
   Q_INVOKABLE int patientsCount();
   Q_INVOKABLE int studiesCount();
@@ -263,14 +272,13 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMItem& ctkDataset,
-                              bool storeFile, bool generateThumbnail);
-  void insert ( DcmItem *item,
-                              bool storeFile = true, bool generateThumbnail = true);
-  Q_INVOKABLE void insert ( const QString& filePath,
-                            bool storeFile = true, bool generateThumbnail = true,
-                            bool createHierarchy = true,
-                            const QString& destinationDirectoryName = QString() );
+  Q_INVOKABLE void insert(const ctkDICOMItem& ctkDataset,
+                          bool storeFile, bool generateThumbnail);
+  void insert (DcmItem *item, bool storeFile = true, bool generateThumbnail = true);
+  Q_INVOKABLE void insert (const QString& filePath,
+                           bool storeFile = true, bool generateThumbnail = true,
+                           bool createHierarchy = true,
+                           const QString& destinationDirectoryName = QString());
   Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
   Q_INVOKABLE void insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
 

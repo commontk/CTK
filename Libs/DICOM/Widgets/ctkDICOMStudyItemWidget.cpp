@@ -776,12 +776,13 @@ void ctkDICOMStudyItemWidget::generateSeries(bool query, bool retrieve)
   d->QueryOn = query;
   d->RetrieveOn = retrieve;
   d->createSeries();
-  if (query && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
+  if (query && d->Scheduler &&
+      d->Scheduler->queryRetrieveServersCount() > 0)
   {
     d->Scheduler->querySeries(d->PatientID,
-                             d->StudyInstanceUID,
-                             QThread::NormalPriority,
-                             d->AllowedServers);
+                              d->StudyInstanceUID,
+                              QThread::NormalPriority,
+                              d->AllowedServers);
   }
 }
 
@@ -922,8 +923,7 @@ void ctkDICOMStudyItemWidget::onOperationStatusButtonClicked(bool)
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(),
                                       QStringList(d->StudyInstanceUID));
   }
-  else if (status == ctkDICOMStudyItemWidget::Failed ||
-    status == ctkDICOMStudyItemWidget::Completed)
+  else if (status > ctkDICOMStudyItemWidget::InProgress)
   {
     ctkDICOMJobDetail queryJobDetail;
     queryJobDetail.JobClass = "ctkDICOMQueryJob";

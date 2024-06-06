@@ -72,10 +72,6 @@ public:
   /// Returns false in case of an error
   bool indexingStatusForFile(const QString& filePath, const QString& sopInstanceUID, bool& datasetInDatabase, bool& datasetUpToDate, QString& databaseFilename);
 
-  /// Retrieve thumbnail from file and store in database folder.
-  bool storeThumbnailFile(const QString& originalFilePath,
-    const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID);
-
   /// Get basic UIDs for a data set, return true if the data set has all the required tags
   bool uidsForDataSet(const ctkDICOMItem& dataset, QString& patientsName, QString& patientID, QString& studyInstanceUID, QString& seriesInstanceUID);
   bool uidsForDataSet(QString& patientsName, QString& patientID, QString& studyInstanceUID);

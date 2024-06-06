@@ -891,7 +891,8 @@ void ctkDICOMPatientItemWidget::generateStudies(bool query, bool retrieve)
   d->QueryOn = query;
   d->RetrieveOn = retrieve;
   d->createStudies();
-  if (query && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
+  if (query && d->Scheduler &&
+      d->Scheduler->queryRetrieveServersCount() > 0)
   {
     d->Scheduler->queryStudies(d->PatientID,
                                QThread::NormalPriority,
