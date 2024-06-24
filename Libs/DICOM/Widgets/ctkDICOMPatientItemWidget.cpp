@@ -367,7 +367,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     QString studyDescription = this->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
     if (studyDescription.isEmpty())
     {
-      studyDescription = q->tr("UNDEFINED");
+      studyDescription = ctkDICOMPatientItemWidget::tr("UNDEFINED");
     }
 
     if ((!this->FilteringStudyDescription.isEmpty() &&
@@ -773,7 +773,7 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   QString studyDescription = d->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
   if (studyDescription.isEmpty())
   {
-    studyDescription = this->tr("UNDEFINED");
+    studyDescription = tr("UNDEFINED");
   }
   ctkDICOMStudyItemWidget* studyItemWidget =
     new ctkDICOMStudyItemWidget(this, d->VisualDICOMBrowser.data());
@@ -784,15 +784,15 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   QString fullDescription = tr("Study");
   if (!studyID.isEmpty())
   {
-    fullDescription += tr(" ID %1").arg(studyID);
+    fullDescription += QString("Study ID %1").arg(studyID);
   }
   if (!formattedStudyDate.isEmpty())
   {
-    fullDescription += tr("  -  %1").arg(formattedStudyDate);
+    fullDescription += QString("  -  %1").arg(formattedStudyDate);
   }
   if (!studyDescription.isEmpty())
   {
-    fullDescription += tr("  -  %1").arg(studyDescription);
+    fullDescription += QString("  -  %1").arg(studyDescription);
   }
 
   studyItemWidget->setDescription(fullDescription);

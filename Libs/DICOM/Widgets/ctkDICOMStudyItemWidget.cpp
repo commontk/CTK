@@ -295,7 +295,7 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
     QString seriesDescription = this->DicomDatabase->fieldForSeries("SeriesDescription", seriesItem);
     if (seriesDescription.isEmpty())
     {
-      seriesDescription = q->tr("UNDEFINED");
+      seriesDescription = ctkDICOMStudyItemWidget::tr("UNDEFINED");
     }
     ctkDICOMSeriesItemWidget* seriesItemWidget =
       q->addSeriesItemWidget(seriesIndex, seriesItem, seriesInstanceUID, modality, seriesDescription);
