@@ -94,6 +94,7 @@ public:
   };
   void setJobType(JobType jobType);
   JobType jobType() const;
+  QString jobTypeString() const;
   ///@}
 
   ///@{

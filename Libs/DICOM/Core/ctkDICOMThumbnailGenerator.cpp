@@ -135,7 +135,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: %1").arg(DicomImage::getString(result));
     DCMTK_LOG4CPLUS_WARN_STR(rootLogThumbnailGenerator, warn.toStdString().c_str());
     return false;
   }
@@ -184,7 +184,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   {
     if (!image.loadFromData( buffer ))
     {
-      qCritical() << Q_FUNC_INFO << "QImage couldn't created";
+      DCMTK_LOG4CPLUS_ERROR_STR(rootLogThumbnailGenerator, "QImage couldn't created");
       return false;
     }
   }
@@ -203,6 +203,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
     return image.save(thumbnailPath, "PNG");
   }
 
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator, "Thumbnail generation failed, using a document icon instead.");
   this->generateDocumentThumbnail(thumbnailPath, backgroundColor);
   return false;
 }

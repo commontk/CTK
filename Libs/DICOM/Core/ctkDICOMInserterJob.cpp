@@ -45,24 +45,27 @@ QString ctkDICOMInserterJob::loggerReport(const QString& status)
 {
   QString fullLogMsg;
   QString logMsg;
-  if (status == "started")
+
+  QString uids;
+  foreach (QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet, this->JobResponseSets)
   {
-    fullLogMsg = QString("ctkDICOMInserterJob: insert job %1. "
-                         "Number of jobResponseSet to process: %2\n")
-                        .arg(status)
-                        .arg(this->JobResponseSets.count());
-    logMsg = QString("Insert job %1. "
-                     "Number of jobResponseSet to process: %2\n")
-                    .arg(status)
-                    .arg(this->JobResponseSets.count());
+    uids += "job type : " + JobResponseSet->jobTypeString() + ": \n" ;
+    uids += JobResponseSet->datasets().keys().join(", ") + ": \n";
   }
-  else
-  {
-    fullLogMsg = QString("ctkDICOMInserterJob: insert job %1.\n")
-                        .arg(status);
-    logMsg = QString("insert job %1. ")
-                    .arg(status);
-  }
+
+  fullLogMsg = QString("ctkDICOMInserterJob: insert job %1. "
+                       "Number of jobResponseSet processing: %2.\n "
+                       "uids: \n  %3\n")
+                      .arg(status)
+                      .arg(this->JobResponseSets.count())
+                      .arg(uids);
+  logMsg = QString("Insert job %1. "
+                   "Number of jobResponseSet processing: %2.\n "
+                   "uids: \n %3\n")
+                  .arg(status)
+                  .arg(this->JobResponseSets.count())
+                  .arg(uids);
+
   QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
   QString logHeader = currentDateTime + " INFO: ";
   this->Log += logHeader;

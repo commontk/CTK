@@ -22,7 +22,7 @@
 #define __ctkJobSchedulerPrivate_h
 
 // Qt includes
-#include <QMutex>
+#include <QReadWriteLock>
 #include <QSharedPointer>
 #include <QTimer>
 class QThreadPool;
@@ -61,7 +61,7 @@ public:
   virtual void queueJobsInThreadPool();
   virtual void clearBactchedJobsLists();
 
-  QMutex QueueMutex;
+  QReadWriteLock QueueLock;
 
   int RetryDelay{100};
   int MaximumNumberOfRetry{3};
@@ -71,6 +71,7 @@ public:
   QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
   QMap<QString, QMap<QString, QMetaObject::Connection>> JobsConnections;
   QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
+  QMap<QString, int> RunningJobsByJobClass;
   QList<QVariant> BatchedJobsStarted;
   QList<QVariant> BatchedJobsUserStopped;
   QList<QVariant> BatchedJobsFinished;

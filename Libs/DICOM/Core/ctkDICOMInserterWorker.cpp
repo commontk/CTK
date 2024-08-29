@@ -119,7 +119,11 @@ void ctkDICOMInserterWorker::run()
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   QList<ctkDICOMJobResponseSet*> jobResponseSets = inserterJob->jobResponseSets();
-  d->Inserter->addJobResponseSets(jobResponseSets);
+  if (!d->Inserter->addJobResponseSets(jobResponseSets))
+  {
+    inserterJob->setStatus(ctkAbstractJob::JobStatus::Failed);
+    return;
+  }
 
   if (d->Inserter->wasCanceled())
   {

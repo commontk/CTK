@@ -195,6 +195,11 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
 
   this->IsGUIUpdating = true;
 
+  QSettings settings;
+  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+  bool queryEnabled = this->QueryOn && queryRetrieveEnabled;
+  bool retrieveEnabled = this->RetrieveOn && queryRetrieveEnabled;
+
   // Sort by SeriesNumber
   QMap<int, QString> seriesMap;
   this->FilteredSeriesCount = 0;
@@ -206,7 +211,7 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
     {
       this->FilteredSeriesCount++;
       seriesIndex++;
-      seriesItemWidget->generateInstances(this->QueryOn, this->RetrieveOn);
+      seriesItemWidget->generateInstances(queryEnabled, retrieveEnabled);
       continue;
     }
 

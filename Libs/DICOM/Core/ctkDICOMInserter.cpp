@@ -107,15 +107,14 @@ bool ctkDICOMInserter::addJobResponseSets(const QList<ctkDICOMJobResponseSet*>& 
   // to determine if any other process is currently writing (for example, a UI element writing the patient's name into the database).
   // Therefore, we propose the inclusion of a static variable in ctkDICOMDatabase that indicates ongoing write operations
   // for each DatabaseFilename, except in cases where it is an in-memory database.
-  database.insert(jobResponseSets);
+  ctkDICOMDatabase::InsertResult result = database.insert(jobResponseSets);
   database.updateDisplayedFields();
-
   database.closeDatabase();
 
   emit updatingDatabase(false);
   emit done();
 
-  return true;
+  return result != ctkDICOMDatabase::InsertResult::Failed ? true : false;
 }
 
 //----------------------------------------------------------------------------

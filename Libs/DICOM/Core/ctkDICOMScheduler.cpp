@@ -179,45 +179,6 @@ ctkDICOMServer* ctkDICOMSchedulerPrivate::getServerFromProxyServersByConnectionN
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMSchedulerPrivate::isJobDuplicate(ctkDICOMJob *referenceJob)
-{
-  bool duplicate = false;
-  {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&this->QueueMutex);
-    foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
-    {
-      if (!job)
-      {
-        continue;
-      }
-
-      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-      if (!dicomJob)
-      {
-        logger.debug("ctkDICOMScheduler::getJobsByDICOMUIDs: unexpected type of job.");
-        continue;
-      }
-
-      if (dicomJob->className() == referenceJob->className() &&
-        dicomJob->patientID() == referenceJob->patientID() &&
-        dicomJob->studyInstanceUID() == referenceJob->studyInstanceUID() &&
-        dicomJob->seriesInstanceUID() == referenceJob->seriesInstanceUID() &&
-        dicomJob->sopInstanceUID() == referenceJob->sopInstanceUID() &&
-        dicomJob->dicomLevel() == referenceJob->dicomLevel() &&
-        dicomJob->status() < ctkAbstractJob::JobStatus::UserStopped)
-      {
-        duplicate = true;
-        break;
-      }
-    }
-  }
-
-  return duplicate;
-}
-
-//------------------------------------------------------------------------------
 // ctkDICOMScheduler methods
 
 //------------------------------------------------------------------------------
@@ -531,10 +492,7 @@ void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
   job->setMaximumNumberOfRetry(0);
   job->setPriority(priority);
 
-  if (!d->isJobDuplicate(job.data()))
-  {
-    d->insertJob(job);
-  }
+  d->insertJob(job);
 }
 
 //----------------------------------------------------------------------------
@@ -846,9 +804,9 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
   }
 
   {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&d->QueueMutex);
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
     bool wait = true;
     while (wait)
     {
@@ -921,9 +879,9 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
   }
 
   {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&d->QueueMutex);
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
       if (!job)
@@ -982,9 +940,9 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
 
   QStringList jobsUIDs;
   {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&d->QueueMutex);
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
     // Stops jobs without a worker (in waiting, still in main thread)
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
@@ -1025,9 +983,9 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
   }
 
   {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&d->QueueMutex);
+    // The QWriteLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QWriteLockers within the scheduler's methods.
+    QWriteLocker locker(&d->QueueLock);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
       if (job->isPersistent())
@@ -1073,9 +1031,9 @@ ctkDICOMStorageListenerJob* ctkDICOMScheduler::listenerJob()
   ctkDICOMStorageListenerJob* listenerJobRaw = nullptr;
 
   {
-    // The QMutexLocker is enclosed within brackets to restrict its scope and
-    // prevent conflicts with other QMutexLockers within the scheduler's methods.
-    QMutexLocker locker(&d->QueueMutex);
+    // The QWriteLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QWriteLockers within the scheduler's methods.
+    QWriteLocker locker(&d->QueueLock);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
       QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =

@@ -114,6 +114,7 @@ public:
   bool RetrieveSeries;
   bool IsLoaded;
   bool IsVisible;
+  bool ThumbnailIsGenerating;
   int ThumbnailSizePixel;
   int NumberOfDownloads;
   QImage ThumbnailImage;
@@ -136,6 +137,7 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->IsVisible = false;
   this->StopJobs = false;
   this->RaiseJobsPriority = false;
+  this->ThumbnailIsGenerating = false;
   this->ThumbnailSizePixel = 200;
   this->NumberOfDownloads = 0;
 
@@ -465,13 +467,23 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath
   if (this->ThumbnailImage.isNull())
   {
     QString thumbnailPath = this->DicomDatabase->thumbnailPathForInstance(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
-    if (thumbnailPath.isEmpty())
+    if (thumbnailPath.isEmpty() && !this->ThumbnailIsGenerating)
     {
       QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
+      this->ThumbnailIsGenerating = true;
       this->Scheduler->generateThumbnail(dicomFilePath, patientID, studyInstanceUID, seriesInstanceUID,
                                          sopInstanceUID, modality, backgroundColor,
                                          this->RaiseJobsPriority ? QThread::HighestPriority : QThread::HighPriority);
       return;
+    }
+
+    if (thumbnailPath.isEmpty())
+    {
+      return;
+    }
+    else
+    {
+      this->ThumbnailIsGenerating = false;
     }
 
     if (!this->ThumbnailImage.load(thumbnailPath))
@@ -953,6 +965,7 @@ void ctkDICOMSeriesItemWidget::onJobStarted(const QVariant &data)
     if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
     {
       d->ReferenceInstanceInserterJobUID = "";
+      d->ThumbnailIsGenerating = false;
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
