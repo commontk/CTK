@@ -50,7 +50,7 @@ public:
   virtual ~ctkDICOMInserterJob();
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const override;
+  Q_INVOKABLE QString loggerReport(const QString& status) override;
 
   ///@{
   /// Database Filename

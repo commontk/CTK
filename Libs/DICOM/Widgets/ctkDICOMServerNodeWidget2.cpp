@@ -405,6 +405,8 @@ void ctkDICOMServerNodeWidget2Private::disconnectScheduler()
                       q, SLOT(onJobFinished(QList<QVariant>)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
                       q, SLOT(onJobFailed(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(serverModified(QString)),
+                      q, SLOT(updateGUIFromServerNodes()));
 }
 
 //----------------------------------------------------------------------------
@@ -424,6 +426,8 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
                    q, SLOT(onJobFinished(QList<QVariant>)));
   QObject::connect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
                    q, SLOT(onJobFailed(QList<QVariant>)));
+  QObject::connect(this->Scheduler.data(), SIGNAL(serverModified(QString)),
+                   q, SLOT(updateGUIFromServerNodes()));
 }
 
 //----------------------------------------------------------------------------
@@ -724,7 +728,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::StorageColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  newItem->setCheckState(server->storageEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+  newItem->setCheckState(server->trustedEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TrustedColumn, newItem);
 
   newItem = new QTableWidgetItem(server->callingAETitle());
@@ -1278,6 +1282,34 @@ void ctkDICOMServerNodeWidget2::updateGUIState()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget2::updateGUIFromServerNodes()
+{
+  Q_D(ctkDICOMServerNodeWidget2);
+
+  d->NodeTable->clearContents();
+  d->NodeTable->setRowCount(0);
+  for (int serverIndex = 0; serverIndex < d->Scheduler->serversCount(); ++serverIndex)
+  {
+    ctkDICOMServer* server = d->Scheduler->getNthServer(serverIndex);
+    if (!server)
+    {
+      continue;
+    }
+
+    d->addServerNode(server);
+  }
+
+  d->SettingsModified = false;
+  this->updateGUIState();
+  QModelIndexList selectedIndexes = d->NodeTable->selectionModel()->selectedIndexes();
+  int horizontalScrollBarValue = d->NodeTable->horizontalScrollBar()->value();
+  int verticalScrollBarValue = d->NodeTable->verticalScrollBar()->value();
+  d->restoreFocus(selectedIndexes, horizontalScrollBarValue, verticalScrollBarValue, false);
+
+  emit serversSettingsChanged();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMServerNodeWidget2::onItemSelectionChanged()
 {
   this->updateGUIState();
@@ -1466,7 +1498,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     // a dummy example
     QMap<QString, QVariant> defaultServerNode;
     defaultServerNode["Name"] = QString("ExampleHost");
-    defaultServerNode["Verification"] = tr("unknown");
+    defaultServerNode["Verification"] = ctkDICOMServerNodeWidget2::tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
@@ -1482,7 +1514,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     // the uk example - see http://www.dicomserver.co.uk/
     // and http://www.medicalconnections.co.uk/
     defaultServerNode["Name"] = QString("MedicalConnections");
-    defaultServerNode["Verification"] = tr("unknown");
+    defaultServerNode["Verification"] = ctkDICOMServerNodeWidget2::tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
@@ -1663,17 +1695,18 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::getServer(const QString& connectionNa
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::addServer(ctkDICOMServer* server)
+int ctkDICOMServerNodeWidget2::addServer(ctkDICOMServer* server)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
     logger.error("addServer failed, no task pool has been set. \n");
-    return;
+    return -1;
   }
 
-  d->addServerNode(server);
+  int row = d->addServerNode(server);
   this->saveSettings();
+  return row;
 }
 
 //----------------------------------------------------------------------------
@@ -1754,6 +1787,6 @@ void ctkDICOMServerNodeWidget2::stopAllJobs()
   }
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  d->Scheduler->stopAllJobs(true);
+  d->Scheduler->stopAllJobs(true, false);
   QApplication::restoreOverrideCursor();
 }

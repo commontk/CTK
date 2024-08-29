@@ -30,7 +30,7 @@
 #include "ctkDICOMEchoWorker.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMRetrieveJob" );
+static ctkLogger logger ( "org.commontk.dicom.DICOMEchoJob" );
 
 //------------------------------------------------------------------------------
 // ctkDICOMEchoJobPrivate methods
@@ -85,10 +85,17 @@ void ctkDICOMEchoJob::setServer(const ctkDICOMServer& server)
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMEchoJob::loggerReport(const QString& status) const
+QString ctkDICOMEchoJob::loggerReport(const QString& status)
 {
-  return QString("ctkDICOMEchoJob: echo job %1.\n")
-      .arg(status);
+  QString fullLogMsg = QString("ctkDICOMEchoJob: echo job %1.\n")
+                          .arg(status);
+  QString logMsg = QString("Echo job %1.\n")
+                          .arg(status);
+  QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+  QString logHeader = currentDateTime + " INFO: ";
+  this->LoggedText += logHeader;
+  this->LoggedText += logMsg;
+  return fullLogMsg;
 }
 //------------------------------------------------------------------------------
 ctkAbstractJob* ctkDICOMEchoJob::clone() const

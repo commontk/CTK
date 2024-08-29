@@ -184,3 +184,9 @@ QVariant ctkDICOMJob::toVariant()
 {
   return QVariant::fromValue(ctkDICOMJobDetail(*this));
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMJob::freeUsedResources()
+{
+  this->JobResponseSets.clear();
+}

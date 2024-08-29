@@ -29,6 +29,7 @@
 #include <QWidget>
 
 // ctkDICOMCore includes
+#include "ctkDICOMJobResponseSet.h"
 class ctkDICOMDatabase;
 class ctkDICOMScheduler;
 
@@ -57,11 +58,11 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMSeriesItemWidget(QWidget* top = nullptr,
-                                    QWidget* parent = nullptr);
+  explicit ctkDICOMSeriesItemWidget(QWidget* parent = nullptr);
   virtual ~ctkDICOMSeriesItemWidget();
 
   ///@{
@@ -178,6 +179,9 @@ public:
   /// Set the Dicom Database as a shared pointer
   /// (not Python-wrappable).
   void setDicomDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
+
+  /// Last stopped job information operated by this widget
+  Q_INVOKABLE QString stoppedJobUID() const;
 
 public Q_SLOTS:
   void generateInstances(bool query = true, bool retrieve = true);

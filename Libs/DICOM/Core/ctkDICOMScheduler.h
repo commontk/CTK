@@ -113,6 +113,16 @@ public:
   Q_INVOKABLE void echo(ctkDICOMServer& server,
                         QThread::Priority priority = QThread::LowPriority);
 
+  /// Generate thumbnail and save it as png on local disk
+  Q_INVOKABLE void generateThumbnail(const QString &originalFilePath,
+                                     const QString &patientID,
+                                     const QString &studyInstanceUID,
+                                     const QString &seriesInstanceUID,
+                                     const QString &sopInstanceUID,
+                                     const QString& modality,
+                                     QColor backgroundColor,
+                                     QThread::Priority priority = QThread::HighPriority);
+
   ///@{
   /// Insert results from a job
   QString insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,
@@ -186,9 +196,6 @@ public:
                                                                        const QStringList& studyInstanceUIDs = {},
                                                                        const QStringList& seriesInstanceUIDs = {},
                                                                        const QStringList& sopInstanceUIDs = {});
-
-  Q_INVOKABLE void runJob(const ctkDICOMJobDetail& jobDetails, const QStringList& allowedSeversForPatient = QStringList());
-  Q_INVOKABLE void runJobs(const QMap<QString, ctkDICOMJobDetail>& jobDetails);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
   ///@}
@@ -212,6 +219,10 @@ public Q_SLOTS:
   virtual void onJobFinished(ctkAbstractJob* job);
   virtual void onJobAttemptFailed(ctkAbstractJob* job);
   virtual void onJobFailed(ctkAbstractJob* job);
+
+Q_SIGNALS:
+  /// Emitted when a server is modified
+  void serverModified(const QString&);
 
 protected:
   ctkDICOMScheduler(ctkDICOMSchedulerPrivate* pimpl, QObject* parent);

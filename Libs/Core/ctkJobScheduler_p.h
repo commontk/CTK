@@ -44,9 +44,6 @@ class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject
 protected:
   ctkJobScheduler* const q_ptr;
 
-Q_SIGNALS:
-  void queueJobsInThreadPool();
-
 public Q_SLOTS:
   virtual void onQueueJobsInThreadPool();
 
@@ -58,9 +55,10 @@ public:
   virtual void init();
 
   virtual bool insertJob(QSharedPointer<ctkAbstractJob> job);
+  virtual bool cleanJob(const QString& jobUID);
+  virtual void cleanJobs(const QStringList& jobUIDs);
   virtual bool removeJob(const QString& jobUID);
   virtual void removeJobs(const QStringList& jobUIDs);
-  virtual void removeAllJobs();
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
   QString generateUniqueJobUID();
   void clearBactchedJobsLists();

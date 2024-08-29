@@ -152,6 +152,10 @@ public:
   /// Create a copy of this Server.
   Q_INVOKABLE ctkDICOMServer* clone() const;
 
+Q_SIGNALS:
+  /// Emitted when a server is modified
+  void serverModified(const QString&);
+
 protected:
   QScopedPointer<ctkDICOMServerPrivate> d_ptr;
 

@@ -73,12 +73,19 @@ CTK_SET_CPP(ctkDICOMStorageListenerJob, const QString&, setAETitle, AETitle);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, QString, AETitle, AETitle)
 
 //----------------------------------------------------------------------------
-QString ctkDICOMStorageListenerJob::loggerReport(const QString& status) const
+QString ctkDICOMStorageListenerJob::loggerReport(const QString& status)
 {
-  return QString("ctkDICOMStorageListenerJob: listener job %1.\n"
-                 "JobUID: %2\n")
-                 .arg(status)
-                 .arg(this->jobUID());
+  QString fullLogMsg = QString("ctkDICOMStorageListenerJob: listener job %1.\n"
+                               "JobUID: %2\n")
+                               .arg(status)
+                               .arg(this->jobUID());
+  QString logMsg = QString("Listener job %1.\n")
+                          .arg(status);
+  QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+  QString logHeader = currentDateTime + " INFO: ";
+  this->LoggedText += logHeader;
+  this->LoggedText += logMsg;
+  return fullLogMsg;
 }
 //------------------------------------------------------------------------------
 ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const

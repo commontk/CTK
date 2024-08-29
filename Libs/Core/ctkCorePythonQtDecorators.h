@@ -260,6 +260,51 @@ public Q_SLOTS:
   {
     return td->JobUID;
   }
+    void setCreationDateTime(ctkJobDetail* td, QString creationDateTime)
+  {
+    td->CreationDateTime = creationDateTime;
+  }
+
+  QString creationDateTime(ctkJobDetail* td)
+  {
+    return td->CreationDateTime;
+  }
+
+  void setStartDateTime(ctkJobDetail* td, QString startDateTime)
+  {
+    td->StartDateTime = startDateTime;
+  }
+  QString startDateTime(ctkJobDetail* td)
+  {
+    return td->StartDateTime;
+  }
+
+  void setCompletionDateTime(ctkJobDetail* td, QString completionDateTime)
+  {
+    td->CompletionDateTime = completionDateTime;
+  }
+  QString completionDateTime(ctkJobDetail* td)
+  {
+    return td->CompletionDateTime;
+  }
+
+  void setRunningThreadID(ctkJobDetail* td, QString runningThreadID)
+  {
+    td->RunningThreadID = runningThreadID;
+  }
+  QString runningThreadID(ctkJobDetail* td)
+  {
+    return td->RunningThreadID;
+  }
+
+  void setLogging(ctkJobDetail* td, QString logging)
+  {
+    td->Logging = logging;
+  }
+  QString logging(ctkJobDetail* td)
+  {
+    return td->Logging;
+  }
 };
 
 //-----------------------------------------------------------------------------

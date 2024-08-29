@@ -19,7 +19,6 @@
 =========================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QMutex>
 #include <QSettings>
 #include <QString>
@@ -27,7 +26,6 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMEcho.h"
-#include "ctkLogger.h"
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcuid.h>
@@ -35,7 +33,7 @@
 #include <dcmtk/ofstd/ofstd.h> /* for class OFStandard */
 #include <dcmtk/ofstd/ofstring.h>
 
-static ctkLogger logger("org.commontk.dicom.DICOMEcho");
+dcmtk::log4cplus::Logger rootLogEcho = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
 class ctkDICOMEchoPrivate
@@ -75,7 +73,6 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
   this->JobUID = "";
   this->Port = 80;
 
-  logger.debug("Setting Transfer Syntaxes");
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back(UID_LittleEndianExplicitTransferSyntax);
   transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
@@ -191,15 +188,18 @@ bool ctkDICOMEcho::echo()
 
   if (!d->SCU->initNetwork().good())
   {
-    logger.error("Error initializing the network");
+    QString error = ctkDICOMEcho::tr("Error initializing the network");
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogEcho, error.toStdString().c_str());
     return false;
   }
-  logger.debug("Negotiating Association");
+  QString debug = ctkDICOMEcho::tr("Negotiating Association");
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogEcho, debug.toStdString().c_str());
 
   OFCondition result = d->SCU->negotiateAssociation();
   if (result.bad())
   {
-    logger.error("Error negotiating the association: " + QString(result.text()));
+    QString error = ctkDICOMEcho::tr("Error negotiating the association: ") + QString(result.text());
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogEcho, error.toStdString().c_str());
     return false;
   }
 
@@ -208,17 +208,20 @@ bool ctkDICOMEcho::echo()
     "" /* don't care about transfer syntax */);
   if (d->PresentationContext == 0)
   {
-    logger.error ( "ECHO Request failed: No valid verification Presentation Context available" );
+    QString error = ctkDICOMEcho::tr("ECHO Request failed: No valid verification Presentation Context available");
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogEcho, error.toStdString().c_str());
     d->releaseAssociation();
     return false;
   }
 
-  logger.info("Seding Echo");
+  QString info = ctkDICOMEcho::tr("Seding Echo");
+  DCMTK_LOG4CPLUS_INFO_STR(rootLogEcho, info.toStdString().c_str());
   // Issue ECHO request and let scu find presentation context itself (0)
   OFCondition status = d->SCU->sendECHORequest(d->PresentationContext);
   if (!status.good())
   {
-    logger.error("Echo failed");
+    QString error = ctkDICOMEcho::tr("Echo failed");
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogEcho, error.toStdString().c_str());
     d->releaseAssociation();
     return false;
   }

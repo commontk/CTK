@@ -24,7 +24,7 @@
 
 // Qt includes
 #include <QObject>
-#include <QVector>
+#include <QColor>
 
 #include "ctkDICOMCoreExport.h"
 
@@ -45,9 +45,9 @@ public:
   virtual ~ctkDICOMAbstractThumbnailGenerator();
 
   virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path,
-                                 QVector<int> color = QVector<int>{169, 169, 169}) = 0;
+                                 QColor backgroundColor = Qt::darkGray) = 0;
   virtual void generateDocumentThumbnail(const QString &thumbnailPath,
-                                         QVector<int> color = QVector<int>{169, 169, 169}) = 0;
+                                         QColor backgroundColor = Qt::darkGray) = 0;
 
 protected:
   QScopedPointer<ctkDICOMAbstractThumbnailGeneratorPrivate> d_ptr;

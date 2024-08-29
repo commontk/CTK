@@ -24,13 +24,13 @@
 // Qt includes
 #include <QDebug>
 
+// ctkCore includes
+#include <ctkPimpl.h>
+
 // ctkDICOMCore includes
-#include "ctkLogger.h"
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMInserter.h"
 #include "ctkDICOMJobResponseSet.h"
-
-static ctkLogger logger ("org.commontk.dicom.DICOMInserter");
 
 //------------------------------------------------------------------------------
 class ctkDICOMInserterPrivate
@@ -83,7 +83,7 @@ bool ctkDICOMInserter::wasCanceled()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMInserter::addJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets)
+bool ctkDICOMInserter::addJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   Q_D(const ctkDICOMInserter);
   if (d->Canceled)

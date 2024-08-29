@@ -64,9 +64,7 @@ public:
   ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItemWidget& obj);
   ~ctkDICOMStudyItemWidgetPrivate();
 
-  void init(QWidget* top, QWidget* parent);
-  void connectToTop();
-  void disconnectFromTop();
+  void init(QWidget* parent);
   void updateColumnsWidths();
   void createSeries();
   int getScreenWidth();
@@ -78,20 +76,20 @@ public:
 
   QString FilteringSeriesDescription;
   QStringList FilteringModalities;
-  QStringList AllowedServers;
-  ctkDICOMStudyItemWidget::OperationStatus Status;
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
-  QSharedPointer<QWidget> PatientWidget;
   QSharedPointer<QWidget> VisualDICOMBrowser;
-  QMap<QString, QMetaObject::Connection> Connections;
 
   ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
   int ThumbnailSizePixel;
   QString PatientID;
   QString StudyInstanceUID;
   QString StudyItem;
+
+  QStringList AllowedServers;
+  ctkDICOMStudyItemWidget::OperationStatus Status;
+  QString StoppedJobUID;
 
   bool IsGUIUpdating;
   bool QueryOn;
@@ -115,6 +113,7 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
 
   this->AllowedServers = QStringList();
   this->Status = ctkDICOMStudyItemWidget::NoOperation;
+  this->StoppedJobUID = "";
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
@@ -129,7 +128,6 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
 //----------------------------------------------------------------------------
 ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
 {
-  this->disconnectFromTop();
   for (int row = 0; row < this->SeriesListTableWidget->rowCount(); row++)
   {
     for (int column = 0; column < this->SeriesListTableWidget->columnCount(); column++)
@@ -148,13 +146,11 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::init(QWidget* top, QWidget* parent)
+void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parent)
 {
   Q_Q(ctkDICOMStudyItemWidget);
   this->setupUi(q);
 
-  this->PatientWidget = QSharedPointer<QWidget>(top, skipDelete);
-  this->connectToTop();
   this->VisualDICOMBrowser = QSharedPointer<QWidget>(parent, skipDelete);
 
   this->StudyDescriptionTextBrowser->hide();
@@ -168,50 +164,6 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* top, QWidget* parent)
                    q, SLOT(onStudySelectionClicked(bool)));
   QObject::connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
                    q, SLOT(onOperationStatusButtonClicked(bool)));
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::connectToTop()
-{
-  Q_Q(ctkDICOMStudyItemWidget);
-  if (!this->PatientWidget)
-  {
-    return;
-  }
-
-  QMetaObject::Connection progressConnection =
-    QObject::connect(this->PatientWidget.data(), SIGNAL(progressJobDetail(QVariant)),
-                   q, SLOT(updateGUIFromScheduler(QVariant)));
-  QMetaObject::Connection startedConnection =
-    QObject::connect(this->PatientWidget.data(), SIGNAL(jobStarted(QVariant)),
-                     q, SLOT(onJobStarted(QVariant)));
-  QMetaObject::Connection userStoppedConnection =
-    QObject::connect(this->PatientWidget.data(), SIGNAL(jobUserStopped(QVariant)),
-                   q, SLOT(onJobUserStopped(QVariant)));
-  QMetaObject::Connection failedConnection =
-    QObject::connect(this->PatientWidget.data(), SIGNAL(jobFailed(QVariant)),
-                     q, SLOT(onJobFailed(QVariant)));
-  QMetaObject::Connection finishedConnection =
-    QObject::connect(this->PatientWidget.data(), SIGNAL(jobFinished(QVariant)),
-                     q, SLOT(onJobFinished(QVariant)));
-  this->Connections =
-  {
-    {"progress", progressConnection},
-    {"started", startedConnection},
-    {"userStopped", userStoppedConnection},
-    {"finished", finishedConnection},
-    {"failed", failedConnection}
-  };
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::disconnectFromTop()
-{
-  QObject::disconnect(this->Connections.value("progress"));
-  QObject::disconnect(this->Connections.value("started"));
-  QObject::disconnect(this->Connections.value("userStopped"));
-  QObject::disconnect(this->Connections.value("finished"));
-  QObject::disconnect(this->Connections.value("failed"));
 }
 
 //------------------------------------------------------------------------------
@@ -452,12 +404,12 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdd
 // ctkDICOMStudyItemWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(QWidget* top, QWidget* parent)
+ctkDICOMStudyItemWidget::ctkDICOMStudyItemWidget(QWidget* parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMStudyItemWidgetPrivate(*this))
 {
   Q_D(ctkDICOMStudyItemWidget);
-  d->init(top, parent);
+  d->init(parent);
 }
 
 //----------------------------------------------------------------------------
@@ -483,7 +435,7 @@ CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, filteringSeriesDescription, Filter
 CTK_SET_CPP(ctkDICOMStudyItemWidget, const QStringList&, setFilteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QStringList, filteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, int, filteredSeriesCount, FilteredSeriesCount);
-
+CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, stoppedJobUID, StoppedJobUID);
 
 //----------------------------------------------------------------------------
 void ctkDICOMStudyItemWidget::setTitle(const QString& title)
@@ -698,7 +650,7 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidget::addSeriesItemWidget(int table
   }
 
   QString seriesNumber = d->DicomDatabase->fieldForSeries("SeriesNumber", seriesItem);
-  ctkDICOMSeriesItemWidget* seriesItemWidget = new ctkDICOMSeriesItemWidget(this);
+  ctkDICOMSeriesItemWidget* seriesItemWidget = new ctkDICOMSeriesItemWidget();
   seriesItemWidget->setSeriesItem(seriesItem);
   seriesItemWidget->setPatientID(d->PatientID);
   seriesItemWidget->setStudyInstanceUID(d->StudyInstanceUID);
@@ -762,6 +714,50 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
 }
 
 //------------------------------------------------------------------------------
+ctkDICOMSeriesItemWidget *ctkDICOMStudyItemWidget::seriesItemWidgetBySeriesItem(const QString &seriesItem)
+{
+Q_D(ctkDICOMStudyItemWidget);
+
+  for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
+  {
+    for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
+    {
+      ctkDICOMSeriesItemWidget* seriesItemWidget =
+        qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
+      if (!seriesItemWidget || seriesItemWidget->seriesItem() != seriesItem)
+      {
+        continue;
+      }
+
+      return seriesItemWidget;
+    }
+  }
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMSeriesItemWidget *ctkDICOMStudyItemWidget::seriesItemWidgetBySeriesInstanceUID(const QString &seriesInstanceUID)
+{
+  Q_D(ctkDICOMStudyItemWidget);
+
+  for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
+  {
+    for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
+    {
+      ctkDICOMSeriesItemWidget* seriesItemWidget =
+        qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
+      if (!seriesItemWidget || seriesItemWidget->seriesInstanceUID() != seriesInstanceUID)
+      {
+        continue;
+      }
+
+      return seriesItemWidget;
+    }
+  }
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
 ctkCollapsibleGroupBox* ctkDICOMStudyItemWidget::collapsibleGroupBox()
 {
   Q_D(ctkDICOMStudyItemWidget);
@@ -803,14 +799,27 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(const QVariant& data)
     return;
   }
 
-  emit this->progressJobDetail(data);
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
-    return;
+    d->createSeries();
   }
-
-  d->createSeries();
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::ThumbnailGenerator ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+  {
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->seriesItemWidgetBySeriesInstanceUID(td.SeriesInstanceUID);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->updateGUIFromScheduler(data);
+      if (td.JobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance ||
+          td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+      {
+        seriesItemWidget->updateSeriesProgressBar(data);
+      }
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -825,16 +834,22 @@ void ctkDICOMStudyItemWidget::onJobStarted(const QVariant &data)
     return;
   }
 
-  emit this->jobStarted(data);
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
-    return;
+    d->Status = ctkDICOMStudyItemWidget::InProgress;
+    d->OperationStatusPushButton->show();
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/pending.svg"));
   }
-
-  d->Status = ctkDICOMStudyItemWidget::InProgress;
-  d->OperationStatusPushButton->show();
-  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/pending.svg"));
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+  {
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->seriesItemWidgetBySeriesInstanceUID(td.SeriesInstanceUID);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->onJobStarted(data);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -849,15 +864,22 @@ void ctkDICOMStudyItemWidget::onJobUserStopped(const QVariant &data)
     return;
   }
 
-  emit this->jobUserStopped(data);
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
-    return;
+    d->Status = ctkDICOMStudyItemWidget::Failed;
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+    d->StoppedJobUID = td.JobUID;
   }
-
-  d->Status = ctkDICOMStudyItemWidget::Failed;
-  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+  {
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->seriesItemWidgetBySeriesInstanceUID(td.SeriesInstanceUID);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->onJobUserStopped(data);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -872,15 +894,22 @@ void ctkDICOMStudyItemWidget::onJobFailed(const QVariant &data)
     return;
   }
 
-  emit this->jobFailed(data);
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
-    return;
+    d->Status = ctkDICOMStudyItemWidget::Failed;
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+    d->StoppedJobUID = td.JobUID;
   }
-
-  d->Status = ctkDICOMStudyItemWidget::Failed;
-  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/error_red.svg"));
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+  {
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->seriesItemWidgetBySeriesInstanceUID(td.SeriesInstanceUID);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->onJobFailed(data);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -895,15 +924,20 @@ void ctkDICOMStudyItemWidget::onJobFinished(const QVariant &data)
     return;
   }
 
-  emit this->jobFinished(data);
-
-  if (td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries)
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
   {
-    return;
+    d->Status = ctkDICOMStudyItemWidget::Completed;
+    d->OperationStatusPushButton->setIcon(QIcon(":/Icons/accept.svg"));
   }
-
-  d->Status = ctkDICOMStudyItemWidget::Completed;
-  d->OperationStatusPushButton->setIcon(QIcon(":/Icons/accept.svg"));
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+           td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
+  {
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->seriesItemWidgetBySeriesInstanceUID(td.SeriesInstanceUID);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->onJobFinished(data);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -925,12 +959,10 @@ void ctkDICOMStudyItemWidget::onOperationStatusButtonClicked(bool)
   }
   else if (status > ctkDICOMStudyItemWidget::InProgress)
   {
-    ctkDICOMJobDetail queryJobDetail;
-    queryJobDetail.JobClass = "ctkDICOMQueryJob";
-    queryJobDetail.DICOMLevel = ctkDICOMJob::DICOMLevels::Series;
-    queryJobDetail.PatientID = d->PatientID;
-    queryJobDetail.StudyInstanceUID = d->StudyInstanceUID;
-
-    d->Scheduler->runJob(queryJobDetail, d->AllowedServers);
+    if (!d->Scheduler->retryJob(d->StoppedJobUID))
+    {
+    logger.info(QString("Unable to restart job %1 (study level) because the job has been fully cleared from the system. "
+                        "Please initiate a new job if further processing is required.").arg(d->StoppedJobUID));
+    }
   }
 }

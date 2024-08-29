@@ -78,33 +78,6 @@ public slots:
     return td->JobUID;
   }
 
-  void setCreationDateTime(ctkDICOMJobDetail* td, QString creationDateTime)
-  {
-    td->CreationDateTime = creationDateTime;
-  }
-  QString creationDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->CreationDateTime;
-  }
-
-  void setStartDateTime(ctkDICOMJobDetail* td, QString startDateTime)
-  {
-    td->StartDateTime = startDateTime;
-  }
-  QString startDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->StartDateTime;
-  }
-
-  void setCompletionDateTime(ctkDICOMJobDetail* td, QString completionDateTime)
-  {
-    td->CompletionDateTime = completionDateTime;
-  }
-  QString completionDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->CompletionDateTime;
-  }
-
   void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
   {
     td->PatientID = patientID;
@@ -148,6 +121,42 @@ public slots:
   QString referenceInserterJobUID(ctkDICOMJobDetail* td)
   {
     return td->ReferenceInserterJobUID;
+  }
+
+  void setQueriedPatientIDs(ctkDICOMJobDetail* td, const QStringList& queriedPatientIDs)
+  {
+    td->QueriedPatientIDs = queriedPatientIDs;
+  }
+  QStringList queriedPatientIDs(ctkDICOMJobDetail* td)
+  {
+    return td->QueriedPatientIDs;
+  }
+
+  void setQueriedStudyInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedStudyInstanceUIDs)
+  {
+    td->QueriedStudyInstanceUIDs = queriedStudyInstanceUIDs;
+  }
+  QStringList queriedStudyInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    return td->QueriedStudyInstanceUIDs;
+  }
+
+  void setQueriedSeriesInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedSeriesInstanceUIDs)
+  {
+    td->QueriedSeriesInstanceUIDs = queriedSeriesInstanceUIDs;
+  }
+  QStringList queriedSeriesInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    return td->QueriedSeriesInstanceUIDs;
+  }
+
+  void setQueriedSOPInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedSOPInstanceUIDs)
+  {
+    td->QueriedSOPInstanceUIDs = queriedSOPInstanceUIDs;
+  }
+  QStringList queriedSOPInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    return td->QueriedSOPInstanceUIDs;
   }
 
   void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)

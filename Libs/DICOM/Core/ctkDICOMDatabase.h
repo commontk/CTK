@@ -22,6 +22,7 @@
 #define __ctkDICOMDatabase_h
 
 // Qt includes
+#include <QColor>
 #include <QObject>
 #include <QStringList>
 #include <QSqlDatabase>
@@ -216,7 +217,7 @@ public:
                                       const QString& seriesInstanceUID,
                                       const QString& sopInstanceUID,
                                       const QString& modality = "",
-                                      QVector<int> color = QVector<int>{169, 169, 169});
+                                      QColor backgroundColor = Qt::darkGray);
 
   Q_INVOKABLE int patientsCount();
   Q_INVOKABLE int studiesCount();
@@ -280,7 +281,7 @@ public:
                            bool createHierarchy = true,
                            const QString& destinationDirectoryName = QString());
   Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
-  Q_INVOKABLE void insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
+  Q_INVOKABLE void insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
 
   /// When a DICOM file is stored in the database (insert is called with storeFile=true) then
   /// path is constructed from study, series, and SOP instance UID.

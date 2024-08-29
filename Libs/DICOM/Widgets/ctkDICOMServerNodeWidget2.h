@@ -92,7 +92,7 @@ public:
   Q_INVOKABLE int serversCount();
   Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
   Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
-  Q_INVOKABLE void addServer(ctkDICOMServer* server);
+  Q_INVOKABLE int addServer(ctkDICOMServer* server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
   Q_INVOKABLE void removeNthServer(int id);
   Q_INVOKABLE void removeAllServers();
@@ -119,6 +119,7 @@ public Q_SLOTS:
   void saveSettings();
   void onRestoreDefaultServers();
   void updateGUIState();
+  void updateGUIFromServerNodes();
   void onItemSelectionChanged();
   void onSettingsModified();
   void onCellSettingsModified(int row, int column);

@@ -59,15 +59,19 @@ public:
   int numberOfPersistentJobs();
   int numberOfRunningJobs();
   Q_INVOKABLE void addJob(ctkAbstractJob* job);
+  Q_INVOKABLE virtual void resetJob(const QString& jobUID);
   Q_INVOKABLE virtual void deleteJob(const QString& jobUID);
+  Q_INVOKABLE virtual void deleteJobs(const QStringList& jobUIDs);
   Q_INVOKABLE virtual void deleteWorker(const QString& jobUID);
   QSharedPointer<ctkAbstractJob> getJobSharedByUID(const QString& jobUID);
   Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
   Q_INVOKABLE void waitForFinish(bool waitForPersistentJobs = false,
                                  bool processEvents = false);
   Q_INVOKABLE void waitForDone(int msec = -1);
-  Q_INVOKABLE void stopAllJobs(bool stopPersistentJobs = false);
-  Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs);
+  Q_INVOKABLE QStringList stopAllJobs(bool stopPersistentJobs = false, bool removeJobs = true);
+  Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs, bool removeJobs = false);
+  Q_INVOKABLE bool retryJob(const QString& jobUID);
+  Q_INVOKABLE void retryJobs(const QStringList& jobUIDs);
   ///@}
 
   ///@{

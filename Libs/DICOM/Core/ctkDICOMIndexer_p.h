@@ -259,7 +259,6 @@ public:
 Q_SIGNALS:
   void startWorker();
 
-
 public:
   DICOMIndexingQueue RequestQueue;
   QThread WorkerThread;

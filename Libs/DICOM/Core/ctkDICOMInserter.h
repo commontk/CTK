@@ -67,7 +67,7 @@ public:
   Q_INVOKABLE bool wasCanceled();
 
   /// add JobResponseSets from queries and retrieves
-  Q_INVOKABLE bool addJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
+  Q_INVOKABLE bool addJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
 
 Q_SIGNALS:
   void updatingDatabase(bool);
