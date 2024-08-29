@@ -55,6 +55,7 @@ class ctkDICOMJobResponseSet;
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(InsertResult)
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(bool isInMemory READ isInMemory)
   Q_PROPERTY(QString lastError READ lastError)
@@ -281,7 +282,14 @@ public:
                            bool createHierarchy = true,
                            const QString& destinationDirectoryName = QString());
   Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
-  Q_INVOKABLE void insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
+  /// Insert operation
+  enum InsertResult
+  {
+    Failed = -1,
+    NotInserted,
+    Inserted
+  };
+  Q_INVOKABLE InsertResult insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
 
   /// When a DICOM file is stored in the database (insert is called with storeFile=true) then
   /// path is constructed from study, series, and SOP instance UID.

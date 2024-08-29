@@ -135,6 +135,42 @@ void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
   d->Datasets.insert(QString(SOPInstanceUID.c_str()), dataset);
 }
 
+//----------------------------------------------------------------------------
+QString ctkDICOMJobResponseSet::jobTypeString() const
+{
+  Q_D(const ctkDICOMJobResponseSet);
+
+  switch (d->JobType)
+  {
+    case ctkDICOMJobResponseSet::JobType::None:
+      return "None";
+    case ctkDICOMJobResponseSet::JobType::QueryPatients:
+      return "QueryPatients";
+    case ctkDICOMJobResponseSet::JobType::QueryStudies:
+      return "QueryStudies";
+    case ctkDICOMJobResponseSet::JobType::QuerySeries:
+      return "QuerySeries";
+    case ctkDICOMJobResponseSet::JobType::QueryInstances:
+      return "QueryInstances";
+    case ctkDICOMJobResponseSet::JobType::RetrieveStudy:
+      return "RetrieveStudy";
+    case ctkDICOMJobResponseSet::JobType::RetrieveSeries:
+      return "RetrieveSeries";
+    case ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance:
+      return "RetrieveSOPInstance";
+    case ctkDICOMJobResponseSet::JobType::StoreSOPInstance:
+      return "StoreSOPInstance";
+    case ctkDICOMJobResponseSet::JobType::Inserter:
+      return "Inserter";
+    case ctkDICOMJobResponseSet::JobType::Echo:
+      return "Echo";
+    case ctkDICOMJobResponseSet::JobType::ThumbnailGenerator:
+      return "ThumbnailGenerator";
+    default:
+      return "Unknown";
+  }
+}
+
 //------------------------------------------------------------------------------
 void ctkDICOMJobResponseSet::setDataset(DcmItem* dcmItem, bool takeOwnership)
 {

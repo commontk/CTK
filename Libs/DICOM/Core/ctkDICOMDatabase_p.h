@@ -39,6 +39,7 @@
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabasePrivate
 {
   Q_DECLARE_PUBLIC(ctkDICOMDatabase);
+
 protected:
   ctkDICOMDatabase* const q_ptr;
 
@@ -174,24 +175,26 @@ public:
   bool openTagCacheDatabase();
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 
-  // Return true if a new item is inserted
-  bool insertPatientStudySeries(const ctkDICOMItem& dataset,
+  /// Insert metadata
+  ctkDICOMDatabase::InsertResult insertPatientStudySeries(const ctkDICOMItem& dataset,
     const QString& patientID,
     const QString& patientsName,
     const QString& connectionName = "");
-  bool insertPatient(const ctkDICOMItem& dataset,
+  ctkDICOMDatabase::InsertResult insertPatient(const ctkDICOMItem& dataset,
     const QString& patientID,
     const QString& patientsName,
     int& databasePatientID);
-  bool insertConnectionName(const int& dbPatientID,
+  ctkDICOMDatabase::InsertResult insertConnectionName(const int& dbPatientID,
     const QString& connectionName);
-  bool updateConnections(const QString& dbPatientID,
+  ctkDICOMDatabase::InsertResult insertStudy(const ctkDICOMItem& dataset,
+    const int& dbPatientID);
+  ctkDICOMDatabase::InsertResult insertSeries(const ctkDICOMItem& dataset,
+    const QString& studyInstanceUID);
+
+  /// Update connections metadata
+  ctkDICOMDatabase::InsertResult updateConnections(const QString& dbPatientID,
     const QStringList& allowList,
     const QStringList& denyList);
-  bool insertStudy(const ctkDICOMItem& dataset,
-    const int& dbPatientID);
-  bool insertSeries(const ctkDICOMItem& dataset,
-    const QString& studyInstanceUID);
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;

@@ -370,6 +370,11 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     studiesMap[key] = studyItemWidget;
   }
 
+  QSettings settings;
+  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+  bool queryEnabled = this->QueryOn && queryRetrieveEnabled;
+  bool retrieveEnabled = this->RetrieveOn && queryRetrieveEnabled;
+
   int cont = 0;
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, studiesMap)
   {
@@ -377,11 +382,11 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     if (cont < this->NumberOfOpenedStudiesPerPatient)
     {
       studyItemWidget->setCollapsed(false);
-      studyItemWidget->generateSeries(this->QueryOn, this->RetrieveOn);
+      studyItemWidget->generateSeries(queryEnabled, retrieveEnabled);
     }
     else
     {
-      studyItemWidget->generateSeries(this->QueryOn, false);
+      studyItemWidget->generateSeries(queryEnabled, false);
     }
     cont++;
 
@@ -869,6 +874,8 @@ void ctkDICOMPatientItemWidget::generateStudies(bool query, bool retrieve)
 //------------------------------------------------------------------------------
 void ctkDICOMPatientItemWidget::generateSeriesAtToggle(bool toggled, const QString& studyItem)
 {
+  Q_D(ctkDICOMPatientItemWidget);
+
   if (!toggled || studyItem.isEmpty())
   {
     return;
@@ -880,7 +887,12 @@ void ctkDICOMPatientItemWidget::generateSeriesAtToggle(bool toggled, const QStri
     return;
   }
 
-  studyItemWidget->generateSeries();
+  QSettings settings;
+  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+  bool queryEnabled = d->QueryOn && queryRetrieveEnabled;
+  bool retrieveEnabled = d->RetrieveOn && queryRetrieveEnabled;
+
+  studyItemWidget->generateSeries(queryEnabled, retrieveEnabled);
 }
 
 //------------------------------------------------------------------------------

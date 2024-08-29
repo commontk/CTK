@@ -123,6 +123,7 @@ public:
   QStringList clearCompletedJobs();
   QStringList clearFailedJobs();
   QStringList clearUserStoppedJobs();
+  QStringList clearQueuedJobs();
   void removeRowsByJobUIDs(QStringList jobUIDs);
   static Columns getColumnIndexFromString(QString columnString);
   static QString getColumnStringFromIndex(Columns columnIndex);
@@ -466,13 +467,19 @@ QStringList QCenteredItemModel::clearCompletedJobs()
 //----------------------------------------------------------------------------
 QStringList QCenteredItemModel::clearFailedJobs()
 {
-  return this->clearJobsByType(ctkDICOMJobListWidget::tr("failed"));;
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("failed"));
 }
 
 //----------------------------------------------------------------------------
 QStringList QCenteredItemModel::clearUserStoppedJobs()
 {
-  return this->clearJobsByType(ctkDICOMJobListWidget::tr("user-stopped"));;
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("user-stopped"));
+}
+
+//----------------------------------------------------------------------------
+QStringList QCenteredItemModel::clearQueuedJobs()
+{
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("queued"));
 }
 
 //----------------------------------------------------------------------------

@@ -58,7 +58,7 @@ public:
   int numberOfJobs();
   int numberOfPersistentJobs();
   int numberOfRunningJobs();
-  Q_INVOKABLE void addJob(ctkAbstractJob* job);
+  Q_INVOKABLE virtual void addJob(ctkAbstractJob* job);
   Q_INVOKABLE virtual void resetJob(const QString& jobUID);
   Q_INVOKABLE virtual void deleteJob(const QString& jobUID);
   Q_INVOKABLE virtual void deleteJobs(const QStringList& jobUIDs);

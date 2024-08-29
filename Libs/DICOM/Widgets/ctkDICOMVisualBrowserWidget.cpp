@@ -2948,6 +2948,11 @@ void ctkDICOMVisualBrowserWidget::onShowPatients()
 void ctkDICOMVisualBrowserWidget::onQueryPatients()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  if (d->IsGUIUpdating)
+  {
+    return;
+  }
+
   QSettings settings;
   bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
   if (!queryRetrieveEnabled)
@@ -2955,11 +2960,6 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     this->onShowPatients();
     return;
     }
-
-  if (d->IsGUIUpdating)
-  {
-    return;
-  }
 
   if (!d->DicomDatabase)
   {
@@ -3110,7 +3110,9 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
 
   if (updatePatients)
   {
-    d->createPatients();
+    QSettings settings;
+    bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+    d->createPatients(queryRetrieveEnabled);
   }
 }
 

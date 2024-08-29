@@ -305,10 +305,8 @@ QStringList ctkDICOMDatabasePrivate::filenames(QString table)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset,
-                                            const QString& patientID,
-                                            const QString& patientsName,
-                                            int& dbPatientID)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
+  const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName, int& dbPatientID)
 {
   // Check if patient is already present in the db
   QString tempPatientID(patientID), tempPatientsName(patientsName), patientsBirthDate;
@@ -362,7 +360,7 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset,
     insertPatientStatement.bindValue(7, QDateTime::currentDateTime());
     if (!loggedExec(insertPatientStatement))
     {
-      return false;
+      return ctkDICOMDatabase::InsertResult::Failed;
     }
     dbPatientID = insertPatientStatement.lastInsertId().toInt();
 
@@ -370,15 +368,15 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset,
   }
 
   this->InsertedPatientsCompositeIDCache[compositeID] = dbPatientID;
-  return !patientFound;
+  return !patientFound ? ctkDICOMDatabase::InsertResult::Inserted :
+    ctkDICOMDatabase::InsertResult::NotInserted;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertConnectionName(const int& dbPatientID,
-                                                   const QString& connectionName)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertConnectionName(
+  const int& dbPatientID, const QString& connectionName)
 {
   Q_Q(ctkDICOMDatabase);
-
   // check if connection name is already stored
   QMap<QString, QStringList> connectionsInformation = q->connectionsInformationForPatient(QString::number(dbPatientID));
   QStringList allowList = connectionsInformation["allow"];
@@ -404,7 +402,7 @@ bool ctkDICOMDatabasePrivate::insertConnectionName(const int& dbPatientID,
 
     if (!loggedExec(updateConnectionsStatement))
     {
-      return false;
+      return ctkDICOMDatabase::InsertResult::Failed;
     }
     logger.debug("New connection name inserted: patient database item ID = " + QString().setNum(dbPatientID));
   }
@@ -421,16 +419,15 @@ bool ctkDICOMDatabasePrivate::insertConnectionName(const int& dbPatientID,
     this->InsertedConnectionsIDCache[dbPatientID] = QStringList(connectionName);
   }
 
-  return !connectionNameFound;
+  return !connectionNameFound ? ctkDICOMDatabase::InsertResult::Inserted :
+    ctkDICOMDatabase::InsertResult::NotInserted;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::updateConnections(const QString& dbPatientID,
-                                                const QStringList& allowList,
-                                                const QStringList& denyList)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::updateConnections(
+  const QString& dbPatientID, const QStringList& allowList, const QStringList& denyList)
 {
   QString connectionsData = this->convertConnectionInfoToJson(allowList, denyList);
-
   QSqlQuery updateConnectionsStatement(this->Database);
   updateConnectionsStatement.prepare("UPDATE Patients SET Connections = :connectionsData WHERE UID = :uid");
   updateConnectionsStatement.bindValue(":connectionsData", connectionsData);
@@ -438,14 +435,15 @@ bool ctkDICOMDatabasePrivate::updateConnections(const QString& dbPatientID,
 
   if (!loggedExec(updateConnectionsStatement))
   {
-    return false;
+    return ctkDICOMDatabase::InsertResult::Failed;
   }
 
-  return true;
+  return ctkDICOMDatabase::InsertResult::Inserted;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& dataset, const int& dbPatientID)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertStudy(
+  const ctkDICOMItem& dataset, const int& dbPatientID)
 {
   QString studyInstanceUID(dataset.GetElementAsString(DCM_StudyInstanceUID) );
   QSqlQuery checkStudyExistsQuery(this->Database);
@@ -453,7 +451,7 @@ bool ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& dataset, const int
   checkStudyExistsQuery.bindValue( 0, studyInstanceUID );
   if (!loggedExec(checkStudyExistsQuery))
   {
-    return false;
+    return ctkDICOMDatabase::InsertResult::Failed;
   }
   if (!checkStudyExistsQuery.next())
   {
@@ -489,25 +487,26 @@ bool ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& dataset, const int
     if (!insertStudyStatement.exec())
     {
       logger.error("Error executing statement: " + insertStudyStatement.lastQuery() + " Error: " + insertStudyStatement.lastError().text() );
-      return false;
+      return ctkDICOMDatabase::InsertResult::Failed;
     }
     else
     {
       this->InsertedStudyUIDsCache.insert(studyInstanceUID);
     }
 
-    return true;
+    return ctkDICOMDatabase::InsertResult::Inserted;
   }
   else
   {
     logger.debug("Used existing study: " + studyInstanceUID);
     this->InsertedStudyUIDsCache.insert(studyInstanceUID);
-    return false;
+    return ctkDICOMDatabase::InsertResult::NotInserted;
   }
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, const QString& studyInstanceUID)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertSeries(
+  const ctkDICOMItem& dataset, const QString& studyInstanceUID)
 {
   QString seriesInstanceUID(dataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QSqlQuery checkSeriesExistsQuery(this->Database);
@@ -516,7 +515,7 @@ bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, const QS
   logger.debug("Statement: " + checkSeriesExistsQuery.lastQuery() );
   if (!loggedExec(checkSeriesExistsQuery))
   {
-    return false;
+    return ctkDICOMDatabase::InsertResult::Failed;
   }
   if (!checkSeriesExistsQuery.next())
   {
@@ -560,20 +559,20 @@ bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, const QS
       logger.error("Error executing statement: "
                      + insertSeriesStatement.lastQuery()
                      + " Error: " + insertSeriesStatement.lastError().text());
-      return false;
+      return ctkDICOMDatabase::InsertResult::Failed;
     }
     else
     {
       this->InsertedSeriesUIDsCache.insert(seriesInstanceUID);
     }
 
-    return true;
+    return ctkDICOMDatabase::InsertResult::Inserted;
   }
   else
   {
     logger.debug("Used existing series: " + seriesInstanceUID);
     this->InsertedSeriesUIDsCache.insert(seriesInstanceUID);
-    return false;
+    return ctkDICOMDatabase::InsertResult::NotInserted;
   }
 }
 
@@ -780,8 +779,8 @@ bool ctkDICOMDatabasePrivate::indexingStatusForFile(const QString& filePath, con
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& dataset,
-  const QString& patientID, const QString& patientsName, const QString& connectionName)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries(
+  const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName, const QString& connectionName)
 {
   Q_Q(ctkDICOMDatabase);
   bool databaseWasChanged = false;
@@ -803,10 +802,16 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   else
   {
     logger.debug("Insert new patient if not already in database: " + patientID + " " + patientsName);
-    if (this->insertPatient(dataset, patientID, patientsName, dbPatientID))
+    ctkDICOMDatabase::InsertResult patientMetadataInsertOperationResult =
+      this->insertPatient(dataset, patientID, patientsName, dbPatientID);
+    if (patientMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
       databaseWasChanged = true;
       emit q->patientAdded(dbPatientID, patientID, patientsName, patientsBirthDate);
+    }
+    else if (patientMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Failed)
+    {
+    return patientMetadataInsertOperationResult;
     }
   }
 
@@ -820,10 +825,16 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   if (connections.count() == 0 || !connections.contains(connectionName))
   {
     logger.debug("Insert new connection name if not already in database: " + connectionName);
-    if (this->insertConnectionName(dbPatientID, connectionName))
+    ctkDICOMDatabase::InsertResult connectionMetadataInsertOperationResult =
+      this->insertConnectionName(dbPatientID, connectionName);
+    if (connectionMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
       databaseWasChanged = true;
       emit q->connectionNameAdded(dbPatientID, patientID, patientsName, patientsBirthDate, connectionName);
+    }
+    else if (connectionMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Failed)
+    {
+    return connectionMetadataInsertOperationResult;
     }
   }
 
@@ -833,27 +844,40 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   QString studyInstanceUID(dataset.GetElementAsString(DCM_StudyInstanceUID));
   if (!this->InsertedStudyUIDsCache.contains(studyInstanceUID))
   {
-    if (this->insertStudy(dataset, dbPatientID))
+    ctkDICOMDatabase::InsertResult studyMetadataInsertOperationResult =
+      this->insertStudy(dataset, dbPatientID);
+    if (studyMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
       logger.debug("Study Added");
       databaseWasChanged = true;
       // let users of this class track when things happen
       emit q->studyAdded(studyInstanceUID);
     }
+    else if (studyMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Failed)
+    {
+    return studyMetadataInsertOperationResult;
+    }
   }
 
   QString seriesInstanceUID(dataset.GetElementAsString(DCM_SeriesInstanceUID));
   if (!seriesInstanceUID.isEmpty() && !this->InsertedSeriesUIDsCache.contains(seriesInstanceUID))
   {
-    if (this->insertSeries(dataset, studyInstanceUID))
+    ctkDICOMDatabase::InsertResult seriesMetadataInsertOperationResult =
+      this->insertSeries(dataset, studyInstanceUID);
+    if (seriesMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
       logger.debug("Series Added");
       databaseWasChanged = true;
       emit q->seriesAdded(seriesInstanceUID);
     }
+    else if (seriesMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Failed)
+    {
+    return seriesMetadataInsertOperationResult;
+    }
   }
 
-  return databaseWasChanged;
+  return databaseWasChanged ? ctkDICOMDatabase::InsertResult::Inserted :
+    ctkDICOMDatabase::InsertResult::NotInserted;
 }
 
 //------------------------------------------------------------------------------
@@ -950,7 +974,8 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
     }
   }
 
-  bool databaseWasChanged = this->insertPatientStudySeries(dataset, patientID, patientsName);
+  ctkDICOMDatabase::InsertResult insertOperationResult =
+    this->insertPatientStudySeries(dataset, patientID, patientsName);
   if (!sopInstanceUID.isEmpty() && !seriesInstanceUID.isEmpty() && !storedFilePath.isEmpty())
   {
     bool alreadyInserted = false;
@@ -1004,14 +1029,14 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
       // let users of this class track when things happen
       emit q->instanceAdded(sopInstanceUID);
 
-      databaseWasChanged = true;
+      insertOperationResult = ctkDICOMDatabase::InsertResult::Inserted;
     }
     if (generateThumbnail)
     {
       q->storeThumbnailFile(storedFilePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID);
     }
   }
-  if (q->isInMemory() && databaseWasChanged)
+  if (q->isInMemory() && insertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
   {
     emit q->databaseChanged();
   }
@@ -2761,7 +2786,8 @@ void ctkDICOMDatabase::insert( const QString& filePath, bool storeFile, bool gen
 void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults)
 {
   Q_D(ctkDICOMDatabase);
-  bool databaseWasChanged = false;
+  ctkDICOMDatabase::InsertResult insertOperationResult =
+    ctkDICOMDatabase::InsertResult::NotInserted;
 
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
@@ -2828,11 +2854,10 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       }
     }
 
-    if (d->insertPatientStudySeries(dataset, patientID, patientsName))
+    if (d->insertPatientStudySeries(dataset, patientID, patientsName) == ctkDICOMDatabase::InsertResult::Inserted)
     {
-      databaseWasChanged = true;
+      insertOperationResult = ctkDICOMDatabase::InsertResult::Inserted;
     }
-
     if (!storedFilePath.isEmpty() && !seriesInstanceUID.isEmpty())
     {
       // Insert all pre-cached fields into tag cache
@@ -2882,7 +2907,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
       emit instanceAdded(sopInstanceUID);
-      databaseWasChanged = true;
+      insertOperationResult = ctkDICOMDatabase::InsertResult::Inserted;
 
       if (generateThumbnail)
       {
@@ -2894,18 +2919,19 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   d->Database.commit();
   d->TagCacheDatabase.commit();
 
-  if (databaseWasChanged && this->isInMemory())
+  if (insertOperationResult == ctkDICOMDatabase::InsertResult::Inserted && this->isInMemory())
   {
     emit this->databaseChanged();
   }
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
+ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   Q_D(ctkDICOMDatabase);
 
   bool databaseWasChanged = false;
+  bool insertFailed = false;
 
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
@@ -3090,9 +3116,16 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseS
         }
       }
 
-      if (d->insertPatientStudySeries(*dataset, patientID, patientName, connectionName))
+      ctkDICOMDatabase::InsertResult insertOperationResult =
+        d->insertPatientStudySeries(*dataset, patientID, patientName, connectionName);
+      if (insertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
       {
         databaseWasChanged = true;
+      }
+      else if (insertOperationResult == ctkDICOMDatabase::InsertResult::Failed)
+      {
+        insertFailed = true;
+        continue;
       }
 
       if (!sopInstanceUID.isEmpty() &&
@@ -3109,7 +3142,8 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseS
           checkImageExistsQuery.addBindValue(sopInstanceUID);
           if (!d->loggedExec(checkImageExistsQuery))
           {
-            return;
+            insertFailed = true;
+            continue;
           }
           alreadyInserted = checkImageExistsQuery.next();
         }
@@ -3138,9 +3172,11 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseS
 
           if (!insertImageStatement.exec())
           {
-            logger.error( "Error executing statement: "
+            logger.error("Error executing statement: "
                          + insertImageStatement.lastQuery()
-                         + " Error: " + insertImageStatement.lastError().text() );
+                         + " Error: " + insertImageStatement.lastError().text());
+            insertFailed = true;
+            continue;
           }
           else
           {
@@ -3163,9 +3199,18 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseS
   d->Database.commit();
   d->TagCacheDatabase.commit();
 
+  if (insertFailed)
+  {
+    return ctkDICOMDatabase::InsertResult::Failed;
+  }
+
   if (databaseWasChanged && this->isInMemory())
   {
-    emit this->databaseChanged();
+    return ctkDICOMDatabase::InsertResult::Inserted;
+  }
+  else
+  {
+    return ctkDICOMDatabase::InsertResult::NotInserted;
   }
 }
 
