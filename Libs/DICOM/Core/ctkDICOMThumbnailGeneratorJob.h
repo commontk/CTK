@@ -21,13 +21,13 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMStorageListenerJob_h
-#define __ctkDICOMStorageListenerJob_h
+#ifndef __ctkDICOMThumbnailGeneratorJob_h
+#define __ctkDICOMThumbnailGeneratorJob_h
 
 // Qt includes
+#include <QColor>
 #include <QObject>
 #include <QSharedPointer>
-#include <QString>
 
 // ctkCore includes
 class ctkAbstractWorker;
@@ -35,37 +35,44 @@ class ctkAbstractWorker;
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMJob.h"
-class ctkDICOMStorageListenerJobPrivate;
+class ctkDICOMThumbnailGeneratorJobPrivate;
 
 /// \ingroup DICOM_Core
-class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListenerJob : public ctkDICOMJob
+class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGeneratorJob : public ctkDICOMJob
 {
   Q_OBJECT
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(QString AETitle READ AETitle WRITE setAETitle);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString databaseFilename READ databaseFilename WRITE setDatabaseFilename);
+  Q_PROPERTY(QString dicomFilePath READ dicomFilePath WRITE setDicomFilePath);
+  Q_PROPERTY(QString modality READ modality WRITE setModality);
+  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMStorageListenerJob();
-  virtual ~ctkDICOMStorageListenerJob();
+  explicit ctkDICOMThumbnailGeneratorJob();
+  virtual ~ctkDICOMThumbnailGeneratorJob();
 
   ///@{
-  /// Port, default: 11112
-  void setPort(const int& port);
-  int port() const;
+  /// Database Filename
+  void setDatabaseFilename(QString databaseFilename);
+  QString databaseFilename() const;
+  ///}@
+
+  ///@{
+  /// Dicom file path
+  void setDicomFilePath(QString dicomFilePath);
+  QString dicomFilePath() const;
   ///@}
 
   ///@{
-  /// AETitle, default: CTKSTORE
-  void setAETitle(const QString& AETitle);
-  QString AETitle() const;
+  /// Modality
+  void setModality(QString modality);
+  QString modality() const;
   ///@}
 
   ///@{
-  /// Connection timeout, default 1 sec.
-  void setConnectionTimeout(const int& timeout);
-  int connectionTimeout() const;
+  /// Background Color
+  void setBackgroundColor(QColor backgroundColor);
+  QColor backgroundColor() const;
   ///@}
 
   /// Logger report string formatting for specific task
@@ -77,22 +84,29 @@ public:
   /// Generate worker for job
   Q_INVOKABLE ctkAbstractWorker* createWorker() override;
 
+  /// Return the QVariant value of this job.
+  ///
+  /// The value is set using the ctkDICOMJobDetail metatype and is used to pass
+  /// information between threads using Qt signals.
+  /// \sa ctkDICOMJobDetail
+  Q_INVOKABLE virtual QVariant toVariant() override;
+
   /// Return job type.
   Q_INVOKABLE virtual ctkDICOMJobResponseSet::JobType getJobType() const override;
 
 protected:
-  QScopedPointer<ctkDICOMStorageListenerJobPrivate> d_ptr;
+  QScopedPointer<ctkDICOMThumbnailGeneratorJobPrivate> d_ptr;
 
   /// Constructor allowing derived class to specify a specialized pimpl.
   ///
   /// \note You are responsible to call init() in the constructor of
   /// derived class. Doing so ensures the derived class is fully
   /// instantiated in case virtual method are called within init() itself.
-  ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJobPrivate* pimpl);
+  ctkDICOMThumbnailGeneratorJob(ctkDICOMThumbnailGeneratorJobPrivate* pimpl);
 
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMStorageListenerJob);
-  Q_DISABLE_COPY(ctkDICOMStorageListenerJob);
+  Q_DECLARE_PRIVATE(ctkDICOMThumbnailGeneratorJob);
+  Q_DISABLE_COPY(ctkDICOMThumbnailGeneratorJob);
 };
 
 #endif

@@ -51,6 +51,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
   Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
 
 public:
   typedef QWidget Superclass;
@@ -177,6 +178,7 @@ public:
   Q_INVOKABLE void addStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyItem(const QString& studyItem);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyInstanceUID(const QString& studyInstanceUID);
   ///@}
 
   /// Set selection for all studies/series
@@ -205,14 +207,18 @@ public:
   OperationStatus operationStatus() const;
   ///@}
 
+  /// Last stopped job information operated by this widget
+  Q_INVOKABLE QString stoppedJobUID() const;
+
 public Q_SLOTS:
   void generateStudies(bool query = true, bool retrieve = true);
   void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
-  void updateGUIFromScheduler(QList<QVariant>);
-  void onJobStarted(QList<QVariant>);
-  void onJobUserStopped(QList<QVariant>);
-  void onJobFailed(QList<QVariant>);
-  void onJobFinished(QList<QVariant>);
+  void updateGUIFromScheduler(QVariant);
+  void onJobStarted(QVariant);
+  void onJobUserStopped(QVariant);
+  void onJobFailed(QVariant);
+  void onJobFinished(QVariant);
+  void onInserterJobFinished(QVariant);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
   void onPatientServersCheckableComboBoxChanged();
@@ -220,12 +226,6 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a studies query.
   void updateGUIFinished();
-  /// Propagate jobs signals to the tree
-  void jobStarted(QVariant);
-  void jobUserStopped(QVariant);
-  void jobFinished(QVariant);
-  void jobFailed(QVariant);
-  void progressJobDetail(QVariant);
 
 protected:
   QScopedPointer<ctkDICOMPatientItemWidgetPrivate> d_ptr;

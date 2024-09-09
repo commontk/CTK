@@ -77,6 +77,14 @@ set(KIT_SRCS
   ctkDICOMStorageListenerWorker_p.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+  ctkDICOMThumbnailGenerator.cpp
+  ctkDICOMThumbnailGenerator.h
+  ctkDICOMThumbnailGeneratorJob.cpp
+  ctkDICOMThumbnailGeneratorJob.h
+  ctkDICOMThumbnailGeneratorJob_p.h
+  ctkDICOMThumbnailGeneratorWorker.cpp
+  ctkDICOMThumbnailGeneratorWorker.h
+  ctkDICOMThumbnailGeneratorWorker_p.h
   ctkDICOMUtil.cpp
   ctkDICOMUtil.h
   ctkDICOMDisplayedFieldGeneratorRuleFactory.h
@@ -144,6 +152,11 @@ set(KIT_MOC_SRCS
   ctkDICOMStorageListenerWorker.h
   ctkDICOMStorageListenerWorker_p.h
   ctkDICOMTester.h
+  ctkDICOMThumbnailGenerator.h
+  ctkDICOMThumbnailGeneratorJob.h
+  ctkDICOMThumbnailGeneratorJob_p.h
+  ctkDICOMThumbnailGeneratorWorker.h
+  ctkDICOMThumbnailGeneratorWorker_p.h
   )
 
 # UI files
@@ -159,7 +172,7 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql)
+list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql Qt${CTK_QT_VERSION}::Svg)
 
 # create a dcm query/retrieve service config file that points to the build dir
 set (DCMQRSCP_STORE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing)

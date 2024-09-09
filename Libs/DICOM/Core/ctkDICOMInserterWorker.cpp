@@ -118,7 +118,7 @@ void ctkDICOMInserterWorker::run()
                        .arg(inserterJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
-  QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets = inserterJob->jobResponseSetsShared();
+  QList<ctkDICOMJobResponseSet*> jobResponseSets = inserterJob->jobResponseSets();
   d->Inserter->addJobResponseSets(jobResponseSets);
 
   if (d->Inserter->wasCanceled())
@@ -127,7 +127,7 @@ void ctkDICOMInserterWorker::run()
     return;
   }
 
-  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
+  foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
   {
     emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
   }

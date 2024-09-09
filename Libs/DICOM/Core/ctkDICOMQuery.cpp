@@ -32,9 +32,11 @@
 #include <QStringList>
 #include <QVariant>
 
+// ctkCore includes
+#include <ctkPimpl.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
-#include "ctkLogger.h"
 #include "ctkDICOMJobResponseSet.h"
 
 // DCMTK includes
@@ -49,7 +51,28 @@
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogQuery = dcmtk::log4cplus::Logger::getRoot();
+
+#define LOG_AND_EMIT_DEBUG(debugStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogQuery, debugStr.toStdString().c_str()); \
+  emit signal(debugStr); \
+} \
+
+#define LOG_AND_EMIT_WARN(warnStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_WARN_STR(rootLogQuery, warnStr.toStdString().c_str()); \
+  emit signal(warnStr); \
+} \
+
+#define LOG_AND_EMIT_ERROR(errorStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_ERROR_STR(rootLogQuery, errorStr.toStdString().c_str()); \
+  emit signal(errorStr); \
+} \
 
 //------------------------------------------------------------------------------
 // A customized implementation so that Qt signals can be emitted
@@ -80,8 +103,7 @@ public:
       return EC_IllegalCall;
     }
 
-    logger.debug ( "FIND RESPONSE" );
-    emit this->query->debug(/*no tr*/"Got a find response!");
+    LOG_AND_EMIT_DEBUG(QString("FIND RESPONSE"), this->query->debug);
     return this->DcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
   };
 };
@@ -292,22 +314,19 @@ QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMQuery::jobResponseSetsShar
 bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 {
   Q_D(ctkDICOMQuery);
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   if (database.database().isOpen())
   {
-    logger.debug("DB open in Query");
-    emit progress(tr("DB open in Query"));
+    LOG_AND_EMIT_DEBUG(QString("DB open in Query"), debug);
   }
   else
   {
-    logger.warn("DB not open in Query");
-    emit progress(tr("DB not open in Query"));
+    LOG_AND_EMIT_WARN(QString("DB not open in Query"), warn);
   }
+
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -317,6 +336,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -344,44 +364,45 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   QString seriesDescription = this->applyFilters(d->Filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   OFList<QRResponse *> responses;
-
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
+
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (!status.good())
   {
-    logger.error("Find failed");
-    emit progress(tr("Find failed"));
+    LOG_AND_EMIT_ERROR(QString("Find failed"), error);
     d->releaseAssociation();
-    emit progress(100);
+    emit done(false);
     return false;
   }
-  logger.debug("Find succeeded");
-  emit progress(tr("Find succeeded"));
+
+  LOG_AND_EMIT_DEBUG(QString("Find succeeded"), debug)
+
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -394,10 +415,11 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
       OFString StudyInstanceUID;
       dataset->findAndGetOFString(DCM_StudyInstanceUID, StudyInstanceUID);
       d->addStudyInstanceUIDAndDataset(StudyInstanceUID.c_str(), dataset);
-      emit progress(tr("Processing: ") + QString(StudyInstanceUID.c_str()));
+      emit progress("Processing: " + QString(StudyInstanceUID.c_str()));
       emit progress(50);
       if (d->Canceled)
       {
+        emit done(false);
         return false;
       }
     }
@@ -430,12 +452,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     studyDataset->findAndGetElement(DCM_PatientName, patientName);
     studyDataset->findAndGetElement(DCM_PatientID, patientID);
 
-    logger.debug("Starting Series C-FIND for Study: " + studyInstanceUID);
-    emit progress(tr("Starting Series C-FIND for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_DEBUG(QString("Starting Series C-FIND for Study: %1").arg(studyInstanceUID), debug)
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled)
     {
-    return false;
+      emit done(false);
+      return false;
     }
 
     d->QueryDcmDataset->putAndInsertString (DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
@@ -458,27 +480,29 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
           database.insert(dataset, false /* do not store */, false /* no thumbnail */);
         }
       }
-      logger.debug ("Find succeeded on Series level for Study: " + studyInstanceUID);
-      emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
+
+      LOG_AND_EMIT_DEBUG(QString("Find succeeded at Series level for Study: %1").arg(studyInstanceUID), debug)
       emit progress(50 + (progressRatio * i++));
       if (d->Canceled)
       {
-    return false;
+        emit done(false);
+        return false;
       }
     }
     else
     {
-      logger.error ("Find on Series level failed for Study: " + studyInstanceUID);
-      emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
+      LOG_AND_EMIT_ERROR(QString("Find at Series level failed for Study: %1").arg(studyInstanceUID), error)
     }
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled)
     {
+    emit done(false);
     return false;
     }
   }
   d->releaseAssociation();
   emit progress(100);
+  emit done(true);
   return true;
 }
 
@@ -487,12 +511,10 @@ bool ctkDICOMQuery::queryPatients()
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -501,6 +523,7 @@ bool ctkDICOMQuery::queryPatients()
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -522,6 +545,7 @@ bool ctkDICOMQuery::queryPatients()
   this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -530,25 +554,24 @@ bool ctkDICOMQuery::queryPatients()
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error)
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Patients C-FIND");
-  emit progress(tr("Starting Patients C-FIND"));
+  LOG_AND_EMIT_DEBUG(QString("Starting patients C-FIND"), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -569,8 +592,8 @@ bool ctkDICOMQuery::queryPatients()
       contResponses++;
       if (contResponses > d->MaximumPatientsQuery)
       {
-        logger.warn(QString("ctkDICOMQuery: the number of responses of the query task at patients level "
-                            "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery));
+        LOG_AND_EMIT_WARN(QString("The number of responses of the query task at patients level "
+                                  "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery), warn)
         break;
       }
       DcmDataset *dataset = (*it)->m_dataset;
@@ -582,25 +605,30 @@ bool ctkDICOMQuery::queryPatients()
       }
     }
 
-      JobResponseSet->setDatasets(datasetsMap);
-      d->JobResponseSets.append(JobResponseSet);
+    if (contResponses == 0)
+    {
+      LOG_AND_EMIT_WARN(QString("The patients query provided no results. Please refine your filters."), warn)
+    }
 
-      logger.debug("Find succeeded on Patient level");
-      emit progress(tr("Find succeeded on Patient level"));
+    JobResponseSet->setDatasets(datasetsMap);
+    d->JobResponseSets.append(JobResponseSet);
+
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at patient level"), debug)
   }
   else
   {
-    logger.error("Find on Patient level failed");
-    emit progress(tr("Find on Patient level failed"));
+    LOG_AND_EMIT_ERROR(QString("Find at patient level failed"), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -608,12 +636,11 @@ bool ctkDICOMQuery::queryPatients()
 bool ctkDICOMQuery::queryStudies(const QString& patientID)
 {
   Q_D(ctkDICOMQuery);
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
+
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -622,6 +649,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -656,6 +684,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -664,25 +693,24 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug);
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Studies C-FIND for Patient: " + patientID);
-  emit progress(tr("Starting Studies C-FIND for Patient: ") + patientID);
+  LOG_AND_EMIT_DEBUG(QString("Starting studies C-FIND for patient: %1").arg(patientID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -715,22 +743,22 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
-    logger.debug("Find succeeded on Study level for Patient: " + patientID);
-    emit progress(tr("Find succeeded on Study level for Patient: ") + patientID);
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at study level for patient: %1").arg(patientID), debug)
   }
   else
   {
-    logger.error("Find on Study level failed for Patient: " + patientID);
-    emit progress(tr("Find on Study level failed for Patient: ") + patientID);
+    LOG_AND_EMIT_ERROR(QString("Find at study level failed for patient: %1").arg(patientID), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -740,12 +768,10 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -754,6 +780,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -778,6 +805,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -790,25 +818,24 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug);
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Series C-FIND for Study: " + studyInstanceUID);
-  emit progress(tr("Starting Series C-FIND for Study: ") + studyInstanceUID);
+  LOG_AND_EMIT_DEBUG(QString("Starting series C-FIND for study: %1").arg(studyInstanceUID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -843,22 +870,22 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
-    logger.debug("Find succeeded on Series level for Study: " + studyInstanceUID);
-    emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at series level for study: %1").arg(studyInstanceUID), debug)
   }
   else
   {
-    logger.error("Find on Series level failed for Study: " + studyInstanceUID);
-    emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_ERROR(QString("Find at series level failed for study: %1").arg(studyInstanceUID), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -869,12 +896,10 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -883,6 +908,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -904,6 +930,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -915,25 +942,24 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   d->PresentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (d->PresentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error)
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Instances C-FIND for Series: " + seriesInstanceUID);
-  emit progress(tr("Starting Instances C-FIND for Series: ") + seriesInstanceUID);
+  LOG_AND_EMIT_DEBUG(QString("Starting sop instances C-FIND for series: %1").arg(seriesInstanceUID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -966,13 +992,12 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
         datasetsMap.insert(SOPInstanceUID.c_str(), dataset);
       }
     }
-    logger.debug("Find succeeded on Series level for Series: " + seriesInstanceUID);
-    emit progress(tr("Find succeeded on Series level for Series: ") + seriesInstanceUID);
+
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at sop instance level for series: %1").arg(seriesInstanceUID), debug)
   }
   else
   {
-    logger.error("Find on Series level failed for Series: " + seriesInstanceUID);
-    emit progress(tr("Find on Series level failed for Series: ") + seriesInstanceUID);
+    LOG_AND_EMIT_ERROR(QString("Find at sop instance level failed for series: %1").arg(seriesInstanceUID), error)
   }
 
   JobResponseSet->setDatasets(datasetsMap);
@@ -981,10 +1006,12 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -1018,8 +1045,7 @@ bool ctkDICOMQuery::initializeSCU()
   d->SCU->setPeerHostName(OFString(this->host().toStdString().c_str()));
   d->SCU->setPeerPort(this->port());
 
-  logger.debug("Setting Transfer Syntaxes");
-  emit progress(tr("Setting Transfer Syntaxes"));
+  LOG_AND_EMIT_DEBUG(QString("Setting Transfer Syntaxes"), debug)
   emit progress(10);
   if (d->Canceled)
   {
@@ -1034,13 +1060,11 @@ bool ctkDICOMQuery::initializeSCU()
   d->SCU->addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
   if (!d->SCU->initNetwork().good())
   {
-    logger.error("Error initializing the network");
-    emit progress(tr("Error initializing the network"));
-    emit progress(100);
+    LOG_AND_EMIT_ERROR(QString("Error initializing the network"), error)
     return false;
   }
-  logger.debug("Negotiating Association");
-  emit progress(tr("Negotiating Association"));
+
+  LOG_AND_EMIT_DEBUG(QString("Negotiating Association"), debug)
   emit progress(20);
   if (d->Canceled)
   {
@@ -1050,9 +1074,7 @@ bool ctkDICOMQuery::initializeSCU()
   OFCondition result = d->SCU->negotiateAssociation();
   if (result.bad())
   {
-    logger.error("Error negotiating the association: " + QString(result.text()));
-    emit progress(tr("Error negotiating the association"));
-    emit progress(100);
+    LOG_AND_EMIT_ERROR(QString("Error negotiating the association: %1").arg(result.text()), error)
     return false;
   }
 
@@ -1104,7 +1126,8 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
         modalitySearch += modality + QString("\\");
       }
       modalitySearch.chop(1); // remove final backslash
-      logger.debug("modalityInStudySearch " + modalitySearch);
+
+      LOG_AND_EMIT_DEBUG(QString("modalityInStudySearch %1").arg(modalitySearch), debug)
       d->QueryDcmDataset->putAndInsertString(DCM_ModalitiesInStudy, modalitySearch.toLatin1().data());
     }
     // Remember Series Description for later series query if we go through the keys now
@@ -1115,7 +1138,7 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
     }
     else
     {
-      logger.debug("Ignoring unknown search key: " + key);
+      LOG_AND_EMIT_DEBUG(QString("Ignoring unknown search key: %1").arg(key), debug)
     }
   }
 
@@ -1126,7 +1149,8 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
                         QString("-") +
                         filters["EndDate"].toString();
     d->QueryDcmDataset->putAndInsertString (DCM_StudyDate, dateRange.toLatin1().data());
-    logger.debug("Query on study date " + dateRange);
+
+    LOG_AND_EMIT_DEBUG(QString("Query on study date: %1").arg(dateRange), debug)
   }
 
   emit progress(30);

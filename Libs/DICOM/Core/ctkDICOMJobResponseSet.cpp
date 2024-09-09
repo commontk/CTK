@@ -69,15 +69,8 @@ ctkDICOMJobResponseSetPrivate::ctkDICOMJobResponseSetPrivate(ctkDICOMJobResponse
   : q_ptr(&obj)
 {
   this->JobType = ctkDICOMJobResponseSet::JobType::None;
-  this->JobUID = "";
-  this->PatientID = "";
-  this->StudyInstanceUID = "";
-  this->SeriesInstanceUID = "";
-  this->SOPInstanceUID = "";
-  this->ConnectionName = "";
   this->CopyFile = false;
   this->OverwriteExistingDataset = false;
-  this->FilePath = "";
 }
 
 //------------------------------------------------------------------------------

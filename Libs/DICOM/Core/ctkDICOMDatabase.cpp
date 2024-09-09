@@ -2374,7 +2374,7 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
                                           const QString &seriesInstanceUID,
                                           const QString &sopInstanceUID,
                                           const QString& modality,
-                                          QVector<int> color)
+                                          QColor backgroundColor)
 {
   Q_D(ctkDICOMDatabase);
   if (!d->ThumbnailGenerator)
@@ -2403,13 +2403,13 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
     // NOTE: currently SEG objects are not fully supported by ctkDICOMThumbnailGenerator,
     // The rendering will fail and in addition SEG object can be very large and
     // loading the file can be slow. For now, we will just create a blank thumbnail with a document svg.
-    d->ThumbnailGenerator->generateDocumentThumbnail(thumbnailPath, color);
+    d->ThumbnailGenerator->generateDocumentThumbnail(thumbnailPath, backgroundColor);
     return true;
   }
   else
   {
     DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
-    return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath, color);
+    return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath, backgroundColor);
   }
 }
 
@@ -2901,7 +2901,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets)
+void ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2910,7 +2910,7 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
   QDir databaseDirectory(this->databaseDirectory());
-  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
+  foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
   {
     ctkDICOMJobResponseSet::JobType jobType = jobResponseSet->jobType();
     QString filePath = jobResponseSet->filePath();

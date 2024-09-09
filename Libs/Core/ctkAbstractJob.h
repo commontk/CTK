@@ -55,7 +55,8 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(QDateTime startDateTime READ startDateTime);
   Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
   Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
-  Q_PROPERTY(QString loggedText READ loggedText WRITE setLoggedText);
+  Q_PROPERTY(QString log READ log);
+  Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
 
 public:
   explicit ctkAbstractJob();
@@ -157,8 +158,8 @@ public:
 
   ///@{
   /// Logged Text
-  QString loggedText() const;
-  void setLoggedText(QString loggedText);
+  QString log() const;
+  void addLog(QString log);
   ///@}
 
   /// Generate worker for job
@@ -168,7 +169,7 @@ public:
   Q_INVOKABLE virtual ctkAbstractJob* clone() const = 0;
 
   /// Logger report string formatting for specific job
-  Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;
+  Q_INVOKABLE virtual QString loggerReport(const QString& status) = 0;
 
   /// Return the QVariant value of this job.
   ///
@@ -176,6 +177,16 @@ public:
   /// information between threads using Qt signals.
   /// \sa ctkJobDetail
   Q_INVOKABLE virtual QVariant toVariant();
+
+  /// Free used resources from job after worker is done
+  Q_INVOKABLE virtual void releaseResources() = 0;
+
+  ///@{
+  /// Destroy job object after worker is done
+  /// default: false
+  bool destroyAfterUse() const;
+  void setDestroyAfterUse(bool destroyAfterUse);
+  ///@}
 
 Q_SIGNALS:
   void started();
@@ -197,7 +208,8 @@ protected:
   QDateTime StartDateTime;
   QDateTime CompletionDateTime;
   QString RunningThreadID;
-  QString LoggedText;
+  QString Log;
+  bool DestroyAfterUse;
 
 private:
   Q_DISABLE_COPY(ctkAbstractJob)
@@ -215,7 +227,7 @@ struct CTK_CORE_EXPORT ctkJobDetail {
     this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->RunningThreadID = job.runningThreadID();
-    this->Logging = job.loggedText();
+    this->Logging = job.log();
   }
   virtual ~ctkJobDetail() = default;
 

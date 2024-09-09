@@ -38,6 +38,7 @@ ctkAbstractJob::ctkAbstractJob()
   this->MaximumConcurrentJobsPerType = 20;
   this->Priority = QThread::Priority::LowPriority;
   this->CreationDateTime = QDateTime::currentDateTime();
+  this->DestroyAfterUse = false;
 }
 
 //----------------------------------------------------------------------------
@@ -212,20 +213,27 @@ void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
 }
 
 //----------------------------------------------------------------------------
-QString ctkAbstractJob::loggedText() const
+QString ctkAbstractJob::log() const
 {
-  return this->LoggedText;
+  return this->Log;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setLoggedText(QString loggedText)
+void ctkAbstractJob::addLog(QString log)
 {
-  if (loggedText.isEmpty())
-  {
-    return;
-  }
+  this->Log += log;
+}
 
-  this->LoggedText += loggedText;
+//----------------------------------------------------------------------------
+bool ctkAbstractJob::destroyAfterUse() const
+{
+  return this->DestroyAfterUse;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setDestroyAfterUse(bool destroyAfterUse)
+{
+  this->DestroyAfterUse = destroyAfterUse;
 }
 
 //----------------------------------------------------------------------------

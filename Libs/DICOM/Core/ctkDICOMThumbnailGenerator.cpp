@@ -21,7 +21,6 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMThumbnailGenerator.h"
-#include "ctkLogger.h"
 
 // Qt includes
 #include <QDebug>
@@ -33,7 +32,10 @@
 // DCMTK includes
 #include "dcmtk/dcmimgle/dcmimage.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGenerator" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogThumbnailGenerator = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
 class ctkDICOMThumbnailGeneratorPrivate
@@ -133,7 +135,8 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    logger.warn(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    DCMTK_LOG4CPLUS_WARN_STR(rootLogThumbnailGenerator, warn.toStdString().c_str());
     return false;
   }
   // Select first window defined in image. If none, compute min/max window as best guess.
@@ -191,7 +194,8 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath, QVector<int> color)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath,
+                                                   QColor backgroundColor)
 {
   QImage image;
   if (this->generateThumbnail(dcmImage, image))
@@ -199,7 +203,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
     return image.save(thumbnailPath, "PNG");
   }
 
-  this->generateDocumentThumbnail(thumbnailPath, color);
+  this->generateDocumentThumbnail(thumbnailPath, backgroundColor);
   return false;
 }
 
@@ -218,21 +222,22 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, 
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor color)
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor backgroundColor)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)
   {
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
   }
-  image.fill(color);
+  image.fill(backgroundColor);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateDocumentThumbnail(const QString &thumbnailPath, QVector<int> color)
+void ctkDICOMThumbnailGenerator::generateDocumentThumbnail(const QString &thumbnailPath,
+                                                           QColor backgroundColor)
 {
   QImage image;
-  this->generateBlankThumbnail(image, QColor(color[0], color[1], color[2]));
+  this->generateBlankThumbnail(image, backgroundColor);
   QPixmap pixmap = QPixmap::fromImage(image);
   QPainter painter;
   if (painter.begin(&pixmap))

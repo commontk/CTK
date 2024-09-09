@@ -24,9 +24,6 @@
 #include <QString>
 #include <QStringList>
 
-// ctkCore includes
-#include <ctkLogger.h>
-
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMStorageListener.h"
@@ -34,7 +31,10 @@
 // DCMTK includes
 #include <dcmtk/dcmnet/dstorscp.h> /* for DcmStorageSCP */
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMStorageListener" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogStorageListener = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
 // A customized implementation so that Qt signals can be emitted
@@ -226,7 +226,8 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
   }
   else
   {
-    logger.error("Failed to find listener configuration file");
+    QString error = "Failed to find listener configuration file";
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return "";
   }
 
@@ -243,7 +244,8 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
   }
   else
   {
-    logger.error("Failed to find listener configuration file");
+    QString error = "Failed to find listener configuration file";
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return "";
   }
   writeFile.close();
@@ -290,9 +292,10 @@ bool ctkDICOMStorageListener::listen()
   OFCondition status = d->SCU.listen();
   if (status.bad() || d->Canceled)
   {
-    logger.error(QString("SCP stopped, it was listening on port %1 : %2 ")
-                     .arg(QString::number(d->Port))
-                     .arg(status.text()));
+    QString error = QString("SCP stopped, it was listening on port %1 : %2 ")
+                            .arg(QString::number(d->Port))
+                            .arg(status.text());
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return false;
   }
   return true;
@@ -324,7 +327,8 @@ bool ctkDICOMStorageListener::initializeSCU()
       OFString(d->defaultConfigFile().toStdString().c_str()), "alldicom");
   if (status.bad())
   {
-    logger.error(QString("Cannot load association configuration: %1").arg(status.text()));
+    QString error = QString("Cannot load association configuration: %1").arg(status.text());
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return false;
   }
 

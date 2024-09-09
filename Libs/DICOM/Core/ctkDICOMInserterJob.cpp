@@ -34,7 +34,6 @@ static ctkLogger logger ("org.commontk.dicom.DICOMInserterJob");
 //------------------------------------------------------------------------------
 ctkDICOMInserterJob::ctkDICOMInserterJob()
 {
-  this->DatabaseFilename = "";
   this->MaximumConcurrentJobsPerType = 1;
 }
 
@@ -42,12 +41,33 @@ ctkDICOMInserterJob::ctkDICOMInserterJob()
 ctkDICOMInserterJob::~ctkDICOMInserterJob() = default;
 
 //------------------------------------------------------------------------------
-QString ctkDICOMInserterJob::loggerReport(const QString& status) const
+QString ctkDICOMInserterJob::loggerReport(const QString& status)
 {
-  return QString("ctkDICOMInserterJob: insert job %1.\n"
-                 "Number of jobResponseSet to process: %2\n")
-      .arg(status)
-      .arg(this->JobResponseSets.count());
+  QString fullLogMsg;
+  QString logMsg;
+  if (status == "started")
+  {
+    fullLogMsg = QString("ctkDICOMInserterJob: insert job %1. "
+                         "Number of jobResponseSet to process: %2\n")
+                        .arg(status)
+                        .arg(this->JobResponseSets.count());
+    logMsg = QString("Insert job %1. "
+                     "Number of jobResponseSet to process: %2\n")
+                    .arg(status)
+                    .arg(this->JobResponseSets.count());
+  }
+  else
+  {
+    fullLogMsg = QString("ctkDICOMInserterJob: insert job %1.\n")
+                        .arg(status);
+    logMsg = QString("insert job %1. ")
+                    .arg(status);
+  }
+  QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+  QString logHeader = currentDateTime + " INFO: ";
+  this->Log += logHeader;
+  this->Log += logMsg;
+  return fullLogMsg;
 }
 
 //------------------------------------------------------------------------------

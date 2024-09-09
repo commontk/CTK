@@ -27,6 +27,7 @@
 // Qt includes
 #include <QVariant>
 #include <QWidget>
+#include <QTabWidget>
 
 // ctkDICOMCore includes
 #include <ctkDICOMModel.h>
@@ -79,6 +80,10 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
   Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
   Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID);
   Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
+  Q_PROPERTY(QString filteringStudyDescription READ filteringStudyDescription WRITE setFilteringStudyDescription);
+  Q_PROPERTY(ctkDICOMPatientItemWidget::DateType filteringDate READ filteringDate WRITE setFilteringDate);
+  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
+  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
   Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
@@ -155,11 +160,11 @@ public:
   ///@{
   /// Servers
   Q_INVOKABLE int serversCount();
-  Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
-  Q_INVOKABLE void addServer(ctkDICOMServer* server);
+  Q_INVOKABLE ctkDICOMServer* server(int id);
+  Q_INVOKABLE ctkDICOMServer* server(const QString& connectionName);
+  Q_INVOKABLE int addServer(ctkDICOMServer* server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
-  Q_INVOKABLE void removeNthServer(int id);
+  Q_INVOKABLE void removeServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
@@ -249,10 +254,13 @@ public:
   /// Add/Remove Patient item widget
   Q_INVOKABLE int addPatientItemWidget(const QString& patientItem);
   Q_INVOKABLE void removePatientItemWidget(const QString& patientItem);
+  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientItem(const QString& patientItem);
+  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientID(const QString& patientID);
+  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientName(const QString& patientName);
   ///@}
 
-  /// Get Patient item widget
-  Q_INVOKABLE ctkDICOMPatientItemWidget* getPatientItemWidgetByPatientName(const QString& patientName);
+  /// Get Patients tab widget
+  Q_INVOKABLE QTabWidget* patientsTabWidget();
 
   ///@{
   /// Accessors to status of last directory import operation
@@ -376,7 +384,7 @@ public Q_SLOTS:
   ///@}
 
   /// stops all the operations
-  void onStop(bool stopPersistentTasks = false);
+  void onStop(bool stopPersistentTasks = false, bool removeJobs = false);
 
   ///@{
   /// high level UI slots: close, load, warning

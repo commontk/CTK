@@ -90,11 +90,12 @@ public:
   /// Servers
   ///@{
   Q_INVOKABLE int serversCount();
-  Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
-  Q_INVOKABLE void addServer(ctkDICOMServer* server);
+  Q_INVOKABLE ctkDICOMServer* server(int id);
+  Q_INVOKABLE ctkDICOMServer* server(const QString& connectionName);
+  /// Return the row index added into the servers table. If -1 the the operation failed.
+  Q_INVOKABLE int addServer(ctkDICOMServer* server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
-  Q_INVOKABLE void removeNthServer(int id);
+  Q_INVOKABLE void removeServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
@@ -119,6 +120,7 @@ public Q_SLOTS:
   void saveSettings();
   void onRestoreDefaultServers();
   void updateGUIState();
+  void updateGUIFromServerNodes();
   void onItemSelectionChanged();
   void onSettingsModified();
   void onCellSettingsModified(int row, int column);

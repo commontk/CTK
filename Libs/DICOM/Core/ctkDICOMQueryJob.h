@@ -85,7 +85,7 @@ public:
   ///@}
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const override;
+  Q_INVOKABLE QString loggerReport(const QString& status) override;
 
   /// \see ctkAbstractJob::clone()
   Q_INVOKABLE ctkAbstractJob* clone() const override;

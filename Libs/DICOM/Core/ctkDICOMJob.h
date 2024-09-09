@@ -117,9 +117,12 @@ public:
   /// \sa ctkDICOMJobDetail
   Q_INVOKABLE virtual QVariant toVariant() override;
 
+  /// Free used resources from job
+  /// \sa ctkAbstractJob::releaseResources
+  Q_INVOKABLE virtual void releaseResources() override;
+
 Q_SIGNALS:
   void progressJobDetail(QVariant);
-  void finishedJobDetail(QVariant);
 
 protected:
   QString PatientID;
@@ -166,6 +169,22 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
     this->SOPInstanceUID = responseSet.sopInstanceUID();
     this->ConnectionName = responseSet.connectionName();
     this->NumberOfDataSets = responseSet.datasets().count();
+    if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+      {
+        this->QueriedPatientIDs = responseSet.datasets().keys();
+      }
+    else if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+      {
+        this->QueriedStudyInstanceUIDs = responseSet.datasets().keys();
+      }
+    else if (this->JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
+      {
+        this->QueriedSeriesInstanceUIDs = responseSet.datasets().keys();
+      }
+    else if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
+      {
+        this->QueriedSOPInstanceUIDs = responseSet.datasets().keys();
+      }
   }
   virtual ~ctkDICOMJobDetail() = default;
 
@@ -174,6 +193,10 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
   QString SeriesInstanceUID;
   QString SOPInstanceUID;
   QString ReferenceInserterJobUID;
+  QStringList QueriedPatientIDs;
+  QStringList QueriedStudyInstanceUIDs;
+  QStringList QueriedSeriesInstanceUIDs;
+  QStringList QueriedSOPInstanceUIDs;
 
   // Common to DICOM Query and Retrieve jobs, and DICOM JobResponseSet
   QString ConnectionName;

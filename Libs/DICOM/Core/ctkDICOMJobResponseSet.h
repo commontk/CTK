@@ -89,7 +89,8 @@ public:
     RetrieveSOPInstance,
     StoreSOPInstance,
     Inserter,
-    Echo
+    Echo,
+    ThumbnailGenerator,
   };
   void setJobType(JobType jobType);
   JobType jobType() const;
