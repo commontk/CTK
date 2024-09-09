@@ -118,8 +118,8 @@ public:
   Q_INVOKABLE virtual QVariant toVariant() override;
 
   /// Free used resources from job
-  /// \sa ctkAbstractJob::freeUsedResources
-  Q_INVOKABLE virtual void freeUsedResources() override;
+  /// \sa ctkAbstractJob::releaseResources
+  Q_INVOKABLE virtual void releaseResources() override;
 
 Q_SIGNALS:
   void progressJobDetail(QVariant);

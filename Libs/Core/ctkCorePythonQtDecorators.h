@@ -27,8 +27,9 @@
 // CTK includes
 #include <ctkAbstractJob.h> // For ctkJobDetail
 #include <ctkBooleanMapper.h>
-#include <ctkUtils.h>
 #include <ctkErrorLogContext.h>
+#include <ctkLogger.h>
+#include <ctkUtils.h>
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
 
@@ -38,6 +39,8 @@
 // with the self argument as NULL.  The self argument is the first argument
 // for non-static methods.
 //
+
+static ctkLogger logger("org.commontk.core.ctkCorePythonQtDecorators");
 
 /// \ingroup Core
 class ctkCorePythonQtDecorators : public QObject
@@ -245,64 +248,147 @@ public Q_SLOTS:
 
   void setJobClass(ctkJobDetail* td, const QString& jobClass)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setJobClass - Invalid ctkJobDetail");
+      return;
+    }
+
     td->JobClass = jobClass;
   }
   QString jobClass(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::jobClass - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->JobClass;
   }
 
   void setJobUID(ctkJobDetail* td, const QString& jobUID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setJobUID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->JobUID = jobUID;
   }
   QString JobUID(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::JobUID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->JobUID;
   }
-    void setCreationDateTime(ctkJobDetail* td, QString creationDateTime)
+
+  void setCreationDateTime(ctkJobDetail* td, QString creationDateTime)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setCreationDateTime - Invalid ctkJobDetail");
+      return;
+    }
+
     td->CreationDateTime = creationDateTime;
   }
-
   QString creationDateTime(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::creationDateTime - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->CreationDateTime;
   }
 
   void setStartDateTime(ctkJobDetail* td, QString startDateTime)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setStartDateTime - Invalid ctkJobDetail");
+      return;
+    }
+
     td->StartDateTime = startDateTime;
   }
   QString startDateTime(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::startDateTime - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->StartDateTime;
   }
 
   void setCompletionDateTime(ctkJobDetail* td, QString completionDateTime)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setCompletionDateTime - Invalid ctkJobDetail");
+      return;
+    }
+
     td->CompletionDateTime = completionDateTime;
   }
   QString completionDateTime(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::completionDateTime - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->CompletionDateTime;
   }
 
   void setRunningThreadID(ctkJobDetail* td, QString runningThreadID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setRunningThreadID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->RunningThreadID = runningThreadID;
   }
   QString runningThreadID(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::runningThreadID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->RunningThreadID;
   }
 
   void setLogging(ctkJobDetail* td, QString logging)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::setLogging - Invalid ctkJobDetail");
+      return;
+    }
     td->Logging = logging;
   }
   QString logging(ctkJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkJobDetail::logging - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->Logging;
   }
 };

@@ -129,18 +129,6 @@ public:
 ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesItemWidget& obj)
   : q_ptr(&obj)
 {
-  this->PatientID = "";
-  this->SeriesItem = "";
-  this->StudyInstanceUID = "";
-  this->SeriesInstanceUID = "";
-  this->CentralFrameSOPInstanceUID = "";
-  this->SeriesNumber = "";
-  this->Modality = "";
-  this->ReferenceSeriesInserterJobUID = "";
-  this->ReferenceInstanceInserterJobUID = "";
-
-  this->StoppedJobUID = "";
-
   this->IsCloud = false;
   this->RetrieveFailed = false;
   this->RetrieveSeries = false;
@@ -706,14 +694,23 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFinished()
   filesList.removeAll(QString(""));
   int numberOfFiles = filesList.count();
 
-  if (numberOfFrames > 1 && numberOfFiles < numberOfFrames)
+  if (numberOfFrames > 1 && numberOfFiles == 1)
   {
+    // Thumbnail frame has been retrieved, but series has more than 1 frame, continue processing...
+    this->IsCloud = true;
+    this->SeriesThumbnail->operationProgressBar()->show();
+    return;
+  }
+  else if (numberOfFrames > 0 && numberOfFiles < numberOfFrames)
+  {
+    // Failed to retrieve all frames, warn the user
     this->RetrieveFailed = true;
     this->IsCloud = false;
     this->SeriesThumbnail->operationProgressBar()->hide();
   }
   else if (numberOfFrames > 0 && numberOfFiles == numberOfFrames)
   {
+    // All frames have been retrieved successfully
     this->IsCloud = false;
     this->SeriesThumbnail->operationProgressBar()->hide();
   }
@@ -1055,22 +1052,20 @@ void ctkDICOMSeriesItemWidget::onJobFinished(const QVariant &data)
       }
     }
   }
-  else if (td.JobType == ctkDICOMJobResponseSet::JobType::Inserter &&
-           (d->ReferenceSeriesInserterJobUID == td.JobUID ||
-            d->ReferenceSeriesInserterJobUID == "StorageListener"))
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::Inserter)
   {
-    QStringList instancesList = d->DicomDatabase->instancesForSeries(d->SeriesInstanceUID);
-    if (instancesList.count() == 1)
-    {
-      d->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::Completed);
-      d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/accept.svg"));
-      d->updateRetrieveUIOnFinished();
-    }
-    else
+    if (d->ReferenceSeriesInserterJobUID == td.JobUID ||
+        d->ReferenceSeriesInserterJobUID == "StorageListener")
     {
       d->ReferenceSeriesInserterJobUID = "";
-      d->updateRetrieveUIOnFinished();
     }
+    else if (d->ReferenceInstanceInserterJobUID == td.JobUID ||
+             d->ReferenceInstanceInserterJobUID == "StorageListener")
+    {
+      d->ReferenceInstanceInserterJobUID = "";
+    }
+
+    d->updateRetrieveUIOnFinished();
   }
 }
 

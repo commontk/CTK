@@ -67,11 +67,6 @@ public:
 ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
   : q_ptr(&obj)
 {
-  this->ConnectionName = "";
-  this->CallingAETitle = "";
-  this->CalledAETitle = "";
-  this->Host = "";
-  this->MoveDestinationAETitle = "";
   this->QueryRetrieveEnabled = true;
   this->StorageEnabled = true;
   this->TrustedEnabled = true;

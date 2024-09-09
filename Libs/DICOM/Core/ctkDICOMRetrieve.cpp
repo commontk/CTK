@@ -18,8 +18,6 @@
 
 =========================================================================*/
 
-#include <stdexcept>
-
 // Qt includes
 #include <QMutex>
 
@@ -47,7 +45,28 @@
 #include <dcmtk/dcmdata/dcrledrg.h>  /* for DcmRLEDecoderRegistration */
 #include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
 
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
 dcmtk::log4cplus::Logger rootLogRetrieve = dcmtk::log4cplus::Logger::getRoot();
+
+#define LOG_AND_EMIT_DEBUG(debugStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debugStr.toStdString().c_str()); \
+  emit signal(debugStr); \
+} \
+
+#define LOG_AND_EMIT_WARN(warnStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_WARN_STR(rootLogRetrieve, warnStr.toStdString().c_str()); \
+  emit signal(warnStr); \
+} \
+
+#define LOG_AND_EMIT_ERROR(errorStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, errorStr.toStdString().c_str()); \
+  emit signal(errorStr); \
+} \
 
 //------------------------------------------------------------------------------
 // A customized local implementation of the DcmSCU so that Qt signals can be emitted
@@ -258,12 +277,6 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   this->AssociationClosing = false;
   this->LastRetrieveType = ctkDICOMRetrieve::RetrieveNone;
 
-  this->PatientID = "";
-  this->StudyInstanceUID = "";
-  this->SeriesInstanceUID = "";
-  this->ConnectionName = "";
-  this->JobUID = "";
-
   // Register the JPEG libraries in case we need them
   // (registration only happens once, so it's okay to call repeatedly)
   // register global JPEG decompression codecs
@@ -344,6 +357,8 @@ bool ctkDICOMRetrievePrivate::initializeSCU(const QString& patientID,
                                             const ctkDICOMRetrieve::RetrieveType retrieveType,
                                             DcmDataset *retrieveParameters)
 {
+  Q_Q(ctkDICOMRetrieve);
+
   // If we like to query another server than before, be sure to disconnect first
   if (this->SCU->isConnected() && this->ConnectionParamsChanged)
   {
@@ -353,28 +368,23 @@ bool ctkDICOMRetrievePrivate::initializeSCU(const QString& patientID,
   if (!this->SCU->isConnected())
   {
     // Check and initialize networking parameters in DCMTK
-    if ( !this->SCU->initNetwork().good() )
+    if (!this->SCU->initNetwork().good())
     {
-      QString error = ctkDICOMRetrieve::tr("Error initializing the network");
-      DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+      LOG_AND_EMIT_ERROR(QString("Error initializing the network"), q->error);
       return false;
     }
     // Negotiate (i.e. start the) association
-    QString debug = ctkDICOMRetrieve::tr("Negotiating Association");
-    DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
-
-    if ( !this->SCU->negotiateAssociation().good() )
+    LOG_AND_EMIT_DEBUG(QString("Negotiating Association"), q->debug);
+    if (!this->SCU->negotiateAssociation().good())
     {
-      QString error = ctkDICOMRetrieve::tr("Error negotiating association");
-      DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
-      return false;;
+      LOG_AND_EMIT_ERROR(QString("Error negotiating association"), q->error);
+      return false;
     }
   }
 
   this->ConnectionParamsChanged = false;
   // Setup query about what to be received from the PACS
-  QString debug = ctkDICOMRetrieve::tr("Setting Retrieve Parameters");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Setting Retrieve Parameters"), q->debug)
   if (retrieveType == ctkDICOMRetrieve::RetrieveSOPInstance)
   {
     retrieveParameters->putAndInsertString(DCM_QueryRetrieveLevel, "IMAGE");
@@ -438,6 +448,7 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
@@ -450,39 +461,46 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
                            retrieveParameters))
   {
     delete retrieveParameters;
-    QString error = ctkDICOMRetrieve::tr("MOVE Request failed: SCU initialization failed");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("MOVE Request failed: SCU initialization failed"), q->error)
+    emit q->done(false);
     return false;
   }
 
   // Issue request
-  QString debug = ctkDICOMRetrieve::tr("Sending Move Request");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Sending MOVE Request"), q->debug)
+
   OFList<RetrieveResponse*> responses;
   this->PresentationContext = this->SCU->findPresentationContextID(
     UID_MOVEStudyRootQueryRetrieveInformationModel,
     "" /* don't care about transfer syntax */);
   if (this->PresentationContext == 0)
   {
-    QString error = ctkDICOMRetrieve::tr("MOVE Request failed: No valid Study Root MOVE Presentation Context available");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("MOVE Request failed: No valid Study Root MOVE Presentation Context available"), q->error)
     if (!this->KeepAssociationOpen)
     {
       this->releaseAssociation();
     }
     delete retrieveParameters;
+    emit q->done(false);
     return false;
   }
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
+
+  LOG_AND_EMIT_DEBUG(QString("Found Presentation Context"), q->debug)
+  emit q->progress(1);
 
   // do the actual move request
   OFCondition status = this->SCU->sendMOVERequest(
     this->PresentationContext, this->MoveDestinationAETitle.toStdString().c_str(),
     retrieveParameters, &responses);
+
+  LOG_AND_EMIT_DEBUG(QString("Sent MOVE Request"), q->debug)
+  emit q->progress(2);
 
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
@@ -493,17 +511,21 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
   delete retrieveParameters;
 
   // If we do not receive a single response, something is fishy
-  if ( responses.begin() == responses.end() )
+  if (responses.begin() == responses.end())
   {
-    QString error = ctkDICOMRetrieve::tr("No responses received at all! (at least one empty response always expected)");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("No responses received at all! (at least one empty response always expected)"), q->error)
+    emit q->done(false);
     return false;
   }
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
+
+  LOG_AND_EMIT_DEBUG(QString("Got Responses"), q->debug)
+  emit q->progress(3);
 
   /* The server is permitted to acknowledge every image that was received, or
    * to send a single move response.
@@ -513,38 +535,35 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
    * 3) Error code, i.e. no images transferred
    * 4) Warning (one or more failures, i.e. some images transferred)
    */
-  if ( responses.size() == 1 )
+  if (responses.size() == 1)
   {
     RetrieveResponse* rsp = *responses.begin();
-    QString debug = ctkDICOMRetrieve::tr("MOVE response receveid with status: ")+
-                    QString(DU_cmoveStatusString(rsp->m_status));
-    DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+    LOG_AND_EMIT_DEBUG(QString("MOVE response received with status: %1").arg(DU_cmoveStatusString(rsp->m_status)), q->debug)
 
-    if ( (rsp->m_status == STATUS_Success)
+    if ((rsp->m_status == STATUS_Success)
             || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
     {
       if (rsp->m_numberOfCompletedSubops == 0)
       {
-        QString error = ctkDICOMRetrieve::tr("No images transferred by PACS!");
-        DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
-
+        LOG_AND_EMIT_ERROR(QString("No images transferred by PACS!"), q->error)
+        emit q->done(false);
         return false;
       }
     }
     else
     {
-      QString debug = ctkDICOMRetrieve::tr("MOVE request failed, server does report error");
-      DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+      LOG_AND_EMIT_DEBUG(QString("MOVE request failed, server does report error"), q->debug)
 
-      QString statusDetail(ctkDICOMRetrieve::tr("No details"));
+      QString statusDetail("No details");
       if (rsp->m_statusDetail != NULL)
       {
          std::ostringstream out;
         rsp->m_statusDetail->print(out);
-        statusDetail = ctkDICOMRetrieve::tr("Status Detail: ") + statusDetail.fromStdString(out.str());
+        statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
       }
-      statusDetail.prepend(ctkDICOMRetrieve::tr("MOVE request failed: "));
-      DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, statusDetail.toStdString().c_str());
+      statusDetail.prepend("MOVE request failed: ");
+      LOG_AND_EMIT_DEBUG(statusDetail, q->debug)
+      emit q->done(false);
       return false;
     }
   }
@@ -557,18 +576,19 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
     it++;
   }
 
-  debug = ctkDICOMRetrieve::tr("MOVE responses report for study: %1\n"
+  LOG_AND_EMIT_DEBUG(QString("MOVE responses report for study: %1\n"
       "%2 images transferred, and\n"
       "%3 images transferred with warning, and\n"
       "%4 images transfers failed")
     .arg(studyInstanceUID)
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops)));
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
+    q->debug)
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
@@ -593,6 +613,8 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
   jobResponseSet->setJobUID(q->jobUID());
   q->addJobResponseSet(jobResponseSet);
 
+  emit q->progress(100);
+  emit q->done(true);
   return true;
 }
 
@@ -613,6 +635,7 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
@@ -625,49 +648,50 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
                            retrieveParameters))
   {
     delete retrieveParameters;
-    QString error = ctkDICOMRetrieve::tr("MOVE Request failed: SCU initialization failed");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("GET Request failed: SCU initialization failed"), q->error)
+    emit q->done(false);
     return false;
   }
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
   // Issue request
-  QString debug = ctkDICOMRetrieve::tr( "Sending Get Request");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
-  emit q->progress(debug);
+  LOG_AND_EMIT_DEBUG(QString("Sending GET Request"), q->debug)
   emit q->progress(0);
+
   OFList<RetrieveResponse*> responses;
   this->PresentationContext = this->SCU->findPresentationContextID(
     UID_GETStudyRootQueryRetrieveInformationModel,
     "" /* don't care about transfer syntax */ );
   if (this->PresentationContext == 0)
   {
-    QString error = ctkDICOMRetrieve::tr("GET Request failed: No valid Study Root GET Presentation Context available");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("GET Request failed: No valid Study Root GET Presentation Context available"), q->error)
     if (!this->KeepAssociationOpen)
     {
       this->releaseAssociation();
     }
     delete retrieveParameters;
+    emit q->done(false);
     return false;
   }
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
-  emit q->progress(ctkDICOMRetrieve::tr("Found Presentation Context"));
+  LOG_AND_EMIT_DEBUG(QString("Found Presentation Context"), q->debug)
   emit q->progress(1);
 
   // do the actual move request
   OFCondition status = this->SCU->sendCGETRequest(this->PresentationContext, retrieveParameters, &responses);
 
-  emit q->progress(ctkDICOMRetrieve::tr("Sent Get Request"));
+  LOG_AND_EMIT_DEBUG(QString("Sent GET Request"), q->debug)
   emit q->progress(2);
 
   // Close association if we do not want to explicitly keep it open
@@ -679,20 +703,20 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
   delete retrieveParameters;
 
   // If we do not receive a single response, something is fishy
-  if ( responses.begin() == responses.end() )
+  if (responses.begin() == responses.end())
   {
-    QString error = ctkDICOMRetrieve::tr("No responses received at all! (at least one empty response always expected)");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
-    emit q->progress(error);
+    LOG_AND_EMIT_ERROR(QString("No responses received at all! (at least one empty response always expected)"), q->error)
+    emit q->done(false);
     return false;
   }
 
   if (this->Canceled)
   {
+    emit q->done(false);
     return false;
   }
 
-  emit q->progress(ctkDICOMRetrieve::tr("Got Responses"));
+  LOG_AND_EMIT_DEBUG(QString("Got Responses"), q->debug)
   emit q->progress(3);
 
   /* The server is permitted to acknowledge every image that was received, or
@@ -703,38 +727,36 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
    * 3) Error code, i.e. no images transferred
    * 4) Warning (one or more failures, i.e. some images transferred)
    */
-  if ( responses.size() == 1 )
+  if (responses.size() == 1)
   {
     RetrieveResponse* rsp = *responses.begin();
-    QString debug = ctkDICOMRetrieve::tr("GET response receveid with status: ") +
-                    QString(DU_cmoveStatusString(rsp->m_status));
-    DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+    LOG_AND_EMIT_DEBUG(QString("GET response received with status: %1").arg(DU_cmoveStatusString(rsp->m_status)), q->debug)
 
-    if ( (rsp->m_status == STATUS_Success)
+    if ((rsp->m_status == STATUS_Success)
             || (rsp->m_status == STATUS_GET_Warning_SubOperationsCompleteOneOrMoreFailures))
     {
       if (rsp->m_numberOfCompletedSubops == 0)
       {
-        QString error = ctkDICOMRetrieve::tr("No images transferred by PACS!");
-        DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+        LOG_AND_EMIT_ERROR(QString("No images transferred by PACS!"), q->error)
+        emit q->done(false);
         return false;
       }
     }
     else
     {
-      QString debug = ctkDICOMRetrieve::tr("GET request failed, server does report error");
-      DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+      LOG_AND_EMIT_DEBUG(QString("GET request failed, server does report error"), q->debug)
 
-      QString statusDetail(ctkDICOMRetrieve::tr("No details"));
+      QString statusDetail("No details");
       if (rsp->m_statusDetail != NULL)
       {
          std::ostringstream out;
         rsp->m_statusDetail->print(out);
-        statusDetail = ctkDICOMRetrieve::tr("Status Detail: ") + statusDetail.fromStdString(out.str());
+        statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
       }
 
-      statusDetail.prepend(ctkDICOMRetrieve::tr("GET request failed: "));
-      DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, statusDetail.toStdString().c_str());
+      statusDetail.prepend("GET request failed: ");
+      LOG_AND_EMIT_DEBUG(statusDetail, q->debug)
+      emit q->done(false);
       return false;
     }
   }
@@ -746,19 +768,18 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
     it++;
   }
 
-  debug = ctkDICOMRetrieve::tr("GET responses report for study: %1\n"
-        "%2 images transferred, and\n"
-        "%3 images transferred with warning, and\n"
-        "%4 images transfers failed")
+  LOG_AND_EMIT_DEBUG(QString("GET responses report for study: %1\n"
+      "%2 images transferred, and\n"
+      "%3 images transferred with warning, and\n"
+      "%4 images transfers failed")
     .arg(studyInstanceUID)
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops)));
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
+    q->debug)
 
-  emit q->progress(ctkDICOMRetrieve::tr("Finished Get"));
   emit q->progress(100);
-
+  emit q->done(true);
   return true;
 }
 
@@ -990,13 +1011,11 @@ bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID,
 
   if (studyInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive series: Study Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr("Starting moveStudy");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Starting moveStudy"), debug)
   return d->move(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
@@ -1008,13 +1027,11 @@ bool ctkDICOMRetrieve::getStudy(const QString& studyInstanceUID,
 
   if (studyInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive study: Study Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr(("Starting getStudy"));
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Starting getStudy"), debug)
   return d->get(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
@@ -1028,13 +1045,11 @@ bool ctkDICOMRetrieve::moveSeries(const QString& studyInstanceUID,
   if (studyInstanceUID.isEmpty() ||
       seriesInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive series: Study or Series Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr("Starting moveSeries");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Starting moveSeries"), debug)
   return d->move(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
 }
 
@@ -1048,13 +1063,11 @@ bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
   if (studyInstanceUID.isEmpty() ||
       seriesInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive series: Study or Series Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr("Starting getSeries");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Starting getSeries"), debug)
   return d->get(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
 }
 
@@ -1070,13 +1083,11 @@ bool ctkDICOMRetrieve::moveSOPInstance(const QString& studyInstanceUID,
       seriesInstanceUID.isEmpty() ||
       SOPInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr("Starting moveSOPInstance");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
+  LOG_AND_EMIT_DEBUG(QString("Starting moveSOPInstance"), debug)
   return d->move(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
 }
 
@@ -1092,14 +1103,12 @@ bool ctkDICOMRetrieve::getSOPInstance(const QString& studyInstanceUID,
       seriesInstanceUID.isEmpty() ||
       SOPInstanceUID.isEmpty())
   {
-    QString error = ctkDICOMRetrieve::tr("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty.");
-    DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, error.toStdString().c_str());
+    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), error)
     return false;
   }
 
-  QString debug = ctkDICOMRetrieve::tr("Starting getSOPInstance");
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debug.toStdString().c_str());
-    return d->get(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
+  LOG_AND_EMIT_DEBUG(QString("Starting getSOPInstance"), debug)
+  return d->get(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
 }
 
 //------------------------------------------------------------------------------

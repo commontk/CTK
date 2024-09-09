@@ -32,6 +32,9 @@
 // DCMTK includes
 #include "dcmtk/dcmimgle/dcmimage.h"
 
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
 dcmtk::log4cplus::Logger rootLogThumbnailGenerator = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
@@ -132,7 +135,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    QString warn = ctkDICOMThumbnailGenerator::tr("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
     DCMTK_LOG4CPLUS_WARN_STR(rootLogThumbnailGenerator, warn.toStdString().c_str());
     return false;
   }

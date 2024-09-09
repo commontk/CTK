@@ -195,6 +195,8 @@ Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
+  /// Signal is emitted inside the query() function. It send any warning messages
+  void warn(const QString& message);
   /// Signal is emitted inside the retrieve() function. It send any error messages
   void error(const QString& message);
   /// Signal is emitted inside the retrieve() function when finished with value

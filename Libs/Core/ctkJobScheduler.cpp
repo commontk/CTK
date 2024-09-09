@@ -65,7 +65,7 @@ void ctkJobSchedulerPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-void ctkJobSchedulerPrivate::onQueueJobsInThreadPool()
+void ctkJobSchedulerPrivate::queueJobsInThreadPool()
 {
   Q_Q(ctkJobScheduler);
 
@@ -73,6 +73,9 @@ void ctkJobSchedulerPrivate::onQueueJobsInThreadPool()
   {
     return;
   }
+
+  // No need to queue jobs with a signal/slot mechanism, since the mutex makes
+  // sure that concurrent threads append/clean/delete the jobs map.
 
   {
     // The QMutexLocker is enclosed within brackets to restrict its scope and
@@ -190,7 +193,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
   }
 
   emit q->jobInitialized(job->toVariant());
-  this->onQueueJobsInThreadPool();
+  this->queueJobsInThreadPool();
   return true;
 }
 
@@ -211,10 +214,10 @@ bool ctkJobSchedulerPrivate::cleanJob(const QString &jobUID)
       return false;
     }
 
-    job->freeUsedResources();
+    job->releaseResources();
   }
 
-  this->onQueueJobsInThreadPool();
+  this->queueJobsInThreadPool();
   return true;
 }
 
@@ -223,7 +226,7 @@ void ctkJobSchedulerPrivate::cleanJobs(const QStringList &jobUIDs)
 {
   Q_Q(ctkJobScheduler);
 
-  QList<QVariant> datas;
+  QList<QVariant> dataObjects;
   {
     // The QMutexLocker is enclosed within brackets to restrict its scope and
     // prevent conflicts with other QMutexLockers within the scheduler's methods.
@@ -237,12 +240,12 @@ void ctkJobSchedulerPrivate::cleanJobs(const QStringList &jobUIDs)
         continue;
       }
 
-      datas.append(job->toVariant());
-      job->freeUsedResources();
+      dataObjects.append(job->toVariant());
+      job->releaseResources();
     }
   }
 
-  emit q->jobUserStopped(datas);
+  emit q->jobUserStopped(dataObjects);
 }
 
 //------------------------------------------------------------------------------
@@ -274,14 +277,14 @@ bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
     this->JobsQueue.remove(jobUID);
   }
 
-  this->onQueueJobsInThreadPool();
+  this->queueJobsInThreadPool();
   return true;
 }
 
 //------------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
 {
-  QList<QVariant> datas;
+  QList<QVariant> dataObjects;
   {
     // The QMutexLocker is enclosed within brackets to restrict its scope and
     // prevent conflicts with other QMutexLockers within the scheduler's methods.
@@ -295,7 +298,7 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
         continue;
       }
 
-      datas.append(job->toVariant());
+      dataObjects.append(job->toVariant());
 
       QMap<QString, QMetaObject::Connection> connections = this->JobsConnections.value(jobUID);
       QObject::disconnect(connections.value("started"));
@@ -720,7 +723,7 @@ bool ctkJobScheduler::retryJob(const QString &jobUID)
 
   job->setStatus(ctkAbstractJob::JobStatus::Initialized);
   emit this->jobInitialized(job->toVariant());
-  d->onQueueJobsInThreadPool();
+  d->queueJobsInThreadPool();
   return true;
 }
 

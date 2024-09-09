@@ -213,20 +213,15 @@ void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
 }
 
 //----------------------------------------------------------------------------
-QString ctkAbstractJob::loggedText() const
+QString ctkAbstractJob::log() const
 {
-  return this->LoggedText;
+  return this->Log;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::addLoggedText(QString loggedText)
+void ctkAbstractJob::addLog(QString log)
 {
-  if (loggedText.isEmpty())
-  {
-    return;
-  }
-
-  this->LoggedText += loggedText;
+  this->Log += log;
 }
 
 //----------------------------------------------------------------------------

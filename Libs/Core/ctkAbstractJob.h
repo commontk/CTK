@@ -55,7 +55,7 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(QDateTime startDateTime READ startDateTime);
   Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
   Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
-  Q_PROPERTY(QString loggedText READ loggedText WRITE addLoggedText);
+  Q_PROPERTY(QString log READ log);
   Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
 
 public:
@@ -158,8 +158,8 @@ public:
 
   ///@{
   /// Logged Text
-  QString loggedText() const;
-  void addLoggedText(QString loggedText);
+  QString log() const;
+  void addLog(QString log);
   ///@}
 
   /// Generate worker for job
@@ -179,10 +179,10 @@ public:
   Q_INVOKABLE virtual QVariant toVariant();
 
   /// Free used resources from job after worker is done
-  Q_INVOKABLE virtual void freeUsedResources() = 0;
+  Q_INVOKABLE virtual void releaseResources() = 0;
 
   ///@{
-  /// Destroy job pointer after worker is done
+  /// Destroy job object after worker is done
   /// default: false
   bool destroyAfterUse() const;
   void setDestroyAfterUse(bool destroyAfterUse);
@@ -208,7 +208,7 @@ protected:
   QDateTime StartDateTime;
   QDateTime CompletionDateTime;
   QString RunningThreadID;
-  QString LoggedText;
+  QString Log;
   bool DestroyAfterUse;
 
 private:
@@ -227,7 +227,7 @@ struct CTK_CORE_EXPORT ctkJobDetail {
     this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->RunningThreadID = job.runningThreadID();
-    this->Logging = job.loggedText();
+    this->Logging = job.log();
   }
   virtual ~ctkJobDetail() = default;
 

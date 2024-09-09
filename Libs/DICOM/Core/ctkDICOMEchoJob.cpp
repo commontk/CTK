@@ -93,8 +93,8 @@ QString ctkDICOMEchoJob::loggerReport(const QString& status)
                           .arg(status);
   QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
   QString logHeader = currentDateTime + " INFO: ";
-  this->LoggedText += logHeader;
-  this->LoggedText += logMsg;
+  this->Log += logHeader;
+  this->Log += logMsg;
   return fullLogMsg;
 }
 //------------------------------------------------------------------------------

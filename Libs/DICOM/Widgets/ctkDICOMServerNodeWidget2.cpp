@@ -1271,11 +1271,11 @@ void ctkDICOMServerNodeWidget2::updateGUIState()
 
   if (d->Scheduler && d->Scheduler->isStorageListenerActive())
   {
-    d->StorageStatusValueLabel->setText(ctkDICOMServerNodeWidget2::tr("Active"));
+    d->StorageStatusValueLabel->setText(tr("Active"));
   }
   else
   {
-    d->StorageStatusValueLabel->setText(ctkDICOMServerNodeWidget2::tr("Inactive"));
+    d->StorageStatusValueLabel->setText(tr("Inactive"));
   }
 
   d->updateProxyComboBoxes();
@@ -1290,7 +1290,7 @@ void ctkDICOMServerNodeWidget2::updateGUIFromServerNodes()
   d->NodeTable->setRowCount(0);
   for (int serverIndex = 0; serverIndex < d->Scheduler->serversCount(); ++serverIndex)
   {
-    ctkDICOMServer* server = d->Scheduler->getNthServer(serverIndex);
+    ctkDICOMServer* server = d->Scheduler->server(serverIndex);
     if (!server)
     {
       continue;
@@ -1343,7 +1343,7 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
   if (lineEdit)
   {
     lineEdit->setReadOnly(false);
-    lineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
+    lineEdit->setText(tr("unknown"));
     lineEdit->setReadOnly(true);
 
     QColor serverNodeWidgetColor = this->palette().color(QPalette::Normal, this->backgroundRole());
@@ -1445,7 +1445,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
       QString tmpProxyName = tmpNode["Retrieve Proxy"].toString();
       if (serverName == tmpProxyName)
       {
-        ctkDICOMServer* server = this->getServer(tmpServerName.toStdString().c_str());
+        ctkDICOMServer* server = this->server(tmpServerName.toStdString().c_str());
         if (server)
         {
           server->setProxyServer(*proxyServer);
@@ -1498,7 +1498,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     // a dummy example
     QMap<QString, QVariant> defaultServerNode;
     defaultServerNode["Name"] = QString("ExampleHost");
-    defaultServerNode["Verification"] = ctkDICOMServerNodeWidget2::tr("unknown");
+    defaultServerNode["Verification"] = tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
@@ -1514,7 +1514,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     // the uk example - see http://www.dicomserver.co.uk/
     // and http://www.medicalconnections.co.uk/
     defaultServerNode["Name"] = QString("MedicalConnections");
-    defaultServerNode["Verification"] = ctkDICOMServerNodeWidget2::tr("unknown");
+    defaultServerNode["Verification"] = tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
@@ -1669,29 +1669,29 @@ int ctkDICOMServerNodeWidget2::serversCount()
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMServerNodeWidget2::getNthServer(int id)
+ctkDICOMServer* ctkDICOMServerNodeWidget2::server(int id)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("getNthServer failed, no task pool has been set. \n");
+    logger.error("server failed, no task pool has been set. \n");
     return nullptr;
   }
 
-  return d->Scheduler->getNthServer(id);
+  return d->Scheduler->server(id);
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMServerNodeWidget2::getServer(const QString& connectionName)
+ctkDICOMServer* ctkDICOMServerNodeWidget2::server(const QString& connectionName)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("getServer failed, no task pool has been set. \n");
+    logger.error("server failed, no task pool has been set. \n");
     return nullptr;
   }
 
-  return d->Scheduler->getServer(connectionName);
+  return d->Scheduler->server(connectionName);
 }
 
 //----------------------------------------------------------------------------
@@ -1719,16 +1719,16 @@ void ctkDICOMServerNodeWidget2::removeServer(const QString& connectionName)
     return;
   }
 
-  this->removeNthServer(this->getServerIndexFromName(connectionName));
+  this->removeServer(this->getServerIndexFromName(connectionName));
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::removeNthServer(int id)
+void ctkDICOMServerNodeWidget2::removeServer(int id)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("removeNthServer failed, no task pool has been set. \n");
+    logger.error("removeServer failed, no task pool has been set. \n");
     return;
   }
 

@@ -106,14 +106,9 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
 {
   this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
   this->ThumbnailSizePixel = 200;
-  this->FilteringSeriesDescription = "";
-  this->PatientID = "";
-  this->StudyInstanceUID = "";
-  this->StudyItem = "";
 
   this->AllowedServers = QStringList();
   this->Status = ctkDICOMStudyItemWidget::NoOperation;
-  this->StoppedJobUID = "";
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;

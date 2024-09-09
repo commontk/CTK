@@ -117,14 +117,6 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->FilteringDate = ctkDICOMPatientItemWidget::DateType::Any;
   this->NumberOfOpenedStudiesPerPatient = 2;
   this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
-  this->PatientItem = "";
-  this->PatientID = "";
-  this->PatientName = "";
-  this->PatientBirthDate = "";
-  this->PatientSex = "";
-
-  this->FilteringStudyDescription = "";
-  this->FilteringSeriesDescription = "";
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
@@ -134,7 +126,6 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
 
   this->AllowedServers = QStringList();
   this->Status = ctkDICOMPatientItemWidget::NoOperation;
-  this->StoppedJobUID = "";
 
   this->IsGUIUpdating = false;
   this->QueryOn = true;
@@ -471,7 +462,7 @@ void ctkDICOMPatientItemWidgetPrivate::updateAllowedServersUIFromDB()
     }
     else
     {
-      ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
+      ctkDICOMServer* server = this->Scheduler->server(connectionName);
       if (server && server->trustedEnabled())
       {
       this->AllowedServers.append(connectionName);
@@ -529,7 +520,7 @@ void ctkDICOMPatientItemWidgetPrivate::saveAllowedServersStringListFromUI()
     }
     else if (checkState == Qt::CheckState::PartiallyChecked)
     {
-      ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
+      ctkDICOMServer* server = this->Scheduler->server(connectionName);
       if (server && server->trustedEnabled())
       {
       this->AllowedServers.append(connectionName);

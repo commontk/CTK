@@ -655,7 +655,7 @@ int ctkDICOMScheduler::storageServersCount()
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMScheduler::getNthServer(int id)
+ctkDICOMServer* ctkDICOMScheduler::server(int id)
 {
   Q_D(ctkDICOMScheduler);
   if (id < 0 || id > d->Servers.size() - 1)
@@ -666,10 +666,10 @@ ctkDICOMServer* ctkDICOMScheduler::getNthServer(int id)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMScheduler::getServer(const QString& connectionName)
+ctkDICOMServer* ctkDICOMScheduler::server(const QString& connectionName)
 {
   Q_D(ctkDICOMScheduler);
-  ctkDICOMServer* server = this->getNthServer(this->getServerIndexFromName(connectionName));
+  ctkDICOMServer* server = this->server(this->getServerIndexFromName(connectionName));
   if (!server)
   {
     server = d->getServerFromProxyServersByConnectionName(connectionName);
@@ -705,11 +705,11 @@ void ctkDICOMScheduler::addServer(QSharedPointer<ctkDICOMServer> server)
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::removeServer(const QString& connectionName)
 {
-  this->removeNthServer(this->getServerIndexFromName(connectionName));
+  this->removeServer(this->getServerIndexFromName(connectionName));
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::removeNthServer(int id)
+void ctkDICOMScheduler::removeServer(int id)
 {
   Q_D(ctkDICOMScheduler);
   if (id < 0 || id > d->Servers.size() - 1)
@@ -717,7 +717,7 @@ void ctkDICOMScheduler::removeNthServer(int id)
     return;
   }
 
-  ctkDICOMServer* server = this->getNthServer(id);
+  ctkDICOMServer* server = this->server(id);
   if (!server)
   {
     return;
@@ -1115,8 +1115,7 @@ void ctkDICOMScheduler::onJobStarted(ctkAbstractJob* job)
   ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
   if (appender)
   {
-    QString loggedText = appender->messageByThreadID(job->runningThreadID());
-    job->addLoggedText(loggedText);
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
   }
 
   ctkJobScheduler::onJobStarted(job);
@@ -1134,8 +1133,7 @@ void ctkDICOMScheduler::onJobUserStopped(ctkAbstractJob* job)
   ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
   if (appender)
   {
-    QString loggedText = appender->messageByThreadID(job->runningThreadID());
-    job->addLoggedText(loggedText);
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
   }
 
   ctkJobScheduler::onJobUserStopped(job);
@@ -1153,8 +1151,7 @@ void ctkDICOMScheduler::onJobFinished(ctkAbstractJob* job)
   ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
   if (appender)
   {
-    QString loggedText = appender->messageByThreadID(job->runningThreadID());
-    job->addLoggedText(loggedText);
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
   }
 
   ctkJobScheduler::onJobFinished(job);
@@ -1172,8 +1169,7 @@ void ctkDICOMScheduler::onJobAttemptFailed(ctkAbstractJob* job)
   ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
   if (appender)
   {
-    QString loggedText = appender->messageByThreadID(job->runningThreadID());
-    job->addLoggedText(loggedText);
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
   }
 
   ctkJobScheduler::onJobAttemptFailed(job);
@@ -1191,8 +1187,7 @@ void ctkDICOMScheduler::onJobFailed(ctkAbstractJob* job)
   ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
   if (appender)
   {
-    QString loggedText = appender->messageByThreadID(job->runningThreadID());
-    job->addLoggedText(loggedText);
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
   }
 
   ctkJobScheduler::onJobFailed(job);

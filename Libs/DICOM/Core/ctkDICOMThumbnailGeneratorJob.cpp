@@ -38,9 +38,6 @@ static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGeneratorJob" );
 ctkDICOMThumbnailGeneratorJobPrivate::ctkDICOMThumbnailGeneratorJobPrivate(ctkDICOMThumbnailGeneratorJob* object)
  : q_ptr(object)
 {
-  this->DatabaseFilename = "";
-  this->DicomFilePath = "";
-  this->Modality = "";
   this->BackgroundColor = Qt::darkGray;
 }
 
@@ -86,8 +83,8 @@ QString ctkDICOMThumbnailGeneratorJob::loggerReport(const QString& status)
                           .arg(status);
   QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
   QString logHeader = currentDateTime + " INFO: ";
-  this->LoggedText += logHeader;
-  this->LoggedText += logMsg;
+  this->Log += logHeader;
+  this->Log += logMsg;
   return fullLogMsg;
 }
 //------------------------------------------------------------------------------

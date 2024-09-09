@@ -169,12 +169,12 @@ public:
   Q_INVOKABLE int serversCount();
   Q_INVOKABLE int queryRetrieveServersCount();
   Q_INVOKABLE int storageServersCount();
-  Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
+  Q_INVOKABLE ctkDICOMServer* server(int id);
+  Q_INVOKABLE ctkDICOMServer* server(const QString& connectionName);
   Q_INVOKABLE void addServer(ctkDICOMServer& server);
   void addServer(QSharedPointer<ctkDICOMServer> server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
-  Q_INVOKABLE void removeNthServer(int id);
+  Q_INVOKABLE void removeServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
