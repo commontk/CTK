@@ -37,6 +37,9 @@
 #include <QStyleOptionSpinBox>
 #include <QVariant>
 
+//------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDoubleSpinBox, bool, isSettingValue, IsSettingValue)
+
 //-----------------------------------------------------------------------------
 // ctkQDoubleSpinBox
 //----------------------------------------------------------------------------
@@ -187,6 +190,7 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->InputRange[0] = 0.;
   this->InputRange[1] = 99.99;
   this->ForceInputValueUpdate = false;
+  this->IsSettingValue = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -285,6 +289,8 @@ int ctkDoubleSpinBoxPrivate::decimalsForValue(double value) const
 void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
 {
   Q_Q(ctkDoubleSpinBox);
+  bool wasSettingValue = this->IsSettingValue;
+  this->IsSettingValue = true;
   dec = this->boundDecimals(dec);
   const bool changeDecimals = dec != q->decimals();
   if (changeDecimals)
@@ -316,6 +322,7 @@ void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
     this->CachedMinimumSizeHint = QSize();
     q->updateGeometry();
   }
+  this->IsSettingValue = wasSettingValue;
 }
 
 //-----------------------------------------------------------------------------
