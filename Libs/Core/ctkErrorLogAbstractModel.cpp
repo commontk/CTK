@@ -371,7 +371,7 @@ void ctkErrorLogAbstractModel::clear()
 
 //------------------------------------------------------------------------------
 void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& logLevel,
-                                   bool disableFilter)
+                                           bool disableFilter)
 {
   Q_D(ctkErrorLogAbstractModel);
 
@@ -381,11 +381,6 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
     patterns << this->filterRegExp().pattern().split("|");
   }
   patterns.removeAll(d->ErrorLogLevel(ctkErrorLogLevel::None));
-
-//  foreach(QString s, patterns)
-//    {
-//    std::cout << "pattern:" << qPrintable(s) << std::endl;
-//    }
 
   QMetaEnum logLevelEnum = d->ErrorLogLevel.metaObject()->enumerator(0);
   Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
