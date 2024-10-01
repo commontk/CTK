@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -251,22 +251,22 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
   this->setData(this->index(row, Columns::PatientID), td.PatientID, Qt::ToolTipRole);
 
   QStringList patients = database->patients();
-  QString patientItem;
+  QString patientUID;
   foreach (QString patient, patients)
   {
     QString patientID = database->fieldForPatient("PatientID", patient);
     if (patientID == td.PatientID)
     {
-      patientItem = patient;
+      patientUID = patient;
       break;
     }
   }
-  QString patientName = database->fieldForPatient("PatientsName", patientItem);
+  QString patientName = database->fieldForPatient("PatientsName", patientUID);
   patientName.replace(R"(^)", R"( )");
   this->setData(this->index(row, Columns::PatientName), patientName);
   this->setData(this->index(row, Columns::PatientName), patientName, Qt::ToolTipRole);
 
-  QString date = database->fieldForPatient("PatientsBirthDate", patientItem);
+  QString date = database->fieldForPatient("PatientsBirthDate", patientUID);
   date.replace(QString("-"), QString(""));
   date = QDate::fromString(date, "yyyyMMdd").toString();
 

@@ -93,6 +93,7 @@ public:
     Completed = 2,
     Failed = 3
   };
+  Q_ENUM(OperationStatus)
 
   void setOperationStatus(const OperationStatus& status);
   OperationStatus operationStatus()const;

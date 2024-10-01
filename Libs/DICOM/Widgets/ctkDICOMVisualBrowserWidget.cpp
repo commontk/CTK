@@ -17,24 +17,30 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
 // Qt includes
+#include <QCalendarWidget>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDate>
+#include <QDateEdit>
+#include <QDesktopWidget>
 #include <QFormLayout>
 #include <QMap>
 #include <QMenu>
+#include <QProgressBar>
 #include <QProgressDialog>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QTableWidget>
 #include <QToolButton>
 
 // CTK includes
 #include <ctkBasePopupWidget.h>
+#include <ctkCheckBox.h>
 #include <ctkDirectoryButton.h>
 #include <ctkFileDialog.h>
 #include <ctkLogger.h>
@@ -46,6 +52,7 @@
 #include "ctkDICOMIndexer.h"
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMModalities.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
@@ -54,10 +61,17 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMMetadataDialog.h"
-#include "ctkDICOMObjectListWidget.h"
+#include "ctkDICOMPatientDelegate.h"
+#include "ctkDICOMPatientModel.h"
+#include "ctkDICOMPatientFilterProxyModel.h"
+#include "ctkDICOMPatientView.h"
 #include "ctkDICOMVisualBrowserWidget.h"
-#include "ctkDICOMSeriesItemWidget.h"
+#include "ctkDICOMSeriesModel.h"
+#include "ctkDICOMSeriesTableView.h"
 #include "ctkDICOMServerNodeWidget2.h"
+#include "ctkDICOMStudyModel.h"
+#include "ctkDICOMStudyMergedFilterProxyModel.h"
+#include "ctkDICOMStudyListView.h"
 #include "ctkDICOMVisualBrowserWidget.h"
 #include "ui_ctkDICOMVisualBrowserWidget.h"
 
@@ -66,6 +80,10 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
 QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
 QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
+int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsNone = 0;
+int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsSmall = 128;
+int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsMedium = 192;
+int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsLarge = 256;
 
 //----------------------------------------------------------------------------
 class ctkDICOMVisualBrowserWidgetPrivate : public Ui_ctkDICOMVisualBrowserWidget
@@ -74,7 +92,6 @@ class ctkDICOMVisualBrowserWidgetPrivate : public Ui_ctkDICOMVisualBrowserWidget
 
 protected:
   ctkDICOMVisualBrowserWidget* const q_ptr;
-  QToolButton* patientsTabMenuToolButton;
 
 public:
   ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMVisualBrowserWidget& obj);
@@ -86,68 +103,41 @@ public:
   void importDirectory(QString directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
   void importFiles(const QStringList& files, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
   void importOldSettings();
-  void configureSearchIcon();
   void showUpdateSchemaDialog();
   void updateModalityCheckableComboBox();
-  void createPatients(bool queryRetrieve = true,
+  void createPatients(bool queryRetrieve = false,
+                      const QStringList& queriedPatientIDs = QStringList(),
                       bool isImport = false);
   bool areFiltersEmpty();
   void resetFilters();
+  void updateUIAfterFilters();
   void updateFiltersWarnings();
   void setBackgroundColorToFilterWidgets(bool warning = false);
   void setBackgroundColorToWidget(QColor color, QWidget* widget);
+  void updateFiltersLayoutOrientation();
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
-  void removeAllPatientItemWidgets();
-  QString findPatientItemFromPatientInfo(const QString& patientID = "",
-                                         const QString& patientName = "",
-                                         const QString& patientBirthDate = "");
-  int findPatientTabIndexFromPatientItem(const QString& patientItem);
-  void updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget);
-  QStringList getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
-                                         QList<QWidget*> selectedWidgets);
-  QStringList getPatientUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                        QList<QWidget*> selectedWidgets);
-  QStringList getStudyUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                      QList<QWidget*> selectedWidgets);
-  QStringList getSeriesUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                       QList<QWidget*> selectedWidgets);
+  QString findPatientUIDByPatientID(const QString& patientID);
   QStringList filterPatientList(const QStringList& patientList,
                                 const QMap<QString, QVariant>& filters);
-  QStringList filterStudyList(const QStringList& patientList,
+  QStringList filterStudyList(const QStringList& studyList,
                               const QMap<QString, QVariant>& filters);
-  QStringList filterSeriesList(const QStringList& patientList,
+  QStringList filterSeriesList(const QStringList& seriesList,
                                const QMap<QString, QVariant>& filters);
-  ctkDICOMStudyItemWidget* getCurrentPatientStudyWidgetByUIDs(const QString& studyInstanceUID);
-  ctkDICOMSeriesItemWidget* getCurrentPatientSeriesWidgetByUIDs(const QString& studyInstanceUID,
-                                                                const QString& seriesInstanceUID);
-  void getPatientsMetadata(bool queryRetrieve = true);
-  void updateTabVisibilityForPatientItemWidgets();
-  void updateTabVisibilityForPatientItemWidget(ctkDICOMPatientItemWidget* patientItemWidget);
+  int computeThumbnailSizeInPixels(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption sizeOption);
+  void updateThumbnailSizeForCurrentStudyView(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption sizeOption);
+
+  // Utility function to convert DateType enum to number of days
+  static int getNDaysFromFilteringDate(ctkDICOMVisualBrowserWidget::DateType dateType);
 
   // Return a sanitized version of the string that is safe to be used
   // as a filename component.
   // All non-ASCII characters are replaced, because they may be used on an internal hard disk,
   // but it may not be possible to use them on file systems of an external drive or network storage.
-  QString filenameSafeString(const QString& str)
-  {
-    QString safeStr;
-    const QString illegalChars("/\\<>:\"|?*");
-    foreach (const QChar& c, str)
-    {
-      int asciiCode = c.toLatin1();
-      if (asciiCode >= 32 && asciiCode <= 127 && !illegalChars.contains(c))
-      {
-        safeStr.append(c);
-      }
-      else
-      {
-        safeStr.append("_");
-      }
-    }
-    // remove leading/trailing whitespaces
-    return safeStr.trimmed();
-  }
+  QString filenameSafeString(const QString& str);
+
+  // Utility function to add a widget to a grid layout with specified row/column/span
+  void setGridWidget(QGridLayout* layout, QWidget* widget, int row, int col, int rowSpan = 1, int colSpan = 1);
 
   // local count variables to keep track of the number of items
   // added to the database during an import operation
@@ -172,24 +162,32 @@ public:
   QSharedPointer<ctkDICOMThumbnailGenerator> ThumbnailGenerator;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
   QSharedPointer<ctkDICOMIndexer> Indexer;
+  QSharedPointer<ctkDICOMPatientModel> PatientModel;
+  QSharedPointer<ctkDICOMPatientFilterProxyModel> PatientFilterProxyModel;
 
   QString FilteringPatientID;
   QString FilteringPatientName;
 
   QString FilteringStudyDescription;
-  ctkDICOMPatientItemWidget::DateType FilteringDate;
+  ctkDICOMVisualBrowserWidget::DateType FilteringDate;
+  QDate FilteringStartDate;
+  QDate FilteringEndDate;
+  QWidget *CustomDateRangeWidget;
+  QDateEdit* FilteringStartDateEdit;
+  QDateEdit* FilteringEndDateEdit;
 
   QString FilteringSeriesDescription;
   QStringList PreviousFilteringModalities;
   QStringList FilteringModalities;
 
   int NumberOfOpenedStudiesPerPatient;
-  ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
+  ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption ThumbnailSizePreset;
   bool SendActionVisible;
   bool DeleteActionVisible;
   bool IsGUIUpdating;
+  bool IsGUIHorizontal;
   bool IsLoading;
-  QString SelectedPatientItem;
+  QString SelectedPatientUID;
 
   QProgressDialog* UpdateSchemaProgress;
   QProgressDialog* ExportProgress;
@@ -217,25 +215,23 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->Indexer->setDatabase(this->DicomDatabase.data());
   this->Indexer->setBackgroundImportEnabled(true);
 
+  this->PatientModel = QSharedPointer<ctkDICOMPatientModel>(new ctkDICOMPatientModel);
+  this->PatientFilterProxyModel = QSharedPointer<ctkDICOMPatientFilterProxyModel>(new ctkDICOMPatientFilterProxyModel);
+
   this->MetadataDialog = new ctkDICOMMetadataDialog();
   this->MetadataDialog->setObjectName("DICOMMetadata");
   this->MetadataDialog->setWindowTitle(ctkDICOMVisualBrowserWidget::tr("DICOM File Metadata"));
 
   this->NumberOfOpenedStudiesPerPatient = 2;
-  this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
+  this->ThumbnailSizePreset = ctkDICOMVisualBrowserWidget::Small;
   this->SendActionVisible = false;
   this->DeleteActionVisible = true;
 
-  this->FilteringDate = ctkDICOMPatientItemWidget::DateType::Any;
-
-  this->FilteringModalities.append("Any");
-  this->FilteringModalities.append("CR");
-  this->FilteringModalities.append("CT");
-  this->FilteringModalities.append("MR");
-  this->FilteringModalities.append("NM");
-  this->FilteringModalities.append("US");
-  this->FilteringModalities.append("PT");
-  this->FilteringModalities.append("XA");
+  this->FilteringDate = ctkDICOMVisualBrowserWidget::Any;
+  this->CustomDateRangeWidget = nullptr;
+  this->FilteringStartDateEdit = nullptr;
+  this->FilteringEndDateEdit = nullptr;
+  this->FilteringModalities = ctkDICOMModalities::AllModalities;
 
   this->PatientsAddedDuringImport = 0;
   this->StudiesAddedDuringImport = 0;
@@ -244,6 +240,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->ImportDialog = nullptr;
 
   this->IsGUIUpdating = false;
+  this->IsGUIHorizontal = true;
   this->IsLoading = false;
 
   this->ExportProgress = nullptr;
@@ -253,9 +250,26 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
 //----------------------------------------------------------------------------
 ctkDICOMVisualBrowserWidgetPrivate::~ctkDICOMVisualBrowserWidgetPrivate()
 {
-  this->ImportDialog->deleteLater();
-  this->MetadataDialog->deleteLater();
-  this->removeAllPatientItemWidgets();
+  if (this->ImportDialog)
+  {
+    this->ImportDialog->deleteLater();
+  }
+  if (this->MetadataDialog)
+  {
+    this->MetadataDialog->deleteLater();
+  }
+  if (this->CustomDateRangeWidget)
+  {
+    this->CustomDateRangeWidget->deleteLater();
+  }
+  if (this->FilteringStartDateEdit)
+  {
+    this->FilteringStartDateEdit->deleteLater();
+  }
+  if (this->FilteringEndDateEdit)
+  {
+    this->FilteringEndDateEdit->deleteLater();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -275,7 +289,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->WarningPushButton->hide();
   QObject::connect(this->WarningPushButton, SIGNAL(clicked()),
                    q, SLOT(onWarningPushButtonClicked()));
-
   QObject::connect(this->FilteringPatientIDSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringPatientIDChanged()));
 
@@ -300,9 +313,34 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->FilteringSeriesDescriptionSearchBox, SIGNAL(returnPressed()),
                    q, SLOT(onQueryPatients()));
 
-  QObject::connect(this->FilteringModalityCheckableComboBox, SIGNAL(checkedIndexesChanged()),
-                   q, SLOT(onFilteringModalityCheckableComboBoxChanged()));
+  // To Do: add an option to disable styling
+  this->FilteringModalityCheckableComboBox->setStyleSheet("combobox-popup: 0;");
+
+  QStringList allModalities = ctkDICOMModalities::AllModalities;
+  QStringList commonModalities = ctkDICOMModalities::CommonImagingModalities;
+
+  QSet<QString> otherModalitiesSet = QSet<QString>(allModalities.begin(), allModalities.end());
+  otherModalitiesSet.subtract(QSet<QString>(commonModalities.begin(), commonModalities.end()));
+  otherModalitiesSet.remove("Any");
+  QStringList otherModalities = otherModalitiesSet.values();
+  otherModalities.sort();
+
+  this->FilteringModalityCheckableComboBox->setMaxVisibleItems(20);
+  this->FilteringModalityCheckableComboBox->addItem("Any");
+  this->FilteringModalityCheckableComboBox->insertSeparator(1);
+  this->FilteringModalityCheckableComboBox->addItems(commonModalities);
+  this->FilteringModalityCheckableComboBox->insertSeparator(commonModalities.length() + 2);
+  this->FilteringModalityCheckableComboBox->addItems(otherModalities);
+
   this->updateModalityCheckableComboBox();
+  QObject::connect(this->FilteringModalityCheckableComboBox, SIGNAL(checkedIndexesChanged()),
+                    q, SLOT(onFilteringModalityCheckableComboBoxChanged()));
+
+  QListView* modalityListView = qobject_cast<QListView*>(this->FilteringModalityCheckableComboBox->view());
+  if (modalityListView)
+  {
+    modalityListView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  }
 
   QObject::connect(this->FilteringModalityCheckableComboBox, SIGNAL(returnRelease()),
                    q, SLOT(onQueryPatients()));
@@ -313,51 +351,103 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->FilteringDateComboBox, SIGNAL(returnRelease()),
                    q, SLOT(onQueryPatients()));
 
-  QObject::connect(this->SearchMenuButton, SIGNAL(clicked()),
+  // Create popup widget for custom date range
+  ctkPopupWidget* dateRangePopup = new ctkPopupWidget(this->FilteringDateComboBox);
+  dateRangePopup->setAutoShow(false);
+  dateRangePopup->setAutoHide(false);
+  dateRangePopup->setAnimationEffect(ctkBasePopupWidget::FadeEffect);
+  dateRangePopup->setOrientation(Qt::Vertical);
+  dateRangePopup->setHorizontalDirection(Qt::LeftToRight);
+  dateRangePopup->setVerticalDirection(ctkBasePopupWidget::TopToBottom);
+
+  // Add the CustomDateRangeWidget to the popup using a layout
+  QVBoxLayout* popupLayout = new QVBoxLayout(dateRangePopup);
+  popupLayout->setContentsMargins(0, 0, 0, 0);
+  this->CustomDateRangeWidget = new QWidget(q);
+  this->CustomDateRangeWidget->setParent(dateRangePopup);
+  this->CustomDateRangeWidget->setVisible(true);
+  popupLayout->addWidget(this->CustomDateRangeWidget);
+
+  // Store popup in a member variable for later access
+  q->setProperty("dateRangePopup", QVariant::fromValue(static_cast<QWidget*>(dateRangePopup)));
+
+  // Add a layout to CustomDateRangeWidget and insert labels, date edits, and popup calendars
+  QHBoxLayout* customDateLayout = new QHBoxLayout(this->CustomDateRangeWidget);
+  customDateLayout->setContentsMargins(0, 0, 0, 0);
+
+  QLabel* fromLabel = new QLabel(ctkDICOMVisualBrowserWidget::tr("From:"), this->CustomDateRangeWidget);
+  this->FilteringStartDateEdit = new QDateEdit(this->CustomDateRangeWidget);
+  this->FilteringStartDateEdit->setCalendarPopup(true);
+  this->FilteringStartDateEdit->setMinimumDate(QDate());
+  this->FilteringStartDateEdit->setDate(QDate()); // Set to null date (empty)
+  this->FilteringStartDateEdit->setSpecialValueText(" "); // Show empty when null
+  this->FilteringStartDateEdit->setDisplayFormat("dd MMM yyyy");
+
+  QLabel* toLabel = new QLabel(ctkDICOMVisualBrowserWidget::tr("To:"), this->CustomDateRangeWidget);
+  this->FilteringEndDateEdit = new QDateEdit(this->CustomDateRangeWidget);
+  this->FilteringEndDateEdit->setCalendarPopup(true);
+  this->FilteringEndDateEdit->setMinimumDate(QDate());
+  this->FilteringEndDateEdit->setDate(QDate());   // Set to null date (empty)
+  this->FilteringEndDateEdit->setSpecialValueText(" ");   // Show empty when null
+  this->FilteringEndDateEdit->setDisplayFormat("dd MMM yyyy");
+
+  customDateLayout->addWidget(fromLabel);
+  customDateLayout->addWidget(this->FilteringStartDateEdit);
+  customDateLayout->addSpacing(10);
+  customDateLayout->addWidget(toLabel);
+  customDateLayout->addWidget(this->FilteringEndDateEdit);
+
+  QObject::connect(this->FilteringStartDateEdit, SIGNAL(dateChanged(QDate)),
+                   q, SLOT(onFilteringStartDateChanged(QDate)));
+  QObject::connect(this->FilteringEndDateEdit, SIGNAL(dateChanged(QDate)),
+                   q, SLOT(onFilteringEndDateChanged(QDate)));
+
+  QObject::connect(this->SearchPushButton, SIGNAL(clicked()),
                    q, SLOT(onQueryPatients()));
 
-  // Add query/retrieve options menu to SearchMenuButton button
-  QMenu *queryRetrieveButtonMenu = new QMenu(ctkDICOMVisualBrowserWidget::tr("Show options"), this->SearchMenuButton);
-  queryRetrieveButtonMenu->setToolTipsVisible(true);
-  this->SearchMenuButton->setMenu(queryRetrieveButtonMenu);
-  this->SearchMenuButton->setFixedWidth(this->SearchMenuButton->width());
+  // Setup Patient View with Model/View/Delegate architecture
+  this->PatientModel->setDicomDatabase(this->DicomDatabase);
+  this->PatientModel->setScheduler(this->Scheduler);
+  this->PatientModel->setNumberOfOpenedStudiesPerPatient(this->NumberOfOpenedStudiesPerPatient);
 
-  QAction *toggleQueryRetrieveAction = new QAction(ctkDICOMVisualBrowserWidget::tr("Query/Retrieve from servers"), queryRetrieveButtonMenu);
-  toggleQueryRetrieveAction->setToolTip(ctkDICOMVisualBrowserWidget::tr("If enabled, the widget will also conduct queries and retrieve the data."));
-  toggleQueryRetrieveAction->setCheckable(true);
-  QSettings settings;
-  if (settings.value("DICOM/QueryRetrieveEnabled", "") == "")
-  {
-    settings.setValue("DICOM/QueryRetrieveEnabled", true);
-    settings.sync();
-  }
-  toggleQueryRetrieveAction->setChecked(settings.value("DICOM/QueryRetrieveEnabled", "").toBool());
-  queryRetrieveButtonMenu->addAction(toggleQueryRetrieveAction);
-  this->configureSearchIcon();
+  // Create and set the delegate for patient rendering
+  ctkDICOMPatientDelegate* patientDelegate = new ctkDICOMPatientDelegate(q);
+  this->PatientView->setItemDelegate(patientDelegate);
 
-  QObject::connect(toggleQueryRetrieveAction, SIGNAL(toggled(bool)),
-                   q, SLOT(onQueryRetrieveOptionToggled(bool)));
+  this->PatientView->setDisplayMode(ctkDICOMPatientView::TabMode);
 
-  this->PatientsTabWidget->clear();
+  // Create filter proxy model for patients
+  this->PatientFilterProxyModel->setSourceModel(this->PatientModel.data());
 
-  // setup patients menu
-  this->patientsTabMenuToolButton = new QToolButton(q);
-  this->patientsTabMenuToolButton->setObjectName("patientsTabMenuToolButton");
-  this->patientsTabMenuToolButton->setCheckable(false);
-  this->patientsTabMenuToolButton->setChecked(false);
-  this->patientsTabMenuToolButton->setIcon(QIcon(":/Icons/more_vert.svg"));
-  this->patientsTabMenuToolButton->hide();
+  // Set display mode on proxy to match view's display mode
+  this->PatientFilterProxyModel->setDisplayMode(
+    this->PatientView->displayMode() == ctkDICOMPatientView::TabMode
+      ? ctkDICOMPatientFilterProxyModel::TabMode
+      : ctkDICOMPatientFilterProxyModel::ListMode
+  );
 
-  QObject::connect(this->patientsTabMenuToolButton, SIGNAL(clicked()),
-                   q, SLOT(onPatientsTabMenuToolButtonClicked()));
+  // Set the proxy model on the view
+  this->PatientView->setModel(this->PatientFilterProxyModel.data());
 
-  this->PatientsTabWidget->setCornerWidget(this->patientsTabMenuToolButton, Qt::TopLeftCorner);
+  // Connect display mode changes to update proxy model
+  QObject::connect(this->PatientView, &ctkDICOMPatientView::displayModeChanged,
+                   q, &ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged);
 
-  QObject::connect(this->PatientsTabWidget, SIGNAL(currentChanged(int)),
-                   q, SLOT(onPatientItemChanged(int)));
+  // Connect patient context menu (3-dot button or right-click)
+  QObject::connect(this->PatientView, &ctkDICOMPatientView::patientContextMenuRequested,
+                   q, &ctkDICOMVisualBrowserWidget::showPatientContextMenu);
 
-  QObject::connect(this->PatientsTabWidget, SIGNAL(tabBarClicked(int)),
-                   q, SLOT(onOperationStatusTabBarItemClicked(int)));
+  // Connect study context menu - when study header is clicked, all series of that study are selected
+  QObject::connect(this->PatientView->studyListView(), &ctkDICOMStudyListView::studyContextMenuRequested,
+                   q, &ctkDICOMVisualBrowserWidget::showStudyContextMenu);
+
+  // Connect series context menu - need to forward through StudyListView
+  QObject::connect(this->PatientView->studyListView(), &ctkDICOMStudyListView::seriesContextMenuRequested,
+                   q, &ctkDICOMVisualBrowserWidget::showSeriesContextMenu);
+
+  // Connect series activation (double-click) signal
+  QObject::connect(this->PatientView->studyListView(), &ctkDICOMStudyListView::seriesActivated,
+                   q, &ctkDICOMVisualBrowserWidget::onSeriesDoubleClicked);
 
   QObject::connect(this->ServerNodeWidget, SIGNAL(serversSettingsChanged()),
                    q, SLOT(onServersSettingsChanged()));
@@ -520,21 +610,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::importOldSettings()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::configureSearchIcon()
-{
-  QSettings settings;
-  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
-  if (queryRetrieveEnabled)
-  {
-    this->SearchMenuButton->setIcon(QIcon(":/Icons/query.svg"));
-  }
-  else
-  {
-    this->SearchMenuButton->setIcon(QIcon(":/Icons/search_local.svg"));
-  }
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::showUpdateSchemaDialog()
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
@@ -573,35 +648,45 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
   QAbstractItemModel* model = this->FilteringModalityCheckableComboBox->checkableModel();
   int wasBlocking = this->FilteringModalityCheckableComboBox->blockSignals(true);
 
-  if ((!this->PreviousFilteringModalities.contains("Any") &&
-       this->FilteringModalities.contains("Any")) ||
-      this->FilteringModalities.count() == 0)
+  bool shouldCheckAllCommon = this->PreviousFilteringModalities.contains("Any") &&
+                              !this->FilteringModalities.contains("Any");
+  bool shouldUncheckAll = this->PreviousFilteringModalities == ctkDICOMModalities::CommonImagingModalities;
+  bool shouldCheckAll = !this->PreviousFilteringModalities.contains("Any") &&
+                         this->FilteringModalities.contains("Any");
+  if (shouldUncheckAll)
+  {
+    this->FilteringModalities.clear();
+  }
+  else if (shouldCheckAll)
   {
     this->FilteringModalities.clear();
     this->FilteringModalities.append("Any");
-    this->FilteringModalities.append("CR");
-    this->FilteringModalities.append("CT");
-    this->FilteringModalities.append("MR");
-    this->FilteringModalities.append("NM");
-    this->FilteringModalities.append("US");
-    this->FilteringModalities.append("PT");
-    this->FilteringModalities.append("XA");
-
-    for (int filterIndex = 0; filterIndex < this->FilteringModalityCheckableComboBox->count(); ++filterIndex)
+    for (int index = 0; index < this->FilteringModalityCheckableComboBox->count(); ++index)
     {
-      QModelIndex modelIndex = model->index(filterIndex, 0);
+      QModelIndex modelIndex = model->index(index, 0);
       this->FilteringModalityCheckableComboBox->setCheckState(modelIndex, Qt::CheckState::Checked);
+      if (index > 0)
+      {
+        QVariant value = model->data(modelIndex);
+        this->FilteringModalities.append(value.toString());
+      }
     }
     this->FilteringModalityCheckableComboBox->blockSignals(wasBlocking);
     return;
   }
-
-  for (int i = 0; i < this->FilteringModalityCheckableComboBox->count(); ++i)
+  else if (shouldCheckAllCommon)
   {
-    QModelIndex modelIndex = model->index(i, 0);
+    this->FilteringModalities = ctkDICOMModalities::CommonImagingModalities;
+  }
+
+  // First, uncheck all items
+  for (int index = 0; index < this->FilteringModalityCheckableComboBox->count(); ++index)
+  {
+    QModelIndex modelIndex = model->index(index, 0);
     this->FilteringModalityCheckableComboBox->setCheckState(modelIndex, Qt::CheckState::Unchecked);
   }
 
+  // Then check only the modalities in FilteringModalities list
   foreach (QString modality, this->FilteringModalities)
   {
     QModelIndexList indexList = model->match(model->index(0, 0), 0, modality);
@@ -614,6 +699,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
     this->FilteringModalityCheckableComboBox->setCheckState(index, Qt::CheckState::Checked);
   }
 
+  // Update the "Any" checkbox state
   if (this->FilteringModalityCheckableComboBox->allChecked())
   {
     this->FilteringModalityCheckableComboBox->blockSignals(wasBlocking);
@@ -640,7 +726,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
   else
   {
     this->FilteringModalityCheckableComboBox->setCheckState(anyModelIndex, Qt::CheckState::Checked);
-    this->FilteringModalities.append("Any");
+    if (!this->FilteringModalities.contains("Any"))
+    {
+      this->FilteringModalities.append("Any");
+    }
   }
 
   this->FilteringModalityCheckableComboBox->blockSignals(wasBlocking);
@@ -648,6 +737,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
+                                                        const QStringList& queriedPatientIDs,
                                                         bool isImport)
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
@@ -662,64 +752,130 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
     return;
   }
 
-  QStringList patientList = this->DicomDatabase->patients();
-  if (patientList.count() == 0)
+  if (!this->PatientModel)
   {
-    this->patientsTabMenuToolButton->hide();
+    logger.error("createPatients failed, no PatientModel has been set. \n");
     return;
   }
 
-  this->patientsTabMenuToolButton->show();
+  QStringList patientList = this->DicomDatabase->patients();
+  if (patientList.count() == 0)
+  {
+    // Clear the model by refreshing with empty database
+    this->PatientModel->refresh();
+    return;
+  }
+  else if (patientList.count() > 5)
+  {
+    this->PatientView->setDisplayMode(ctkDICOMPatientView::ListMode);
+  }
+  else
+  {
+    this->PatientView->setDisplayMode(ctkDICOMPatientView::TabMode);
+  }
+
   this->IsGUIUpdating = true;
-  int wasBlocking = this->PatientsTabWidget->blockSignals(true);
-  QMap<QString, QDateTime> patientsInsertDateTimeList;
-  foreach (QString patientItem, patientList)
+
+  // Set all filters on the model - it will handle filtering internally
+  this->PatientModel->setPatientIDFilter(this->FilteringPatientID);
+  this->PatientModel->setPatientNameFilter(this->FilteringPatientName);
+  this->PatientModel->setStudyDescriptionFilter(this->FilteringStudyDescription);
+  this->PatientModel->setSeriesDescriptionFilter(this->FilteringSeriesDescription);
+  this->PatientModel->setDateFilter(static_cast<ctkDICOMPatientModel::DateType>(this->FilteringDate));
+  this->PatientModel->setModalityFilter(this->FilteringModalities);
+  this->PatientModel->setThumbnailSize(this->computeThumbnailSizeInPixels(this->ThumbnailSizePreset));
+
+  // Refresh the model to populate with filtered patients
+  this->PatientModel->refresh();
+
+  QString patientUIDToShow;
+  // If this is an import and we have new patients, select the most recent one
+  if (isImport && patientList.count() > 0)
   {
-    QString patientID = this->DicomDatabase->fieldForPatient("PatientID", patientItem);
-    QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", patientItem);
-    patientName.replace(R"(^)", R"( )");
-    int index = this->findPatientTabIndexFromPatientItem(patientItem);
-    if (index != -1)
+    QMap<QString, QDateTime> patientsInsertDateTimeList;
+    foreach (QString patientUID, patientList)
     {
-      continue;
+      QString patientID = this->DicomDatabase->fieldForPatient("PatientID", patientUID);
+      QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", patientUID);
+
+      // Apply the same filters as the model
+      if ((!this->FilteringPatientID.isEmpty() && !patientID.contains(this->FilteringPatientID, Qt::CaseInsensitive)) ||
+          (!this->FilteringPatientName.isEmpty() && !patientName.contains(this->FilteringPatientName, Qt::CaseInsensitive)))
+      {
+        continue;
+      }
+
+      QDateTime patientInsertDateTime = this->DicomDatabase->insertDateTimeForPatient(patientUID);
+      patientsInsertDateTimeList[patientUID] = patientInsertDateTime;
     }
 
-    // Filter with patientID and patientsName
-    if ((!this->FilteringPatientID.isEmpty() && !patientID.contains(this->FilteringPatientID, Qt::CaseInsensitive)) ||
-        (!this->FilteringPatientName.isEmpty() && !patientName.contains(this->FilteringPatientName, Qt::CaseInsensitive)))
+    if (patientsInsertDateTimeList.count() > 0)
     {
-      continue;
+      QList<QPair<QString, QDateTime>> list;
+      for (QMap<QString, QDateTime>::const_iterator it = patientsInsertDateTimeList.cbegin();
+        it != patientsInsertDateTimeList.cend(); ++it)
+      {
+        list.append(qMakePair(it.key(), it.value()));
+      }
+
+      std::sort(list.begin(), list.end(), [](const QPair<QString, QDateTime>& a, const QPair<QString, QDateTime>& b)
+      {
+        return a.second < b.second;
+      });
+
+      patientUIDToShow = list.last().first;
     }
-
-    index = q->addPatientItemWidget(patientItem);
-
-    QDateTime patientInsertDateTime = this->DicomDatabase->insertDateTimeForPatient(patientItem);
-    patientsInsertDateTimeList[patientItem] = patientInsertDateTime;
+  }
+  else if (!this->SelectedPatientUID.isEmpty())
+  {
+    // Restore previous selection if it still exists
+    patientUIDToShow = this->SelectedPatientUID;
+  }
+  else
+  {
+    // Select the first patient by default
+    patientUIDToShow = patientList.first();
   }
 
-  int selectedIndex = this->findPatientTabIndexFromPatientItem(this->SelectedPatientItem);
-  if (isImport && patientsInsertDateTimeList.count() > 0)
+  this->PatientView->selectPatientUID(patientUIDToShow);
+
+  q->onServersSettingsChanged();
+
+  if (queryRetrieve && this->Scheduler &&
+      this->Scheduler->queryRetrieveServersCount() > 0)
   {
-    QList<QPair<QString, QDateTime>> list;
-    for (QMap<QString, QDateTime>::const_iterator it = patientsInsertDateTimeList.cbegin();
-      it != patientsInsertDateTimeList.cend(); ++it)
+    bool studiesQueried = false;
+    if (queriedPatientIDs.empty())
     {
-      list.append(qMakePair(it.key(), it.value()));
+      QModelIndex modelIndex = this->PatientModel->indexFromPatientUID(patientUIDToShow);
+      QString patientID = this->PatientModel->patientID(modelIndex);
+      studiesQueried = this->PatientModel->queryStudies(patientID);
     }
-
-    std::sort(list.begin(), list.end(), [](const QPair<QString, QDateTime>& a, const QPair<QString, QDateTime>& b)
+    else
     {
-      return a.second < b.second;
-    });
-
-    QString mostRecentPatientItem = list.last().first;
-    selectedIndex = this->findPatientTabIndexFromPatientItem(mostRecentPatientItem);
+      foreach (QString patientID, queriedPatientIDs)
+      {
+        if (this->PatientModel->queryStudies(patientID))
+        {
+          studiesQueried = true;
+        }
+      }
+    }
+    if (!studiesQueried)
+    {
+      this->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      QString warningText = ctkDICOMVisualBrowserWidget::tr(
+        "No server is configured for query/retrieve operations. "
+        "The server settings section is below.\n"
+        "Check also the allowed servers at patient level."
+      );
+      logger.warn(warningText);
+      this->WarningPushButton->setText(warningText);
+      this->WarningPushButton->show();
+      q->openServerSettingsSection();
+    }
   }
-  this->PatientsTabWidget->setCurrentIndex(selectedIndex);
-  this->PatientsTabWidget->blockSignals(wasBlocking);
   this->IsGUIUpdating = false;
-
-  this->getPatientsMetadata(queryRetrieve);
 }
 
 //----------------------------------------------------------------------------
@@ -729,7 +885,7 @@ bool ctkDICOMVisualBrowserWidgetPrivate::areFiltersEmpty()
          this->FilteringPatientName.isEmpty() &&
          this->FilteringStudyDescription.isEmpty() &&
          this->FilteringSeriesDescription.isEmpty() &&
-         this->FilteringDate == ctkDICOMPatientItemWidget::DateType::Any &&
+         this->FilteringDate == ctkDICOMVisualBrowserWidget::Any &&
          this->FilteringModalities.contains("Any");
 }
 
@@ -744,21 +900,31 @@ void ctkDICOMVisualBrowserWidgetPrivate::resetFilters()
   this->FilteringStudyDescriptionSearchBox->setText("");
   this->FilteringSeriesDescription = "";
   this->FilteringSeriesDescriptionSearchBox->setText("");
-  this->FilteringDate = ctkDICOMPatientItemWidget::DateType::Any;
-  this->FilteringDateComboBox->setCurrentIndex(this->FilteringDate);
-
-  this->FilteringModalities.append("Any");
-  this->FilteringModalities.append("CR");
-  this->FilteringModalities.append("CT");
-  this->FilteringModalities.append("MR");
-  this->FilteringModalities.append("NM");
-  this->FilteringModalities.append("US");
-  this->FilteringModalities.append("PT");
-  this->FilteringModalities.append("XA");
+  this->FilteringDate = ctkDICOMVisualBrowserWidget::Any;
+  this->FilteringDateComboBox->setCurrentIndex(static_cast<int>(this->FilteringDate));
+  this->PatientModel->setDateFilter(static_cast<ctkDICOMPatientModel::DateType>(this->FilteringDate));
+  this->PreviousFilteringModalities = ctkDICOMModalities::AllModalities;
+  this->FilteringModalities = ctkDICOMModalities::AllModalities;
 
   this->updateModalityCheckableComboBox();
 
   this->setBackgroundColorToFilterWidgets();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updateUIAfterFilters()
+{
+  QModelIndexList selectedIndexes = this->PatientView->selectionModel()->selectedIndexes();
+  if (selectedIndexes.empty())
+  {
+    this->PatientView->selectPatientUID("");
+  }
+
+  this->PatientView->refreshLayout();
+  this->PatientView->studyListView()->clearSelection();
+  this->PatientView->studyListView()->refreshLayout();
+  this->PatientView->studyListView()->refreshSeriesLayout();
+  this->updateFiltersWarnings();
 }
 
 //----------------------------------------------------------------------------
@@ -770,64 +936,58 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
     return;
   }
 
-  // Loop over all the data in the dicom database and apply the filters.
-  // If there are no series, highlight which are the filters that produce no results
+  if (!this->PatientModel)
+  {
+    logger.error("updateFiltersWarnings failed, no PatientModel has been set. \n");
+    return;
+  }
+
+  // Reset all filter widgets to default color
   this->setBackgroundColorToFilterWidgets();
 
-  QColor color = ctkDICOMVisualBrowserWidgetWarningColor;
-  QStringList patientList = this->DicomDatabase->patients();
-  if (patientList.count() == 0)
+  QColor warningColor = ctkDICOMVisualBrowserWidgetWarningColor;
+
+  // Check if there are any patients in the database at all
+  QStringList allPatients = this->DicomDatabase->patients();
+  if (allPatients.count() == 0)
   {
-    this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringPatientIDSearchBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringPatientNameSearchBox);
     return;
   }
 
-  QMap<QString, QVariant> filters;
-  filters.insert("PatientsName", this->FilteringPatientName);
-  filters.insert("PatientID", this->FilteringPatientID);
-  QStringList filteredPatientList = this->filterPatientList(patientList, filters);
-  if (filteredPatientList.count() == 0)
+  QStringList filteredPatientUIDs = this->PatientModel->filteredPatientUIDs();
+  if (filteredPatientUIDs.count() == 0)
   {
-    this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
+    // No patients match the patient-level filters
+    this->setBackgroundColorToWidget(warningColor, this->FilteringPatientIDSearchBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringPatientNameSearchBox);
     return;
   }
 
-  QStringList studiesList;
-  foreach (QString patientItem, filteredPatientList)
+  int filteredStudiesCount = 0;
+  foreach (const QString& patientUID, filteredPatientUIDs)
   {
-    studiesList.append(this->DicomDatabase->studiesForPatient(patientItem));
+    filteredStudiesCount += this->PatientModel->filteredStudiesCountForPatient(patientUID);
   }
 
-  filters.clear();
-  filters.insert("StudyDate", QString::number(ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(this->FilteringDate)));
-  filters.insert("StudyDescription", this->FilteringStudyDescription);
-
-  QStringList filteredStudyList = this->filterStudyList(studiesList, filters);
-  if (filteredStudyList.count() == 0)
+  if (filteredStudiesCount == 0)
   {
-    this->setBackgroundColorToWidget(color, this->FilteringDateComboBox);
-    this->setBackgroundColorToWidget(color, this->FilteringStudyDescriptionSearchBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringDateComboBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringStudyDescriptionSearchBox);
     return;
   }
 
-  QStringList seriesList;
-  foreach (QString studyItem, filteredStudyList)
+  int filteredSeriesCount = 0;
+  foreach (const QString& patientUID, filteredPatientUIDs)
   {
-    QString studyInstanceUID = this->DicomDatabase->fieldForStudy("StudyInstanceUID", studyItem);
-    seriesList.append(this->DicomDatabase->seriesForStudy(studyInstanceUID));
+    filteredSeriesCount += this->PatientModel->filteredSeriesCountForPatient(patientUID);
   }
 
-  filters.clear();
-  filters.insert("Modality", this->FilteringModalities);
-  filters.insert("SeriesDescription", this->FilteringSeriesDescription);
-
-  QStringList filteredSeriesList = this->filterSeriesList(seriesList, filters);
-  if (filteredSeriesList.count() == 0)
+  if (filteredSeriesCount == 0)
   {
-    this->setBackgroundColorToWidget(color, this->FilteringSeriesDescriptionSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringModalityCheckableComboBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringSeriesDescriptionSearchBox);
+    this->setBackgroundColorToWidget(warningColor, this->FilteringModalityCheckableComboBox);
   }
 }
 
@@ -884,540 +1044,169 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
+{
+  Q_Q(ctkDICOMVisualBrowserWidget);
+
+  QGridLayout* searchGridLayout = qobject_cast<QGridLayout*>(this->SearchPatientsCollapsibleGroupBox->layout());
+  if (!searchGridLayout)
+  {
+    return;
+  }
+  QGridLayout* actionGridLayout = qobject_cast<QGridLayout*>(this->ActionsCollapsibleGroupBox->layout());
+  if (!actionGridLayout)
+  {
+    return;
+  }
+  ctkCollapsibleGroupBox * storageCollapsibleGroupBox = this->ServerNodeWidget->storageCollapsibleGroupBox();
+  QGridLayout* storageGridLayout = qobject_cast<QGridLayout*>(storageCollapsibleGroupBox->layout());
+  if (!storageGridLayout)
+  {
+    return;
+  }
+  if (this->IsGUIUpdating)
+  {
+    return;
+  }
+
+  this->IsGUIUpdating = true;
+
+  // Use a threshold width approach
+  const int thresholdWidth = 800;
+  int availableWidth = q->width();
+  bool horizontal = true;
+  if (availableWidth < thresholdWidth)
+  {
+    horizontal = false;
+  }
+
+  if (this->IsGUIHorizontal == horizontal)
+  {
+    this->IsGUIUpdating = false;
+    return;
+  }
+
+  this->IsGUIHorizontal = horizontal;
+
+  // Widget pointers (must match UI file order)
+  QWidget* patientIDBox = this->FilteringPatientIDSearchBox;
+  QWidget* patientNameBox = this->FilteringPatientNameSearchBox;
+  QWidget* studyDescriptionBox = this->FilteringStudyDescriptionSearchBox;
+  QWidget* seriesDescriptionBox = this->FilteringSeriesDescriptionSearchBox;
+  QWidget* modalityLabel = this->FilteringModalityLabel;
+  QWidget* modalityCombo = this->FilteringModalityCheckableComboBox;
+  QWidget* dateLabel = this->FilteringDateLabel;
+  QWidget* dateCombo = this->FilteringDateComboBox;
+
+  // Batch layout changes for performance
+  q->setUpdatesEnabled(false);
+
+  if (!this->IsGUIHorizontal)
+  {
+    this->setGridWidget(searchGridLayout, patientIDBox, 0, 0);
+    this->setGridWidget(searchGridLayout, patientNameBox, 1, 0);
+    this->setGridWidget(searchGridLayout, studyDescriptionBox, 2, 0);
+    this->setGridWidget(searchGridLayout, seriesDescriptionBox, 3, 0);
+    this->setGridWidget(searchGridLayout, modalityLabel, 5, 0);
+    this->setGridWidget(searchGridLayout, modalityCombo, 6, 0);
+    this->setGridWidget(searchGridLayout, dateLabel, 7, 0);
+    this->setGridWidget(searchGridLayout, dateCombo, 8, 0);
+  }
+  else
+  {
+    this->setGridWidget(searchGridLayout, patientIDBox, 0, 0);
+    this->setGridWidget(searchGridLayout, patientNameBox, 0, 1);
+    this->setGridWidget(searchGridLayout, studyDescriptionBox, 1, 0);
+    this->setGridWidget(searchGridLayout, seriesDescriptionBox, 1, 1);
+    this->setGridWidget(searchGridLayout, modalityLabel, 0, 2);
+    this->setGridWidget(searchGridLayout, modalityCombo, 1, 2);
+    this->setGridWidget(searchGridLayout, dateLabel, 0, 3);
+    this->setGridWidget(searchGridLayout, dateCombo, 1, 3);
+  }
+
+  QWidget* searchPushButton = this->SearchPushButton;
+  QWidget* closePushButton = this->ClosePushButton;
+  QWidget* importPushButton = this->ImportPushButton;
+  ctkDynamicSpacer *actionsDynamicSpacer = this->ActionsDynamicSpacer;
+
+  if (!this->IsGUIHorizontal)
+  {
+    this->setGridWidget(actionGridLayout, searchPushButton, 0, 0);
+    this->setGridWidget(actionGridLayout, closePushButton, 1, 0);
+    this->setGridWidget(actionGridLayout, importPushButton, 2, 0);
+    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 3, 0);
+  }
+  else
+  {
+    this->setGridWidget(actionGridLayout, searchPushButton, 0, 0, 2, 1);
+    this->setGridWidget(actionGridLayout, closePushButton, 0, 1);
+    this->setGridWidget(actionGridLayout, importPushButton, 1, 1);
+    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 2, 0);
+  }
+
+  // Get widgets from the storageGridLayout by their object names
+  QLabel* storageEnabledLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageEnabledLabel");
+  ctkCheckBox* storageEnabledCheckBox = storageCollapsibleGroupBox->findChild<ctkCheckBox*>("StorageEnabledCheckBox");
+  QLabel* storageAETitleLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageAETitleLabel");
+  QLineEdit* storageAETitle = storageCollapsibleGroupBox->findChild<QLineEdit*>("StorageAETitle");
+  QLabel* storagePortLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StoragePortLabel");
+  QLineEdit* storagePort = storageCollapsibleGroupBox->findChild<QLineEdit*>("StoragePort");
+  QLabel* storageStatusLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageStatusLabel");
+  QLabel* storageStatusValueLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageStatusValueLabel");
+
+  if (!this->IsGUIHorizontal)
+  {
+    this->setGridWidget(storageGridLayout, storageEnabledLabel, 0, 0);
+    this->setGridWidget(storageGridLayout, storageEnabledCheckBox, 0, 1);
+    this->setGridWidget(storageGridLayout, storageAETitleLabel, 1, 0);
+    this->setGridWidget(storageGridLayout, storageAETitle, 1, 1);
+    this->setGridWidget(storageGridLayout, storagePortLabel, 2, 0);
+    this->setGridWidget(storageGridLayout, storagePort, 2, 1);
+    this->setGridWidget(storageGridLayout, storageStatusLabel, 3, 0);
+    this->setGridWidget(storageGridLayout, storageStatusValueLabel, 3, 1);
+  }
+  else
+  {
+    this->setGridWidget(storageGridLayout, storageEnabledLabel, 0, 0);
+    this->setGridWidget(storageGridLayout, storageEnabledCheckBox, 0, 1);
+    this->setGridWidget(storageGridLayout, storageAETitleLabel, 0, 2);
+    this->setGridWidget(storageGridLayout, storageAETitle, 0, 3);
+    this->setGridWidget(storageGridLayout, storagePortLabel, 0, 4);
+    this->setGridWidget(storageGridLayout, storagePort, 0, 5);
+    this->setGridWidget(storageGridLayout, storageStatusLabel, 0, 6);
+    this->setGridWidget(storageGridLayout, storageStatusValueLabel, 0, 7);
+  }
+
+  q->setUpdatesEnabled(true);
+  this->IsGUIUpdating = false;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
 {
-  Q_Q(ctkDICOMVisualBrowserWidget);
-  if (!this->Scheduler)
-  {
-    logger.error("retrieveSeries failed, no task pool has been set. \n");
-    return;
-  }
-
-  if (this->IsLoading)
-  {
-    return;
-  }
-
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-  if (!currentPatientItemWidget)
-  {
-    return;
-  }
-
-  this->IsLoading = true;
-
-  // Get only the selected series widgets
-  QList<ctkDICOMSeriesItemWidget*> selectedSeriesWidgetsList;
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QModelIndexList indexList = seriesListTableWidget->selectionModel()->selectedIndexes();
-    foreach (QModelIndex index, indexList)
-    {
-      ctkDICOMSeriesItemWidget* seriesItemWidget = qobject_cast<ctkDICOMSeriesItemWidget*>
-        (seriesListTableWidget->cellWidget(index.row(), index.column()));
-      if (!seriesItemWidget)
-      {
-        continue;
-      }
-
-      selectedSeriesWidgetsList.append(seriesItemWidget);
-    }
-  }
-
-  if (selectedSeriesWidgetsList.count() == 0)
-  {
-    this->IsLoading = false;
-    return;
-  }
-
-  // Get all series widgets
-  QList<ctkDICOMSeriesItemWidget*> seriesWidgetsList;
-  for (int patientIndex = 0; patientIndex < this->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = patientItemWidget->studyItemWidgetsList();
-    foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-    {
-      QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-      for (int row = 0; row < seriesListTableWidget->rowCount(); row++)
-      {
-        for (int column = 0; column < seriesListTableWidget->columnCount(); column++)
-        {
-          ctkDICOMSeriesItemWidget* seriesItemWidget =
-            qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
-          if (!seriesItemWidget)
-          {
-            continue;
-          }
-
-          seriesWidgetsList.append(seriesItemWidget);
-        }
-      }
-    }
-  }
-
-  // Update UI
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
-  bool deleteActionWasVisible = this->DeleteActionVisible;
-  this->DeleteActionVisible = false;
-
-  bool queryPatientButtonWasEnabled = this->SearchMenuButton->isEnabled();
-  this->SearchMenuButton->setEnabled(false);
-
-  // Set a flag in non selected series widget to stop any jobs creation
-  // and stop all the jobs connected to the widgets
-  QStringList seriesInstanceUIDsToStop;
-  foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesWidgetsList)
-  {
-    if (!seriesItemWidget)
-    {
-      continue;
-    }
-
-    if (!selectedSeriesWidgetsList.contains(seriesItemWidget))
-    {
-      seriesItemWidget->setStopJobs(true);
-      seriesInstanceUIDsToStop.append(seriesItemWidget->seriesInstanceUID());
-    }
-  }
-
-  this->Scheduler->stopJobsByDICOMUIDs({}, {}, seriesInstanceUIDsToStop);
-  this->Scheduler->waitForDone(300);
-
-  // Check all the selected series widgets. If any widgets is not fully retrieved or the retrieve failed,
-  // and no jobs are running for the series, force the retrieve.
-  foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
-  {
-    if (!seriesItemWidget)
-    {
-      continue;
-    }
-
-    if (!seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
-    {
-      continue;
-    }
-
-    if (this->Scheduler->getJobsByDICOMUIDs({}, {}, {seriesItemWidget->seriesInstanceUID()}).count() == 0)
-    {
-      seriesItemWidget->forceRetrieve();
-    }
-  }
-
-  // Create a progress dialog to show the progress of the retrieve
-  QProgressDialog loadSeriesProgress(
-    ctkDICOMVisualBrowserWidget::tr("Retrieving and processing selected series..."),
-    ctkDICOMVisualBrowserWidget::tr("Cancel"), 0, 100, q);
-  loadSeriesProgress.setWindowModality(Qt::ApplicationModal);
-  loadSeriesProgress.setMinimumDuration(1000);
-
-  QProgressBar *bar = new QProgressBar(&loadSeriesProgress);
-  bar->setTextVisible(false);
-  loadSeriesProgress.setBar(bar);
-  loadSeriesProgress.setValue(0);
-
-  // Wait for the selected series widgets to be fully retrieved
-  bool wait = true;
-  int progress = 0;
-  while (wait)
-  {
-    qApp->processEvents();
-    this->Scheduler->waitForDone(300);
-
-    progress++;
-    if (progress == 99)
-    {
-      progress = 0;
-    }
-    loadSeriesProgress.setValue(progress);
-
-    wait = false;
-    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
-    {
-      if (!seriesItemWidget)
-      {
-        continue;
-      }
-
-      if (loadSeriesProgress.wasCanceled())
-      {
-        break;
-      }
-
-      if (seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
-      {
-        wait = true;
-        break;
-      }
-    }
-
-    if (loadSeriesProgress.wasCanceled())
-    {
-      break;
-    }
-  }
-
-  // Update UI
-  this->updateFiltersWarnings();
-  this->configureSearchIcon();
-
-  this->IsLoading = false;
-  this->DeleteActionVisible = deleteActionWasVisible;
-  this->SearchMenuButton->setEnabled(queryPatientButtonWasEnabled);
-  QApplication::restoreOverrideCursor();
-
-
-  // Finalize the retrieve
-  QStringList selectedSeriesInstanceUIDs;
-  if (loadSeriesProgress.wasCanceled())
-    {
-    // It was canceled -> stop the jobs connected to the selected series widgets
-    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
-    {
-      if (!seriesItemWidget)
-      {
-        continue;
-      }
-
-      selectedSeriesInstanceUIDs.append(seriesItemWidget->seriesInstanceUID());
-    }
-
-    this->Scheduler->stopJobsByDICOMUIDs({}, {}, selectedSeriesInstanceUIDs);
-    this->Scheduler->waitForDone(300);
-    }
-  else
-    {
-    loadSeriesProgress.close();
-    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
-    {
-      // If the series was not fully retrieved or the retrieve failed -> skip
-      if (!seriesItemWidget || seriesItemWidget->isCloud() || seriesItemWidget->retrieveFailed())
-      {
-        continue;
-      }
-
-      // If the series has only metadata -> skip
-      if (this->DicomDatabase->instancesForSeries(seriesItemWidget->seriesInstanceUID()).count() == 0)
-      {
-        continue;
-      }
-
-      selectedSeriesInstanceUIDs.append(seriesItemWidget->seriesInstanceUID());
-    }
-
-    q->emit seriesRetrieved(selectedSeriesInstanceUIDs);
-  }
-
-  // Re-allow all seriesItemWidgets to run jobs
-  foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesWidgetsList)
-  {
-    if (!seriesItemWidget)
-    {
-      continue;
-    }
-
-    seriesItemWidget->setStopJobs(false);
-  }
+  // TODO: Implement series retrieve logic with model/view architecture
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::removeAllPatientItemWidgets()
+QString ctkDICOMVisualBrowserWidgetPrivate::findPatientUIDByPatientID(const QString& patientID)
 {
-  Q_Q(ctkDICOMVisualBrowserWidget);
-
-  int wasBlocking = this->PatientsTabWidget->blockSignals(true);
-  for (int patientIndex = 0; patientIndex < this->PatientsTabWidget->count(); ++patientIndex)
+  if (!this->DicomDatabase || patientID.isEmpty())
   {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    this->PatientsTabWidget->removeTab(patientIndex);
-    q->disconnect(patientItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                  q, SLOT(showPatientContextMenu(const QPoint&)));
-
-    QList<ctkDICOMStudyItemWidget*> studyItemWidgets = patientItemWidget->studyItemWidgetsList();
-    foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgets)
-    {
-      q->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemDoubleClicked(QTableWidgetItem*)),
-                    q, SLOT(onLoad()));
-    }
-
-    delete patientItemWidget;
-    patientIndex--;
-  }
-  this->PatientsTabWidget->blockSignals(wasBlocking);
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidgetPrivate::findPatientItemFromPatientInfo(const QString &patientID,
-                                                                           const QString &patientName,
-                                                                           const QString &patientBirthDate)
-{
-  QString patientItem;
-  if (patientID.isEmpty() && patientName.isEmpty() && patientBirthDate.isEmpty())
-  {
-    return patientItem;
+    return QString();
   }
 
-  for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
+  // Search through database for patient with this ID
+  QStringList patientList = this->DicomDatabase->patients();
+  foreach (QString patientUID, patientList)
   {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(index));
-    if (!patientItemWidget)
+    QString currentPatientID = this->DicomDatabase->fieldForPatient("PatientID", patientUID);
+    if (currentPatientID == patientID)
     {
-      continue;
-    }
-
-    if ((patientID.isEmpty() || patientItemWidget->patientID() == patientID) &&
-      (patientName.isEmpty() || patientItemWidget->patientName() == patientName) &&
-      (patientBirthDate.isEmpty() || patientItemWidget->patientBirthDate() == patientBirthDate))
-    {
-      return this->PatientsTabWidget->tabWhatsThis(index);
+      return patientUID;
     }
   }
 
-  return patientItem;
-}
-
-//----------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidgetPrivate::findPatientTabIndexFromPatientItem(const QString& patientItem)
-{
-  int patientIndex = -1;
-  for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
-  {
-    if (patientItem == this->PatientsTabWidget->tabWhatsThis(index))
-    {
-      patientIndex = index;
-      break;
-    }
-  }
-
-  return patientIndex;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget)
-{
-  if (!selectedSeriesItemWidget)
-  {
-    return;
-  }
-
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-  if (!currentPatientItemWidget)
-  {
-    return;
-  }
-
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    if (!studyItemWidget)
-    {
-      continue;
-    }
-    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
-    foreach (QTableWidgetItem* selectedItem, selectedItems)
-    {
-      if (!selectedItem)
-      {
-        continue;
-      }
-
-      int row = selectedItem->row();
-      int column = selectedItem->column();
-      ctkDICOMSeriesItemWidget* seriesItemWidget =
-          qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
-
-      if (seriesItemWidget == selectedSeriesItemWidget)
-      {
-        seriesListTableWidget->itemClicked(selectedItem);
-        return;
-      }
-    }
-  }
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidgetPrivate::getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
-                                                                           QList<QWidget *> selectedWidgets)
-{
-  QStringList selectedPatientItems;
-
-  if (!this->DicomDatabase)
-  {
-    return selectedPatientItems;
-  }
-
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-
-    if (level == ctkDICOMModel::PatientType)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
-      if (patientItemWidget)
-      {
-        QString patientItem = patientItemWidget->patientItem();
-        selectedPatientItems << patientItem;
-      }
-    }
-  }
-
-  return selectedPatientItems;
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidgetPrivate::getPatientUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                                                          QList<QWidget*> selectedWidgets)
-{
-  QStringList selectedPatientUIDs;
-
-  if (!this->DicomDatabase)
-  {
-    return selectedPatientUIDs;
-  }
-
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-
-    if (level == ctkDICOMModel::PatientType)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
-      if (patientItemWidget)
-      {
-        QString patientID = patientItemWidget->patientID();
-        selectedPatientUIDs << patientID;
-      }
-    }
-  }
-
-  return selectedPatientUIDs;
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidgetPrivate::getStudyUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                                                        QList<QWidget*> selectedWidgets)
-{
-  QStringList selectedStudyUIDs;
-
-  if (!this->DicomDatabase)
-  {
-    return selectedStudyUIDs;
-  }
-
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-
-    if (level == ctkDICOMModel::PatientType)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
-      if (patientItemWidget)
-      {
-        selectedStudyUIDs << this->DicomDatabase->studiesForPatient(patientItemWidget->patientItem());
-      }
-    }
-    else if (level == ctkDICOMModel::StudyType)
-    {
-      ctkDICOMStudyItemWidget* studyItemWidget =
-        qobject_cast<ctkDICOMStudyItemWidget*>(selectedWidget);
-      if (studyItemWidget)
-      {
-        selectedStudyUIDs << studyItemWidget->studyInstanceUID();
-      }
-    }
-  }
-
-  return selectedStudyUIDs;
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidgetPrivate::getSeriesUIDsFromWidgets(ctkDICOMModel::IndexType level,
-                                                                         QList<QWidget*> selectedWidgets)
-{
-  QStringList selectedStudyUIDs;
-  QStringList selectedSeriesUIDs;
-
-  if (!this->DicomDatabase)
-  {
-    return selectedSeriesUIDs;
-  }
-
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-
-    if (level == ctkDICOMModel::PatientType)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
-      if (patientItemWidget)
-      {
-        selectedStudyUIDs << this->DicomDatabase->studiesForPatient(patientItemWidget->patientItem());
-      }
-    }
-    else if (level == ctkDICOMModel::StudyType)
-    {
-      ctkDICOMStudyItemWidget* studyItemWidget =
-        qobject_cast<ctkDICOMStudyItemWidget*>(selectedWidget);
-      if (studyItemWidget)
-      {
-        selectedStudyUIDs << studyItemWidget->studyInstanceUID();
-      }
-    }
-
-    if (level == ctkDICOMModel::SeriesType)
-    {
-      ctkDICOMSeriesItemWidget* seriesItemWidget =
-        qobject_cast<ctkDICOMSeriesItemWidget*>(selectedWidget);
-      if (seriesItemWidget)
-      {
-        selectedSeriesUIDs << seriesItemWidget->seriesInstanceUID();
-      }
-    }
-    else
-    {
-      foreach (const QString& uid, selectedStudyUIDs)
-      {
-        selectedSeriesUIDs << this->DicomDatabase->seriesForStudy(uid);
-      }
-    }
-  }
-
-  return selectedSeriesUIDs;
+  return QString();
 }
 
 //----------------------------------------------------------------------------
@@ -1431,12 +1220,12 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
     return filteredPatientList;
   }
 
-  foreach (QString patientItem, patientList)
+  foreach (QString patientUID, patientList)
   {
     bool filtered = false;
     for (QString key : filters.keys())
     {
-      QString filter = this->DicomDatabase->fieldForPatient(key, patientItem);
+      QString filter = this->DicomDatabase->fieldForPatient(key, patientUID);
       QString filterValue = filters.value(key).toString();
       if (!filter.contains(filterValue, Qt::CaseInsensitive))
       {
@@ -1450,7 +1239,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
       continue;
     }
 
-    filteredPatientList.append(patientItem);
+    filteredPatientList.append(patientUID);
   }
 
   return filteredPatientList;
@@ -1557,161 +1346,112 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMStudyItemWidget* ctkDICOMVisualBrowserWidgetPrivate::getCurrentPatientStudyWidgetByUIDs(const QString& studyInstanceUID)
+int ctkDICOMVisualBrowserWidgetPrivate::computeThumbnailSizeInPixels(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption sizeOption)
 {
-  ctkDICOMPatientItemWidget* patientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-  if (!patientItemWidget)
+  if (sizeOption == ctkDICOMVisualBrowserWidget::None)
   {
-    return nullptr;
+    return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsNone;
+  }
+  else if (sizeOption == ctkDICOMVisualBrowserWidget::Small)
+  {
+    return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsSmall;
+  }
+  else if (sizeOption == ctkDICOMVisualBrowserWidget::Medium)
+  {
+    return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsMedium;
+  }
+  else if (sizeOption == ctkDICOMVisualBrowserWidget::Large)
+  {
+    return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsLarge;
   }
 
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = patientItemWidget->studyItemWidgetsList();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    if (!studyItemWidget || studyItemWidget->studyInstanceUID() != studyInstanceUID)
-    {
-      continue;
-    }
-
-    return studyItemWidget;
-  }
-
-  return nullptr;
+  return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsSmall;
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMSeriesItemWidget* ctkDICOMVisualBrowserWidgetPrivate::getCurrentPatientSeriesWidgetByUIDs(const QString& studyInstanceUID,
-                                                                                                  const QString& seriesInstanceUID)
+void ctkDICOMVisualBrowserWidgetPrivate::updateThumbnailSizeForCurrentStudyView(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption sizeOption)
 {
-  ctkDICOMStudyItemWidget* studyItemWidget = this->getCurrentPatientStudyWidgetByUIDs(studyInstanceUID);
-  if (!studyItemWidget)
+  Q_Q(ctkDICOMVisualBrowserWidget);
+
+  ctkDICOMPatientView* patientView = q->patientView();
+  ctkDICOMStudyListView* studyView = nullptr;
+  QModelIndex firstVisibleIndex;
+  if (patientView)
   {
-    return nullptr;
+    studyView = patientView->studyListView();
+    if (studyView)
+    {
+      QRect viewportRect = studyView->viewport()->rect();
+      firstVisibleIndex = studyView->indexAt(QPoint(viewportRect.left(), viewportRect.top()));
+    }
   }
 
-  QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList = studyItemWidget->seriesItemWidgetsList();
-  foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesItemWidgetsList)
+  q->setThumbnailSizePreset(sizeOption);
+
+  // Restore the first visible item and current index after thumbnail size change
+  if (studyView && firstVisibleIndex.isValid())
   {
-    if (!seriesItemWidget || seriesItemWidget->seriesInstanceUID() != seriesInstanceUID)
-    {
-      continue;
-    }
-
-    return seriesItemWidget;
-  }
-
-  return nullptr;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::getPatientsMetadata(bool queryRetrieve)
-{
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-
-  for (int patientIndex = 0; patientIndex < this->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    bool query = queryRetrieve;
-    bool retrieve = false;
-    if (patientItemWidget == currentPatientItemWidget)
-    {
-      retrieve = queryRetrieve;
-    }
-
-    patientItemWidget->generateStudies(query, retrieve);
+    studyView->scrollTo(firstVisibleIndex, QAbstractItemView::PositionAtTop);
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::updateTabVisibilityForPatientItemWidgets()
+int ctkDICOMVisualBrowserWidgetPrivate::getNDaysFromFilteringDate(ctkDICOMVisualBrowserWidget::DateType dateType)
 {
-  for (int patientIndex = 0; patientIndex < this->PatientsTabWidget->count(); ++patientIndex)
+  switch (dateType)
   {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-    this->updateTabVisibilityForPatientItemWidget(patientItemWidget);
+    case ctkDICOMVisualBrowserWidget::Any:
+      return -1;
+    case ctkDICOMVisualBrowserWidget::Today:
+      return 0;
+    case ctkDICOMVisualBrowserWidget::Yesterday:
+      return 1;
+    case ctkDICOMVisualBrowserWidget::LastWeek:
+      return 7;
+    case ctkDICOMVisualBrowserWidget::LastMonth:
+      return 30;
+    case ctkDICOMVisualBrowserWidget::LastYear:
+      return 365;
+    case ctkDICOMVisualBrowserWidget::CustomRange:
+      return -1;
+    default:
+      return -1;
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::updateTabVisibilityForPatientItemWidget(ctkDICOMPatientItemWidget *patientItemWidget)
+QString ctkDICOMVisualBrowserWidgetPrivate::filenameSafeString(const QString& str)
 {
-  if (this->IsGUIUpdating)
+  QString safeStr;
+  const QString illegalChars("/\\<>:\"|?*");
+  foreach (const QChar& c, str)
   {
-    return;
-  }
-
-  if(this->areFiltersEmpty())
-  {
-    return;
-  }
-
-  int index = this->findPatientTabIndexFromPatientItem(patientItemWidget->patientItem());
-  if (index == -1)
-  {
-    return;
-  }
-
-  this->IsGUIUpdating = true;
-  int wasBlocking = this->PatientsTabWidget->blockSignals(true);
-
-  QString patientItem;
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-  if (currentPatientItemWidget)
-  {
-    patientItem = currentPatientItemWidget->patientItem();
-  }
-
-  bool patientVisible = false;
-  QStringList studiesList = this->DicomDatabase->studiesForPatient(patientItemWidget->patientItem());
-
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = patientItemWidget->studyItemWidgetsList();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    if (!studyItemWidget)
+    int asciiCode = c.toLatin1();
+    if (asciiCode >= 32 && asciiCode <= 127 && !illegalChars.contains(c))
     {
-      continue;
+      safeStr.append(c);
     }
-
-    if (studyItemWidget->filteredSeriesCount() != 0)
+    else
     {
-      patientVisible = true;
-      break;
+      safeStr.append("_");
     }
   }
 
-#if QT_VERSION <= QT_VERSION_CHECK(5, 13, 0)
-  this->PatientsTabWidget->setTabEnabled(index, patientVisible);
-  this->PatientsTabWidget->setTabText(index, patientVisible ? patientItemWidget->patientName() : "");
-  this->PatientsTabWidget->setTabIcon(index, patientVisible ? QIcon(":/Icons/patient.svg") : QIcon());
-#else
-  this->PatientsTabWidget->setTabVisible(index, patientVisible);
-#endif
+  // remove leading/trailing whitespaces
+  return safeStr.trimmed();
+}
 
-  int selectedIndex = this->findPatientTabIndexFromPatientItem(patientItem);
-  if (selectedIndex == index && !patientVisible)
-  {
-    this->PatientsTabWidget->setCurrentIndex(0);
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::setGridWidget(QGridLayout* layout, QWidget* widget, int row, int col, int rowSpan, int colSpan)
+{
+  int idx = layout->indexOf(widget);
+  if (idx >= 0) {
+    int curRow, curCol, curRowSpan, curColSpan;
+    layout->getItemPosition(idx, &curRow, &curCol, &curRowSpan, &curColSpan);
+    if (curRow == row && curCol == col && curRowSpan == rowSpan && curColSpan == colSpan) return;
+    layout->removeWidget(widget);
   }
-  else if (selectedIndex != -1)
-  {
-    this->PatientsTabWidget->setCurrentIndex(selectedIndex);
-  }
-  this->PatientsTabWidget->blockSignals(wasBlocking);
-  this->IsGUIUpdating = false;
+  layout->addWidget(widget, row, col, rowSpan, colSpan);
 }
 
 //----------------------------------------------------------------------------
@@ -1735,17 +1475,32 @@ CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectorySettingsKey, 
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringPatientID, FilteringPatientID);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringPatientName, FilteringPatientName);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringStudyDescription, FilteringStudyDescription);
-CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMPatientItemWidget::DateType, filteringDate, FilteringDate);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMVisualBrowserWidget::DateType, filteringDate, FilteringDate);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QStringList, filteringModalities, FilteringModalities);
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, int, numberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize);
-CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption, thumbnailSizePreset, ThumbnailSizePreset);
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionVisible);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isSendActionVisible, SendActionVisible);
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isDeleteActionVisible, DeleteActionVisible);
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::setThumbnailSizePreset(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption thumbnailSizePreset)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (d->ThumbnailSizePreset == thumbnailSizePreset)
+  {
+    return;
+  }
+
+  d->ThumbnailSizePreset = thumbnailSizePreset;
+  if (d->PatientModel)
+  {
+    d->PatientModel->setThumbnailSize(d->computeThumbnailSizeInPixels(thumbnailSizePreset));
+  }
+}
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setDatabaseDirectorySettingsKey(const QString& key)
@@ -1986,11 +1741,11 @@ void ctkDICOMVisualBrowserWidget::setFilteringStudyDescription(const QString& fi
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setFilteringDate(const ctkDICOMPatientItemWidget::DateType& filteringDate)
+void ctkDICOMVisualBrowserWidget::setFilteringDate(DateType filteringDate)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringDate = filteringDate;
-  d->FilteringDateComboBox->setCurrentIndex(d->FilteringDate);
+  d->FilteringDateComboBox->setCurrentIndex(static_cast<int>(d->FilteringDate));
 }
 
 //------------------------------------------------------------------------------
@@ -2016,153 +1771,18 @@ void ctkDICOMVisualBrowserWidget::resetFilters()
   d->resetFilters();
 }
 
-//----------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidget::addPatientItemWidget(const QString& patientItem)
+//------------------------------------------------------------------------------
+ctkDICOMPatientView* ctkDICOMVisualBrowserWidget::patientView() const
 {
-  Q_D(ctkDICOMVisualBrowserWidget);
-  if (!d->DicomDatabase)
-  {
-    logger.error("addPatientItemWidget failed, no DICOM database has been set. \n");
-    return -1;
-  }
-
-  QString patientName = d->DicomDatabase->fieldForPatient("PatientsName", patientItem);
-  patientName.replace(R"(^)", R"( )");
-  QString patientID = d->DicomDatabase->fieldForPatient("PatientID", patientItem);
-  QString date = d->DicomDatabase->fieldForPatient("PatientsBirthDate", patientItem);
-  date.replace(QString("-"), QString(""));
-  date = QDate::fromString(date, "yyyyMMdd").toString();
-  QString sex = d->DicomDatabase->fieldForPatient("PatientsSex", patientItem);
-
-  ctkDICOMPatientItemWidget* patientItemWidget = new ctkDICOMPatientItemWidget(this);
-  patientItemWidget->setDicomDatabase(d->DicomDatabase);
-  patientItemWidget->setScheduler(d->Scheduler);
-  patientItemWidget->setPatientItem(patientItem);
-  patientItemWidget->setPatientID(patientID);
-  patientItemWidget->setPatientName(patientName);
-  patientItemWidget->setPatientBirthDate(date);
-  patientItemWidget->setPatientSex(sex);
-  patientItemWidget->setFilteringStudyDescription(d->FilteringStudyDescription);
-  patientItemWidget->setFilteringDate(d->FilteringDate);
-  patientItemWidget->setFilteringSeriesDescription(d->FilteringSeriesDescription);
-  patientItemWidget->setFilteringModalities(d->FilteringModalities);
-  patientItemWidget->setThumbnailSize(d->ThumbnailSize);
-  patientItemWidget->setNumberOfOpenedStudiesPerPatient(d->NumberOfOpenedStudiesPerPatient);
-  patientItemWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-  this->connect(patientItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                this, SLOT(showPatientContextMenu(const QPoint&)));
-  this->connect(patientItemWidget, SIGNAL(updateGUIFinished()),
-                this, SLOT(onPatientUpdateGUIFinished()));
-
-  int index = d->PatientsTabWidget->addTab(patientItemWidget, QIcon(":/Icons/patient.svg"), patientName);
-  d->PatientsTabWidget->setTabWhatsThis(index, patientItem);
-
-  return index;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::removePatientItemWidget(const QString& patientItem)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-
-    if (!patientItemWidget || patientItemWidget->patientItem() != patientItem)
-    {
-      continue;
-    }
-
-    d->PatientsTabWidget->removeTab(patientIndex);
-    this->disconnect(patientItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                     this, SLOT(showPatientContextMenu(const QPoint&)));
-    delete patientItemWidget;
-    break;
-  }
+  Q_D(const ctkDICOMVisualBrowserWidget);
+  return d->PatientView;
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMPatientItemWidget *ctkDICOMVisualBrowserWidget::patientItemWidgetByPatientItem(const QString &patientItem)
+ctkDICOMPatientModel* ctkDICOMVisualBrowserWidget::patientModel() const
 {
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    if (patientItemWidget->patientItem() != patientItem)
-    {
-      continue;
-    }
-
-    return patientItemWidget;
-  }
-
-  return nullptr;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMPatientItemWidget *ctkDICOMVisualBrowserWidget::patientItemWidgetByPatientID(const QString &patientID)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    if (patientItemWidget->patientID() != patientID)
-    {
-      continue;
-    }
-
-    return patientItemWidget;
-  }
-
-  return nullptr;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMPatientItemWidget* ctkDICOMVisualBrowserWidget::patientItemWidgetByPatientName(const QString& patientName)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
-
-    if (patientItemWidget->patientName() != patientName)
-    {
-      continue;
-    }
-
-    return patientItemWidget;
-  }
-
-  return nullptr;
-}
-
-//------------------------------------------------------------------------------
-QTabWidget* ctkDICOMVisualBrowserWidget::patientsTabWidget()
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  return d->PatientsTabWidget;
+  Q_D(const ctkDICOMVisualBrowserWidget);
+  return d->PatientModel.data();
 }
 
 //------------------------------------------------------------------------------
@@ -2336,7 +1956,11 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
     settings.sync();
   }
 
-  // pass DICOM database instance to Import widget
+  // Clean model first (this will clean all study models and series models)
+  d->PatientModel->clean();
+  // Then clean the view (this will clean study view and all series views)
+  d->PatientView->clean();
+  d->createPatients();
   emit databaseDirectoryChanged(absDirectory);
 }
 
@@ -2436,12 +2060,11 @@ void ctkDICOMVisualBrowserWidget::onIndexingComplete(int patientsAdded, int stud
 
   d->ProgressFrame->hide();
   d->ProgressDetailLineEdit->hide();
-  d->configureSearchIcon();
 
   // allow users of this widget to know that the process has finished
   emit directoryImported();
 
-  d->createPatients(false, true);
+  d->createPatients(false, QStringList(), true);
   d->setBackgroundColorToFilterWidgets();
 }
 
@@ -2567,29 +2190,30 @@ void ctkDICOMVisualBrowserWidget::onWarningPushButtonClicked()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->WarningPushButton->hide();
-  d->JobsCollapsibleGroupBox->setChecked(true);
-  d->AdvancedCollapsibleGroupBox->setChecked(true);
+  this->openServerSettingsSection();
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidget::fileListForCurrentSelection(ctkDICOMModel::IndexType level,
-                                                                     const QList<QWidget*>& selectedWidgets)
+void ctkDICOMVisualBrowserWidget::openServerSettingsSection()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  if (!d->DicomDatabase)
+  d->JobsCollapsibleGroupBox->setChecked(false);
+  d->AdvancedCollapsibleGroupBox->setChecked(true);
+  // Ensure the splitter shows the AdvancedCollapsibleGroupBox
+  if (d->AdvancedCollapsibleGroupBox->parentWidget())
   {
-    logger.error("fileListForCurrentSelection failed, no DICOM database has been set. \n");
-    return QStringList();
+    QSplitter* splitter = qobject_cast<QSplitter*>(d->AdvancedCollapsibleGroupBox->parentWidget());
+    if (splitter)
+    {
+      int index = splitter->indexOf(d->AdvancedCollapsibleGroupBox);
+      if (index >= 0)
+      {
+        int height = splitter->size().height() * 0.5;
+        splitter->setSizes(QList<int>() << height << height);
+      }
+    }
   }
-
-  QStringList selectedSeriesUIDs = d->getSeriesUIDsFromWidgets(level, selectedWidgets);
-
-  QStringList fileList;
-  foreach (const QString& selectedSeriesUID, selectedSeriesUIDs)
-  {
-    fileList << d->DicomDatabase->filesForSeries(selectedSeriesUID);
-  }
-  return fileList;
+  d->ServersSettingsCollapsibleGroupBox->setChecked(true);
 }
 
 //------------------------------------------------------------------------------
@@ -2601,196 +2225,17 @@ void ctkDICOMVisualBrowserWidget::showMetadata(const QStringList& fileList)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::forceSeriesRetrieve(const QList<QWidget *> &selectedWidgets)
-{
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-    ctkDICOMSeriesItemWidget* seriesItemWidget =
-      qobject_cast<ctkDICOMSeriesItemWidget*>(selectedWidget);
-    if (seriesItemWidget)
-    {
-      seriesItemWidget->forceRetrieve();
-    }
-
-    ctkDICOMStudyItemWidget* studyItemWidget =
-        qobject_cast<ctkDICOMStudyItemWidget*>(selectedWidget);
-    if (studyItemWidget)
-    {
-      QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList = studyItemWidget->seriesItemWidgetsList();
-      foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesItemWidgetsList)
-      {
-        if (!seriesItemWidget)
-        {
-          continue;
-        }
-
-        seriesItemWidget->forceRetrieve();
-      }
-    }
-  }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType level,
-                                                      const QList<QWidget*>& selectedWidgets)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  if (!d->DicomDatabase)
-  {
-    logger.error("removeSelectedItems failed, no DICOM database has been set. \n");
-    return;
-  }
-
-  QStringList selectedPatientItems;
-  QStringList selectedPatientUIDs;
-  QStringList selectedStudyUIDs;
-  QStringList selectedSeriesUIDs;
-
-  if (level == ctkDICOMModel::RootType)
-  {
-    for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-      if (!patientItemWidget)
-      {
-        continue;
-      }
-      QString patientItem = patientItemWidget->patientItem();
-      QString patientID = patientItemWidget->patientID();
-      selectedStudyUIDs << d->DicomDatabase->studiesForPatient(patientItem);
-      selectedPatientUIDs << patientID;
-      selectedPatientItems << patientItem;
-    }
-
-    if (!this->confirmDeleteSelectedUIDs(selectedPatientUIDs))
-    {
-      return;
-    }
-
-    d->removeAllPatientItemWidgets();
-  }
-  else if (level == ctkDICOMModel::PatientType)
-  {
-    selectedPatientUIDs = d->getPatientUIDsFromWidgets(ctkDICOMModel::PatientType, selectedWidgets);
-    selectedPatientItems = d->getPatientItemsFromWidgets(ctkDICOMModel::PatientType, selectedWidgets);
-    if (!this->confirmDeleteSelectedUIDs(selectedPatientUIDs))
-    {
-      return;
-    }
-  }
-  else if (level == ctkDICOMModel::StudyType)
-  {
-    selectedStudyUIDs = d->getStudyUIDsFromWidgets(ctkDICOMModel::StudyType, selectedWidgets);
-    if (!this->confirmDeleteSelectedUIDs(selectedStudyUIDs))
-    {
-      return;
-    }
-  }
-  else if (level == ctkDICOMModel::SeriesType)
-  {
-    selectedSeriesUIDs = d->getSeriesUIDsFromWidgets(ctkDICOMModel::SeriesType, selectedWidgets);
-    if (!this->confirmDeleteSelectedUIDs(selectedSeriesUIDs))
-    {
-      return;
-    }
-  }
-
-  foreach (QWidget* selectedWidget, selectedWidgets)
-  {
-    if (!selectedWidget)
-    {
-      continue;
-    }
-    else if (level == ctkDICOMModel::PatientType)
-    {
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
-      if (patientItemWidget)
-      {
-        QString patientItem = patientItemWidget->patientItem();
-        selectedStudyUIDs << d->DicomDatabase->studiesForPatient(patientItem);
-
-        this->removePatientItemWidget(patientItem);
-      }
-    }
-    else if (level == ctkDICOMModel::StudyType)
-    {
-      ctkDICOMStudyItemWidget* studyItemWidget =
-        qobject_cast<ctkDICOMStudyItemWidget*>(selectedWidget);
-      if (studyItemWidget)
-      {
-        ctkDICOMPatientItemWidget* patientItemWidget =
-          qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-        if (patientItemWidget)
-        {
-          patientItemWidget->removeStudyItemWidget(studyItemWidget->studyItem());
-        }
-      }
-    }
-
-    if (level == ctkDICOMModel::SeriesType)
-    {
-      ctkDICOMSeriesItemWidget* seriesItemWidget =
-        qobject_cast<ctkDICOMSeriesItemWidget*>(selectedWidget);
-      if (seriesItemWidget)
-      {
-        ctkDICOMPatientItemWidget* patientItemWidget =
-          qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-        if (patientItemWidget)
-        {
-          QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = patientItemWidget->studyItemWidgetsList();
-          foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-          {
-            if (!studyItemWidget || studyItemWidget->studyInstanceUID() != seriesItemWidget->studyInstanceUID())
-            {
-              continue;
-            }
-
-            studyItemWidget->removeSeriesItemWidget(seriesItemWidget->seriesItem());
-            break;
-          }
-        }
-      }
-    }
-    else
-    {
-      foreach (const QString& uid, selectedStudyUIDs)
-      {
-        selectedSeriesUIDs << d->DicomDatabase->seriesForStudy(uid);
-      }
-    }
-  }
-
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  d->Scheduler->stopJobsByDICOMUIDs(selectedPatientUIDs,
-                                    selectedStudyUIDs,
-                                    selectedSeriesUIDs);
-
-  foreach (const QString& uid, selectedSeriesUIDs)
-  {
-    d->DicomDatabase->removeSeries(uid, false, level == ctkDICOMModel::RootType);
-  }
-  foreach (const QString& uid, selectedStudyUIDs)
-  {
-    d->DicomDatabase->removeStudy(uid, level == ctkDICOMModel::RootType);
-  }
-  foreach (const QString& uid, selectedPatientItems)
-  {
-    d->DicomDatabase->removePatient(uid, level == ctkDICOMModel::RootType);
-  }
-  QApplication::restoreOverrideCursor();
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onFilteringPatientIDChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringPatientID = d->FilteringPatientIDSearchBox->text();
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setPatientIDFilter(d->FilteringPatientID);
+  d->updateUIAfterFilters();
 }
 
 //------------------------------------------------------------------------------
@@ -2798,6 +2243,13 @@ void ctkDICOMVisualBrowserWidget::onFilteringPatientNameChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringPatientName = d->FilteringPatientNameSearchBox->text();
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setPatientNameFilter(d->FilteringPatientName);
+  d->updateUIAfterFilters();
 }
 
 //------------------------------------------------------------------------------
@@ -2805,6 +2257,13 @@ void ctkDICOMVisualBrowserWidget::onFilteringStudyDescriptionChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringStudyDescription = d->FilteringStudyDescriptionSearchBox->text();
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setStudyDescriptionFilter(d->FilteringStudyDescription);
+  d->updateUIAfterFilters();
 }
 
 //------------------------------------------------------------------------------
@@ -2812,6 +2271,13 @@ void ctkDICOMVisualBrowserWidget::onFilteringSeriesDescriptionChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringSeriesDescription = d->FilteringSeriesDescriptionSearchBox->text();
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setSeriesDescriptionFilter(d->FilteringSeriesDescription);
+  d->updateUIAfterFilters();
 }
 
 //------------------------------------------------------------------------------
@@ -2827,62 +2293,98 @@ void ctkDICOMVisualBrowserWidget::onFilteringModalityCheckableComboBoxChanged()
     QVariant value = d->FilteringModalityCheckableComboBox->checkableModel()->data(index);
     d->FilteringModalities.append(value.toString());
   }
+
   d->updateModalityCheckableComboBox();
+
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setModalityFilter(d->FilteringModalities);
+  d->updateUIAfterFilters();
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onFilteringDateComboBoxChanged(int index)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  d->FilteringDate = static_cast<ctkDICOMPatientItemWidget::DateType>(index);
-}
+  d->FilteringDate = static_cast<DateType>(index);
 
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onShowPatients()
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  if (d->IsGUIUpdating)
+  // Retrieve the popup widget
+  ctkPopupWidget* dateRangePopup = qobject_cast<ctkPopupWidget*>(this->property("dateRangePopup").value<QWidget*>());
+
+  // Show popup for custom date range selection, hide for other options
+  if (d->FilteringDate == CustomRange)
   {
-    return;
-  }
-
-  if (!d->DicomDatabase)
-  {
-    logger.error("onQueryPatient failed, no DICOM database has been set. \n");
-    return;
-  }
-
-  // Stop any fetching task.
-  this->onStop();
-
-  // Save current patient selection
-  QString patientItem;
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (currentPatientItemWidget)
-  {
-    d->SelectedPatientItem = currentPatientItemWidget->patientItem();
-  }
-
-  // Clear the UI.
-  d->removeAllPatientItemWidgets();
-
-  if (d->DicomDatabase->patients().count() == 0)
-  {
-    d->setBackgroundColorToFilterWidgets(true);
-
-    d->WarningPushButton->setText(tr("No patients have been found in the local database."));
-    d->WarningPushButton->show();
-    d->patientsTabMenuToolButton->hide();
-    return;
+    if (dateRangePopup)
+    {
+      dateRangePopup->showPopup();
+    }
+    d->FilteringStartDate = d->FilteringStartDateEdit->date();
+    d->FilteringEndDate = d->FilteringEndDateEdit->date();
   }
   else
   {
-    d->WarningPushButton->hide();
+    // Hide popup when selecting any other date filter option
+    if (dateRangePopup)
+    {
+      dateRangePopup->hidePopup();
+    }
   }
 
-  d->createPatients(false);
-  d->updateFiltersWarnings();
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  d->PatientModel->setDateFilter(static_cast<ctkDICOMPatientModel::DateType>(index));
+  d->updateUIAfterFilters();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onFilteringStartDateChanged(const QDate& date)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  d->FilteringStartDate = date;
+
+  if (d->FilteringDate != CustomRange)
+  {
+    return;
+  }
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+  // Only apply filter if both dates are valid
+  if (d->FilteringStartDate.isValid() && d->FilteringEndDate.isValid())
+  {
+    d->PatientModel->setCustomDateRange(d->FilteringStartDate, d->FilteringEndDate);
+    d->updateUIAfterFilters();
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onFilteringEndDateChanged(const QDate& date)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  d->FilteringEndDate = date;
+
+  if (d->FilteringDate != CustomRange)
+  {
+    return;
+  }
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  // Only apply filter if both dates are valid
+  if (d->FilteringStartDate.isValid() && d->FilteringEndDate.isValid())
+  {
+    d->PatientModel->setCustomDateRange(d->FilteringStartDate, d->FilteringEndDate);
+    d->updateUIAfterFilters();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2894,68 +2396,67 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     return;
   }
 
-  QSettings settings;
-  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
-  if (!queryRetrieveEnabled)
-    {
-    this->onShowPatients();
-    return;
-    }
-
   if (!d->DicomDatabase)
   {
-    logger.error("onQueryPatient failed, no DICOM database has been set. \n");
-    return;
-  }
-
-  if (!d->Scheduler)
-  {
-    logger.error("onQueryPatient failed, no scheduler has been set. \n");
+    logger.error("onQueryPatients failed, no DICOM database has been set. \n");
     return;
   }
 
   // Stop any fetching task.
   this->onStop();
+  d->SearchPushButton->setIcon(QIcon(":/Icons/query.svg"));
+  d->WarningPushButton->hide();
+  d->updateFiltersWarnings();
 
-  // Save current patient selection
-  QString patientItem;
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (currentPatientItemWidget)
+  bool filtersAreEmpty = d->areFiltersEmpty();
+  bool hasActiveQueryRetrieveServer = d->Scheduler->queryRetrieveServersCount() > 0;
+  bool localDatabaseIsEmpty = (d->DicomDatabase->patients().count() == 0);
+
+  if (!hasActiveQueryRetrieveServer)
   {
-    d->SelectedPatientItem = currentPatientItemWidget->patientItem();
-  }
-
-  // Clear the UI.
-  d->removeAllPatientItemWidgets();
-
-  bool filtersEmpty = d->areFiltersEmpty();
-
-  if (d->DicomDatabase->patients().count() == 0 &&
-      (filtersEmpty || d->Scheduler->queryRetrieveServersCount() == 0))
-  {
-    d->setBackgroundColorToFilterWidgets(true);
-
-    d->WarningPushButton->setText(tr("No filters or query/retrieve servers have been set and"
-                                     " no patients have been found in the local database."
-                                     "\nPlease set at least one filter to query the servers and "
-                                     "check that at least one server has the Query/Retrieve property toggled."));
+    d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+    QString warningText = tr("No server is configured for query/retrieve operations.\n"
+                              "The server settings section is below.");
+    logger.warn(warningText);
+    d->WarningPushButton->setText(warningText);
     d->WarningPushButton->show();
-    d->patientsTabMenuToolButton->hide();
+    this->openServerSettingsSection();
     return;
   }
-  else
+
+  if (filtersAreEmpty && localDatabaseIsEmpty)
   {
-    d->WarningPushButton->hide();
+    d->setBackgroundColorToFilterWidgets(true);
+    d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+    QString warningText = tr("No filters are set and no patients are found in the local database.\n"
+                              "Please specify at least one filter to query the servers.");
+    logger.warn(warningText);
+    d->WarningPushButton->setText(warningText);
+    d->WarningPushButton->show();
+    return;
   }
 
-  d->createPatients();
-
-  if (filtersEmpty || (d->Scheduler->queryRetrieveServersCount() == 0))
+  // Save current patient selection
+  if (d->PatientView)
   {
-    d->updateFiltersWarnings();
+    QString patientUID = d->PatientView->currentPatientUID();
+    if (patientUID.isEmpty())
+    {
+      if (d->PatientModel->rowCount() > 0)
+      {
+        QModelIndex firstPatientIndex = d->PatientModel->index(0, 0);
+        patientUID = d->PatientModel->patientUID(firstPatientIndex);
+        d->PatientView->selectPatientUID(patientUID);
+      }
+    }
+    d->SelectedPatientUID = patientUID;
   }
-  else if (d->Scheduler->queryRetrieveServersCount() > 0)
+
+  d->WarningPushButton->hide();
+  d->updateFiltersWarnings();
+
+  d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
+  if (!filtersAreEmpty)
   {
     QMap<QString, QVariant> parameters;
     parameters["Name"] = d->FilteringPatientName;
@@ -2967,7 +2468,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
       parameters["Modalities"] = d->FilteringModalities;
     }
 
-    int nDays = ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(d->FilteringDate);
+    int nDays = d->getNDaysFromFilteringDate(d->FilteringDate);
     if (nDays != -1)
     {
       QDate endDate = QDate::currentDate();
@@ -2979,19 +2480,22 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
       parameters["StartDate"] = formattedStartDate;
       parameters["EndDate"] = formattedEndDate;
     }
+    else if (d->FilteringDate == ctkDICOMVisualBrowserWidget::CustomRange)
+    {
+      QString formattedStartDate = d->FilteringStartDate.toString("yyyyMMdd");
+      QString formattedEndDate = d->FilteringEndDate.toString("yyyyMMdd");
+
+      parameters["StartDate"] = formattedStartDate;
+      parameters["EndDate"] = formattedEndDate;
+    }
 
     d->Scheduler->setFilters(parameters);
     d->Scheduler->queryPatients(QThread::NormalPriority);
   }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onQueryRetrieveOptionToggled(bool toggled)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  QSettings settings;
-  settings.setValue("DICOM/QueryRetrieveEnabled", toggled);
-  d->configureSearchIcon();
+  else
+  {
+    d->createPatients(true, QStringList(), false);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2999,7 +2503,13 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 
+  if (!d->Scheduler || !d->PatientModel || !d->PatientView)
+  {
+    return;
+  }
+
   bool updatePatients = false;
+  QStringList queriedPatientIDs;
   foreach (QVariant data, datas)
   {
     ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -3017,43 +2527,52 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
         td.JobType == ctkDICOMJobResponseSet::JobType::ThumbnailGenerator ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientID(td.PatientID);
-      if (patientItemWidget)
-      {
-        patientItemWidget->updateGUIFromScheduler(data);
-      }
+      d->PatientModel->updateGUIFromScheduler(data);
     }
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
       td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
     {
+      if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+          d->PatientView->currentPatientUID().isEmpty())
+      {
+        d->PatientView->selectPatientUID(d->SelectedPatientUID);
+        d->SelectedPatientUID = d->PatientView->currentPatientUID();
+        d->PatientModel->refreshPatient(d->SelectedPatientUID);
+        d->PatientModel->updateAllowedServersFromDB(d->SelectedPatientUID);
+      }
       d->updateFiltersWarnings();
       continue;
     }
-    else if (td.JobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
+    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
     {
-      continue;
+      // NOTE: if running query jobs, wait to open the first 2 studies of the patient.
+      if (d->Scheduler->getJobsByDICOMUIDs({td.PatientID}).count() == 0)
+      {
+        d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(this->numberOfOpenedStudiesPerPatient());
+      }
     }
-
-    d->updateFiltersWarnings();
-    if (td.NumberOfDataSets == 0)
+    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
-      d->WarningPushButton->setText(tr("The patients query provided no results. Please refine your filters."));
-      d->WarningPushButton->show();
-      d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-    }
-    else
-    {
-      d->WarningPushButton->hide();
-      updatePatients = true;
+      d->updateFiltersWarnings();
+      if (td.NumberOfDataSets == 0)
+      {
+        d->WarningPushButton->setText(tr("The patients query provided no results. Please refine your filters in the search section."));
+        d->WarningPushButton->show();
+        d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      }
+      else
+      {
+        d->WarningPushButton->hide();
+        queriedPatientIDs.append(td.QueriedPatientIDs);
+        updatePatients = true;
+      }
     }
   }
 
   if (updatePatients)
   {
-    QSettings settings;
-    bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
-    d->createPatients(queryRetrieveEnabled);
+    d->createPatients(true, queriedPatientIDs, false);
   }
 }
 
@@ -3061,6 +2580,10 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
 void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel)
+  {
+    return;
+  }
 
   foreach (QVariant data, datas)
   {
@@ -3073,31 +2596,17 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
       d->updateFiltersWarnings();
-      d->SearchMenuButton->setIcon(QIcon(":/Icons/wait.svg"));
-    }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
-    {
-      QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
-      int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-      if (patientItemWidget)
-      {
-        patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::InProgress);
-      }
-      d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_pending.svg"));
+      d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
+      continue;
     }
 
-    if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
         td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientID(td.PatientID);
-      if (patientItemWidget)
-      {
-        patientItemWidget->onJobStarted(data);
-      }
+      d->PatientModel->onJobStarted(data);
     }
   }
 }
@@ -3106,6 +2615,10 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
 void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel)
+  {
+    return;
+  }
 
   foreach (QVariant data, datas)
   {
@@ -3118,19 +2631,8 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
       d->updateFiltersWarnings();
-      d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-    }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
-    {
-      QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
-      int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-      if (patientItemWidget)
-      {
-        patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Failed);
-      }
-      d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_failed.svg"));
+      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      continue;
     }
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
@@ -3139,11 +2641,7 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientID(td.PatientID);
-      if (patientItemWidget)
-      {
-        patientItemWidget->onJobUserStopped(data);
-      }
+      d->PatientModel->onJobUserStopped(data);
     }
   }
 }
@@ -3152,6 +2650,10 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
 void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel)
+  {
+    return;
+  }
 
   foreach (QVariant data, datas)
   {
@@ -3164,21 +2666,10 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
       d->updateFiltersWarnings();
-      d->SearchMenuButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
       d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
       d->WarningPushButton->show();
-    }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
-    {
-      QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
-      int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-      if (patientItemWidget)
-      {
-        patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Failed);
-      }
-      d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_failed.svg"));
+      continue;
     }
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
@@ -3187,11 +2678,7 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientID(td.PatientID);
-      if (patientItemWidget)
-      {
-        patientItemWidget->onJobFailed(data);
-      }
+      d->PatientModel->onJobFailed(data);
     }
   }
 }
@@ -3200,6 +2687,10 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
 void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel)
+  {
+    return;
+  }
 
   foreach (QVariant data, datas)
   {
@@ -3209,85 +2700,20 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
       continue;
     }
 
-    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
     {
       d->updateFiltersWarnings();
-      d->SearchMenuButton->setIcon(QIcon(":/Icons/query_success.svg"));
+      d->SearchPushButton->setIcon(QIcon(":/Icons/query_success.svg"));
     }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
-    {
-      QString patientItem = d->findPatientItemFromPatientInfo(td.PatientID);
-      int patientIndex = d->findPatientTabIndexFromPatientItem(patientItem);
-      ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-      if (patientItemWidget)
-      {
-        patientItemWidget->setOperationStatus(ctkDICOMPatientItemWidget::Completed);
-      }
-      d->PatientsTabWidget->setTabIcon(patientIndex, QIcon(":/Icons/patient_success.svg"));
-    }
-
-    if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
-        td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+        td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::ThumbnailGenerator)
     {
-      ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientID(td.PatientID);
-      if (patientItemWidget)
-      {
-        patientItemWidget->onJobFinished(data);
-      }
-    }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::Inserter)
-    {
-      for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-      {
-        ctkDICOMPatientItemWidget* patientItemWidget =
-          qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-        if (patientItemWidget)
-        {
-          patientItemWidget->onInserterJobFinished(data);
-        }
-      }
-    }
-  }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onPatientItemChanged(int index)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  ctkDICOMPatientItemWidget* patientItem =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(index));
-  if (!patientItem || patientItem->patientItem().isEmpty())
-  {
-    return;
-  }
-
-  patientItem->generateStudies();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  ctkDICOMPatientItemWidget* patientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(index));
-  if (!patientItemWidget)
-  {
-    return;
-  }
-
-  ctkDICOMPatientItemWidget::OperationStatus status = patientItemWidget->operationStatus();
-  if (status == ctkDICOMPatientItemWidget::InProgress)
-  {
-    d->Scheduler->stopJobsByDICOMUIDs(QStringList(patientItemWidget->patientID()));
-  }
-  else if (status > ctkDICOMPatientItemWidget::InProgress)
-  {
-    if (!d->Scheduler->retryJob(patientItemWidget->stoppedJobUID()))
-    {
-    logger.info(QString("Unable to restart Job job %1 (patient level) because the job has been fully cleared from the system. "
-                        "Please initiate a new job if further processing is required.").arg(patientItemWidget->stoppedJobUID()));
+      d->PatientModel->onJobFinished(data);
     }
   }
 }
@@ -3296,17 +2722,16 @@ void ctkDICOMVisualBrowserWidget::onOperationStatusTabBarItemClicked(int index)
 void ctkDICOMVisualBrowserWidget::onServersSettingsChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
+  if (!d->PatientModel)
   {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-    if (!patientItemWidget)
-    {
-      continue;
-    }
+    return;
+  }
 
-    patientItemWidget->updateAllowedServersUIFromDB();
+  // Update allowed servers from database for all patients when server settings change
+  QStringList patientUIDs = d->PatientModel->filteredPatientUIDs();
+  foreach (const QString& patientUID, patientUIDs)
+  {
+    d->PatientModel->updateAllowedServersFromDB(patientUID);
   }
 }
 
@@ -3316,400 +2741,1056 @@ void ctkDICOMVisualBrowserWidget::patientSelectedOnJobList(const QString& patien
                                                            const QString& patientBirthDate)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  Q_UNUSED(patientName);
+  Q_UNUSED(patientBirthDate);
 
-  QString patientItem = d->findPatientItemFromPatientInfo(patientID, patientName, patientBirthDate);
-  int selectedIndex = d->findPatientTabIndexFromPatientItem(patientItem);
-  int wasBlocking = d->PatientsTabWidget->blockSignals(true);
-  d->PatientsTabWidget->setCurrentIndex(selectedIndex);
-  d->PatientsTabWidget->blockSignals(wasBlocking);
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& point)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  ctkDICOMPatientItemWidget* patientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (!patientItemWidget)
+  if (!d->PatientView || !d->DicomDatabase)
   {
     return;
   }
 
-  QList<QWidget*> selectedWidgets;
-  selectedWidgets.append(patientItemWidget);
+  QString patientUID = d->findPatientUIDByPatientID(patientID);
+  if (patientUID.isEmpty())
+  {
+    return;
+  }
 
-  QPoint globalPos = patientItemWidget->mapToGlobal(point);
-  QMenu* patientMenu = new QMenu();
+  // Select the patient item in the patient view
+  d->PatientView->selectPatientUID(patientUID);
+  d->PatientView->refreshLayout();
+}
 
-  QString loadString = tr("Load patient files");
-  QAction* loadAction = new QAction(loadString, patientMenu);
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged(ctkDICOMPatientView::DisplayMode mode)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientFilterProxyModel)
+  {
+    return;
+  }
+  d->PatientFilterProxyModel.data()->setDisplayMode(
+      mode == ctkDICOMPatientView::TabMode
+          ? ctkDICOMPatientFilterProxyModel::TabMode
+          : ctkDICOMPatientFilterProxyModel::ListMode
+      );
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos, const QStringList& selectedPatientUIDs)
+{
+  if (selectedPatientUIDs.isEmpty())
+  {
+    return;
+  }
+
+  int patientCount = selectedPatientUIDs.count();
+
+  // Create context menu
+  QMenu* patientMenu = new QMenu(this);
+
+  // Set window flags to enable rounded corners
+  patientMenu->setWindowFlags(patientMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+  patientMenu->setAttribute(Qt::WA_TranslucentBackground);
+  // To Do: add an option to disable styling
+  patientMenu->setStyleSheet(
+    "QMenu {"
+    "  background-color: #ffffff;"
+    "  border-radius: 8px;"
+    "  border: 1px solid #e0e0e0;"
+    "  padding: 4px;"
+    "}"
+    "QMenu::item {"
+    "  padding: 8px 32px 8px 16px;"
+    "  border-radius: 4px;"
+    "  color: #212121;"
+    "  background-color: transparent;"
+    "  margin: 2px 4px;"
+    "}"
+    "QMenu::item:selected {"
+    "  background-color: #f5f5f5;"
+    "  color: #1976d2;"
+    "}"
+    "QMenu::separator {"
+    "  height: 1px;"
+    "  background: #eeeeee;"
+    "  margin: 4px 8px;"
+    "}"
+  );
+
+  // Load action
+  QString loadString = patientCount == 1 ? tr("Load patient") :
+    tr("Load %1 patients").arg(patientCount);
+  QAction* loadAction = new QAction(QIcon(":/Icons/load.svg"), loadString, patientMenu);
   patientMenu->addAction(loadAction);
 
-  QString metadataString = tr("View patient DICOM metadata");
-  QAction* metadataAction = new QAction(metadataString, patientMenu);
+  // View metadata action
+  QString metadataString = patientCount == 1 ? tr("View patient DICOM metadata") :
+    tr("View %1 patients DICOM metadata").arg(patientCount);
+  QAction* metadataAction = new QAction(QIcon(":/Icons/metadata.svg"), metadataString, patientMenu);
   patientMenu->addAction(metadataAction);
 
-  QString deleteString = tr("Delete patient from local database");
-  QAction* deleteAction = new QAction(deleteString, patientMenu);
-  patientMenu->addAction(deleteAction);
+  // Delete action
+  QString deleteString = patientCount == 1 ? tr("Delete patient from local database") :
+    tr("Delete %1 patients from local database").arg(patientCount);
+  QAction* deleteAction = new QAction(QIcon(":/Icons/delete.svg"), deleteString, patientMenu);
   deleteAction->setVisible(this->isDeleteActionVisible());
+  patientMenu->addAction(deleteAction);
 
-  QString exportString = tr("Export patient to file system");
-  QAction* exportAction = new QAction(exportString, patientMenu);
+  // Export action
+  QString exportString = patientCount == 1 ? tr("Export patient to file system") :
+    tr("Export %1 patients to file system").arg(patientCount);
+  QAction* exportAction = new QAction(QIcon(":/Icons/export.svg"), exportString, patientMenu);
   patientMenu->addAction(exportAction);
 
-  QString sendString = tr("Send patient to DICOM server");
-  QAction* sendAction = new QAction(sendString, patientMenu);
+  // Send action (if enabled)
+  QString sendString = patientCount == 1 ? tr("Send patient to DICOM server") :
+    tr("Send %1 patients to DICOM server").arg(patientCount);
+  QAction* sendAction = new QAction(QIcon(":/Icons/upload.svg"), sendString, patientMenu);
   sendAction->setVisible(this->isSendActionVisible());
   patientMenu->addAction(sendAction);
 
+  // Execute menu
   QAction* selectedAction = patientMenu->exec(globalPos);
+
+  // Handle selected action
   if (selectedAction == loadAction)
   {
-    // first select all the series for all studies
-    ctkDICOMPatientItemWidget* currentPatientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-    if (currentPatientItemWidget)
-    {
-      currentPatientItemWidget->setSelection(true);
-    }
-
-    this->onLoad();
+    this->onLoadPatients(selectedPatientUIDs);
   }
   else if (selectedAction == metadataAction)
   {
-    this->showMetadata(this->fileListForCurrentSelection(ctkDICOMModel::PatientType, selectedWidgets));
+    this->showMetadataForPatients(selectedPatientUIDs);
   }
   else if (selectedAction == deleteAction)
   {
-    this->removeSelectedItems(ctkDICOMModel::PatientType, selectedWidgets);
+    this->removePatients(selectedPatientUIDs);
   }
   else if (selectedAction == exportAction)
   {
-    this->exportSelectedItems(ctkDICOMModel::PatientType, selectedWidgets);
+    this->exportPatients(selectedPatientUIDs);
   }
   else if (selectedAction == sendAction)
   {
-    emit sendRequested(this->fileListForCurrentSelection(ctkDICOMModel::PatientType, selectedWidgets));
+    // Get all studies for the selected patients and send their files
+    QStringList selectedStudyInstanceUIDs = this->studiesForPatients(selectedPatientUIDs);
+    QStringList seriesInstanceUIDs = this->seriesForStudies(selectedStudyInstanceUIDs);
+    emit this->sendRequested(this->filesForSeries(seriesInstanceUIDs));
   }
+
+  delete patientMenu;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& point)
+void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& globalPos, const QStringList& selectedStudyInstanceUIDs)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 
-  ctkDICOMStudyItemWidget* studyItemWidget =
-    qobject_cast<ctkDICOMStudyItemWidget*>(QObject::sender());
-  if (!studyItemWidget)
+  if (selectedStudyInstanceUIDs.isEmpty() || !d->PatientView)
   {
     return;
   }
 
-  studyItemWidget->setSelection(true);
+  int numberOfStudies = selectedStudyInstanceUIDs.count();
 
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (!currentPatientItemWidget)
-  {
-    return;
-  }
+  QMenu* studyMenu = new QMenu(this);
 
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
-  QList<QWidget*> selectedWidgets;
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    if (!studyItemWidget || !studyItemWidget->selection())
-    {
-      continue;
-    }
+  // Set window flags to enable rounded corners
+  studyMenu->setWindowFlags(studyMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+  studyMenu->setAttribute(Qt::WA_TranslucentBackground);
+  // To Do: add an option to disable styling
+  studyMenu->setStyleSheet(
+    "QMenu {"
+    "  background-color: #ffffff;"
+    "  border-radius: 8px;"
+    "  border: 1px solid #e0e0e0;"
+    "  padding: 4px;"
+    "}"
+    "QMenu::item {"
+    "  padding: 8px 32px 8px 16px;"
+    "  border-radius: 4px;"
+    "  color: #212121;"
+    "  background-color: transparent;"
+    "  margin: 2px 4px;"
+    "}"
+    "QMenu::item:selected {"
+    "  background-color: #f5f5f5;"
+    "  color: #1976d2;"
+    "}"
+    "QMenu::separator {"
+    "  height: 1px;"
+    "  background: #eeeeee;"
+    "  margin: 4px 8px;"
+    "}"
+  );
 
-    selectedWidgets.append(studyItemWidget);
-  }
-
-  int numberOfSelectedStudies = selectedWidgets.count();
-
-  QPoint globalPos = studyItemWidget->mapToGlobal(point);
-  QMenu* studyMenu = new QMenu();
-
-  QString loadString = numberOfSelectedStudies == 1 ? tr("Load study") :
-    tr("Load %1 studies").arg(numberOfSelectedStudies);
-  QAction* loadAction = new QAction(loadString, studyMenu);
+  // Load action
+  QString loadString = numberOfStudies == 1 ? tr("Load study") :
+    tr("Load %1 studies").arg(numberOfStudies);
+  QAction* loadAction = new QAction(QIcon(":/Icons/load.svg"), loadString, studyMenu);
   studyMenu->addAction(loadAction);
 
-  QString metadataString = numberOfSelectedStudies == 1 ? tr("View study DICOM metadata") :
-    tr("View %1 studies DICOM metadata").arg(numberOfSelectedStudies);
-  QAction* metadataAction = new QAction(metadataString, studyMenu);
+  // View metadata action
+  QString metadataString = numberOfStudies == 1 ? tr("View study DICOM metadata") :
+    tr("View %1 studies DICOM metadata").arg(numberOfStudies);
+  QAction* metadataAction = new QAction(QIcon(":/Icons/metadata.svg"), metadataString, studyMenu);
   studyMenu->addAction(metadataAction);
 
-  QString forceRetrieveString = numberOfSelectedStudies == 1 ? tr("Force retrieve series") :
-    tr("Force retrieve series for %1 studies").arg(numberOfSelectedStudies);
-  QAction *forceRetrieveAction = new QAction(forceRetrieveString, studyMenu);
+  // Force retrieve action
+  QString forceRetrieveString = numberOfStudies == 1 ? tr("Force retrieve study") :
+    tr("Force retrieve %1 studies").arg(numberOfStudies);
+  QAction* forceRetrieveAction = new QAction(QIcon(":/Icons/download.svg"), forceRetrieveString, studyMenu);
   studyMenu->addAction(forceRetrieveAction);
 
-  QString deleteString = numberOfSelectedStudies == 1 ? tr("Delete study from local database") :
-    tr("Delete %1 studies from local database").arg(numberOfSelectedStudies);
-  QAction* deleteAction = new QAction(deleteString, studyMenu);
-  studyMenu->addAction(deleteAction);
+  // Delete action
+  QString deleteString = numberOfStudies == 1 ? tr("Delete study from local database") :
+    tr("Delete %1 studies from local database").arg(numberOfStudies);
+  QAction* deleteAction = new QAction(QIcon(":/Icons/delete.svg"), deleteString, studyMenu);
   deleteAction->setVisible(this->isDeleteActionVisible());
+  studyMenu->addAction(deleteAction);
 
-  QString exportString = numberOfSelectedStudies == 1 ? tr("Export study to file system") :
-    tr("Export %1 studies to file system").arg(numberOfSelectedStudies);
-  QAction* exportAction = new QAction(exportString, studyMenu);
+  // Export action
+  QString exportString = numberOfStudies == 1 ? tr("Export study to file system") :
+    tr("Export %1 studies to file system").arg(numberOfStudies);
+  QAction* exportAction = new QAction(QIcon(":/Icons/export.svg"), exportString, studyMenu);
   studyMenu->addAction(exportAction);
 
-  QString sendString = numberOfSelectedStudies == 1 ? tr("Send study to DICOM server") :
-    tr("Send %1 studies to DICOM server").arg(numberOfSelectedStudies);
-  QAction* sendAction = new QAction(sendString, studyMenu);
+  // Send action
+  QString sendString = numberOfStudies == 1 ? tr("Send study to DICOM server") :
+    tr("Send %1 studies to DICOM server").arg(numberOfStudies);
+  QAction* sendAction = new QAction(QIcon(":/Icons/upload.svg"), sendString, studyMenu);
   sendAction->setVisible(this->isSendActionVisible());
   studyMenu->addAction(sendAction);
 
+  // Execute menu
   QAction* selectedAction = studyMenu->exec(globalPos);
+
   if (selectedAction == loadAction)
   {
-    this->onLoad();
+    this->onLoadStudies(selectedStudyInstanceUIDs);
   }
   else if (selectedAction == metadataAction)
   {
-    this->showMetadata(this->fileListForCurrentSelection(ctkDICOMModel::StudyType, selectedWidgets));
+    this->showMetadataForStudies(selectedStudyInstanceUIDs);
   }
   else if (selectedAction == forceRetrieveAction)
   {
-    this->forceSeriesRetrieve(selectedWidgets);
+    this->forceRetrieveStudies(selectedStudyInstanceUIDs);
   }
   else if (selectedAction == deleteAction)
   {
-    this->removeSelectedItems(ctkDICOMModel::StudyType, selectedWidgets);
+    this->removeStudies(selectedStudyInstanceUIDs);
   }
   else if (selectedAction == exportAction)
   {
-    this->exportSelectedItems(ctkDICOMModel::StudyType, selectedWidgets);
+    this->exportStudies(selectedStudyInstanceUIDs);
   }
   else if (selectedAction == sendAction)
   {
-    emit sendRequested(this->fileListForCurrentSelection(ctkDICOMModel::StudyType, selectedWidgets));
+    // Get all series for the selected studies and send their files
+    QStringList seriesInstanceUIDs = this->seriesForStudies(selectedStudyInstanceUIDs);
+    emit this->sendRequested(this->filesForSeries(seriesInstanceUIDs));
   }
+
+  delete studyMenu;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& point)
+void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 
-  ctkDICOMSeriesItemWidget* selectedSeriesItemWidget =
-    qobject_cast<ctkDICOMSeriesItemWidget*>(QObject::sender());
-  if (!selectedSeriesItemWidget)
+  if (selectedSeriesInstanceUIDs.isEmpty() || !d->PatientView)
   {
     return;
   }
 
-  ctkDICOMPatientItemWidget* currentPatientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (!currentPatientItemWidget)
-  {
-    return;
-  }
+  int numberOfSelectedSeries = selectedSeriesInstanceUIDs.count();
 
-  d->updateSeriesTablesSelection(selectedSeriesItemWidget);
-  QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList = currentPatientItemWidget->studyItemWidgetsList();
-  QList<QWidget*> selectedWidgets;
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studyItemWidgetsList)
-  {
-    if (!studyItemWidget)
-    {
-      continue;
-    }
-    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
-    foreach (QTableWidgetItem* selectedItem, selectedItems)
-    {
-      if (!selectedItem)
-      {
-        continue;
-      }
+  QMenu* seriesMenu = new QMenu(this);
 
-      int row = selectedItem->row();
-      int column = selectedItem->column();
-      ctkDICOMSeriesItemWidget* seriesItemWidget =
-        qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
+  // Set window flags to enable rounded corners
+  seriesMenu->setWindowFlags(seriesMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+  seriesMenu->setAttribute(Qt::WA_TranslucentBackground);
+  // To Do: add an option to disable styling
+  seriesMenu->setStyleSheet(
+    "QMenu {"
+    "  background-color: #ffffff;"
+    "  border-radius: 8px;"
+    "  border: 1px solid #e0e0e0;"
+    "  padding: 4px;"
+    "}"
+    "QMenu::item {"
+    "  padding: 8px 32px 8px 16px;"
+    "  border-radius: 4px;"
+    "  color: #212121;"
+    "  background-color: transparent;"
+    "  margin: 2px 4px;"
+    "}"
+    "QMenu::item:selected {"
+    "  background-color: #f5f5f5;"
+    "  color: #1976d2;"
+    "}"
+    "QMenu::separator {"
+    "  height: 1px;"
+    "  background: #eeeeee;"
+    "  margin: 4px 8px;"
+    "}"
+  );
 
-      selectedWidgets.append(seriesItemWidget);
-    }
-  }
-
-  int numberOfSelectedSeries = selectedWidgets.count();
-
-  QPoint globalPos = selectedSeriesItemWidget->mapToGlobal(point);
-  QMenu* seriesMenu = new QMenu();
-
+  // Load action
   QString loadString = numberOfSelectedSeries == 1 ? tr("Load series") :
     tr("Load %1 series").arg(numberOfSelectedSeries);
-  QAction *loadAction = new QAction(loadString, seriesMenu);
+  QAction* loadAction = new QAction(QIcon(":/Icons/load.svg"), loadString, seriesMenu);
   seriesMenu->addAction(loadAction);
 
+  // View metadata action
   QString metadataString = numberOfSelectedSeries == 1 ? tr("View series DICOM metadata") :
     tr("View %1 series DICOM metadata").arg(numberOfSelectedSeries);
-  QAction *metadataAction = new QAction(metadataString, seriesMenu);
+  QAction* metadataAction = new QAction(QIcon(":/Icons/metadata.svg"), metadataString, seriesMenu);
   seriesMenu->addAction(metadataAction);
 
+  // Force retrieve action
   QString forceRetrieveString = numberOfSelectedSeries == 1 ? tr("Force retrieve series") :
-    tr("Force retrieve for %1 series").arg(numberOfSelectedSeries);
-  QAction *forceRetrieveAction = new QAction(forceRetrieveString, seriesMenu);
+    tr("Force retrieve %1 series").arg(numberOfSelectedSeries);
+  QAction* forceRetrieveAction = new QAction(QIcon(":/Icons/download.svg"), forceRetrieveString, seriesMenu);
   seriesMenu->addAction(forceRetrieveAction);
 
+  // Delete action
   QString deleteString = numberOfSelectedSeries == 1 ? tr("Delete series from local database") :
     tr("Delete %1 series from local database").arg(numberOfSelectedSeries);
-  QAction *deleteAction = new QAction(deleteString, seriesMenu);
-  seriesMenu->addAction(deleteAction);
+  QAction* deleteAction = new QAction(QIcon(":/Icons/delete.svg"), deleteString, seriesMenu);
   deleteAction->setVisible(this->isDeleteActionVisible());
+  seriesMenu->addAction(deleteAction);
 
+  // Export action
   QString exportString = numberOfSelectedSeries == 1 ? tr("Export series to file system") :
     tr("Export %1 series to file system").arg(numberOfSelectedSeries);
-  QAction *exportAction = new QAction(exportString, seriesMenu);
+  QAction* exportAction = new QAction(QIcon(":/Icons/export.svg"), exportString, seriesMenu);
   seriesMenu->addAction(exportAction);
 
+  // Send action
   QString sendString = numberOfSelectedSeries == 1 ? tr("Send series to DICOM server") :
     tr("Send %1 series to DICOM server").arg(numberOfSelectedSeries);
-  QAction* sendAction = new QAction(sendString, seriesMenu);
+  QAction* sendAction = new QAction(QIcon(":/Icons/upload.svg"), sendString, seriesMenu);
   sendAction->setVisible(this->isSendActionVisible());
   seriesMenu->addAction(sendAction);
 
+  // Execute menu
   QAction* selectedAction = seriesMenu->exec(globalPos);
+
   if (selectedAction == loadAction)
   {
-    this->onLoad();
+    this->onLoadSeries(selectedSeriesInstanceUIDs);
   }
   else if (selectedAction == metadataAction)
   {
-    this->showMetadata(this->fileListForCurrentSelection(ctkDICOMModel::SeriesType, selectedWidgets));
+    this->showMetadataForSeries(selectedSeriesInstanceUIDs);
   }
   else if (selectedAction == forceRetrieveAction)
   {
-    this->forceSeriesRetrieve(selectedWidgets);
+    this->forceRetrieveSeries(selectedSeriesInstanceUIDs);
   }
   else if (selectedAction == deleteAction)
   {
-    this->removeSelectedItems(ctkDICOMModel::SeriesType, selectedWidgets);
+    this->removeSeries(selectedSeriesInstanceUIDs);
   }
   else if (selectedAction == exportAction)
   {
-    this->exportSelectedItems(ctkDICOMModel::SeriesType, selectedWidgets);
+    this->exportSeries(selectedSeriesInstanceUIDs);
   }
   else if (selectedAction == sendAction)
   {
-    emit sendRequested(this->fileListForCurrentSelection(ctkDICOMModel::SeriesType, selectedWidgets));
+    emit this->sendRequested(this->filesForSeries(selectedSeriesInstanceUIDs));
   }
+
+  delete seriesMenu;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onPatientsTabMenuToolButtonClicked()
+void ctkDICOMVisualBrowserWidget::onSeriesDoubleClicked(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 
-  QPoint globalPos = this->mapToGlobal(d->patientsTabMenuToolButton->geometry().bottomLeft());
-  globalPos.setY(globalPos.y() + d->patientsTabMenuToolButton->height() * 3);
-  globalPos.setX(globalPos.x());
-
-  QMenu* patientMenu = new QMenu();
-  patientMenu->move(globalPos);
-  for (int patientIndex = 0; patientIndex < d->PatientsTabWidget->count(); ++patientIndex)
-  {
-    ctkDICOMPatientItemWidget* patientItemWidget =
-        qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->widget(patientIndex));
-
-#if QT_VERSION <= QT_VERSION_CHECK(5, 13, 0)
-    if (!patientItemWidget || d->PatientsTabWidget->tabText(patientIndex).isEmpty())
-#else
-    if (!patientItemWidget || !d->PatientsTabWidget->isTabVisible(patientIndex))
-#endif
-    {
-      continue;
-    }
-
-    QString patientName = patientItemWidget->patientName();
-    QAction* changePatientAction = new QAction(patientName, patientMenu);
-    if (patientItemWidget == d->PatientsTabWidget->currentWidget())
-    {
-      changePatientAction->setIcon(QIcon(":Icons/patient.svg"));
-      QFont font(changePatientAction->font());
-      font.setBold(true);
-      changePatientAction->setFont(font);
-    }
-    patientMenu->addAction(changePatientAction);
-  }
-
-  patientMenu->addSeparator();
-  QString deleteString = tr("Delete all Patients from local database");
-  QAction* deleteAction = new QAction(deleteString, patientMenu);
-  deleteAction->setIcon(QIcon(":Icons/delete.svg"));
-  patientMenu->addAction(deleteAction);
-  deleteAction->setVisible(this->isDeleteActionVisible());
-
-  QAction* selectedAction = patientMenu->exec(globalPos);
-  if (selectedAction == deleteAction)
-  {
-    this->removeSelectedItems(ctkDICOMModel::RootType);
-    d->patientsTabMenuToolButton->hide();
-  }
-  else if (selectedAction)
-  {
-    QString patientName = selectedAction->text();
-    ctkDICOMPatientItemWidget* patientItemWidget = this->patientItemWidgetByPatientName(patientName);
-    if (patientItemWidget)
-    {
-      d->PatientsTabWidget->setCurrentWidget(patientItemWidget);
-    }
-  }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onPatientUpdateGUIFinished()
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  ctkDICOMPatientItemWidget* patientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(QObject::sender());
-  if (!patientItemWidget)
+  if (seriesInstanceUID.isEmpty() || !d->PatientView)
   {
     return;
   }
 
-  d->updateTabVisibilityForPatientItemWidget(patientItemWidget);
+  // Clear all series selections across all studies
+  QStringList selectedSeriesInstanceUIDs;
+  ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+  if (studyListView)
+  {
+    QMap<QString, ctkDICOMSeriesTableView*> allSeriesViews = studyListView->getAllSeriesView();
+    for (ctkDICOMSeriesTableView* seriesView : allSeriesViews)
+    {
+      if (seriesView)
+      {
+        selectedSeriesInstanceUIDs.append(seriesView->selectedSeriesInstanceUIDs());
+      }
+    }
+  }
+
+  // Load the series
+  this->onLoadSeries(selectedSeriesInstanceUIDs);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::exportSelectedItems(ctkDICOMModel::IndexType level,
-                                                      const QList<QWidget*>& selectedWidgets)
+QStringList ctkDICOMVisualBrowserWidget::studiesForPatients(const QStringList& patientUIDs)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  QStringList studyUIDs;
+
   if (!d->DicomDatabase)
   {
-    logger.error("exportSelectedItems failed, no DICOM database has been set. \n");
-    return;
+    return studyUIDs;
   }
 
-  ctkFileDialog* directoryDialog = new ctkFileDialog();
-  directoryDialog->setOption(QFileDialog::ShowDirsOnly);
-  directoryDialog->setFileMode(QFileDialog::Directory);
-  directoryDialog->setOption(QFileDialog::ShowDirsOnly);
-  bool res = directoryDialog->exec();
-  if (!res)
+  foreach (const QString& patientUID, patientUIDs)
   {
-    delete directoryDialog;
-    return;
+    QStringList studiesList = d->DicomDatabase->studiesForPatient(patientUID);
+    studiesList.removeAll("");
+    studyUIDs << studiesList;
   }
-  QStringList dirs = directoryDialog->selectedFiles();
-  delete directoryDialog;
-  QString dirPath = dirs[0];
 
-  QStringList selectedSeriesUIDs = d->getSeriesUIDsFromWidgets(level, selectedWidgets);
-
-  this->exportSeries(dirPath, selectedSeriesUIDs);
+  return studyUIDs;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::exportSeries(const QString& dirPath, const QStringList& uids)
+void ctkDICOMVisualBrowserWidget::onLoadPatients(const QStringList& patientUIDs)
+{
+  // Get all studies for the patients and load them
+  QStringList studyUIDs = this->studiesForPatients(patientUIDs);
+  this->onLoadStudies(studyUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::showMetadataForPatients(const QStringList& patientUIDs)
+{
+  // Get all studies for the patients and show their metadata
+  QStringList studyUIDs = this->studiesForPatients(patientUIDs);
+  this->showMetadataForStudies(studyUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::removePatients(const QStringList& patientUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  if (!d->PatientModel || !d->PatientView ||
+      !d->Scheduler || !d->DicomDatabase)
+  {
+    return;
+  }
+
+  // Confirm delete
+  if (!this->confirmDeleteSelectedUIDs(patientUIDs))
+  {
+    return;
+  }
+
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
+  QStringList patientIDs;
+  for (const QString& patientUID : patientUIDs)
+  {
+    QString patientID = d->PatientModel->patientID(d->PatientModel->indexFromPatientUID(patientUID));
+    if (!patientID.isEmpty())
+    {
+      patientIDs << patientID;
+    }
+  }
+
+  // Stop any running jobs for these studies
+  d->Scheduler->stopJobsByDICOMUIDs(patientIDs);
+
+  // Delete patients from database
+  QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+  foreach (const QString& patientUID, patientUIDs)
+  {
+    QStringList studyInstanceUIDs = d->DicomDatabase->studiesForPatient(patientUID);
+    for (const QString& studyInstanceUID : studyInstanceUIDs)
+    {
+      QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
+      for (const QString& seriesInstanceUID : seriesInstanceUIDs)
+      {
+        loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
+      }
+    }
+    d->DicomDatabase->removePatient(patientUID);
+  }
+  d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+
+  // Refresh the patient model
+  d->PatientModel->refresh();
+  d->PatientView->selectPatientUID("");
+  QApplication::restoreOverrideCursor();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::exportPatients(const QStringList& patientUIDs)
+{
+  // Get all studies for the patients and export them
+  QStringList studyUIDs = this->studiesForPatients(patientUIDs);
+  this->exportStudies(studyUIDs);
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMVisualBrowserWidget::seriesForStudies(const QStringList& studyInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  QStringList seriesInstanceUIDs;
+
+  if (!d->DicomDatabase)
+  {
+    return seriesInstanceUIDs;
+  }
+
+  foreach (const QString& studyInstanceUID, studyInstanceUIDs)
+  {
+    seriesInstanceUIDs << d->DicomDatabase->seriesForStudy(studyInstanceUID);
+  }
+
+  return seriesInstanceUIDs;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onLoadStudies(const QStringList& studyInstanceUIDs)
+{
+  // Get all series for the studies and load them
+  QStringList seriesInstanceUIDs = this->seriesForStudies(studyInstanceUIDs);
+  this->onLoadSeries(seriesInstanceUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::showMetadataForStudies(const QStringList& studyInstanceUIDs)
+{
+  // Get all series for the studies and show their metadata
+  QStringList seriesInstanceUIDs = this->seriesForStudies(studyInstanceUIDs);
+  this->showMetadataForSeries(seriesInstanceUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::forceRetrieveStudies(const QStringList& studyInstanceUIDs)
+{
+  // Get all series for the studies and force retrieve them
+  QStringList seriesInstanceUIDs = this->seriesForStudies(studyInstanceUIDs);
+  this->forceRetrieveSeries(seriesInstanceUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::removeStudies(const QStringList& studyInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // Confirm delete
+  if (!this->confirmDeleteSelectedUIDs(studyInstanceUIDs))
+  {
+    return;
+  }
+
+  if (!d->PatientView || !d->DicomDatabase)
+  {
+    return;
+  }
+
+  ctkDICOMStudyListView* studyListView =  d->PatientView->studyListView();
+  if (!studyListView)
+  {
+    return;
+  }
+
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
+  // Stop any running jobs for these studies
+  if (d->Scheduler)
+  {
+    d->Scheduler->stopJobsByDICOMUIDs(QStringList(), studyInstanceUIDs, QStringList());
+  }
+
+  // Delete studies from database
+  QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+  foreach (const QString& studyInstanceUID, studyInstanceUIDs)
+  {
+    QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
+    for (const QString& seriesInstanceUID : seriesInstanceUIDs)
+    {
+      loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
+    }
+    d->DicomDatabase->removeStudy(studyInstanceUID);
+  }
+  d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+
+  ctkDICOMStudyModel* studyModel = studyListView->studyModel();
+  ctkDICOMStudyMergedFilterProxyModel* studyMergedFilterModel = studyListView->studyMergedFilterProxyModel();
+  if (studyModel)
+  {
+    studyModel->refresh();
+    studyModel->refreshStudies();
+  }
+  else if (studyMergedFilterModel)
+  {
+    QList<ctkDICOMStudyModel *> sourceModels = studyMergedFilterModel->sourceModels();
+    foreach (ctkDICOMStudyModel* sourceModel, sourceModels)
+    {
+      sourceModel->refresh();
+      sourceModel->refreshStudies();
+    }
+  }
+  QString patientUID = d->PatientView->currentPatientUID();
+  d->PatientModel->refreshPatient(patientUID);
+  QApplication::restoreOverrideCursor();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::exportStudies(const QStringList& studyInstanceUIDs)
+{
+  // Get all series for the studies and export them
+  QStringList seriesUIDs = this->seriesForStudies(studyInstanceUIDs);
+  this->exportSeries(seriesUIDs);
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMVisualBrowserWidget::filesForSeries(const QStringList& seriesInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  QStringList fileList;
+
+  if (!d->DicomDatabase)
+  {
+    return fileList;
+  }
+
+  foreach (const QString& seriesUID, seriesInstanceUIDs)
+  {
+    fileList << d->DicomDatabase->filesForSeries(seriesUID);
+  }
+
+  return fileList;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  if (!d->Scheduler)
+  {
+    logger.error("onLoadSeries failed, no scheduler has been set. \n");
+    return;
+  }
+
+  if (!d->DicomDatabase)
+  {
+    logger.error("onLoadSeries failed, no DicomDatabase has been set. \n");
+    return;
+  }
+
+  if (seriesInstanceUIDs.isEmpty())
+  {
+    return;
+  }
+
+  // Update UI - disable delete action and search button during load
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  bool deleteActionWasVisible = d->DeleteActionVisible;
+  d->DeleteActionVisible = false;
+
+  // Get all series models from study list view to potentially stop non-selected series jobs
+  QList<QString> allSeriesUIDs;
+  if (d->PatientView)
+  {
+    ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+    if (studyListView && studyListView->studyModel())
+    {
+      ctkDICOMStudyModel* studyModel = studyListView->studyModel();
+      QStringList studyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
+      foreach (const QString& studyUID, studyInstanceUIDs)
+      {
+        ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyUID);
+        if (seriesModel)
+        {
+          allSeriesUIDs.append(seriesModel->filteredSeriesInstanceUIDs());
+        }
+      }
+    }
+    else if (studyListView && studyListView->studyMergedFilterProxyModel())
+    {
+      ctkDICOMStudyMergedFilterProxyModel* studyMergedFilterModel = studyListView->studyMergedFilterProxyModel();
+      QList<ctkDICOMStudyModel *> sourceModels = studyMergedFilterModel->sourceModels();
+      foreach (ctkDICOMStudyModel* studyModel, sourceModels)
+      {
+        QStringList studyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
+        foreach (const QString& studyUID, studyInstanceUIDs)
+        {
+          ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyUID);
+          if (seriesModel)
+          {
+            allSeriesUIDs.append(seriesModel->filteredSeriesInstanceUIDs());
+          }
+        }
+      }
+    }
+  }
+
+  // Stop jobs for non-selected series
+  QStringList seriesToStop;
+  foreach (const QString& seriesInstanceUID, allSeriesUIDs)
+  {
+    if (!seriesInstanceUIDs.contains(seriesInstanceUID))
+    {
+      seriesToStop.append(seriesInstanceUID);
+    }
+  }
+
+  if (!seriesToStop.isEmpty())
+  {
+    d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesToStop);
+  }
+
+  // For cloud series that haven't been retrieved or failed, force retrieve if no jobs running
+  QStringList seriesToForceRetrieve;
+  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+  {
+    int numberOfRunningJobsPerSeries = d->Scheduler->getJobsByDICOMUIDs({}, {}, {seriesInstanceUID}).count();
+    bool seriesIsCloud = false;
+
+    QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
+    QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
+    ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
+    if (studyModel)
+    {
+      ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+      if (seriesModel)
+      {
+        seriesIsCloud = seriesModel->isSeriesCloud(seriesInstanceUID);
+      }
+    }
+
+    if (numberOfRunningJobsPerSeries == 0 && seriesIsCloud)
+    {
+      seriesToForceRetrieve.append(seriesInstanceUID);
+    }
+  }
+
+  if (!seriesToForceRetrieve.isEmpty())
+  {
+    this->forceRetrieveSeries(seriesToForceRetrieve);
+  }
+
+  // Create progress dialog
+  QProgressDialog loadSeriesProgress(
+    ctkDICOMVisualBrowserWidget::tr("Retrieving and processing selected series..."),
+    ctkDICOMVisualBrowserWidget::tr("Cancel"), 0, 100, this);
+  loadSeriesProgress.setWindowModality(Qt::ApplicationModal);
+  loadSeriesProgress.setMinimumDuration(1000);
+  QProgressBar* bar = new QProgressBar(&loadSeriesProgress);
+  bar->setTextVisible(false);
+  loadSeriesProgress.setBar(bar);
+  loadSeriesProgress.setValue(0);
+
+  // Wait for selected series to be fully retrieved
+  bool wait = true;
+  int progress = 0;
+  while (wait)
+  {
+    qApp->processEvents();
+    d->Scheduler->waitForDone(300);
+    progress++;
+    if (progress >= 99)
+    {
+      progress = 0;
+    }
+    loadSeriesProgress.setValue(progress);
+
+    if (loadSeriesProgress.wasCanceled())
+    {
+      break;
+    }
+
+    // Check if all selected series have been retrieved
+    // In the new architecture, we check if instances exist in database
+    wait = false;
+    if (d->DicomDatabase)
+    {
+      foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+      {
+        QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
+        QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
+        ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
+        if (studyModel)
+        {
+          ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+          if (seriesModel)
+          {
+            if (seriesModel->isSeriesCloud(seriesInstanceUID))
+            {
+              wait = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Restore UI
+  d->DeleteActionVisible = deleteActionWasVisible;
+  QApplication::restoreOverrideCursor();
+
+  // Finalize
+  QStringList retrievedSeriesInstanceUIDs;
+  if (loadSeriesProgress.wasCanceled())
+  {
+    // Stop jobs for selected series
+    d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesInstanceUIDs);
+    d->Scheduler->waitForDone(300);
+  }
+  else
+  {
+    loadSeriesProgress.close();
+
+    // Collect successfully retrieved series
+    if (d->DicomDatabase)
+    {
+      foreach (const QString& seriesUID, seriesInstanceUIDs)
+      {
+        // If series has instances, it was successfully retrieved
+        if (d->DicomDatabase->instancesForSeries(seriesUID).count() > 0)
+        {
+          retrievedSeriesInstanceUIDs.append(seriesUID);
+        }
+      }
+    }
+
+    // Emit signal with retrieved series
+    if (!retrievedSeriesInstanceUIDs.isEmpty())
+    {
+      emit seriesRetrieved(retrievedSeriesInstanceUIDs);
+      QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+      for (const QString& uid : retrievedSeriesInstanceUIDs)
+      {
+        if (!loadedSeriesInstanceUIDs.contains(uid))
+        {
+          loadedSeriesInstanceUIDs.append(uid);
+        }
+      }
+
+      d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::showMetadataForSeries(const QStringList& seriesInstanceUIDs)
+{
+  this->showMetadata(this->filesForSeries(seriesInstanceUIDs));
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::forceRetrieveSeries(const QStringList& seriesInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  if (!d->Scheduler)
+  {
+    logger.error("forceRetrieveSeries failed, no scheduler has been set. \n");
+    return;
+  }
+
+  if (!d->DicomDatabase)
+  {
+    logger.error("forceRetrieveSeries failed, no DicomDatabase has been set. \n");
+    return;
+  }
+
+  // Stop any running jobs for these series
+  d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesInstanceUIDs);
+
+  // Delete series from database
+  QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+  {
+    loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
+    d->DicomDatabase->removeSeries(seriesInstanceUID, false, false);
+  }
+  d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+
+  // Delete series from database
+  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+  {
+    QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
+    QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
+    ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
+    if (studyModel)
+    {
+      ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+      if (seriesModel)
+      {
+        seriesModel->forceRetrieveSeries(seriesInstanceUID);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::removeSeries(const QStringList& seriesInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // Confirm delete
+  if (!this->confirmDeleteSelectedUIDs(seriesInstanceUIDs))
+  {
+    return;
+  }
+
+  if (!d->PatientView || !d->Scheduler || !d->DicomDatabase)
+  {
+    return;
+  }
+
+  ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+  if (!studyListView)
+  {
+    return;
+  }
+
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
+  // Stop any running jobs for these series
+  d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesInstanceUIDs);
+
+  // Collect affected study UIDs and series models before deleting series
+  QMap<QString, ctkDICOMSeriesModel*> affectedSeriesModels;
+
+  // For each series, get its study UID from the model and cache the series model and view
+  foreach (const QString& seriesUID, seriesInstanceUIDs)
+  {
+    ctkDICOMStudyModel* studyModel = studyListView->studyModel();
+    ctkDICOMStudyMergedFilterProxyModel* studyMergedFilterModel = studyListView->studyMergedFilterProxyModel();
+    if (studyModel)
+    {
+      QStringList studyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
+      foreach (const QString& studyInstanceUID, studyInstanceUIDs)
+      {
+        if (affectedSeriesModels.contains(studyInstanceUID))
+        {
+          // Already cached
+          continue;
+        }
+        ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+        if (seriesModel)
+        {
+          QModelIndex seriesIndex = seriesModel->indexForSeriesInstanceUID(seriesUID);
+          if (seriesIndex.isValid())
+          {
+            affectedSeriesModels.insert(studyInstanceUID, seriesModel);
+          }
+        }
+      }
+    }
+    else if (studyMergedFilterModel)
+    {
+      QList<ctkDICOMStudyModel *> sourceModels = studyMergedFilterModel->sourceModels();
+      foreach (ctkDICOMStudyModel* studyModel, sourceModels)
+      {
+        QStringList studyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
+        foreach (const QString& studyInstanceUID, studyInstanceUIDs)
+        {
+          if (affectedSeriesModels.contains(studyInstanceUID))
+          {
+            // Already cached
+            continue;
+          }
+          ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+          if (seriesModel)
+          {
+            QModelIndex seriesIndex = seriesModel->indexForSeriesInstanceUID(seriesUID);
+            if (seriesIndex.isValid())
+            {
+              affectedSeriesModels.insert(studyInstanceUID, seriesModel);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Delete series from database
+  QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+  {
+    loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
+    d->DicomDatabase->removeSeries(seriesInstanceUID);
+  }
+  d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+
+  QApplication::restoreOverrideCursor();
+
+  // Refresh the affected series models and update their views' viewports
+  foreach (const QString& studyUID, affectedSeriesModels.keys())
+  {
+    ctkDICOMSeriesModel* seriesModel = affectedSeriesModels.value(studyUID, nullptr);
+    if (seriesModel)
+    {
+      seriesModel->refresh();
+    }
+
+    // Also refresh the series view and force layout recalculation
+    ctkDICOMSeriesTableView* seriesView = studyListView->getSeriesViewForStudy(studyUID);
+    if (seriesView)
+    {
+      // reset the model to force a full view update
+      QAbstractItemModel* oldModel = seriesView->model();
+      seriesView->setModel(nullptr);
+      seriesView->setModel(oldModel);
+    }
+  }
+
+  ctkDICOMStudyModel* studyModel = studyListView->studyModel();
+  ctkDICOMStudyMergedFilterProxyModel* studyMergedFilterModel = studyListView->studyMergedFilterProxyModel();
+  if (studyModel)
+  {
+    studyModel->refresh();
+    studyModel->refreshStudies();
+  }
+  else if (studyMergedFilterModel)
+  {
+    QList<ctkDICOMStudyModel *> sourceModels = studyMergedFilterModel->sourceModels();
+    foreach (ctkDICOMStudyModel* sourceModel, sourceModels)
+    {
+      sourceModel->refresh();
+      sourceModel->refreshStudies();
+    }
+  }
+  QString patientUID = d->PatientView->currentPatientUID();
+  d->PatientModel->refreshPatient(patientUID);
+  QApplication::restoreOverrideCursor();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::exportSeries(const QStringList& seriesInstanceUIDs)
+{
+  // Show directory selection dialog
+  ctkFileDialog* directoryDialog = new ctkFileDialog(this);
+  directoryDialog->setOption(QFileDialog::ShowDirsOnly);
+  directoryDialog->setFileMode(QFileDialog::Directory);
+
+  if (directoryDialog->exec())
+  {
+    QStringList dirs = directoryDialog->selectedFiles();
+    if (!dirs.isEmpty())
+    {
+      this->exportSeriesToDirectory(dirs[0], seriesInstanceUIDs);
+    }
+  }
+  delete directoryDialog;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::exportSeriesToDirectory(const QString& dirPath, const QStringList& uids)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -3845,6 +3926,64 @@ void ctkDICOMVisualBrowserWidget::exportSeries(const QString& dirPath, const QSt
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::wheelEvent(QWheelEvent *event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (event->modifiers() & Qt::ControlModifier)
+  {
+
+    int numDegrees = event->angleDelta().y() / 120;
+    int newSize = static_cast<int>(d->ThumbnailSizePreset) + (numDegrees > 0 ? 1 : -1);
+    newSize = std::max(0, std::min(newSize, 3)); // Clamp to None = 0, Small=1, Medium=2, Large=3
+    d->updateThumbnailSizeForCurrentStudyView(static_cast<ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption>(newSize));
+    event->accept();
+    return;
+  }
+
+  Superclass::wheelEvent(event);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::keyPressEvent(QKeyEvent *event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (event->modifiers() & Qt::ControlModifier)
+  {
+    switch (event->key())
+    {
+      case Qt::Key_Plus:
+        {
+          int newSize = static_cast<int>(d->ThumbnailSizePreset) + 1;
+          newSize = std::min(newSize, 3); // Clamp to None = 0, Small=1, Medium=2, Large=3
+          d->updateThumbnailSizeForCurrentStudyView(static_cast<ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption>(newSize));
+          event->accept();
+          return;
+        }
+      break;
+      case Qt::Key_Minus:
+        {
+          int newSize = static_cast<int>(d->ThumbnailSizePreset) - 1;
+          newSize = std::max(newSize, 0);
+          d->updateThumbnailSizeForCurrentStudyView(static_cast<ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption>(newSize));
+          event->accept();
+          return;
+        }
+      break;
+    }
+  }
+
+  Superclass::keyPressEvent(event);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::resizeEvent(QResizeEvent* event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  Superclass::resizeEvent(event);
+  d->updateFiltersLayoutOrientation();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onImportDirectoriesSelected(const QStringList& directories)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
@@ -3907,7 +4046,6 @@ void ctkDICOMVisualBrowserWidget::onStop(bool stopPersistentTasks, bool removeJo
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   d->Scheduler->stopAllJobs(stopPersistentTasks, removeJobs);
-  d->updateFiltersWarnings();
   d->ProgressFrame->hide();
   QApplication::restoreOverrideCursor();
 }
@@ -3917,35 +4055,6 @@ void ctkDICOMVisualBrowserWidget::closeEvent(QCloseEvent* event)
 {
   this->onStop(true, true);
   event->accept();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::keyPressEvent(QKeyEvent *event)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-
-  if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab)
-  {
-    int currentIndex = d->PatientsTabWidget->currentIndex();
-    if (event->modifiers() & Qt::ControlModifier &&
-      !(event->modifiers() & Qt::ShiftModifier))
-    {
-    d->PatientsTabWidget->setCurrentIndex(currentIndex + 1);
-    }
-    else if ((event->modifiers() & Qt::ControlModifier) &&
-      (event->modifiers() & Qt::ShiftModifier))
-    {
-    d->PatientsTabWidget->setCurrentIndex(currentIndex - 1);
-    }
-    else
-    {
-      QWidget::keyPressEvent(event);
-    }
-  }
-  else
-  {
-    QWidget::keyPressEvent(event);
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -3969,9 +4078,9 @@ bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& u
 
   // add the information about the selected UIDs
   int numUIDs = uids.size();
-  for (int i = 0; i < numUIDs; ++i)
+  for (int index = 0; index < numUIDs; ++index)
   {
-    QString uid = uids.at(i);
+    QString uid = uids.at(index);
 
     // try using the given UID to find a descriptive string
     QString patientName = d->DicomDatabase->nameForPatient(uid);

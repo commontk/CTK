@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -34,6 +34,7 @@ class QTableWidgetItem;
 
 // ctkCore includes
 class ctkAbstractTask;
+class ctkCollapsibleGroupBox;
 
 // ctkDICOMCore includes
 class ctkDICOMScheduler;
@@ -101,6 +102,9 @@ public:
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
   Q_INVOKABLE void stopAllJobs();
   ///@}
+
+  Q_INVOKABLE ctkCollapsibleGroupBox* storageCollapsibleGroupBox() const;
+  Q_INVOKABLE ctkCollapsibleGroupBox* serversCollapsibleGroupBox() const;
 
 public Q_SLOTS:
   /// Add an empty server node and make it current

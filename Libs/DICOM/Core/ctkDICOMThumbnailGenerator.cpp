@@ -194,8 +194,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath,
-                                                   QColor backgroundColor)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath)
 {
   QImage image;
   if (this->generateThumbnail(dcmImage, image))
@@ -203,8 +202,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
     return image.save(thumbnailPath, "PNG");
   }
 
-  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator, "Thumbnail generation failed, using a document icon instead.");
-  this->generateDocumentThumbnail(thumbnailPath, backgroundColor);
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator, "Thumbnail generation failed");
   return false;
 }
 

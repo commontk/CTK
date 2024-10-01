@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -831,7 +831,6 @@ void ctkJobScheduler::onJobUserStopped(ctkAbstractJob* job)
 
   logger.debug(job->loggerReport(tr("user stopped")));
 
-  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   if (job->destroyAfterUse())
@@ -861,7 +860,6 @@ void ctkJobScheduler::onJobFinished(ctkAbstractJob* job)
 
   logger.debug(job->loggerReport(tr("finished")));
 
-  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   if (job->destroyAfterUse())
@@ -891,7 +889,6 @@ void ctkJobScheduler::onJobAttemptFailed(ctkAbstractJob* job)
 
   logger.debug(job->loggerReport(tr("attempt failed")));
 
-  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   if (job->destroyAfterUse())
@@ -921,7 +918,6 @@ void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
 
   logger.debug(job->loggerReport(tr("failed")));
 
-  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   if (job->destroyAfterUse())

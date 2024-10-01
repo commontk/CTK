@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -31,6 +31,7 @@
 #include "ctkDICOMThumbnailGeneratorJob.h"
 #include "ctkDICOMInserterJob.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMModalities.h"
 #include "ctkDICOMQueryJob.h"
 #include "ctkDICOMRetrieveJob.h"
 #include "ctkDICOMScheduler.h"
@@ -479,6 +480,14 @@ void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
 {
   Q_D(ctkDICOMScheduler);
 
+  // Do not generate thumbnails for modalities that do not have meaningful image thumbnails
+  if (ctkDICOMModalities::ExcludedFromThumbnailGeneration.contains(modality))
+  {
+    // Do not generate thumbnails for excluded modalities
+    // To Do: refactor the ctkDICOMThumbnailGenerator to handle properly these cases
+    return;
+  }
+
   QSharedPointer<ctkDICOMThumbnailGeneratorJob> job =
     QSharedPointer<ctkDICOMThumbnailGeneratorJob>(new ctkDICOMThumbnailGeneratorJob);
   job->setDatabaseFilename(d->DicomDatabase->databaseFilename());
@@ -757,7 +766,7 @@ QStringList ctkDICOMScheduler::getAllServersConnectionNames()
 //----------------------------------------------------------------------------
 QStringList ctkDICOMScheduler::getConnectionNamesForActiveServers()
 {
-Q_D(ctkDICOMScheduler);
+  Q_D(ctkDICOMScheduler);
 
   QStringList connectionNames;
   for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
@@ -772,6 +781,24 @@ Q_D(ctkDICOMScheduler);
   }
 
   return connectionNames;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMScheduler::serverHasProxy(const QString& connectionName)
+{
+  ctkDICOMServer* server = this->server(connectionName);
+  if (!server)
+  {
+    return false;
+  }
+
+  ctkDICOMServer* proxyServer = server->proxyServer();
+  if (!proxyServer)
+  {
+    return false;
+  }
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -851,7 +878,8 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
 QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(const QStringList &patientIDs,
                                                                             const QStringList &studyInstanceUIDs,
                                                                             const QStringList &seriesInstanceUIDs,
-                                                                            const QStringList &sopInstanceUIDs)
+                                                                            const QStringList &sopInstanceUIDs,
+                                                                            QList<ctkAbstractJob::JobStatus> statusFilters)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -896,10 +924,15 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
         continue;
       }
 
-      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+      if (
+        (
+          (!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
           (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
           (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID()))
+        )
+        && (statusFilters.isEmpty() || statusFilters.contains(job->status()))
+      )
       {
         jobs.push_back(job);
       }
