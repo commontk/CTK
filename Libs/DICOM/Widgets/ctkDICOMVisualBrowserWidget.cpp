@@ -1678,11 +1678,13 @@ void ctkDICOMVisualBrowserWidgetPrivate::getPatientsMetadata(bool queryRetrieve)
       continue;
     }
 
-    bool query = queryRetrieve;
+    QSettings settings;
+    bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+    bool query = queryRetrieve && queryRetrieveEnabled;
     bool retrieve = false;
     if (patientItemWidget == currentPatientItemWidget)
     {
-      retrieve = queryRetrieve;
+      retrieve = queryRetrieve && queryRetrieveEnabled;
     }
 
     patientItemWidget->generateStudies(query, retrieve);
@@ -2832,15 +2834,15 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
 
   foreach (const QString& uid, selectedSeriesUIDs)
   {
-    d->DicomDatabase->removeSeries(uid, false, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removeSeries(uid, false, true);
   }
   foreach (const QString& uid, selectedStudyUIDs)
   {
-    d->DicomDatabase->removeStudy(uid, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removeStudy(uid, true);
   }
   foreach (const QString& uid, selectedPatientItems)
   {
-    d->DicomDatabase->removePatient(uid, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removePatient(uid, true);
   }
   QApplication::restoreOverrideCursor();
 }
@@ -3322,7 +3324,9 @@ void ctkDICOMVisualBrowserWidget::onPatientItemChanged(int index)
     return;
   }
 
-  patientItem->generateStudies();
+  QSettings settings;
+  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+  patientItem->generateStudies(queryRetrieveEnabled, queryRetrieveEnabled);
 }
 
 //------------------------------------------------------------------------------
