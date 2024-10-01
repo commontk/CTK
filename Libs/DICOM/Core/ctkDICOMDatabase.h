@@ -69,8 +69,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList patientFieldNames READ patientFieldNames)
   Q_PROPERTY(QStringList studyFieldNames READ studyFieldNames)
   Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames)
-  Q_PROPERTY(QStringList loadedSeries READ loadedSeries WRITE setLoadedSeries)
-  Q_PROPERTY(QStringList visibleSeries READ visibleSeries WRITE setVisibleSeries)
+  Q_PROPERTY(QStringList loadedSeriesInstanceUIDs READ loadedSeriesInstanceUIDs WRITE setLoadedSeriesInstanceUIDs NOTIFY loadedSeriesInstanceUIDsChanged)
   Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath)
 
 public:
@@ -220,8 +219,7 @@ public:
                                       const QString& studyInstanceUID,
                                       const QString& seriesInstanceUID,
                                       const QString& sopInstanceUID,
-                                      const QString& modality = "",
-                                      QColor backgroundColor = Qt::darkGray);
+                                      const QString& modality = "");
 
   Q_INVOKABLE int patientsCount();
   Q_INVOKABLE int studiesCount();
@@ -341,7 +339,7 @@ public:
   /// on large databases.
   Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID, bool clearCachedTags=false, bool cleanup=true);
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID, bool cleanup=true);
-  Q_INVOKABLE bool removePatient(const QString& patientID, bool cleanup=true);
+  Q_INVOKABLE bool removePatient(const QString& patientUID, bool cleanup=true);
   /// Remove all patients, studies, series, which do not have associated images.
   /// If vacuum is set to true then the whole database content is attempted to
   /// cleaned from remnants of all previously deleted data from the file.
@@ -365,6 +363,12 @@ public:
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
+
+  /// \brief Efficiently retrieve tag values for multiple instances in a single query
+  /// @param sopInstanceUIDs List of instance UIDs to query
+  /// @param tag The DICOM tag to retrieve (e.g., "0020,0013" for Instance Number)
+  /// @returns Map of sopInstanceUID -> tag value. Missing or empty values are not included.
+  Q_INVOKABLE QMap<QString, QString> instanceValues(const QStringList& sopInstanceUIDs, const QString& tag);
 
   /// Convert between string and (unsigned short int, unsigned short int) representation of a DICOM tag.
   Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
@@ -435,13 +439,9 @@ public:
   /// inserted under the same patient.
   Q_INVOKABLE static QString compositePatientID(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate);
 
-  /// Set a list of loaded series
-  void setLoadedSeries(const QStringList& seriesList);
-  QStringList loadedSeries() const;
-
-  /// Set a list of visible series
-  void setVisibleSeries(const QStringList& seriesList);
-  QStringList visibleSeries() const;
+  /// Set a list of loaded seriesInstanceUIDs
+  void setLoadedSeriesInstanceUIDs(const QStringList& seriesInstanceUIDs);
+  QStringList loadedSeriesInstanceUIDs() const;
 
 Q_SIGNALS:
 
@@ -472,10 +472,11 @@ Q_SIGNALS:
 
   /// \brief This signal is emitted after a patient is removed by calling removePatient().
   ///
+  /// \param patientUID (interal Slicer id, unique within CTK database)
   /// \param patientID (not unique across institutions)
   ///
   /// \sa removePatient()
-  void patientRemoved(QString);
+  void patientRemoved(QString, QString);
 
   /// \brief This signal is emitted after a study is removed by calling removeStudy().
   ///
@@ -520,6 +521,9 @@ Q_SIGNALS:
   void displayedFieldsUpdateProgress(int);
   /// Indicate displayed fields update finished
   void displayedFieldsUpdated();
+
+  /// Indicate that the list of loaded seriesInstanceUIDs changed
+  void loadedSeriesInstanceUIDsChanged(const QStringList&);
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
