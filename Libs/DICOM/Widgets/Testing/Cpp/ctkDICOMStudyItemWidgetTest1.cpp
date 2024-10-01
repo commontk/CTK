@@ -51,7 +51,6 @@ int ctkDICOMStudyItemWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(widget.patientID(), "");
   CHECK_QSTRING(widget.studyInstanceUID(), "");
   CHECK_QSTRING(widget.title(), "Series");
-  CHECK_QSTRING(widget.description(), "");
   CHECK_QSTRING(widget.filteringSeriesDescription(), "");
   CHECK_BOOL(widget.collapsed(), false)
   CHECK_BOOL(widget.selection(), false)
@@ -66,8 +65,6 @@ int ctkDICOMStudyItemWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(widget.studyInstanceUID(), "123456.123");
   widget.setTitle("title");
   CHECK_QSTRING(widget.title(), "title");
-  widget.setDescription("description");
-  CHECK_QSTRING(widget.description(), "description");
   widget.setFilteringSeriesDescription("seriesDescription");
   CHECK_QSTRING(widget.filteringSeriesDescription(), "seriesDescription");
   widget.setCollapsed(true);

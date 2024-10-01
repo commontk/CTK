@@ -53,7 +53,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
   Q_PROPERTY(QString title READ title WRITE setTitle);
-  Q_PROPERTY(QString description READ description WRITE setDescription);
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed);
   Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
@@ -93,12 +92,6 @@ public:
   /// Study title
   void setTitle(const QString& title);
   QString title() const;
-  ///@}
-
-  ///@{
-  /// Study Description
-  void setDescription(const QString& description);
-  QString description() const;
   ///@}
 
   ///@{
