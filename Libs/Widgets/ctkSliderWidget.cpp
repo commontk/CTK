@@ -738,3 +738,10 @@ void ctkSliderWidget::onValueProxyModified()
   d->SpinBox->setValue(d->Slider->value());
   Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
 }
+
+// --------------------------------------------------------------------------
+bool ctkSliderWidget::isSettingValueFromSpinBox()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->SpinBox->isSettingValue();
+}

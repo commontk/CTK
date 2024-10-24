@@ -53,6 +53,7 @@ public:
     }
 
     int progress = ceil(float(data.at(0).toInt()) / data.at(1).toInt() * 100);
+    progress = progress < 0 ? 0 : progress;
     progress = progress > 100 ? 100 : progress;
 
     QStyleOptionProgressBar progressBarOption;
@@ -85,7 +86,8 @@ public:
     Initialized,
     Queued,
     Running,
-    Canceled,
+    UserStopped,
+    AttemptFailed,
     Failed,
     Completed
   }; Q_ENUM(JobStatus);
@@ -106,7 +108,9 @@ public:
     SOPInstanceUID,
     Connection,
     JobUID,
-    JobClass
+    JobClass,
+    JobThread,
+    JobLogging,
   }; Q_ENUM(Columns);
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -115,7 +119,12 @@ public:
   void updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status);
   void updateProgressBar(const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
   void setProgressBar(int row, const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
-  void clearCompletedJobs();
+  QStringList clearJobsByType(QString type);
+  QStringList clearCompletedJobs();
+  QStringList clearFailedJobs();
+  QStringList clearUserStoppedJobs();
+  QStringList clearQueuedJobs();
+  void removeRowsByJobUIDs(QStringList jobUIDs);
   static Columns getColumnIndexFromString(QString columnString);
   static QString getColumnStringFromIndex(Columns columnIndex);
 };
@@ -140,36 +149,54 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
   {
     switch (dicomLevel)
     {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        return "";
       case ctkDICOMJob::DICOMLevels::Patients:
-        return QObject::tr("Query patients");
+        return ctkDICOMJobListWidget::tr("Query patients");
       case ctkDICOMJob::DICOMLevels::Studies:
-        return QObject::tr("Query studies");
+        return ctkDICOMJobListWidget::tr("Query studies");
       case ctkDICOMJob::DICOMLevels::Series:
-        return QObject::tr("Query series");
+        return ctkDICOMJobListWidget::tr("Query series");
       case ctkDICOMJob::DICOMLevels::Instances:
-        return QObject::tr("Query instances");
+        return ctkDICOMJobListWidget::tr("Query instances");
     }
   }
   else if (jobClass == "ctkDICOMRetrieveJob")
   {
     switch (dicomLevel)
     {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        return "";
       case ctkDICOMJob::DICOMLevels::Patients:
-        return QObject::tr("Retrieve patients");
+        return ctkDICOMJobListWidget::tr("Retrieve patients");
       case ctkDICOMJob::DICOMLevels::Studies:
-        return QObject::tr("Retrieve studies");
+        return ctkDICOMJobListWidget::tr("Retrieve studies");
       case ctkDICOMJob::DICOMLevels::Series:
-        return QObject::tr("Retrieve series");
+        return ctkDICOMJobListWidget::tr("Retrieve series");
       case ctkDICOMJob::DICOMLevels::Instances:
-        return QObject::tr("Retrieve instances");
+        return ctkDICOMJobListWidget::tr("Retrieve instances");
     }
   }
   else if (jobClass == "ctkDICOMStorageListenerJob")
   {
-    return QObject::tr("Storage listener");
+    return ctkDICOMJobListWidget::tr("Storage listener");
+  }
+  else if (jobClass == "ctkDICOMEchoJob")
+  {
+    return ctkDICOMJobListWidget::tr("Echo server");
+  }
+  else if (jobClass == "ctkDICOMInserterJob")
+  {
+    return ctkDICOMJobListWidget::tr("Inserter");
+  }
+  else if (jobClass == "ctkDICOMThumbnailGeneratorJob")
+  {
+    return ctkDICOMJobListWidget::tr("Thumbnail generator");
   }
 
-  return QObject::tr("");
+  return QString();
 }
 
 //----------------------------------------------------------------------------
@@ -181,20 +208,17 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
     return;
   }
 
-  if (td.JobClass == "ctkDICOMInserterJob")
-  {
-    return;
-  }
-
-  int row = 0; // add the job to the top
+  int row = 0;
+  QString backupLogging, creationDateTime;
   this->insertRow(row);
+  creationDateTime = td.CreationDateTime;
 
   QString jobType = this->getJobTypeAsString(td.JobClass, td.DICOMLevel);
   this->setData(this->index(row, Columns::JobType), jobType);
   this->setData(this->index(row, Columns::JobType), jobType, Qt::ToolTipRole);
 
   QIcon statusIcon = QIcon(":/Icons/pending.svg");
-  QString statusText = QObject::tr("initialized");
+  QString statusText = ctkDICOMJobListWidget::tr("initialized");
   QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
   statusItem->setIcon(statusIcon);
   this->setItem(row, Columns::Status, statusItem);
@@ -210,8 +234,8 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
   }
   this->setData(this->index(row, Columns::Progress), data);
 
-  this->setData(this->index(row, Columns::CreationDateTime), td.CreationDateTime);
-  this->setData(this->index(row, Columns::CreationDateTime), td.CreationDateTime, Qt::ToolTipRole);
+  this->setData(this->index(row, Columns::CreationDateTime), creationDateTime);
+  this->setData(this->index(row, Columns::CreationDateTime), creationDateTime, Qt::ToolTipRole);
 
   this->setData(this->index(row, Columns::StartDateTime), QString("-"));
   this->setData(this->index(row, Columns::CompletionDateTime), QString("-"));
@@ -258,76 +282,88 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 
   this->setData(this->index(row, Columns::JobUID), td.JobUID);
   this->setData(this->index(row, Columns::JobClass), td.JobClass);
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID);
+  this->setData(this->index(row, Columns::JobLogging), td.Logging);
 }
 
 //----------------------------------------------------------------------------
 void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status)
 {
-  if (td.JobClass == "ctkDICOMInserterJob")
+  QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
+  if (list.empty())
   {
     return;
   }
 
-  QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
-  if (!list.empty())
+  int row = list.first()->row();
+  QIcon statusIcon;
+  QString statusText;
+  if (status == Queued)
   {
-    int row = list.first()->row();
-    QIcon statusIcon;
-    QString statusText;
-    if (status == Queued)
+    statusIcon = QIcon(":/Icons/pending.svg");
+    statusText = ctkDICOMJobListWidget::tr("queued");
+    QList<QVariant> data;
+    data.append(0);
+    data.append(100);
+    this->setData(this->index(row, Columns::Progress), data);
+  }
+  else if (status == Running)
+  {
+    statusIcon = QIcon(":/Icons/pending.svg");
+    statusText = ctkDICOMJobListWidget::tr("in-progress");
+    if (td.JobClass == "ctkDICOMQueryJob")
     {
-      statusIcon = QIcon(":/Icons/pending.svg");
-      statusText = tr("queued");
-    }
-    else if (status == Running)
-    {
-      statusIcon = QIcon(":/Icons/pending.svg");
-      statusText = tr("in-progress");
-      if (td.JobClass == "ctkDICOMQueryJob")
-      {
-        QList<QVariant> data;
-        data.append(20);
-        data.append(100);
-        this->setData(this->index(row, Columns::Progress), data);
-      }
-    }
-    else if (status == Failed)
-    {
-      statusIcon = QIcon(":/Icons/error.svg");
-      statusText = tr("failed");
-    }
-    else if (status == Canceled)
-    {
-      statusIcon = QIcon(":/Icons/error.svg");
-      statusText = tr("canceled");
-    }
-    else if (status == Completed)
-    {
-      statusIcon = QIcon(":/Icons/accept.svg");
-      statusText = tr("completed");
       QList<QVariant> data;
-      data.append(100);
+      data.append(20);
       data.append(100);
       this->setData(this->index(row, Columns::Progress), data);
     }
-
-    QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
-    statusItem->setIcon(statusIcon);
-    this->setItem(row, Columns::Status, statusItem);
-    this->setData(this->index(row, Columns::Status), statusText);
-    this->setData(this->index(row, Columns::Status), statusText, Qt::ToolTipRole);
-
-    if (status == Running)
-    {
-      this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime);
-      this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime, Qt::ToolTipRole);
-    }
-    else
-    {
-      this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime);
-      this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime, Qt::ToolTipRole);
-    }
   }
+  else if (status == Failed)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = ctkDICOMJobListWidget::tr("failed");
+  }
+  else if (status == UserStopped)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = ctkDICOMJobListWidget::tr("user-stopped");
+  }
+  else if (status == AttemptFailed)
+  {
+    statusIcon = QIcon(":/Icons/error.svg");
+    statusText = ctkDICOMJobListWidget::tr("attempt-failed");
+  }
+  else if (status == Completed)
+  {
+    statusIcon = QIcon(":/Icons/accept.svg");
+    statusText = ctkDICOMJobListWidget::tr("completed");
+    QList<QVariant> data;
+    data.append(100);
+    data.append(100);
+    this->setData(this->index(row, Columns::Progress), data);
+  }
+
+  QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
+  statusItem->setIcon(statusIcon);
+  this->setItem(row, Columns::Status, statusItem);
+  this->setData(this->index(row, Columns::Status), statusText);
+  this->setData(this->index(row, Columns::Status), statusText, Qt::ToolTipRole);
+
+  if (status == Running)
+  {
+    this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime);
+    this->setData(this->index(row, Columns::StartDateTime), td.CreationDateTime, Qt::ToolTipRole);
+  }
+  else
+  {
+    this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime);
+    this->setData(this->index(row, Columns::CompletionDateTime), td.CompletionDateTime, Qt::ToolTipRole);
+  }
+
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID);
+  this->setData(this->index(row, Columns::JobThread), td.RunningThreadID, Qt::ToolTipRole);
+  this->setData(this->index(row, Columns::JobLogging), td.Logging);
 }
 
 //----------------------------------------------------------------------------
@@ -400,81 +436,144 @@ void QCenteredItemModel::setProgressBar(int row, const ctkDICOMJobDetail &td, ct
 }
 
 //----------------------------------------------------------------------------
-void QCenteredItemModel::clearCompletedJobs()
+QStringList QCenteredItemModel::clearJobsByType(QString type)
 {
-  QList<QStandardItem*> list = this->findItems(tr("completed"), Qt::MatchRegularExpression, Columns::Status);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+  QList<QStandardItem*> list = this->findItems(type, Qt::MatchRegularExpression, Columns::Status);
+#else
+  QList<QStandardItem*> list = this->findItems(type, Qt::MatchRegExp, Columns::Status);
+#endif
+
+  QStringList jobUIDs;
   foreach (QStandardItem* item, list)
   {
-    this->removeRow(item->row());
+    int row = item->row();
+    jobUIDs.append(this->index(row, QCenteredItemModel::Columns::JobUID).data().toString());
+    this->removeRow(row);
+  }
+
+  return jobUIDs;
+}
+
+//----------------------------------------------------------------------------
+QStringList QCenteredItemModel::clearCompletedJobs()
+{
+  QStringList jobUIDs;
+  jobUIDs.append(this->clearJobsByType(ctkDICOMJobListWidget::tr("attempt-failed")));
+  jobUIDs.append(this->clearJobsByType(ctkDICOMJobListWidget::tr("completed")));
+  return jobUIDs;
+}
+
+//----------------------------------------------------------------------------
+QStringList QCenteredItemModel::clearFailedJobs()
+{
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("failed"));
+}
+
+//----------------------------------------------------------------------------
+QStringList QCenteredItemModel::clearUserStoppedJobs()
+{
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("user-stopped"));
+}
+
+//----------------------------------------------------------------------------
+QStringList QCenteredItemModel::clearQueuedJobs()
+{
+  return this->clearJobsByType(ctkDICOMJobListWidget::tr("queued"));
+}
+
+//----------------------------------------------------------------------------
+void QCenteredItemModel::removeRowsByJobUIDs(QStringList jobUIDs)
+{
+  foreach (QString jobUID, jobUIDs)
+  {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+  QList<QStandardItem*> list = this->findItems(jobUID, Qt::MatchRegularExpression, Columns::JobUID);
+#else
+  QList<QStandardItem*> list = this->findItems(jobUID, Qt::MatchRegExp, Columns::JobUID);
+#endif
+    if (!list.empty())
+    {
+      int row = list.first()->row();
+      this->removeRow(row);
+    }
   }
 }
 
 //----------------------------------------------------------------------------
 QCenteredItemModel::Columns QCenteredItemModel::getColumnIndexFromString(QString columnString)
 {
-  if (columnString == QObject::tr("Type"))
+  if (columnString == ctkDICOMJobListWidget::tr("Type"))
   {
     return Columns::JobType;
   }
-  else if (columnString == QObject::tr("Status"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Status"))
   {
     return Columns::Status;
   }
-  else if (columnString == QObject::tr("Progress"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Progress"))
   {
     return Columns::Progress;
   }
-  else if (columnString == QObject::tr("Time and Date"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Time and Date"))
   {
     return Columns::CreationDateTime;
   }
-  else if (columnString == QObject::tr("Starting Time and Date"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Starting Time and Date"))
   {
     return Columns::StartDateTime;
   }
-  else if (columnString == QObject::tr("Completion Time and Date"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Completion Time and Date"))
   {
     return Columns::CompletionDateTime;
   }
-  else if (columnString == QObject::tr("DICOM Level"))
+  else if (columnString == ctkDICOMJobListWidget::tr("DICOM Level"))
   {
     return Columns::DICOMLevel;
   }
-  else if (columnString == QObject::tr("Patient ID"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Patient ID"))
   {
     return Columns::PatientID;
   }
-  else if (columnString == QObject::tr("Patient Name"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Patient Name"))
   {
     return Columns::PatientName;
   }
-  else if (columnString == QObject::tr("Birth Date"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Birth Date"))
   {
     return Columns::PatientBirthDate;
   }
-  else if (columnString == QObject::tr("Study UID"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Study UID"))
   {
     return Columns::StudyInstanceUID;
   }
-  else if (columnString == QObject::tr("Series UID"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Series UID"))
   {
     return Columns::SeriesInstanceUID;
   }
-  else if (columnString == QObject::tr("SOP UID"))
+  else if (columnString == ctkDICOMJobListWidget::tr("SOPInstance UID"))
   {
     return Columns::SOPInstanceUID;
   }
-  else if (columnString == QObject::tr("Connection"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Connection"))
   {
     return Columns::Connection;
   }
-  else if (columnString == QObject::tr("Job UID"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Job UID"))
   {
     return Columns::JobUID;
   }
-  else if (columnString == QObject::tr("Class"))
+  else if (columnString == ctkDICOMJobListWidget::tr("Class"))
   {
     return Columns::JobClass;
+  }
+  else if (columnString == ctkDICOMJobListWidget::tr("Thread"))
+  {
+    return Columns::JobThread;
+  }
+  else if (columnString == ctkDICOMJobListWidget::tr("Logging"))
+  {
+    return Columns::JobLogging;
   }
   else
   {
@@ -488,39 +587,43 @@ QString QCenteredItemModel::getColumnStringFromIndex(Columns columnIndex)
   switch (columnIndex)
   {
     case Columns::JobType:
-      return QObject::tr("Type");
+      return ctkDICOMJobListWidget::tr("Type");
     case Columns::Status:
-      return QObject::tr("Status");
+      return ctkDICOMJobListWidget::tr("Status");
     case Columns::Progress:
-      return QObject::tr("Progress");
+      return ctkDICOMJobListWidget::tr("Progress");
     case Columns::CreationDateTime:
-      return QObject::tr("Time and Date");
+      return ctkDICOMJobListWidget::tr("Time and Date");
     case Columns::StartDateTime:
-      return QObject::tr("Starting Time and Date");
+      return ctkDICOMJobListWidget::tr("Starting Time and Date");
     case Columns::CompletionDateTime:
-      return QObject::tr("Completion Time and Date");
+      return ctkDICOMJobListWidget::tr("Completion Time and Date");
     case Columns::DICOMLevel:
-      return QObject::tr("DICOM Level");
+      return ctkDICOMJobListWidget::tr("DICOM Level");
     case Columns::PatientID:
-      return QObject::tr("Patient ID");
+      return ctkDICOMJobListWidget::tr("Patient ID");
     case Columns::PatientName:
-      return QObject::tr("Patient Name");
+      return ctkDICOMJobListWidget::tr("Patient Name");
     case Columns::PatientBirthDate:
-      return QObject::tr("Birth Date");
+      return ctkDICOMJobListWidget::tr("Birth Date");
     case Columns::StudyInstanceUID:
-      return QObject::tr("Study UID");
+      return ctkDICOMJobListWidget::tr("Study UID");
     case Columns::SeriesInstanceUID:
-      return QObject::tr("Series UID");
+      return ctkDICOMJobListWidget::tr("Series UID");
     case Columns::SOPInstanceUID:
-      return QObject::tr("SOP UID");
+      return ctkDICOMJobListWidget::tr("SOP UID");
     case Columns::Connection:
-      return QObject::tr("Connection");
+      return ctkDICOMJobListWidget::tr("Connection");
     case Columns::JobUID:
-      return QObject::tr("Job UID");
+      return ctkDICOMJobListWidget::tr("Job UID");
     case Columns::JobClass:
-      return QObject::tr("Class");
+      return ctkDICOMJobListWidget::tr("Class");
+    case Columns::JobThread:
+      return ctkDICOMJobListWidget::tr("Thread");
+    case Columns::JobLogging:
+      return ctkDICOMJobListWidget::tr("Logging");
     default:
-      return QObject::tr("");
+      return QString();
   }
 }
 
@@ -601,6 +704,8 @@ void ctkDICOMJobListWidgetPrivate::init()
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
   allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
+  allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobThread));
+  allColumnNames.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobLogging));
 
   this->dataModel = QSharedPointer<QCenteredItemModel>(new QCenteredItemModel(0, allColumnNames.count(), q));
   this->dataModel->setHorizontalHeaderLabels(allColumnNames);
@@ -624,6 +729,8 @@ void ctkDICOMJobListWidgetPrivate::init()
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::SOPInstanceUID, true);
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobUID, true);
   this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobClass, true);
+  this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobThread, true);
+  this->JobsView->setColumnHidden(QCenteredItemModel::Columns::JobLogging, true);
 
   QObject::connect(this->JobsView->selectionModel(), &QItemSelectionModel::selectionChanged,
                    q, &ctkDICOMJobListWidget::onJobsViewSelectionChanged);
@@ -669,16 +776,18 @@ void ctkDICOMJobListWidgetPrivate::disconnectScheduler()
                                     q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                     q, SLOT(onJobQueued(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                    q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                                    q, SLOT(onJobCanceled(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                    q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                    q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                    q, SLOT(onProgressJobDetail(QVariant)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                                    q, SLOT(onJobStarted(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                                    q, SLOT(onJobUserStopped(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                                    q, SLOT(onJobFinished(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                                    q, SLOT(onJobAttemptFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                                    q, SLOT(onJobFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                                    q, SLOT(onProgressJobDetail(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -694,16 +803,18 @@ void ctkDICOMJobListWidgetPrivate::connectScheduler()
                                  q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                  q, SLOT(onJobQueued(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                 q, SLOT(onJobStarted(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobCanceled(QVariant)),
-                                 q, SLOT(onJobCanceled(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
-                                 q, SLOT(onJobFinished(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                 q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                 q, SLOT(onProgressJobDetail(QVariant)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QList<QVariant>)),
+                                 q, SLOT(onJobStarted(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobUserStopped(QList<QVariant>)),
+                                 q, SLOT(onJobUserStopped(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
+                                 q, SLOT(onJobFinished(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                                 q, SLOT(onJobAttemptFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QList<QVariant>)),
+                                 q, SLOT(onJobFailed(QList<QVariant>)));
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QList<QVariant>)),
+                                 q, SLOT(onProgressJobDetail(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -716,6 +827,8 @@ void ctkDICOMJobListWidgetPrivate::setFilterKeyColumn(QString text)
 //----------------------------------------------------------------------------
 void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
 {
+  Q_Q(ctkDICOMJobListWidget);
+
   this->DetailsTextBrowser->clear();
 
   QItemSelectionModel *select = this->JobsView->selectionModel();
@@ -726,10 +839,14 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
 
   QString detailsText;
   QModelIndexList selectedRows = select->selectedRows();
+  int count = 0;
   foreach (QModelIndex rowIndex, selectedRows)
   {
-    detailsText.append(QString("\n  || --------------------------------------------------------"
-                               "-------------------------------------------------------  ||\n\n"));
+    if (count != 0)
+    {
+      detailsText.append(QString("\n =============================================================== \n"));
+    }
+
     int row = rowIndex.row();
     QString jobType = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobType).data().toString();
@@ -761,40 +878,102 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
       (row, QCenteredItemModel::Columns::JobUID).data().toString();
     QString jobClass = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
+    QString thread = this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::JobThread).data().toString();
+    QString logging = this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::JobLogging).data().toString();
 
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobType));
-    detailsText.append(QString(" : ") + jobType + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Status));
-    detailsText.append(QString(" : ") + status + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CreationDateTime));
-    detailsText.append(QString(" : ") + creationDateTime + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StartDateTime));
-    detailsText.append(QString(" : ") + startDateTime + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CompletionDateTime));
-    detailsText.append(QString(" : ") + completionDateTime + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::DICOMLevel));
-    detailsText.append(QString(" : ") + dicomLevel + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientID));
-    detailsText.append(QString(" : ") + patientID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientName));
-    detailsText.append(QString(" : ") + patientName + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientBirthDate));
-    detailsText.append(QString(" : ") + patientBirthDate + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StudyInstanceUID));
-    detailsText.append(QString(" : ") + studyInstanceUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SeriesInstanceUID));
-    detailsText.append(QString(" : ") + seriesInstanceUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SOPInstanceUID));
-    detailsText.append(QString(" : ") + sopInstanceUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
-    detailsText.append(QString(" : ") + connection + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
-    detailsText.append(QString(" : ") + jobUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
-    detailsText.append(QString(" : ") + jobClass + QString(" \n"));
+    if (!jobType.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobType));
+      detailsText.append(QString(": ") + jobType + QString("\n"));
+    }
+    if (!jobUID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
+      detailsText.append(QString(": ") + jobUID + QString("\n"));
+    }
+    if (!jobClass.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
+      detailsText.append(QString(": ") + jobClass + QString("\n"));
+    }
+    if (!connection.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
+      detailsText.append(QString(": ") + connection + QString("\n"));
+    }
+    if (!status.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Status));
+      detailsText.append(QString(": ") + status + QString("\n"));
+    }
+    if (!creationDateTime.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CreationDateTime));
+      detailsText.append(QString(": ") + creationDateTime + QString("\n"));
+    }
+    if (!startDateTime.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StartDateTime));
+      detailsText.append(QString(": ") + startDateTime + QString("\n"));
+    }
+    if (!completionDateTime.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CompletionDateTime));
+      detailsText.append(QString(": ") + completionDateTime + QString("\n"));
+    }
+    if (!dicomLevel.isEmpty() && dicomLevel != "None")
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::DICOMLevel));
+      detailsText.append(QString(": ") + dicomLevel + QString("\n"));
+    }
+    if (!patientID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientID));
+      detailsText.append(QString(": ") + patientID + QString("\n"));
+    }
+    if (!patientName.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientName));
+      detailsText.append(QString(": ") + patientName + QString("\n"));
+    }
+    if (!patientBirthDate.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientBirthDate));
+      detailsText.append(QString(": ") + patientBirthDate + QString("\n"));
+    }
+    if (!studyInstanceUID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StudyInstanceUID));
+      detailsText.append(QString(": ") + studyInstanceUID + QString("\n"));
+    }
+    if (!seriesInstanceUID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SeriesInstanceUID));
+      detailsText.append(QString(": ") + seriesInstanceUID + QString("\n"));
+    }
+    if (!sopInstanceUID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SOPInstanceUID));
+      detailsText.append(QString(": ") + sopInstanceUID + QString("\n"));
+    }
+    if (!thread.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobThread));
+      detailsText.append(QString(": ") + thread + QString("\n"));
+    }
+    if (!logging.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobLogging));
+      detailsText.append(QString(":\n") + logging + QString("\n"));
+    }
 
-    detailsText.append(QString("Logger : ") + QString(" \n"));
-    // To Do: get DCMTK logging stream per job
+    if (count == 0)
+    {
+      q->patientSelected(patientID, patientName, patientBirthDate);
+    }
+    count++;
   }
 
   this->DetailsTextBrowser->setPlainText(detailsText);
@@ -803,7 +982,7 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
 //----------------------------------------------------------------------------
 void ctkDICOMJobListWidgetPrivate::retryJobs()
 {
-  QMap<QString, ctkDICOMJobDetail> jobsUIDsToRetry;
+  QStringList jobsUIDsToRetry;
   QItemSelectionModel *select = this->JobsView->selectionModel();
   QModelIndexList selectedRows = select->selectedRows();
   foreach (QModelIndex rowIndex, selectedRows)
@@ -813,9 +992,8 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
       (row, QCenteredItemModel::Columns::Status).data().toString();
     QString jobClass = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
-    QString jobUID = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::JobUID).data().toString();
-    if (status != QObject::tr("failed") && status != QObject::tr("canceled"))
+
+    if (status != ctkDICOMJobListWidget::tr("failed") && status != ctkDICOMJobListWidget::tr("user-stopped"))
     {
       continue;
     }
@@ -825,78 +1003,12 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
       continue;
     }
 
-    ctkDICOMJobDetail jobDetail;
-    jobDetail.JobClass = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::JobClass).data().toString();
-
-    QString DICOMLevelString = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::DICOMLevel).data().toString();
-    ctkDICOMJob::DICOMLevels DICOMLevel = ctkDICOMJob::DICOMLevels::Patients;
-    if (DICOMLevelString == "Studies")
-    {
-      DICOMLevel = ctkDICOMJob::DICOMLevels::Studies;
-    }
-    else if (DICOMLevelString == "Series")
-    {
-      DICOMLevel = ctkDICOMJob::DICOMLevels::Series;
-    }
-    else if (DICOMLevelString == "Instances")
-    {
-      DICOMLevel = ctkDICOMJob::DICOMLevels::Instances;
-    }
-
-    jobDetail.DICOMLevel = DICOMLevel;
-    jobDetail.PatientID = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::PatientID).data().toString();
-    jobDetail.StudyInstanceUID = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::StudyInstanceUID).data().toString();
-    jobDetail.SeriesInstanceUID = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::SeriesInstanceUID).data().toString();
-    jobDetail.SOPInstanceUID = this->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::SOPInstanceUID).data().toString();
-    jobsUIDsToRetry.insert(jobUID, jobDetail);
+    jobsUIDsToRetry.append(this->showCompletedProxyModel->index
+      (row, QCenteredItemModel::Columns::JobUID).data().toString());
   }
 
-  // remove duplicate jobs (e.g., in the selected list there is multiple
-  // entries of the same job canceled/failed, we don't want running multiple
-  // times the same jobs)
-  QMap<QString, ctkDICOMJobDetail> filteredJobsUIDsToRetry;
-  foreach (QString jobUID, jobsUIDsToRetry.keys())
-  {
-    ctkDICOMJobDetail td = jobsUIDsToRetry.value(jobUID);
-    bool duplicate = false;
-    foreach (QString filteredJobUID, filteredJobsUIDsToRetry.keys())
-    {
-      if (filteredJobUID == jobUID)
-      {
-        continue;
-      }
-
-      ctkDICOMJobDetail filteredTD = jobsUIDsToRetry.value(filteredJobUID);
-      if (td.JobClass == filteredTD.JobClass &&
-          td.DICOMLevel == filteredTD.DICOMLevel &&
-          td.PatientID == filteredTD.PatientID &&
-          td.StudyInstanceUID == filteredTD.StudyInstanceUID &&
-          td.SeriesInstanceUID == filteredTD.SeriesInstanceUID &&
-          td.SOPInstanceUID == filteredTD.SOPInstanceUID)
-      {
-        duplicate = true;
-        break;
-      }
-    }
-
-    if (duplicate)
-    {
-      continue;
-    }
-    else
-    {
-      filteredJobsUIDsToRetry.insert(jobUID, td);
-    }
-  }
-
-  this->Scheduler->runJobs(filteredJobsUIDsToRetry);
   this->JobsView->clearSelection();
+  this->Scheduler->retryJobs(jobsUIDsToRetry);
 }
 
 //----------------------------------------------------------------------------
@@ -967,7 +1079,15 @@ void ctkDICOMJobListWidget::onJobInitialized(QVariant data)
     return;
   }
 
-  d->dataModel->addJob(td, d->Scheduler->dicomDatabase());
+  QList<QStandardItem*> list = d->dataModel->findItems(td.JobUID, Qt::MatchExactly, QCenteredItemModel::Columns::JobUID);
+  if (list.empty())
+  {
+    d->dataModel->addJob(td, d->Scheduler->dicomDatabase());
+  }
+  else
+  {
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Initialized);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -977,81 +1097,113 @@ void ctkDICOMJobListWidget::onJobQueued(QVariant data)
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
   if(td.JobClass.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->dataModel->updateJobStatus(td, QCenteredItemModel::Queued);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobStarted(QVariant data)
+void ctkDICOMJobListWidget::onJobStarted(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Running);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Running);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobFinished(QVariant data)
+void ctkDICOMJobListWidget::onJobFinished(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Completed);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Completed);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onProgressJobDetail(QVariant data)
+void ctkDICOMJobListWidget::onProgressJobDetail(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobType == ctkDICOMJobResponseSet::JobType::None)
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateProgressBar(td, d->Scheduler->dicomDatabase());
+    if(td.JobType == ctkDICOMJobResponseSet::JobType::None)
+    {
+      continue;
+    }
+
+    d->dataModel->updateProgressBar(td, d->Scheduler->dicomDatabase());
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobCanceled(QVariant data)
+void ctkDICOMJobListWidget::onJobAttemptFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Canceled);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::AttemptFailed);
+  }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobFailed(QVariant data)
+void ctkDICOMJobListWidget::onJobFailed(QList<QVariant> datas)
 {
   Q_D(ctkDICOMJobListWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if(td.JobClass.isEmpty())
+  foreach (QVariant data, datas)
   {
-    return;
-  }
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
-  d->dataModel->updateJobStatus(td, QCenteredItemModel::Failed);
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::Failed);
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMJobListWidget::onJobUserStopped(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMJobListWidget);
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+
+    if(td.JobClass.isEmpty())
+    {
+      continue;
+    }
+
+    d->dataModel->updateJobStatus(td, QCenteredItemModel::UserStopped);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1084,7 +1236,7 @@ void ctkDICOMJobListWidget::onJobsViewSelectionChanged()
     QString jobClass = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
 
-    if ((status == tr("failed") || status == tr("canceled")) &&
+    if ((status == ctkDICOMJobListWidget::tr("failed") || status == ctkDICOMJobListWidget::tr("user-stopped")) &&
         (jobClass == "ctkDICOMQueryJob" || jobClass == "ctkDICOMRetrieveJob"))
     {
       failedJobSelected = true;
@@ -1104,7 +1256,9 @@ void ctkDICOMJobListWidget::onJobsViewSelectionChanged()
     QString jobClass = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
 
-    if ((status == tr("in-progress") || status == tr("queued") || status == tr("initialized")) &&
+    if ((status == ctkDICOMJobListWidget::tr("in-progress") ||
+         status == ctkDICOMJobListWidget::tr("queued") ||
+         status == ctkDICOMJobListWidget::tr("initialized")) &&
         jobClass != "ctkDICOMStorageListenerJob")
     {
       inProgressJobSelected = true;
@@ -1137,15 +1291,15 @@ void ctkDICOMJobListWidget::onStopButtonClicked()
       (row, QCenteredItemModel::Columns::Status).data().toString();
     QString jobUID = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobUID).data().toString();
-    if (status == tr("in-progress") || status == tr("queued") || status == tr("initialized"))
+    if (status == ctkDICOMJobListWidget::tr("in-progress") ||
+        status == ctkDICOMJobListWidget::tr("queued") ||
+        status == ctkDICOMJobListWidget::tr("initialized"))
     {
       jobsUIDsToStop.append(jobUID);
     }
   }
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   d->Scheduler->stopJobsByJobUIDs(jobsUIDsToStop);
-  QApplication::restoreOverrideCursor();
   d->JobsView->clearSelection();
 }
 
@@ -1169,15 +1323,28 @@ void ctkDICOMJobListWidget::onResetFiltersButtonClicked()
 void ctkDICOMJobListWidget::onShowCompletedButtonToggled(bool toggled)
 {
   Q_D(ctkDICOMJobListWidget);
-  QString text = toggled ? "" : tr("initialized|queued|in-progress|canceled|failed");
-  d->showCompletedProxyModel->setFilterRegExp(text);
+  QString filterText;
+  if (!toggled)
+  {
+    filterText = QString("^%1$|^%2$|^%3$|^%4$|^%5$")
+      .arg(tr("initialized"))
+      .arg(tr("queued"))
+      .arg(tr("in-progress"))
+      .arg(tr("user-stopped"))
+      .arg(tr("failed"));
+  }
+  d->showCompletedProxyModel->setFilterRegExp(filterText);
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMJobListWidget::onClearCompletedButtonClicked()
 {
   Q_D(ctkDICOMJobListWidget);
-  d->dataModel->clearCompletedJobs();
+  QStringList jobUIDs = d->dataModel->clearCompletedJobs();
+  // Delete jobs pointer of completed jobs
+  // (for these the scheduler has only cleaned the memory footprint).
+  // NOTE: attempt-failed are considered completed jobs
+  d->Scheduler->deleteJobs(jobUIDs);
 }
 
 //----------------------------------------------------------------------------
@@ -1185,7 +1352,19 @@ void ctkDICOMJobListWidget::onClearAllButtonClicked()
 {
   Q_D(ctkDICOMJobListWidget);
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  d->Scheduler->stopAllJobs();
+  // Stop all initialized, queued, in-progress jobs and clean the UI rows.
+  // Jobs will destroyed automatically by the scheduler.
+  QStringList stoppedJobUIDs = d->Scheduler->stopAllJobs();
+  d->dataModel->removeRowsByJobUIDs(stoppedJobUIDs);
+
+  // Clean UI rows of completed, failed, user-stopped jobs
+  QStringList jobUIDsToDelete = d->dataModel->clearCompletedJobs();
+  jobUIDsToDelete.append(d->dataModel->clearFailedJobs());
+  jobUIDsToDelete.append(d->dataModel->clearUserStoppedJobs());
+  // Delete jobs pointer of completed/failed/user-stopped jobs
+  // (for these the scheduler has only cleaned the memory footprint).
+  // NOTE: attempt-failed are considered completed jobs
+  d->Scheduler->deleteJobs(jobUIDsToDelete);
+
   QApplication::restoreOverrideCursor();
-  d->dataModel->removeRows(0, d->dataModel->rowCount());
 }

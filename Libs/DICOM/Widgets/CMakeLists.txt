@@ -48,8 +48,6 @@ set(KIT_SRCS
   ctkDICOMTableManager.cpp
   ctkDICOMTableView.cpp
   ctkDICOMTableView.h
-  ctkDICOMThumbnailGenerator.cpp
-  ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.cpp
   ctkDICOMThumbnailListWidget.h
   ctkDICOMVisualBrowserWidget.cpp
@@ -76,7 +74,6 @@ set(KIT_MOC_SRCS
   ctkDICOMStudyItemWidget.h
   ctkDICOMTableManager.h
   ctkDICOMTableView.h
-  ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
   ctkDICOMVisualBrowserWidget.h
   )

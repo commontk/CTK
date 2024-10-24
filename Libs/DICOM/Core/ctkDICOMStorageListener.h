@@ -42,6 +42,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListener : public QObject
   Q_PROPERTY(QString AETitle READ AETitle WRITE setAETitle);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:
   explicit ctkDICOMStorageListener(QObject* parent = 0);
@@ -57,15 +58,15 @@ public:
   ///@{
   /// Storage port
   /// 11112 by default
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
   ///@{
   /// Connection timeout
   /// 1 sec by default
-  void setConnectionTimeout(int timeout);
-  int connectionTimeout();
+  void setConnectionTimeout(const int& timeout);
+  int connectionTimeout() const;
   ///@}
 
   ///@{
@@ -75,14 +76,18 @@ public:
   Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
   void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
-  Q_INVOKABLE void setJobUID(const QString& jobUID);
-  Q_INVOKABLE QString jobUID() const;
+  ///@}
+
+  ///@{
+  /// Reference job uid.
+  void setJobUID(const QString& jobUID);
+  QString jobUID() const;
   ///@}
 
   /// Start listen connection.
   bool listen();
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
 Q_SIGNALS:

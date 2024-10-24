@@ -265,6 +265,9 @@ public:
   virtual void setValueProxy(ctkValueProxy* proxy);
   virtual ctkValueProxy* valueProxy() const;
 
+  /// Return true if a value is currently being set in the spinbox.
+  bool isSettingValueFromSpinBox()const;
+
 public Q_SLOTS:
   ///
   /// Reset the slider and spinbox to zero (value and position)

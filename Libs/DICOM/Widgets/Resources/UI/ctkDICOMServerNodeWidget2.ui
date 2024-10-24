@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1202</width>
-    <height>306</height>
+    <width>1198</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -196,7 +196,7 @@
          <enum>Qt::ElideRight</enum>
         </property>
         <property name="columnCount">
-         <number>10</number>
+         <number>12</number>
         </property>
         <attribute name="horizontalHeaderVisible">
          <bool>true</bool>
@@ -232,12 +232,22 @@
         </column>
         <column>
          <property name="text">
+          <string>Verification</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Query/Retrieve</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Storage</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Trusted</string>
          </property>
         </column>
         <column>
@@ -267,12 +277,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Protocol</string>
+          <string>Retrieve Protocol</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Proxy</string>
+          <string>Retrieve Proxy</string>
          </property>
         </column>
        </widget>
@@ -303,7 +313,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkPushButton" name="TestButton">
+      <widget class="ctkPushButton" name="VerifyButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -333,6 +343,17 @@
        <property name="icon">
         <iconset resource="ctkDICOMWidget.qrc">
          <normaloff>:/Icons/delete.svg</normaloff>:/Icons/delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkPushButton" name="RestoreDefaultPushButton">
+       <property name="text">
+        <string>Restore Defaults</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/reset.svg</normaloff>:/Icons/reset.svg</iconset>
        </property>
       </widget>
      </item>

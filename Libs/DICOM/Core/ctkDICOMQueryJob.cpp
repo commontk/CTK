@@ -71,6 +71,10 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 {
 }
 
+//------------------------------------------------------------------------------
+CTK_SET_CPP(ctkDICOMQueryJob, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_GET_CPP(ctkDICOMQueryJob, int, maximumPatientsQuery, MaximumPatientsQuery)
+
 //----------------------------------------------------------------------------
 void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant>& filters)
 {
@@ -83,20 +87,6 @@ QMap<QString, QVariant> ctkDICOMQueryJob::filters() const
 {
   Q_D(const ctkDICOMQueryJob);
   return d->Filters;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQueryJob::setMaximumPatientsQuery(int maximumPatientsQuery)
-{
-  Q_D(ctkDICOMQueryJob);
-  d->MaximumPatientsQuery = maximumPatientsQuery;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQueryJob::maximumPatientsQuery()
-{
-  Q_D(const ctkDICOMQueryJob);
-  return d->MaximumPatientsQuery;
 }
 
 //----------------------------------------------------------------------------
@@ -114,53 +104,75 @@ void ctkDICOMQueryJob::setServer(const ctkDICOMServer& server)
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMQueryJob::loggerReport(const QString& status) const
+QString ctkDICOMQueryJob::loggerReport(const QString& status)
 {
+  QString fullLogMsg;
+  QString logMsg;
   switch (this->dicomLevel())
   {
     case ctkDICOMJob::DICOMLevels::Patients:
-      return QString("ctkDICOMQueryJob: query job at patients level %1.\n"
-                     "JobUID: %2\n"
-                     "Server: %3\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->server()->connectionName());
+      fullLogMsg = QString("ctkDICOMQueryJob: query job at patients level %1.\n"
+                       "JobUID: %2\n"
+                       "Server: %3\n")
+                      .arg(status)
+                      .arg(this->jobUID())
+                      .arg(this->server()->connectionName());
+      logMsg = QString("Query job at patients level %1.\n")
+                      .arg(status);
+      break;
     case ctkDICOMJob::DICOMLevels::Studies:
-      return QString("ctkDICOMQueryJob: query job at studies level %1.\n"
-                     "JobUID: %2\n"
-                     "Server: %3\n"
-                     "PatientID: %4\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->server()->connectionName())
-          .arg(this->patientID());
+      fullLogMsg = QString("ctkDICOMQueryJob: query job at studies level %1.\n"
+                       "JobUID: %2\n"
+                       "Server: %3\n"
+                       "PatientID: %4\n")
+                      .arg(status)
+                      .arg(this->jobUID())
+                      .arg(this->server()->connectionName())
+                      .arg(this->patientID());
+      logMsg = QString("Query job at studies level %1.\n")
+                      .arg(status);
+      break;
     case ctkDICOMJob::DICOMLevels::Series:
-      return QString("ctkDICOMQueryJob: query job at series level %1.\n"
-                     "JobUID: %2\n"
-                     "Server: %3\n"
-                     "PatientID: %4\n"
-                     "StudyInstanceUID: %5\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->server()->connectionName())
-          .arg(this->patientID())
-          .arg(this->studyInstanceUID());
+      fullLogMsg = QString("ctkDICOMQueryJob: query job at series level %1.\n"
+                       "JobUID: %2\n"
+                       "Server: %3\n"
+                       "PatientID: %4\n"
+                       "StudyInstanceUID: %5\n")
+                      .arg(status)
+                      .arg(this->jobUID())
+                      .arg(this->server()->connectionName())
+                      .arg(this->patientID())
+                      .arg(this->studyInstanceUID());
+      logMsg = QString("Query job at studies level %1.\n")
+                      .arg(status);
+      break;
     case ctkDICOMJob::DICOMLevels::Instances:
-      return QString("ctkDICOMQueryJob: query job at instances level %1.\n"
-                     "JobUID: %2\n"
-                     "Server: %3\n"
-                     "PatientID: %4\n"
-                     "StudyInstanceUID: %5\n"
-                     "SeriesInstanceUID: %6\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->server()->connectionName())
-          .arg(this->patientID())
-          .arg(this->studyInstanceUID())
-          .arg(this->seriesInstanceUID());
+      fullLogMsg = QString("ctkDICOMQueryJob: query job at instances level %1.\n"
+                       "JobUID: %2\n"
+                       "Server: %3\n"
+                       "PatientID: %4\n"
+                       "StudyInstanceUID: %5\n"
+                       "SeriesInstanceUID: %6\n")
+                      .arg(status)
+                      .arg(this->jobUID())
+                      .arg(this->server()->connectionName())
+                      .arg(this->patientID())
+                      .arg(this->studyInstanceUID())
+                      .arg(this->seriesInstanceUID());
+      logMsg = QString("Query job at instances level %1.\n")
+                      .arg(status);
+      break;
     default:
-      return QString("");
+      fullLogMsg = QString("");
+      logMsg = QString("");
+      break;
   }
+
+  QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+  QString logHeader = currentDateTime + " INFO: ";
+  this->Log += logHeader;
+  this->Log += logMsg;
+  return fullLogMsg;
 }
 
 //------------------------------------------------------------------------------

@@ -22,15 +22,18 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.6.2');
+INSERT INTO 'SchemaInfo' VALUES('0.8.1');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
   'Filename' VARCHAR(1024) NOT NULL ,
+  'URL' VARCHAR(2048) NULL,
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
-  PRIMARY KEY ('SOPInstanceUID') );
+  PRIMARY KEY ('SOPInstanceUID')
+);
+
 CREATE TABLE 'Patients' (
   'UID' INTEGER PRIMARY KEY AUTOINCREMENT,
   'PatientsName' VARCHAR(255) NULL ,
@@ -43,7 +46,10 @@ CREATE TABLE 'Patients' (
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedPatientsName' VARCHAR(255) NULL ,
   'DisplayedNumberOfStudies' INT NULL ,
-  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL );
+  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
+  'Connections' VARCHAR(2048) NULL
+);
+
 CREATE TABLE 'Studies' (
   'StudyInstanceUID' VARCHAR(64) NOT NULL ,
   'PatientsUID' INT NOT NULL ,
@@ -59,7 +65,9 @@ CREATE TABLE 'Studies' (
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedNumberOfSeries' INT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
-  PRIMARY KEY ('StudyInstanceUID') );
+  PRIMARY KEY ('StudyInstanceUID')
+);
+
 CREATE TABLE 'Series' (
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'StudyInstanceUID' VARCHAR(64) NOT NULL ,
@@ -112,6 +120,7 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'InsertTimestamp',     
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedPatientsName',           'Patient name',         0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedNumberOfStudies',        'Studies',              0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'Connections',                     '',                     0, 0, '');
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'StudyInstanceUID',                '',                     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'PatientsUID',                     '',                     0, 0, '');

@@ -51,10 +51,12 @@ public:
   /// Cancel worker. This method is thread safe
   void requestCancel() override;
 
+  ///@{
   /// Job.
   /// These methods are not thread safe
   void setJob(QSharedPointer<ctkAbstractJob> job) override;
   using ctkAbstractWorker::setJob;
+  ///@}
 
   ///@{
   /// Retriever.

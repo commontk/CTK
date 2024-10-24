@@ -1,0 +1,93 @@
+name: CI (Build)
+
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "*"
+  # Allows running this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: ["ubuntu-latest", "ubuntu-20.04"]
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@959f1116cf9f1ae42fff8ec1a4aaae6d4a0e348b # v2.0.1
+        with:
+          cmake-version: "3.16.3"
+
+      - name: Display CMake version
+        run: |
+          cmake --version
+
+      - name: Retrieve new lists of APT packages
+        run: sudo apt-get update
+
+      - name: Install Qt
+        run: |
+          sudo apt-get install -y \
+            qtbase5-dev \
+            qtmultimedia5-dev \
+            qttools5-dev \
+            libqt5xmlpatterns5-dev \
+            libqt5svg5-dev \
+            qtwebengine5-dev \
+            qtscript5-dev \
+            qtbase5-private-dev \
+            libqt5x11extras5-dev \
+            libxt-dev
+
+      - name: Install VTK
+        if: matrix.runs-on == 'ubuntu-latest'
+        run: |
+          sudo apt-get install -y \
+            libvtk9-dev \
+            libvtk9-qt-dev
+
+      - name: Configure CTK
+        run: |
+          cmake \
+            -DCTK_QT_VERSION:STRING=5 \
+            -DCTK_ENABLE_Widgets:BOOL=ON \
+            -DCTK_USE_SYSTEM_VTK:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS:BOOL=$CTK_USE_VTK \
+            -DCTK_APP_ctkDICOM:BOOL=ON \
+            -DCTK_LIB_DICOM/Core:BOOL=ON \
+            -DCTK_LIB_DICOM/Widgets:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTNETWORK:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTMULTIMEDIA:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTWEBKIT:BOOL=OFF \
+            -DCTK_LIB_Scripting/Python/Widgets:BOOL=ON \
+            -DCTK_ENABLE_Python_Wrapping:BOOL=ON \
+            -B CTK-build \
+            -S .
+        env:
+          CTK_USE_VTK: "${{ matrix.runs-on == 'ubuntu-latest' && 'ON' || 'OFF' }}"
+
+      - name: Display Qt5_DIR
+        run: |
+          cat CTK-build/CMakeCache.txt | grep ^Qt5_DIR
+
+      - name: Build CTK
+        run: |
+          cmake \
+            --build CTK-build -- -j4

@@ -38,17 +38,12 @@ ctkAbstractJob::ctkAbstractJob()
   this->MaximumConcurrentJobsPerType = 20;
   this->Priority = QThread::Priority::LowPriority;
   this->CreationDateTime = QDateTime::currentDateTime();
+  this->DestroyAfterUse = false;
 }
 
 //----------------------------------------------------------------------------
 ctkAbstractJob::~ctkAbstractJob()
 {
-}
-
-//----------------------------------------------------------------------------
-void ctkAbstractJob::setJobUID(const QString &jobUID)
-{
-  this->JobUID = jobUID;
 }
 
 //----------------------------------------------------------------------------
@@ -65,6 +60,12 @@ QString ctkAbstractJob::className() const
 QString ctkAbstractJob::jobUID() const
 {
   return this->JobUID;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setJobUID(const QString &jobUID)
+{
+  this->JobUID = jobUID;
 }
 
 //----------------------------------------------------------------------------
@@ -91,9 +92,13 @@ void ctkAbstractJob::setStatus(JobStatus status)
   {
     emit this->started();
   }
-  else if (this->Status == JobStatus::Stopped)
+  else if (this->Status == JobStatus::UserStopped)
   {
-    emit this->canceled();
+    emit this->userStopped();
+  }
+  else if (this->Status == JobStatus::AttemptFailed)
+  {
+    emit this->attemptFailed();
   }
   else if (this->Status == JobStatus::Failed)
   {
@@ -193,6 +198,42 @@ QDateTime ctkAbstractJob::startDateTime() const
 QDateTime ctkAbstractJob::completionDateTime() const
 {
   return this->CompletionDateTime;
+}
+
+//----------------------------------------------------------------------------
+QString ctkAbstractJob::runningThreadID() const
+{
+  return this->RunningThreadID;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
+{
+  this->RunningThreadID = runningThreadID;
+}
+
+//----------------------------------------------------------------------------
+QString ctkAbstractJob::log() const
+{
+  return this->Log;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::addLog(QString log)
+{
+  this->Log += log;
+}
+
+//----------------------------------------------------------------------------
+bool ctkAbstractJob::destroyAfterUse() const
+{
+  return this->DestroyAfterUse;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setDestroyAfterUse(bool destroyAfterUse)
+{
+  this->DestroyAfterUse = destroyAfterUse;
 }
 
 //----------------------------------------------------------------------------

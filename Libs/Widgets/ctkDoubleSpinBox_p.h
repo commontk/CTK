@@ -101,6 +101,8 @@ public:
   mutable QSize CachedMinimumSizeHint;
   bool ForceInputValueUpdate;
 
+  bool IsSettingValue;
+
   QPointer<ctkValueProxy> Proxy;
 
   void init();

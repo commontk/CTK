@@ -44,6 +44,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMEcho : public QObject
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:
   explicit ctkDICOMEcho(QObject* parent = 0);
@@ -76,18 +77,30 @@ public:
   /// Specify a port for the packet headers.
   /// \a port ranges from 0 to 65535.
   /// 80 by default.
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
   ///@{
   /// Connection timeout, default 3 sec.
-  void setConnectionTimeout(int timeout);
+  void setConnectionTimeout(const int& timeout);
   int connectionTimeout() const;
   ///@}
 
+  /// Return true if the operation was canceled.
+  Q_INVOKABLE bool wasCanceled();
+
   /// Echo connection.
   Q_INVOKABLE bool echo();
+
+  ///@{
+  /// Reference job uid.
+  void setJobUID(const QString& jobUID);
+  QString jobUID() const;
+  ///@}
+
+public Q_SLOTS:
+  void cancel();
 
 protected:
   QScopedPointer<ctkDICOMEchoPrivate> d_ptr;

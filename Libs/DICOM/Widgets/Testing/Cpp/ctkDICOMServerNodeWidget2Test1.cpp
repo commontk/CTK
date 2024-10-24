@@ -65,35 +65,35 @@ int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
   ctkDICOMScheduler scheduler;
   widget.setScheduler(scheduler);
   CHECK_QSTRING(widget.getServerNameFromIndex(0), "ExampleHost");
-  CHECK_BOOL(widget.getServer("ExampleHost")->queryRetrieveEnabled(), false);
-  CHECK_BOOL(widget.getServer("ExampleHost")->storageEnabled(), false);
-  CHECK_QSTRING(widget.getServer("ExampleHost")->callingAETitle(), "CTK");
-  CHECK_QSTRING(widget.getServer("ExampleHost")->calledAETitle(), "AETITLE");
-  CHECK_QSTRING(widget.getServer("ExampleHost")->host(), "dicom.example.com");
-  CHECK_INT(widget.getServer("ExampleHost")->port(), 11112);
-  CHECK_QSTRING(widget.getServer("ExampleHost")->retrieveProtocolAsString(), "CGET");
-  CHECK_INT(widget.getServer("ExampleHost")->connectionTimeout(), 30);
+  CHECK_BOOL(widget.server("ExampleHost")->queryRetrieveEnabled(), false);
+  CHECK_BOOL(widget.server("ExampleHost")->storageEnabled(), false);
+  CHECK_QSTRING(widget.server("ExampleHost")->callingAETitle(), "CTK");
+  CHECK_QSTRING(widget.server("ExampleHost")->calledAETitle(), "AETITLE");
+  CHECK_QSTRING(widget.server("ExampleHost")->host(), "dicom.example.com");
+  CHECK_INT(widget.server("ExampleHost")->port(), 11112);
+  CHECK_QSTRING(widget.server("ExampleHost")->retrieveProtocolAsString(), "CGET");
+  CHECK_INT(widget.server("ExampleHost")->connectionTimeout(), 30);
 
   CHECK_QSTRING(widget.getServerNameFromIndex(1), "MedicalConnections");
-  CHECK_BOOL(widget.getServer("MedicalConnections")->queryRetrieveEnabled(), false);
-  CHECK_BOOL(widget.getServer("MedicalConnections")->storageEnabled(), false);
-  CHECK_QSTRING(widget.getServer("MedicalConnections")->callingAETitle(), "CTK");
-  CHECK_QSTRING(widget.getServer("MedicalConnections")->calledAETitle(), "ANYAE");
-  CHECK_QSTRING(widget.getServer("MedicalConnections")->host(), "dicomserver.co.uk");
-  CHECK_INT(widget.getServer("MedicalConnections")->port(), 104);
-  CHECK_QSTRING(widget.getServer("MedicalConnections")->retrieveProtocolAsString(), "CGET");
-  CHECK_INT(widget.getServer("MedicalConnections")->connectionTimeout(), 30);
+  CHECK_BOOL(widget.server("MedicalConnections")->queryRetrieveEnabled(), false);
+  CHECK_BOOL(widget.server("MedicalConnections")->storageEnabled(), false);
+  CHECK_QSTRING(widget.server("MedicalConnections")->callingAETitle(), "CTK");
+  CHECK_QSTRING(widget.server("MedicalConnections")->calledAETitle(), "ANYAE");
+  CHECK_QSTRING(widget.server("MedicalConnections")->host(), "dicomserver.co.uk");
+  CHECK_INT(widget.server("MedicalConnections")->port(), 104);
+  CHECK_QSTRING(widget.server("MedicalConnections")->retrieveProtocolAsString(), "CGET");
+  CHECK_INT(widget.server("MedicalConnections")->connectionTimeout(), 30);
 
   // Test adding and removing servers
   ctkDICOMServer* server = new ctkDICOMServer();
   server->setConnectionName("server");
   widget.addServer(server);
-  CHECK_INT(widget.getNumberOfServers(), 3);
+  CHECK_INT(widget.serversCount(), 3);
   CHECK_INT(widget.getServerIndexFromName("server"), 2);
   CHECK_QSTRING(widget.getServerNameFromIndex(2), "server");
-  CHECK_QSTRING(widget.getServer("server")->connectionName(), server->connectionName());
+  CHECK_QSTRING(widget.server("server")->connectionName(), server->connectionName());
   widget.removeServer("server");
-  CHECK_INT(widget.getNumberOfServers(), 2);
+  CHECK_INT(widget.serversCount(), 2);
   delete server;
 
   if (!interactive)

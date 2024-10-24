@@ -60,33 +60,38 @@ public:
   /// Query Studies applying filters on all servers.
   /// The method spans a ctkDICOMQueryJob for each server.
   Q_INVOKABLE void queryStudies(const QString& patientID,
-                                QThread::Priority priority = QThread::LowPriority);
+                                QThread::Priority priority = QThread::LowPriority,
+                                const QStringList& allowedSeversForPatient = QStringList());
 
   /// Query Series applying filters on all servers.
   /// The method spans a ctkDICOMQueryJob for each server.
   Q_INVOKABLE void querySeries(const QString& patientID,
                                const QString& studyInstanceUID,
-                               QThread::Priority priority = QThread::LowPriority);
+                               QThread::Priority priority = QThread::LowPriority,
+                               const QStringList& allowedSeversForPatient = QStringList());
 
   /// Query Instances applying filters on all servers.
   /// The method spans a ctkDICOMQueryJob for each server.
   Q_INVOKABLE void queryInstances(const QString& patientID,
                                   const QString& studyInstanceUID,
                                   const QString& seriesInstanceUID,
-                                  QThread::Priority priority = QThread::LowPriority);
+                                  QThread::Priority priority = QThread::LowPriority,
+                                  const QStringList& allowedSeversForPatient = QStringList());
 
   /// Retrieve Study.
   /// The method spans a ctkDICOMRetrieveJob for each server.
   Q_INVOKABLE void retrieveStudy(const QString& patientID,
                                  const QString& studyInstanceUID,
-                                 QThread::Priority priority = QThread::LowPriority);
+                                 QThread::Priority priority = QThread::LowPriority,
+                                 const QStringList& allowedSeversForPatient = QStringList());
 
   /// Retrieve Series.
   /// The method spans a ctkDICOMRetrieveJob for each server.
   Q_INVOKABLE void retrieveSeries(const QString& patientID,
                                   const QString& studyInstanceUID,
                                   const QString& seriesInstanceUID,
-                                  QThread::Priority priority = QThread::LowPriority);
+                                  QThread::Priority priority = QThread::LowPriority,
+                                  const QStringList& allowedSeversForPatient = QStringList());
 
   /// Retrieve SOPInstance.
   /// The method spans a ctkDICOMRetrieveJob for each server.
@@ -94,12 +99,29 @@ public:
                                        const QString& studyInstanceUID,
                                        const QString& seriesInstanceUID,
                                        const QString& SOPInstanceUID,
-                                       QThread::Priority priority = QThread::LowPriority);
+                                       QThread::Priority priority = QThread::LowPriority,
+                                       const QStringList& allowedSeversForPatient = QStringList());
 
   /// Start a storage listener
   Q_INVOKABLE void startListener(int port,
                                  const QString &AETitle,
                                  QThread::Priority priority = QThread::LowPriority);
+
+  /// Echo a server
+  Q_INVOKABLE void echo(const QString& connectionName,
+                        QThread::Priority priority = QThread::LowPriority);
+  Q_INVOKABLE void echo(ctkDICOMServer& server,
+                        QThread::Priority priority = QThread::LowPriority);
+
+  /// Generate thumbnail and save it as png on local disk
+  Q_INVOKABLE void generateThumbnail(const QString &originalFilePath,
+                                     const QString &patientID,
+                                     const QString &studyInstanceUID,
+                                     const QString &seriesInstanceUID,
+                                     const QString &sopInstanceUID,
+                                     const QString& modality,
+                                     QColor backgroundColor,
+                                     QThread::Priority priority = QThread::HighPriority);
 
   ///@{
   /// Insert results from a job
@@ -144,18 +166,20 @@ public:
 
   ///@{
   /// Servers
-  Q_INVOKABLE int getNumberOfServers();
-  Q_INVOKABLE int getNumberOfQueryRetrieveServers();
-  Q_INVOKABLE int getNumberOfStorageServers();
-  Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
+  Q_INVOKABLE int serversCount();
+  Q_INVOKABLE int queryRetrieveServersCount();
+  Q_INVOKABLE int storageServersCount();
+  Q_INVOKABLE ctkDICOMServer* server(int id);
+  Q_INVOKABLE ctkDICOMServer* server(const QString& connectionName);
   Q_INVOKABLE void addServer(ctkDICOMServer& server);
   void addServer(QSharedPointer<ctkDICOMServer> server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
-  Q_INVOKABLE void removeNthServer(int id);
+  Q_INVOKABLE void removeServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
+  Q_INVOKABLE QStringList getAllServersConnectionNames();
+  Q_INVOKABLE QStringList getConnectionNamesForActiveServers();
   ///@}
 
   ///@{
@@ -172,11 +196,8 @@ public:
                                                                        const QStringList& studyInstanceUIDs = {},
                                                                        const QStringList& seriesInstanceUIDs = {},
                                                                        const QStringList& sopInstanceUIDs = {});
-
-  Q_INVOKABLE void runJobs(const QMap<QString, ctkDICOMJobDetail>& jobDetails);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
-
   ///@}
 
   ///@{
@@ -191,6 +212,17 @@ public:
   Q_INVOKABLE ctkDICOMStorageListenerJob* listenerJob();
   Q_INVOKABLE bool isStorageListenerActive();
   ///@}
+
+public Q_SLOTS:
+  virtual void onJobStarted(ctkAbstractJob* job);
+  virtual void onJobUserStopped(ctkAbstractJob* job);
+  virtual void onJobFinished(ctkAbstractJob* job);
+  virtual void onJobAttemptFailed(ctkAbstractJob* job);
+  virtual void onJobFailed(ctkAbstractJob* job);
+
+Q_SIGNALS:
+  /// Emitted when a server is modified
+  void serverModified(const QString&);
 
 protected:
   ctkDICOMScheduler(ctkDICOMSchedulerPrivate* pimpl, QObject* parent);

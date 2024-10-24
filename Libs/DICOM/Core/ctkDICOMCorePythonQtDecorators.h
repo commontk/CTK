@@ -24,6 +24,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// CTK Core includes
+#include <ctkLogger.h>
+
 // CTK includes
 #include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
@@ -36,6 +39,8 @@
 // with the self argument as NULL.  The self argument is the first argument
 // for non-static methods.
 //
+
+static ctkLogger logger("org.commontk.core.ctkDICOMCorePythonQtDecorators");
 
 /// \ingroup DICOM_Core
 class ctkDICOMCorePythonQtDecorators : public QObject
@@ -60,129 +65,276 @@ public slots:
     return new ctkDICOMJobDetail();
   }
 
-  void setJobClass(ctkDICOMJobDetail* td, QString jobClass)
-  {
-    td->JobClass = jobClass;
-  }
-  QString jobClass(ctkDICOMJobDetail* td)
-  {
-    return td->JobClass;
-  }
-
-  void setJobUID(ctkDICOMJobDetail* td, QString jobUID)
-  {
-    td->JobUID = jobUID;
-  }
-  QString jobUID(ctkDICOMJobDetail* td)
-  {
-    return td->JobUID;
-  }
-
-  void setCreationDateTime(ctkDICOMJobDetail* td, QString creationDateTime)
-  {
-    td->CreationDateTime = creationDateTime;
-  }
-  QString creationDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->CreationDateTime;
-  }
-
-  void setStartDateTime(ctkDICOMJobDetail* td, QString startDateTime)
-  {
-    td->StartDateTime = startDateTime;
-  }
-  QString startDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->StartDateTime;
-  }
-
-  void setCompletionDateTime(ctkDICOMJobDetail* td, QString completionDateTime)
-  {
-    td->CompletionDateTime = completionDateTime;
-  }
-  QString completionDateTime(ctkDICOMJobDetail* td)
-  {
-    return td->CompletionDateTime;
-  }
-
   void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setPatientID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->PatientID = patientID;
   }
   QString patientID(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::patientID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->PatientID;
   }
 
   void setStudyInstanceUID(ctkDICOMJobDetail* td, const QString& studyInstanceUID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setStudyInstanceUID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->StudyInstanceUID = studyInstanceUID;
   }
   QString studyInstanceUID(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::studyInstanceUID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->StudyInstanceUID;
   }
 
   void setSeriesInstanceUID(ctkDICOMJobDetail* td, const QString& seriesInstanceUID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setSeriesInstanceUID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->SeriesInstanceUID = seriesInstanceUID;
   }
   QString seriesInstanceUID(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::seriesInstanceUID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->SeriesInstanceUID;
   }
 
   void setSOPInstanceUID(ctkDICOMJobDetail* td, const QString& sopInstanceUID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setSOPInstanceUID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->SOPInstanceUID = sopInstanceUID;
   }
   QString sopInstanceUID(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::sopInstanceUID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->SOPInstanceUID;
   }
 
   void setReferenceInserterJobUID(ctkDICOMJobDetail* td, const QString& referenceInserterJobUID)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setReferenceInserterJobUID - Invalid ctkJobDetail");
+      return;
+    }
+
     td->ReferenceInserterJobUID = referenceInserterJobUID;
   }
   QString referenceInserterJobUID(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::referenceInserterJobUID - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->ReferenceInserterJobUID;
+  }
+
+  void setQueriedPatientIDs(ctkDICOMJobDetail* td, const QStringList& queriedPatientIDs)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setQueriedPatientIDs - Invalid ctkJobDetail");
+      return;
+    }
+
+    td->QueriedPatientIDs = queriedPatientIDs;
+  }
+  QStringList queriedPatientIDs(ctkDICOMJobDetail* td)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::queriedPatientIDs - Invalid ctkJobDetail");
+      return QStringList();
+    }
+
+    return td->QueriedPatientIDs;
+  }
+
+  void setQueriedStudyInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedStudyInstanceUIDs)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setQueriedStudyInstanceUIDs - Invalid ctkJobDetail");
+      return;
+    }
+
+    td->QueriedStudyInstanceUIDs = queriedStudyInstanceUIDs;
+  }
+  QStringList queriedStudyInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::queriedStudyInstanceUIDs - Invalid ctkJobDetail");
+      return QStringList();
+    }
+
+    return td->QueriedStudyInstanceUIDs;
+  }
+
+  void setQueriedSeriesInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedSeriesInstanceUIDs)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setQueriedSeriesInstanceUIDs - Invalid ctkJobDetail");
+      return;
+    }
+
+    td->QueriedSeriesInstanceUIDs = queriedSeriesInstanceUIDs;
+  }
+  QStringList queriedSeriesInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::queriedSeriesInstanceUIDs - Invalid ctkJobDetail");
+      return QStringList();
+    }
+
+    return td->QueriedSeriesInstanceUIDs;
+  }
+
+  void setQueriedSOPInstanceUIDs(ctkDICOMJobDetail* td, const QStringList& queriedSOPInstanceUIDs)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setQueriedSOPInstanceUIDs - Invalid ctkJobDetail");
+      return;
+    }
+
+    td->QueriedSOPInstanceUIDs = queriedSOPInstanceUIDs;
+  }
+  QStringList queriedSOPInstanceUIDs(ctkDICOMJobDetail* td)
+  {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::queriedSOPInstanceUIDs - Invalid ctkJobDetail");
+      return QStringList();
+    }
+
+    return td->QueriedSOPInstanceUIDs;
   }
 
   void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setConnectionName - Invalid ctkJobDetail");
+      return;
+    }
+
     td->ConnectionName = connectionName;
   }
   QString connectionName(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::connectionName - Invalid ctkJobDetail");
+      return "";
+    }
+
     return td->ConnectionName;
   }
 
   void setDICOMLevel(ctkDICOMJobDetail* td, ctkDICOMJob::DICOMLevels level)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setDICOMLevel - Invalid ctkJobDetail");
+      return;
+    }
+
     td->DICOMLevel = level;
   }
   ctkDICOMJob::DICOMLevels DICOMLevel(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::DICOMLevel - Invalid ctkJobDetail");
+      return ctkDICOMJob::DICOMLevels::None;
+    }
+
     return td->DICOMLevel;
   }
 
   void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setJobType - Invalid ctkJobDetail");
+      return;
+    }
+
     td->JobType = jobType;
   }
   ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::jobType - Invalid ctkJobDetail");
+      return ctkDICOMJobResponseSet::JobType::None;
+    }
+
     return td->JobType;
   }
 
   void setNumberOfDataSets(ctkDICOMJobDetail* td, int numberOfDataSets)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::setNumberOfDataSets - Invalid ctkJobDetail");
+      return;
+    }
+
     td->NumberOfDataSets = numberOfDataSets;
   }
   int numberOfDataSets(ctkDICOMJobDetail* td)
   {
+    if (td == nullptr)
+    {
+      logger.error("ctkDICOMJobDetail::numberOfDataSets - Invalid ctkJobDetail");
+      return -1;
+    }
+
     return td->NumberOfDataSets;
   }
 

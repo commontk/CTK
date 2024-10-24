@@ -74,8 +74,8 @@ public:
   ///@{
   /// maximum number of responses allowed in one query
   /// when query is at Patient level. Default is 25.
-  void setMaximumPatientsQuery(int maximumPatientsQuery);
-  int maximumPatientsQuery();
+  void setMaximumPatientsQuery(const int& maximumPatientsQuery);
+  int maximumPatientsQuery() const;
   ///@}
 
   ///@{
@@ -85,7 +85,7 @@ public:
   ///@}
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const override;
+  Q_INVOKABLE QString loggerReport(const QString& status) override;
 
   /// \see ctkAbstractJob::clone()
   Q_INVOKABLE ctkAbstractJob* clone() const override;

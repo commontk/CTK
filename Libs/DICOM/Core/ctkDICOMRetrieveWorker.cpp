@@ -31,6 +31,9 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
+// DCMTK includes
+#include <dcmtk/oflog/spi/logevent.h>
+
 static ctkLogger logger ("org.commontk.dicom.DICOMRetrieveWorker");
 
 //------------------------------------------------------------------------------
@@ -41,6 +44,7 @@ ctkDICOMRetrieveWorkerPrivate::ctkDICOMRetrieveWorkerPrivate(ctkDICOMRetrieveWor
  : q_ptr(object)
 {
   this->Retrieve = QSharedPointer<ctkDICOMRetrieve>(new ctkDICOMRetrieve);
+  this->Retrieve->setKeepAssociationOpen(false);
 }
 
 //------------------------------------------------------------------------------
@@ -128,6 +132,9 @@ void ctkDICOMRetrieveWorker::run()
     return;
   }
 
+  QString currentThread = dcmtk::log4cplus::thread::getCurrentThreadName().c_str();
+  retrieveJob->setRunningThreadID(currentThread);
+
   QSharedPointer<ctkDICOMScheduler> scheduler =
       qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   ctkDICOMServer* server = retrieveJob->server();
@@ -150,8 +157,12 @@ void ctkDICOMRetrieveWorker::run()
     case ctkDICOMServer::CGET:
       switch(retrieveJob->dicomLevel())
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
+          return;
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("ctkDICOMRetrieveTask : get operation for a full patient is not implemented.");
+          logger.warn("ctkDICOMRetrieveWorker : get operation for a full patient is not implemented.");
           this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
@@ -186,6 +197,10 @@ void ctkDICOMRetrieveWorker::run()
     case ctkDICOMServer::CMOVE:
       switch(retrieveJob->dicomLevel())
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
+          return;
         case ctkDICOMJob::DICOMLevels::Patients:
           logger.warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
           retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
@@ -235,6 +250,7 @@ void ctkDICOMRetrieveWorker::run()
     newJob->setRetryCounter(0);
     newJob->setServer(*proxyServer);
     scheduler->addJob(newJob);
+    retrieveJob->setReferenceInserterJobUID("Proxy");
   }
   else if (d->Retrieve->jobResponseSetsShared().count() > 0 &&
     server->retrieveProtocol() == ctkDICOMServer::RetrieveProtocol::CGET)

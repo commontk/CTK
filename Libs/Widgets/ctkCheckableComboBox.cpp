@@ -108,6 +108,7 @@ class ctkCheckableComboBoxPrivate
 protected:
   ctkCheckableComboBox* const q_ptr;
   QModelIndexList checkedIndexes()const;
+  QModelIndexList paritiallyCheckedIndexes()const;
   QModelIndexList uncheckedIndexes()const;
 
 public:
@@ -211,7 +212,17 @@ QModelIndexList ctkCheckableComboBoxPrivate::checkedIndexes()const
   QModelIndex startIndex = q->model()->index(0,0, q->rootModelIndex());
   return q->model()->match(
     startIndex, Qt::CheckStateRole,
-    static_cast<int>(Qt::Checked), -1, Qt::MatchRecursive);
+      static_cast<int>(Qt::Checked), -1, Qt::MatchRecursive);
+}
+
+//-----------------------------------------------------------------------------
+QModelIndexList ctkCheckableComboBoxPrivate::paritiallyCheckedIndexes() const
+{
+Q_Q(const ctkCheckableComboBox);
+  QModelIndex startIndex = q->model()->index(0,0, q->rootModelIndex());
+  return q->model()->match(
+    startIndex, Qt::CheckStateRole,
+      static_cast<int>(Qt::PartiallyChecked), -1, Qt::MatchRecursive);
 }
 
 //-----------------------------------------------------------------------------
@@ -318,14 +329,21 @@ QModelIndexList ctkCheckableComboBox::checkedIndexes()const
 bool ctkCheckableComboBox::allChecked()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->uncheckedIndexes().count() == 0;
+  return d->checkedIndexes().count() == this->count();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCheckableComboBox::allPatiallyChecked() const
+{
+  Q_D(const ctkCheckableComboBox);
+  return d->paritiallyCheckedIndexes().count() == this->count();
 }
 
 //-----------------------------------------------------------------------------
 bool ctkCheckableComboBox::noneChecked()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->cachedCheckedIndexes().count() == 0;
+  return d->uncheckedIndexes().count() == this->count();
 }
 
 //-----------------------------------------------------------------------------
@@ -370,14 +388,14 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
 
-  if (this->allChecked())
+  if (this->count() == 0 || d->uncheckedIndexes().count() + d->paritiallyCheckedIndexes().count() == this->count())
   {
-    opt.currentText = tr("All");
+    opt.currentText = ctkCheckableComboBox::tr("None");
     opt.currentIcon = QIcon();
   }
-  else if (this->noneChecked())
+  else if (d->checkedIndexes().count() + d->paritiallyCheckedIndexes().count() == this->count())
   {
-    opt.currentText = tr("None");
+    opt.currentText = ctkCheckableComboBox::tr("All");
     opt.currentIcon = QIcon();
   }
   else
@@ -404,4 +422,14 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
 
   // draw the icon and text
   painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckableComboBox::keyReleaseEvent(QKeyEvent *event)
+{
+  QComboBox::keyReleaseEvent(event);
+  if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+  {
+    emit this->returnRelease();
+  }
 }

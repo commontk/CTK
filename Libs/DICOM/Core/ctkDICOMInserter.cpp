@@ -24,13 +24,13 @@
 // Qt includes
 #include <QDebug>
 
+// ctkCore includes
+#include <ctkPimpl.h>
+
 // ctkDICOMCore includes
-#include "ctkLogger.h"
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMInserter.h"
 #include "ctkDICOMJobResponseSet.h"
-
-static ctkLogger logger ("org.commontk.dicom.DICOMInserter");
 
 //------------------------------------------------------------------------------
 class ctkDICOMInserterPrivate
@@ -68,46 +68,12 @@ ctkDICOMInserter::ctkDICOMInserter(QObject* parentObject)
 ctkDICOMInserter::~ctkDICOMInserter() = default;
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserter::setDatabaseFilename(const QString& databaseFilename)
-{
-  Q_D(ctkDICOMInserter);
-  d->DatabaseFilename = databaseFilename;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMInserter::databaseFilename() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->DatabaseFilename;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToPrecache(const QStringList& tagsToPrecache)
-{
-  Q_D(ctkDICOMInserter);
-  d->TagsToPrecache = tagsToPrecache;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMInserter::tagsToPrecache() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->TagsToPrecache;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage)
-{
-  Q_D(ctkDICOMInserter);
-  d->TagsToExcludeFromStorage = tagsToExcludeFromStorage;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMInserter::tagsToExcludeFromStorage() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->TagsToExcludeFromStorage;
-}
+CTK_SET_CPP(ctkDICOMInserter, const QString&, setDatabaseFilename, DatabaseFilename);
+CTK_GET_CPP(ctkDICOMInserter, QString, databaseFilename, DatabaseFilename)
+CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToPrecache, TagsToPrecache);
+CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToPrecache, TagsToPrecache)
+CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToExcludeFromStorage, TagsToExcludeFromStorage);
+CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToExcludeFromStorage, TagsToExcludeFromStorage)
 
 //------------------------------------------------------------------------------
 bool ctkDICOMInserter::wasCanceled()
@@ -117,7 +83,7 @@ bool ctkDICOMInserter::wasCanceled()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMInserter::addJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets)
+bool ctkDICOMInserter::addJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   Q_D(const ctkDICOMInserter);
   if (d->Canceled)
@@ -141,15 +107,14 @@ bool ctkDICOMInserter::addJobResponseSets(QList<QSharedPointer<ctkDICOMJobRespon
   // to determine if any other process is currently writing (for example, a UI element writing the patient's name into the database).
   // Therefore, we propose the inclusion of a static variable in ctkDICOMDatabase that indicates ongoing write operations
   // for each DatabaseFilename, except in cases where it is an in-memory database.
-  database.insert(jobResponseSets);
+  ctkDICOMDatabase::InsertResult result = database.insert(jobResponseSets);
   database.updateDisplayedFields();
-
   database.closeDatabase();
 
   emit updatingDatabase(false);
   emit done();
 
-  return true;
+  return result != ctkDICOMDatabase::InsertResult::Failed ? true : false;
 }
 
 //----------------------------------------------------------------------------

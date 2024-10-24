@@ -49,7 +49,7 @@ QString ctkDICOMVisualBrowserWidgetPlugin::domXml() const
 // --------------------------------------------------------------------------
 QIcon ctkDICOMVisualBrowserWidgetPlugin::icon() const
 {
-  return QIcon(":/Icons/listview.png");
+  return QIcon(":/Icons/widget.png");
 }
 
 //-----------------------------------------------------------------------------

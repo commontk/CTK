@@ -27,6 +27,8 @@
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
+#include "ctkDICOMEchoJob.h"
+#include "ctkDICOMThumbnailGeneratorJob.h"
 #include "ctkDICOMInserterJob.h"
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMQueryJob.h"
@@ -39,9 +41,68 @@
 
 // dcmtk includes
 #include <dcmtk/dcmdata/dcdeftag.h>
-
+#include <dcmtk/oflog/layout.h>
+#include <dcmtk/oflog/oflog.h>
+#include "dcmtk/oflog/spi/logevent.h"
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMScheduler" );
+
+//------------------------------------------------------------------------------
+// JobAppender class (custom DCMTK Appender)
+
+//------------------------------------------------------------------------------
+class ctkDICOMJobsAppender : public dcmtk::log4cplus::Appender {
+public:
+  ctkDICOMJobsAppender() {};
+
+  virtual void close() {};
+
+  QMap<QString, QString> messagesPerThread() const
+  {
+    return this->MessagesPerThread;
+  }
+
+  QString messageByThreadID(QString threadID)
+  {
+    if (!this->MessagesPerThread.contains(threadID))
+    {
+      return "";
+    }
+
+    return this->MessagesPerThread.take(threadID);
+  }
+
+  void clearMessagesPerThread()
+  {
+    this->MessagesPerThread.clear();
+  }
+
+protected:
+  void append(const dcmtk::log4cplus::spi::InternalLoggingEvent& event)
+  {
+    dcmtk::log4cplus::PatternLayout *layout =
+      dynamic_cast<dcmtk::log4cplus::PatternLayout*>(this->getLayout());
+    if (!layout)
+    {
+      return;
+    }
+
+    dcmtk::log4cplus::tostringstream oss;
+    layout->formatAndAppend(oss, event);
+
+    QString message = QString::fromLatin1(oss.str().c_str());
+    if (message.isEmpty())
+    {
+      return;
+    }
+
+    QString messageThread = event.getThread().c_str();
+    this->MessagesPerThread[messageThread] += message;
+  }
+
+private:
+  QMap<QString, QString> MessagesPerThread;
+};
 
 //------------------------------------------------------------------------------
 // ctkDICOMSchedulerPrivate methods
@@ -51,6 +112,15 @@ ctkDICOMSchedulerPrivate::ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj)
   : ctkJobSchedulerPrivate(obj)
 {
   ctk::setDICOMLogLevel(ctkErrorLogLevel::Warning);
+
+  OFunique_ptr<dcmtk::log4cplus::Layout> layout(new dcmtk::log4cplus::PatternLayout("%D{%Y-%m-%d %H:%M:%S.%q} %5p: %m%n"));
+  this->Appender = (new ctkDICOMJobsAppender());
+  this->Appender->setName("ctkDICOM");
+  this->Appender->setLayout(OFmove(layout));
+  this->Appender->setThreshold(ctk::dicomLogLevel());
+
+  dcmtk::log4cplus::Logger rootLog = dcmtk::log4cplus::Logger::getRoot();
+  rootLog.addAppender(this->Appender);
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +128,39 @@ ctkDICOMSchedulerPrivate::~ctkDICOMSchedulerPrivate()
 {
   Q_Q(ctkDICOMScheduler);
   q->removeAllServers();
+
+  if (this->Appender)
+  {
+    dcmtk::log4cplus::Logger rootLog = dcmtk::log4cplus::Logger::getRoot();
+    rootLog.removeAppender(this->Appender);
+  }
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMSchedulerPrivate::isServerAllowed(ctkDICOMServer *server,
+                                               const QStringList& allowedSeversForPatient)
+{
+  if (!server)
+  {
+    return false;
+  }
+
+  if (!server->queryRetrieveEnabled())
+  {
+    return false;
+  }
+  else if (server->trustedEnabled())
+  {
+    return true;
+  }
+  else if (allowedSeversForPatient.contains(server->connectionName()))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -125,13 +228,14 @@ void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::queryStudies(const QString& patientID,
-                                    QThread::Priority priority)
+                                     QThread::Priority priority,
+                                     const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -152,14 +256,15 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::querySeries(const QString& patientID,
-                                   const QString& studyInstanceUID,
-                                   QThread::Priority priority)
+                                    const QString& studyInstanceUID,
+                                    QThread::Priority priority,
+                                    const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -181,15 +286,16 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::queryInstances(const QString& patientID,
-                                      const QString& studyInstanceUID,
-                                      const QString& seriesInstanceUID,
-                                      QThread::Priority priority)
+                                       const QString& studyInstanceUID,
+                                       const QString& seriesInstanceUID,
+                                       QThread::Priority priority,
+                                       const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -213,13 +319,14 @@ void ctkDICOMScheduler::queryInstances(const QString& patientID,
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
                                       const QString& studyInstanceUID,
-                                      QThread::Priority priority)
+                                      QThread::Priority priority,
+                                      const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -242,13 +349,14 @@ void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
 void ctkDICOMScheduler::retrieveSeries(const QString& patientID,
                                        const QString& studyInstanceUID,
                                        const QString& seriesInstanceUID,
-                                       QThread::Priority priority)
+                                       QThread::Priority priority,
+                                       const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -273,13 +381,14 @@ void ctkDICOMScheduler::retrieveSOPInstance(const QString& patientID,
                                             const QString& studyInstanceUID,
                                             const QString& seriesInstanceUID,
                                             const QString& SOPInstanceUID,
-                                            QThread::Priority priority)
+                                            QThread::Priority priority,
+                                            const QStringList& allowedSeversForPatient)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -313,6 +422,74 @@ void ctkDICOMScheduler::startListener(int port,
   job->setAETitle(AETitle);
   job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
   job->setRetryDelay(d->RetryDelay);
+  job->setPriority(priority);
+
+  d->insertJob(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::echo(const QString &connectionName,
+                             QThread::Priority priority)
+{
+  Q_D(ctkDICOMScheduler);
+
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
+  {
+    if (server->connectionName() != connectionName)
+    {
+      continue;
+    }
+
+    QSharedPointer<ctkDICOMEchoJob> job =
+      QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
+
+    job->setServer(*server);
+    job->setMaximumNumberOfRetry(0);
+    job->setPriority(priority);
+
+    d->insertJob(job);
+    break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::echo(ctkDICOMServer &server, QThread::Priority priority)
+{
+  Q_D(ctkDICOMScheduler);
+
+  QSharedPointer<ctkDICOMEchoJob> job =
+    QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
+
+  job->setServer(server);
+  job->setMaximumNumberOfRetry(0);
+  job->setPriority(priority);
+
+  d->insertJob(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
+                                          const QString &patientID,
+                                          const QString &studyInstanceUID,
+                                          const QString &seriesInstanceUID,
+                                          const QString &sopInstanceUID,
+                                          const QString &modality,
+                                          QColor backgroundColor,
+                                          QThread::Priority priority)
+{
+  Q_D(ctkDICOMScheduler);
+
+  QSharedPointer<ctkDICOMThumbnailGeneratorJob> job =
+    QSharedPointer<ctkDICOMThumbnailGeneratorJob>(new ctkDICOMThumbnailGeneratorJob);
+  job->setDatabaseFilename(d->DicomDatabase->databaseFilename());
+  job->setDicomFilePath(originalFilePath);
+  job->setModality(modality);
+  job->setBackgroundColor(backgroundColor);
+  job->setPatientID(patientID);
+  job->setStudyInstanceUID(studyInstanceUID);
+  job->setSeriesInstanceUID(seriesInstanceUID);
+  job->setSOPInstanceUID(sopInstanceUID);
+  job->setMaximumNumberOfRetry(0);
   job->setPriority(priority);
 
   d->insertJob(job);
@@ -399,14 +576,14 @@ QMap<QString, QVariant> ctkDICOMScheduler::filters() const
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMScheduler::getNumberOfServers()
+int ctkDICOMScheduler::serversCount()
 {
   Q_D(ctkDICOMScheduler);
   return d->Servers.size();
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMScheduler::getNumberOfQueryRetrieveServers()
+int ctkDICOMScheduler::queryRetrieveServersCount()
 {
   Q_D(ctkDICOMScheduler);
   int numberOfServers = 0;
@@ -421,7 +598,7 @@ int ctkDICOMScheduler::getNumberOfQueryRetrieveServers()
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMScheduler::getNumberOfStorageServers()
+int ctkDICOMScheduler::storageServersCount()
 {
   Q_D(ctkDICOMScheduler);
   int numberOfServers = 0;
@@ -436,7 +613,7 @@ int ctkDICOMScheduler::getNumberOfStorageServers()
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMScheduler::getNthServer(int id)
+ctkDICOMServer* ctkDICOMScheduler::server(int id)
 {
   Q_D(ctkDICOMScheduler);
   if (id < 0 || id > d->Servers.size() - 1)
@@ -447,10 +624,10 @@ ctkDICOMServer* ctkDICOMScheduler::getNthServer(int id)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMScheduler::getServer(const QString& connectionName)
+ctkDICOMServer* ctkDICOMScheduler::server(const QString& connectionName)
 {
   Q_D(ctkDICOMScheduler);
-  ctkDICOMServer* server = this->getNthServer(this->getServerIndexFromName(connectionName));
+  ctkDICOMServer* server = this->server(this->getServerIndexFromName(connectionName));
   if (!server)
   {
     server = d->getServerFromProxyServersByConnectionName(connectionName);
@@ -464,6 +641,11 @@ void ctkDICOMScheduler::addServer(ctkDICOMServer& server)
   Q_D(ctkDICOMScheduler);
   QSharedPointer<ctkDICOMServer> QSharedServer = QSharedPointer<ctkDICOMServer>(&server, skipDelete);
   d->Servers.append(QSharedServer);
+
+  QMetaObject::Connection serverModifiedConnection =
+    this->connect(QSharedServer.data(), SIGNAL(serverModified(QString)),
+                  this, SIGNAL(serverModified(QString)));
+  d->ServersConnections.insert(QSharedServer->connectionName(), serverModifiedConnection);
 }
 
 //----------------------------------------------------------------------------
@@ -471,22 +653,36 @@ void ctkDICOMScheduler::addServer(QSharedPointer<ctkDICOMServer> server)
 {
   Q_D(ctkDICOMScheduler);
   d->Servers.append(server);
+
+  QMetaObject::Connection serverModifiedConnection =
+    this->connect(server.data(), SIGNAL(serverModified(QString)),
+                  this, SIGNAL(serverModified(QString)));
+  d->ServersConnections.insert(server->connectionName(), serverModifiedConnection);
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::removeServer(const QString& connectionName)
 {
-  this->removeNthServer(this->getServerIndexFromName(connectionName));
+  this->removeServer(this->getServerIndexFromName(connectionName));
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::removeNthServer(int id)
+void ctkDICOMScheduler::removeServer(int id)
 {
   Q_D(ctkDICOMScheduler);
   if (id < 0 || id > d->Servers.size() - 1)
   {
     return;
   }
+
+  ctkDICOMServer* server = this->server(id);
+  if (!server)
+  {
+    return;
+  }
+
+  QMetaObject::Connection connection = d->ServersConnections.value(server->connectionName());
+  QObject::disconnect(connection);
 
   d->Servers.removeAt(id);
 }
@@ -496,6 +692,12 @@ void ctkDICOMScheduler::removeAllServers()
 {
   Q_D(ctkDICOMScheduler);
   d->Servers.clear();
+  for (QMap<QString, QMetaObject::Connection>::iterator it = d->ServersConnections.begin();
+       it != d->ServersConnections.end(); ++it)
+  {
+    QObject::disconnect(it.value());
+  }
+  d->ServersConnections.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -533,6 +735,46 @@ int ctkDICOMScheduler::getServerIndexFromName(const QString& connectionName)
 }
 
 //----------------------------------------------------------------------------
+QStringList ctkDICOMScheduler::getAllServersConnectionNames()
+{
+  Q_D(ctkDICOMScheduler);
+
+  QStringList connectionNames;
+  for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
+  {
+    QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
+    if (!server)
+    {
+      continue;
+    }
+
+    connectionNames.append(server->connectionName());
+  }
+
+  return connectionNames;
+}
+
+//----------------------------------------------------------------------------
+QStringList ctkDICOMScheduler::getConnectionNamesForActiveServers()
+{
+Q_D(ctkDICOMScheduler);
+
+  QStringList connectionNames;
+  for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
+  {
+    QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
+    if (!server || (!server->queryRetrieveEnabled() && !server->storageEnabled()))
+    {
+      continue;
+    }
+
+    connectionNames.append(server->connectionName());
+  }
+
+  return connectionNames;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
                                                  const QStringList& studyInstanceUIDs,
                                                  const QStringList& seriesInstanceUIDs,
@@ -561,45 +803,48 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
     return;
   }
 
-  d->QueueMutex.lock();
-  bool wait = true;
-  while (wait)
   {
-    QCoreApplication::processEvents();
-    d->ThreadPool->waitForDone(300);
-
-    wait = false;
-    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
+    bool wait = true;
+    while (wait)
     {
-      if (!job)
-      {
-        continue;
-      }
+      qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+      d->ThreadPool->waitForDone(300);
 
-      if (job->isPersistent())
+      wait = false;
+      foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
       {
-        continue;
-      }
-      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-      if (!dicomJob)
-      {
-        continue;
-      }
-
-      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-      {
-        if (job->status() != ctkAbstractJob::JobStatus::Finished)
+        if (!job)
         {
-          wait = true;
-          break;
+          continue;
+        }
+
+        if (job->isPersistent())
+        {
+          continue;
+        }
+        ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+        if (!dicomJob)
+        {
+          continue;
+        }
+
+        if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+        {
+          if (job->status() != ctkAbstractJob::JobStatus::Finished)
+          {
+            wait = true;
+            break;
+          }
         }
       }
     }
   }
-  d->QueueMutex.unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -633,30 +878,33 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
     return jobs;
   }
 
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (!job)
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (!job)
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        logger.debug("ctkDICOMScheduler::getJobsByDICOMUIDs: unexpected type of job.");
+        continue;
+      }
 
-    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-    {
-      jobs.push_back(job);
+      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+      {
+        jobs.push_back(job);
+      }
     }
   }
-  d->QueueMutex.unlock();
 
   return jobs;
 }
@@ -686,97 +934,41 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
 
   if (numberOfInputLists == 0)
   {
-    logger.warn("ctkDICOMScheduler::stopJobsByDICOMUIDs failed: all the provided lists with UIDs are empty.");
+    logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: all the provided lists with UIDs are empty.");
     return;
   }
 
   QStringList jobsUIDs;
-  d->QueueMutex.lock();
-  // Stops jobs without a worker (in waiting, still in main thread)
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (!job)
+    // The QReadLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QReadLockers within the scheduler's methods.
+    QReadLocker locker(&d->QueueLock);
+    // Stops jobs without a worker (in waiting, still in main thread)
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (!job)
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: unexpected type of job.");
+        continue;
+      }
 
-    ctkDICOMInserterJob* inserterJob = qobject_cast<ctkDICOMInserterJob*>(job.data());
-    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-    {
-      jobsUIDs.append(dicomJob->jobUID());
-    }
-    else if (inserterJob)
-    {
-      jobsUIDs.append(dicomJob->jobUID());
+      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+      {
+        jobsUIDs.append(dicomJob->jobUID());
+      }
     }
   }
 
-  d->QueueMutex.unlock();
   this->stopJobsByJobUIDs(jobsUIDs);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetails)
-{
-  for(QString jobUID : jobDetails.keys())
-  {
-    ctkDICOMJobDetail jd = jobDetails.value(jobUID);
-    if (jd.JobClass == "ctkDICOMQueryJob")
-    {
-      switch (jd.DICOMLevel)
-      {
-        case ctkDICOMJob::DICOMLevels::Patients:
-          this->queryPatients();
-        break;
-        case ctkDICOMJob::DICOMLevels::Studies:
-          this->queryStudies(jd.PatientID);
-        break;
-        case ctkDICOMJob::DICOMLevels::Series:
-          this->querySeries(jd.PatientID,
-                            jd.StudyInstanceUID);
-        break;
-        case ctkDICOMJob::DICOMLevels::Instances:
-          this->queryInstances(jd.PatientID,
-                               jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID);
-        break;
-      }
-    }
-    else if (jd.JobClass == "ctkDICOMRetrieveJob")
-    {
-      switch (jd.DICOMLevel)
-      {
-        case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("Retrieve Patient is not implemented");
-        break;
-        case ctkDICOMJob::DICOMLevels::Studies:
-          this->retrieveStudy(jd.PatientID,
-                              jd.StudyInstanceUID);
-        break;
-        case ctkDICOMJob::DICOMLevels::Series:
-          this->retrieveSeries(jd.PatientID,
-                               jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID);
-        break;
-        case ctkDICOMJob::DICOMLevels::Instances:
-          this->retrieveSOPInstance(jd.PatientID,
-                                    jd.StudyInstanceUID,
-                                    jd.SeriesInstanceUID,
-                                    jd.SOPInstanceUID);
-        break;
-      }
-    }
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -790,29 +982,32 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
     return;
   }
 
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (job->isPersistent())
+    // The QWriteLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QWriteLockers within the scheduler's methods.
+    QWriteLocker locker(&d->QueueLock);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (job->isPersistent())
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        logger.debug("ctkDICOMScheduler::raiseJobsPriorityForSeries: unexpected type of job.");
+        continue;
+      }
 
-    if (!selectedSeriesInstanceUIDs.contains(dicomJob->seriesInstanceUID()))
-    {
-      priority = QThread::Priority::LowPriority;
-    }
+      if (!selectedSeriesInstanceUIDs.contains(dicomJob->seriesInstanceUID()))
+      {
+        priority = QThread::Priority::LowPriority;
+      }
 
-    job->setPriority(priority);
+      job->setPriority(priority);
+    }
   }
-  d->QueueMutex.unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -834,18 +1029,22 @@ ctkDICOMStorageListenerJob* ctkDICOMScheduler::listenerJob()
 {
   Q_D(ctkDICOMScheduler);
   ctkDICOMStorageListenerJob* listenerJobRaw = nullptr;
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+
   {
-    QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
-      qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
-    if (listenerJob)
+    // The QWriteLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QWriteLockers within the scheduler's methods.
+    QWriteLocker locker(&d->QueueLock);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      listenerJobRaw = listenerJob.data();
-      break;
+      QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
+        qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
+      if (listenerJob)
+      {
+        listenerJobRaw = listenerJob.data();
+        break;
+      }
     }
   }
-  d->QueueMutex.unlock();
 
   return listenerJobRaw;
 }
@@ -860,4 +1059,94 @@ bool ctkDICOMScheduler::isStorageListenerActive()
     return true;
   }
   return false;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobStarted(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
+  }
+
+  ctkJobScheduler::onJobStarted(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobUserStopped(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
+  }
+
+  ctkJobScheduler::onJobUserStopped(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobFinished(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
+  }
+
+  ctkJobScheduler::onJobFinished(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobAttemptFailed(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
+  }
+
+  ctkJobScheduler::onJobAttemptFailed(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::onJobFailed(ctkAbstractJob* job)
+{
+  Q_D(ctkDICOMScheduler);
+  if (!job)
+  {
+    return;
+  }
+
+  ctkDICOMJobsAppender* appender = dynamic_cast<ctkDICOMJobsAppender*>(d->Appender.get());
+  if (appender)
+  {
+    job->addLog(appender->messageByThreadID(job->runningThreadID()));
+  }
+
+  ctkJobScheduler::onJobFailed(job);
 }

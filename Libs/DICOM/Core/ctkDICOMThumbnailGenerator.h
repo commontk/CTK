@@ -28,16 +28,16 @@ class QImage;
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMAbstractThumbnailGenerator.h"
-#include "ctkDICOMWidgetsExport.h"
+#include "ctkDICOMCoreExport.h"
 class ctkDICOMThumbnailGeneratorPrivate;
 
 // DCMTK includes
 class DicomImage;
 
-/// \ingroup DICOM_Widgets
+/// \ingroup DICOM_Core
 ///
 /// \brief Thumbnail generator class
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
+class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT
   Q_PROPERTY(int width READ width WRITE setWidth)
@@ -49,15 +49,18 @@ public:
   explicit ctkDICOMThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMThumbnailGenerator();
 
-  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path);
+  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& thumbnailPath,
+                                 QColor backgroundColor = Qt::darkGray);
 
   Q_INVOKABLE bool generateThumbnail(DicomImage *dcmImage, QImage& image);
-  Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, QImage& image);
-  Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath);
+  Q_INVOKABLE bool generateThumbnail(const QString& dcmImagePath, QImage& image);
+  Q_INVOKABLE bool generateThumbnail(const QString& dcmImagePath, const QString& thumbnailPath);
 
   /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
   /// It can be used as a placeholder for invalid images or duringan image is loaded.
-  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor color = Qt::darkGray);
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor backgroundColor = Qt::darkGray);
+  Q_INVOKABLE virtual void generateDocumentThumbnail(const QString &thumbnailPath,
+                                                     QColor backgroundColor = Qt::darkGray);
 
   /// Set thumbnail width
   void setWidth(int width);

@@ -39,16 +39,16 @@ public:
 
   enum LogLevel
   {
-    Unknown = 0,
-    Status,
-    Trace,
-    Debug,
-    Info,
-    Warning,
-    Error,
-    Critical,
-    Fatal,
-    None,
+    Unknown  = 0x1,
+    Status   = 0x2,
+    Trace    = 0x4,
+    Debug    = 0x8,
+    Info     = 0x10,
+    Warning  = 0x20,
+    Error    = 0x40,
+    Critical = 0x80,
+    Fatal    = 0x100,
+    None     = 0x200,
   };
   Q_DECLARE_FLAGS(LogLevels, LogLevel)
 

@@ -33,6 +33,9 @@
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMStorageListenerWorker_p.h"
 
+// DCMTK includes
+#include <dcmtk/oflog/spi/logevent.h>
+
 static ctkLogger logger ("org.commontk.dicom.DICOMStorageListenerWorker");
 
 //------------------------------------------------------------------------------
@@ -122,6 +125,9 @@ void ctkDICOMStorageListenerWorker::run()
   {
     return;
   }
+
+  QString currentThread = dcmtk::log4cplus::thread::getCurrentThreadName().c_str();
+  storageListenerJob->setRunningThreadID(currentThread);
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
     qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);

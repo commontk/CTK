@@ -109,8 +109,8 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   std::cout << qPrintable(testName) << ": Running queryStudies" << std::endl;
   QString patientID = "Facial Expression";
-  scheduler.queryStudies(patientID);
-  scheduler.waitForFinish();
+  scheduler.queryStudies(patientID, QThread::LowPriority, QStringList("Test"));
+  scheduler.waitForFinish(false, true);
 
   CHECK_INT(database.patients().count(), 1);
 
@@ -120,16 +120,16 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   std::cout << qPrintable(testName) << ": Running querySeries" << std::endl;
   QString studyIstanceUID = studies[0];
-  scheduler.querySeries(patientID, studyIstanceUID);
-  scheduler.waitForFinish();
+  scheduler.querySeries(patientID, studyIstanceUID, QThread::LowPriority, QStringList("Test"));
+  scheduler.waitForFinish(false, true);
 
   QStringList series = database.seriesForStudy(studyIstanceUID);
   CHECK_INT(series.count(), 1);
 
   std::cout << qPrintable(testName) << ": Running queryInstances" << std::endl;
   QString seriesIstanceUID = series[0];
-  scheduler.queryInstances(patientID, studyIstanceUID, seriesIstanceUID);
-  scheduler.waitForFinish();
+  scheduler.queryInstances(patientID, studyIstanceUID, seriesIstanceUID, QThread::LowPriority, QStringList("Test"));
+  scheduler.waitForFinish(false, true);
 
   QStringList instances = database.instancesForSeries(seriesIstanceUID);
   QStringList files = database.filesForSeries(seriesIstanceUID);
@@ -147,11 +147,12 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   foreach (const QString& sopIstanceUID, instances)
   {
-    scheduler.retrieveSOPInstance(patientID, studyIstanceUID, seriesIstanceUID, sopIstanceUID);
+    scheduler.retrieveSOPInstance(patientID, studyIstanceUID, seriesIstanceUID,
+      sopIstanceUID, QThread::LowPriority, QStringList("Test"));
   }
 
   CHECK_INT(scheduler.numberOfJobs(), numberOfImages);
-  scheduler.waitForFinish();
+  scheduler.waitForFinish(false, true);
 
   instances = database.instancesForSeries(seriesIstanceUID);
   files = database.filesForSeries(seriesIstanceUID);

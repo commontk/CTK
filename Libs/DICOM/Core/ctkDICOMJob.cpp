@@ -36,12 +36,7 @@ static ctkLogger logger ("org.commontk.dicom.DICOMJob");
 //------------------------------------------------------------------------------
 ctkDICOMJob::ctkDICOMJob()
 {
-  this->DICOMLevel = DICOMLevels::Patients;
-  this->PatientID = "";
-  this->StudyInstanceUID = "";
-  this->SeriesInstanceUID = "";
-  this->SOPInstanceUID = "";
-  this->ReferenceInserterJobUID = "";
+  this->DICOMLevel = DICOMLevels::None;
 }
 
 //------------------------------------------------------------------------------
@@ -183,4 +178,10 @@ ctkDICOMJobResponseSet::JobType ctkDICOMJob::getJobType() const
 QVariant ctkDICOMJob::toVariant()
 {
   return QVariant::fromValue(ctkDICOMJobDetail(*this));
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMJob::releaseResources()
+{
+  this->JobResponseSets.clear();
 }

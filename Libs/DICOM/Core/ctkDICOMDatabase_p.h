@@ -39,6 +39,7 @@
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabasePrivate
 {
   Q_DECLARE_PUBLIC(ctkDICOMDatabase);
+
 protected:
   ctkDICOMDatabase* const q_ptr;
 
@@ -71,10 +72,6 @@ public:
 
   /// Returns false in case of an error
   bool indexingStatusForFile(const QString& filePath, const QString& sopInstanceUID, bool& datasetInDatabase, bool& datasetUpToDate, QString& databaseFilename);
-
-  /// Retrieve thumbnail from file and store in database folder.
-  bool storeThumbnailFile(const QString& originalFilePath,
-    const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID);
 
   /// Get basic UIDs for a data set, return true if the data set has all the required tags
   bool uidsForDataSet(const ctkDICOMItem& dataset, QString& patientsName, QString& patientID, QString& studyInstanceUID, QString& seriesInstanceUID);
@@ -120,6 +117,14 @@ public:
   /// Convert an absolute path to an internal path (absolute if outside database folder, relative if inside database folder).
   QString internalPathFromAbsolute(const QString& filename);
 
+  /// Convert allowList and denyList to a JSON string
+  QString convertConnectionInfoToJson(const QStringList &allowList,
+                                      const QStringList &denyList);
+  /// Convert QStringList to QJsonArray
+  QJsonArray stringListToJsonArray(const QStringList &stringList);
+  /// Convert QJsonArray to QStringList
+  QStringList jsonArrayToStringList(const QJsonArray &jsonArray);
+
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString DatabaseFileName;
 
@@ -144,7 +149,14 @@ public:
   /// It would be very expensive to check in the database
   /// presence of all these records on each slice insertion,
   /// therefore we cache recently added entries in memory.
-  QMap<QString, int> InsertedPatientsCompositeIDCache; // map from composite patient ID to database ID
+
+  /// map from composite patient ID to database ID
+  QMap<QString, int> InsertedPatientsCompositeIDCache;
+
+  /// map for patient database ID and inserted enabled connection
+  QMap<int, QStringList> InsertedConnectionsIDCache;
+
+  /// map studies and series UIDs
   QSet<QString> InsertedStudyUIDsCache;
   QSet<QString> InsertedSeriesUIDsCache;
 
@@ -163,11 +175,26 @@ public:
   bool openTagCacheDatabase();
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 
-  // Return true if a new item is inserted
-  bool insertPatientStudySeries(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName);
-  bool insertPatient(const ctkDICOMItem& dataset, int& databasePatientID);
-  bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
-  bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
+  /// Insert metadata
+  ctkDICOMDatabase::InsertResult insertPatientStudySeries(const ctkDICOMItem& dataset,
+    const QString& patientID,
+    const QString& patientsName,
+    const QString& connectionName = "");
+  ctkDICOMDatabase::InsertResult insertPatient(const ctkDICOMItem& dataset,
+    const QString& patientID,
+    const QString& patientsName,
+    int& databasePatientID);
+  ctkDICOMDatabase::InsertResult insertConnectionName(const int& dbPatientID,
+    const QString& connectionName);
+  ctkDICOMDatabase::InsertResult insertStudy(const ctkDICOMItem& dataset,
+    const int& dbPatientID);
+  ctkDICOMDatabase::InsertResult insertSeries(const ctkDICOMItem& dataset,
+    const QString& studyInstanceUID);
+
+  /// Update connections metadata
+  ctkDICOMDatabase::InsertResult updateConnections(const QString& dbPatientID,
+    const QStringList& allowList,
+    const QStringList& denyList);
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;

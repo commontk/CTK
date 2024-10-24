@@ -24,9 +24,6 @@
 #include <QString>
 #include <QStringList>
 
-// ctkCore includes
-#include <ctkLogger.h>
-
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMStorageListener.h"
@@ -34,7 +31,10 @@
 // DCMTK includes
 #include <dcmtk/dcmnet/dstorscp.h> /* for DcmStorageSCP */
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMStorageListener" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogStorageListener = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
 // A customized implementation so that Qt signals can be emitted
@@ -123,6 +123,8 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
       reqDataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesUID);
       OFString studyUID;
       reqDataset->findAndGetOFString(DCM_StudyInstanceUID, studyUID);
+      OFString patientID;
+      reqDataset->findAndGetOFString(DCM_PatientID, patientID);
       emit this->listener->progress(
           ctkDICOMStorageListener::tr("Got STORE request for %1").arg(instanceUID.c_str()));
       emit this->listener->progress(0);
@@ -131,6 +133,7 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
         QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
             QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
         jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
+        jobResponseSet->setPatientID(patientID.c_str());
         jobResponseSet->setStudyInstanceUID(studyUID.c_str());
         jobResponseSet->setSeriesInstanceUID(seriesUID.c_str());
         jobResponseSet->setSOPInstanceUID(instanceUID.c_str());
@@ -223,7 +226,8 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
   }
   else
   {
-    logger.error("Failed to find listener configuration file");
+    QString error = "Failed to find listener configuration file";
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return "";
   }
 
@@ -240,7 +244,8 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
   }
   else
   {
-    logger.error("Failed to find listener configuration file");
+    QString error = "Failed to find listener configuration file";
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return "";
   }
   writeFile.close();
@@ -268,6 +273,14 @@ ctkDICOMStorageListener::~ctkDICOMStorageListener()
 }
 
 //------------------------------------------------------------------------------
+CTK_SET_CPP(ctkDICOMStorageListener, const QString&, setAETitle, AETitle);
+CTK_GET_CPP(ctkDICOMStorageListener, QString, AETitle, AETitle)
+CTK_SET_CPP(ctkDICOMStorageListener, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMStorageListener, int, port, Port)
+CTK_SET_CPP(ctkDICOMStorageListener, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMStorageListener, QString, jobUID, JobUID)
+
+//------------------------------------------------------------------------------
 bool ctkDICOMStorageListener::listen()
 {
   Q_D(ctkDICOMStorageListener);
@@ -279,9 +292,10 @@ bool ctkDICOMStorageListener::listen()
   OFCondition status = d->SCU.listen();
   if (status.bad() || d->Canceled)
   {
-    logger.error(QString("SCP stopped, it was listening on port %1 : %2 ")
-                     .arg(QString::number(d->Port))
-                     .arg(status.text()));
+    QString error = QString("SCP stopped, it was listening on port %1 : %2 ")
+                            .arg(QString::number(d->Port))
+                            .arg(status.text());
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return false;
   }
   return true;
@@ -313,43 +327,16 @@ bool ctkDICOMStorageListener::initializeSCU()
       OFString(d->defaultConfigFile().toStdString().c_str()), "alldicom");
   if (status.bad())
   {
-    logger.error(QString("Cannot load association configuration: %1").arg(status.text()));
+    QString error = QString("Cannot load association configuration: %1").arg(status.text());
+    DCMTK_LOG4CPLUS_ERROR_STR(rootLogStorageListener, error.toStdString().c_str());
     return false;
   }
 
   return true;
 }
 
-//------------------------------------------------------------------------------
-void ctkDICOMStorageListener::setAETitle(const QString& AETitle)
-{
-  Q_D(ctkDICOMStorageListener);
-  d->AETitle = AETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMStorageListener::AETitle() const
-{
-  Q_D(const ctkDICOMStorageListener);
-  return d->AETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMStorageListener::setPort(int port)
-{
-  Q_D(ctkDICOMStorageListener);
-  d->Port = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMStorageListener::port() const
-{
-  Q_D(const ctkDICOMStorageListener);
-  return d->Port;
-}
-
 //-----------------------------------------------------------------------------
-void ctkDICOMStorageListener::setConnectionTimeout(int timeout)
+void ctkDICOMStorageListener::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMStorageListener);
   d->SCU.setACSETimeout(timeout);
@@ -357,7 +344,7 @@ void ctkDICOMStorageListener::setConnectionTimeout(int timeout)
 }
 
 //-----------------------------------------------------------------------------
-int ctkDICOMStorageListener::connectionTimeout()
+int ctkDICOMStorageListener::connectionTimeout() const
 {
   Q_D(const ctkDICOMStorageListener);
   return d->SCU.getConnectionTimeout();
@@ -409,18 +396,4 @@ void ctkDICOMStorageListener::removeJobResponseSet(QSharedPointer<ctkDICOMJobRes
 {
   Q_D(ctkDICOMStorageListener);
   d->JobResponseSets.removeOne(jobResponseSet);
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMStorageListener::setJobUID(const QString& jobUID)
-{
-  Q_D(ctkDICOMStorageListener);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMStorageListener::jobUID() const
-{
-  Q_D(const ctkDICOMStorageListener);
-  return d->JobUID;
 }

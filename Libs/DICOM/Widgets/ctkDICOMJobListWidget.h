@@ -1,4 +1,4 @@
-﻿/*=========================================================================
+/*=========================================================================
 
   Library:   CTK
 
@@ -57,11 +57,12 @@ public:
 public Q_SLOTS:
   void onJobInitialized(QVariant);
   void onJobQueued(QVariant);
-  void onJobStarted(QVariant);
-  void onJobCanceled(QVariant);
-  void onJobFailed(QVariant);
-  void onJobFinished(QVariant);
-  void onProgressJobDetail(QVariant);
+  void onJobStarted(QList<QVariant>);
+  void onJobAttemptFailed(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
+  void onProgressJobDetail(QList<QVariant>);
 
   void onFilterTextChanged(QString);
   void onFilterColumnChanged(QString);
@@ -74,6 +75,10 @@ public Q_SLOTS:
   void onShowCompletedButtonToggled(bool);
   void onClearCompletedButtonClicked();
   void onClearAllButtonClicked();
+
+Q_SIGNALS:
+  /// Emitted when a job row is selected
+  void patientSelected(const QString&, const QString&, const QString&);
 
 protected:
   QScopedPointer<ctkDICOMJobListWidgetPrivate> d_ptr;

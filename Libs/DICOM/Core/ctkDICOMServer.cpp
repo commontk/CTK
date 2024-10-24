@@ -48,6 +48,7 @@ public:
   QString ConnectionName;
   bool QueryRetrieveEnabled;
   bool StorageEnabled;
+  bool TrustedEnabled;
   QString CallingAETitle;
   QString CalledAETitle;
   QString Host;
@@ -66,13 +67,9 @@ public:
 ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
   : q_ptr(&obj)
 {
-  this->ConnectionName = "";
-  this->CallingAETitle = "";
-  this->CalledAETitle = "";
-  this->Host = "";
-  this->MoveDestinationAETitle = "";
   this->QueryRetrieveEnabled = true;
   this->StorageEnabled = true;
+  this->TrustedEnabled = true;
   this->KeepAssociationOpen = false;
   this->ConnectionTimeout = 10;
   this->Port = 80;
@@ -104,45 +101,49 @@ ctkDICOMServer::ctkDICOMServer(QObject* parent)
 ctkDICOMServer::~ctkDICOMServer() = default;
 
 //------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDICOMServer, QString, connectionName, ConnectionName)
+CTK_GET_CPP(ctkDICOMServer, bool, queryRetrieveEnabled, QueryRetrieveEnabled)
+CTK_GET_CPP(ctkDICOMServer, bool, storageEnabled, StorageEnabled)
+CTK_GET_CPP(ctkDICOMServer, bool, trustedEnabled, TrustedEnabled)
+CTK_GET_CPP(ctkDICOMServer, QString, callingAETitle, CallingAETitle)
+CTK_GET_CPP(ctkDICOMServer, QString, calledAETitle, CalledAETitle)
+CTK_GET_CPP(ctkDICOMServer, QString, host, Host)
+CTK_GET_CPP(ctkDICOMServer, int, port, Port)
+CTK_GET_CPP(ctkDICOMServer, ctkDICOMServer::RetrieveProtocol, retrieveProtocol, RetrieveProtocol)
+CTK_GET_CPP(ctkDICOMServer, QString, moveDestinationAETitle, MoveDestinationAETitle)
+CTK_GET_CPP(ctkDICOMServer, bool, keepAssociationOpen, KeepAssociationOpen)
+CTK_GET_CPP(ctkDICOMServer, int, connectionTimeout, ConnectionTimeout)
+
+//------------------------------------------------------------------------------
 void ctkDICOMServer::setConnectionName(const QString& connectionName)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionName = connectionName;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMServer::connectionName() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->ConnectionName;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMServer::setQueryRetrieveEnabled(bool queryRetrieveEnabled)
+void ctkDICOMServer::setQueryRetrieveEnabled(const bool& queryRetrieveEnabled)
 {
   Q_D(ctkDICOMServer);
   d->QueryRetrieveEnabled = queryRetrieveEnabled;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMServer::queryRetrieveEnabled() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->QueryRetrieveEnabled;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMServer::setStorageEnabled(bool storageEnabled)
+void ctkDICOMServer::setStorageEnabled(const bool& storageEnabled)
 {
   Q_D(ctkDICOMServer);
   d->StorageEnabled = storageEnabled;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMServer::storageEnabled() const
+void ctkDICOMServer::setTrustedEnabled(const bool& trustedEnabled)
 {
-  Q_D(const ctkDICOMServer);
-  return d->StorageEnabled;
+  Q_D(ctkDICOMServer);
+  d->TrustedEnabled = trustedEnabled;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -150,13 +151,7 @@ void ctkDICOMServer::setCallingAETitle(const QString& callingAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CallingAETitle = callingAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMServer::callingAETitle() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->CallingAETitle;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -164,13 +159,7 @@ void ctkDICOMServer::setCalledAETitle(const QString& calledAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CalledAETitle = calledAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMServer::calledAETitle() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->CalledAETitle;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -178,27 +167,15 @@ void ctkDICOMServer::setHost(const QString& host)
 {
   Q_D(ctkDICOMServer);
   d->Host = host;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMServer::host() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->Host;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMServer::setPort(int port)
+void ctkDICOMServer::setPort(const int& port)
 {
   Q_D(ctkDICOMServer);
   d->Port = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMServer::port() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->Port;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -206,20 +183,13 @@ void ctkDICOMServer::setRetrieveProtocol(RetrieveProtocol protocol)
 {
   Q_D(ctkDICOMServer);
   d->RetrieveProtocol = protocol;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMServer::RetrieveProtocol ctkDICOMServer::retrieveProtocol() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->RetrieveProtocol;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMServer::setRetrieveProtocolAsString(const QString& protocolString)
 {
   Q_D(ctkDICOMServer);
-
   if (protocolString == "CGET")
   {
     d->RetrieveProtocol = RetrieveProtocol::CGET;
@@ -232,6 +202,7 @@ void ctkDICOMServer::setRetrieveProtocolAsString(const QString& protocolString)
     {
     d->RetrieveProtocol = RetrieveProtocol::WADO;
     }*/
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -262,44 +233,24 @@ QString ctkDICOMServer::retrieveProtocolAsString() const
 void ctkDICOMServer::setMoveDestinationAETitle(const QString& moveDestinationAETitle)
 {
   Q_D(ctkDICOMServer);
-  if (moveDestinationAETitle != d->MoveDestinationAETitle)
-  {
-    d->MoveDestinationAETitle = moveDestinationAETitle;
-  }
-}
-//------------------------------------------------------------------------------
-QString ctkDICOMServer::moveDestinationAETitle() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->MoveDestinationAETitle;
+  d->MoveDestinationAETitle = moveDestinationAETitle;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setKeepAssociationOpen(const bool& keepOpen)
+void ctkDICOMServer::setKeepAssociationOpen(const bool& keepAssociationOpen)
 {
   Q_D(ctkDICOMServer);
-  d->KeepAssociationOpen = keepOpen;
+  d->KeepAssociationOpen = keepAssociationOpen;
+  emit serverModified(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMServer::keepAssociationOpen() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->KeepAssociationOpen;
-}
-
-//-----------------------------------------------------------------------------
 void ctkDICOMServer::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionTimeout = timeout;
-}
-
-//-----------------------------------------------------------------------------
-int ctkDICOMServer::connectionTimeout() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->ConnectionTimeout;
+  emit serverModified(d->ConnectionName);
 }
 
 //----------------------------------------------------------------------------
@@ -314,6 +265,7 @@ void ctkDICOMServer::setProxyServer(const ctkDICOMServer& proxyServer)
 {
   Q_D(ctkDICOMServer);
   d->ProxyServer = proxyServer.clone();
+  emit serverModified(d->ConnectionName);
 }
 
 //----------------------------------------------------------------------------
@@ -323,6 +275,7 @@ ctkDICOMServer *ctkDICOMServer::clone() const
   newServer->setConnectionName(this->connectionName());
   newServer->setQueryRetrieveEnabled(this->queryRetrieveEnabled());
   newServer->setStorageEnabled(this->storageEnabled());
+  newServer->setTrustedEnabled(this->trustedEnabled());
   newServer->setCallingAETitle(this->callingAETitle());
   newServer->setCalledAETitle(this->calledAETitle());
   newServer->setHost(this->host());

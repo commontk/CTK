@@ -52,7 +52,7 @@ public:
 
   ///@{
   /// Port, default: 11112
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
@@ -64,12 +64,12 @@ public:
 
   ///@{
   /// Connection timeout, default 1 sec.
-  void setConnectionTimeout(int timeout);
+  void setConnectionTimeout(const int& timeout);
   int connectionTimeout() const;
   ///@}
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const override;
+  Q_INVOKABLE QString loggerReport(const QString& status) override;
 
   /// \see ctkAbstractJob::clone()
   Q_INVOKABLE ctkAbstractJob* clone() const override;

@@ -109,7 +109,7 @@ public:
   int connectionTimeout() const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   ///@{
@@ -128,8 +128,12 @@ public:
   Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
   void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
-  Q_INVOKABLE void setJobUID(const QString& jobUID);
-  Q_INVOKABLE QString jobUID() const;
+  ///@}
+
+  ///@{
+  /// Reference job uid.
+  void setJobUID(const QString& jobUID);
+  QString jobUID() const;
   ///@}
 
   /// Patient ID from from the last operation.
@@ -179,6 +183,7 @@ public Q_SLOTS:
                             const QString& patientID = "");
   /// Cancel the current operation
   Q_INVOKABLE void cancel();
+  Q_INVOKABLE void releaseAssociation();
 
 Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.
@@ -190,6 +195,8 @@ Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
+  /// Signal is emitted inside the query() function. It send any warning messages
+  void warn(const QString& message);
   /// Signal is emitted inside the retrieve() function. It send any error messages
   void error(const QString& message);
   /// Signal is emitted inside the retrieve() function when finished with value

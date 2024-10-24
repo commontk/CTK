@@ -80,21 +80,21 @@ public:
   /// Specify a port for the packet headers.
   /// \a port ranges from 0 to 65535.
   /// 0 by default.
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
   ///@{
   /// connection timeout, default 10 sec.
-  void setConnectionTimeout(int timeout);
+  void setConnectionTimeout(const int& timeout);
   int connectionTimeout() const;
   ///@}
 
   ///@{
   /// maximum number of responses allowed in one query
   /// when query is at Patient level. Default is 25.
-  void setMaximumPatientsQuery(int maximumPatientsQuery);
-  int maximumPatientsQuery();
+  void setMaximumPatientsQuery(const int& maximumPatientsQuery);
+  int maximumPatientsQuery() const;
   ///@}
 
   ///@{
@@ -118,7 +118,7 @@ public:
   Q_INVOKABLE QMap<QString,QVariant> filters()const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   /// Query a remote DICOM Image Store SCP.
@@ -153,11 +153,15 @@ public:
                                   const QString& studyInstanceUID,
                                   const QString& seriesInstanceUID);
 
-  ///@{
+
   /// Access the list of datasets from the last queryPatients, queryStudies,
   /// querySeries and queryInstances methods.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
+  ///@}
+
+  ///@{
+  /// Reference job uid.
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
   ///@}
@@ -172,6 +176,8 @@ Q_SIGNALS:
   /// Signal is emitted inside the query() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
+  /// Signal is emitted inside the query() function. It send any warning messages
+  void warn(const QString& message);
   /// Signal is emitted inside the query() function. It send any error messages
   void error(const QString& message);
   /// Signal is emitted inside the query() function when finished with value
@@ -179,10 +185,12 @@ Q_SIGNALS:
   void done(const bool& error);
 
 public Q_SLOTS:
-  void cancel();
+  /// Cancel the current operation
+  Q_INVOKABLE void cancel();
+  Q_INVOKABLE void releaseAssociation();
 
 protected:
-  QString applyFilters();
+  QString applyFilters(QMap<QString,QVariant>);
   bool initializeSCU();
 
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;

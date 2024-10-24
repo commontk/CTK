@@ -91,9 +91,25 @@
           </spacer>
          </item>
          <item>
-          <layout class="QFormLayout" name="PatientFormLayout">
-           <item row="1" column="0">
-            <widget class="QLabel" name="PatientIDLabel">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="4">
+            <widget class="ctkCheckableComboBox" name="PatientServersCheckableComboBox"/>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="PatientServersLabel">
+             <property name="text">
+              <string>Servers:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="PatientNameLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -101,52 +117,21 @@
               </size>
              </property>
              <property name="text">
-              <string>ID</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              <string>Name:</string>
              </property>
              <property name="margin">
               <number>3</number>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="PatientSexLabel">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Sex</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-             <property name="margin">
-              <number>3</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="PatientSexValueLabel">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-             <property name="margin">
-              <number>3</number>
-             </property>
+           <item row="0" column="1">
+            <widget class="QLabel" name="PatientNameValueLabel">
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="1" column="2">
             <widget class="QLabel" name="PatientBirthDateLabel">
              <property name="minimumSize">
               <size>
@@ -155,7 +140,7 @@
               </size>
              </property>
              <property name="text">
-              <string>Birth Date</string>
+              <string>Birth Date:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -165,10 +150,16 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLabel" name="PatientBirthDateValueLabel">
+           <item row="1" column="0">
+            <widget class="QLabel" name="PatientSexLabel">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
-              <string/>
+              <string>Sex:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -176,12 +167,41 @@
              <property name="margin">
               <number>3</number>
              </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="PatientSexValueLabel">
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="2">
+            <widget class="QLabel" name="PatientIDLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>ID:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="margin">
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
             <widget class="QLabel" name="PatientIDValueLabel">
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
@@ -195,44 +215,13 @@
              <property name="midLineWidth">
               <number>0</number>
              </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-             <property name="margin">
-              <number>3</number>
-             </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="PatientNameLabel">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Name</string>
-             </property>
-             <property name="margin">
-              <number>3</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="PatientNameValueLabel">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="margin">
-              <number>3</number>
-             </property>
+           <item row="1" column="3">
+            <widget class="QLabel" name="PatientBirthDateValueLabel">
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
@@ -288,7 +277,7 @@
            <x>0</x>
            <y>0</y>
            <width>996</width>
-           <height>191</height>
+           <height>254</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5"/>
@@ -317,6 +306,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkCheckableComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkCheckableComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>

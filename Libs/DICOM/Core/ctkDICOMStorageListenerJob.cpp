@@ -64,55 +64,28 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 //------------------------------------------------------------------------------
 ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setPort(int port)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->Port = port;
-}
+//------------------------------------------------------------------------------
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, int, port, Port)
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setConnectionTimeout, ConnectionTimeout);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, int, connectionTimeout, ConnectionTimeout)
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const QString&, setAETitle, AETitle);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, QString, AETitle, AETitle)
 
 //----------------------------------------------------------------------------
-int ctkDICOMStorageListenerJob::port() const
+QString ctkDICOMStorageListenerJob::loggerReport(const QString& status)
 {
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->Port;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setAETitle(const QString& AETitle)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->AETitle = AETitle;
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMStorageListenerJob::AETitle() const
-{
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->AETitle;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setConnectionTimeout(int timeout)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->ConnectionTimeout = timeout;
-}
-
-//----------------------------------------------------------------------------
-int ctkDICOMStorageListenerJob::connectionTimeout() const
-{
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->ConnectionTimeout;
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMStorageListenerJob::loggerReport(const QString& status) const
-{
-  return QString("ctkDICOMStorageListenerJob: listener job %1.\n"
-                 "JobUID: %2\n")
-                 .arg(status)
-                 .arg(this->jobUID());
+  QString fullLogMsg = QString("ctkDICOMStorageListenerJob: listener job %1.\n"
+                               "JobUID: %2\n")
+                               .arg(status)
+                               .arg(this->jobUID());
+  QString logMsg = QString("Listener job %1.\n")
+                          .arg(status);
+  QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+  QString logHeader = currentDateTime + " INFO: ";
+  this->Log += logHeader;
+  this->Log += logMsg;
+  return fullLogMsg;
 }
 //------------------------------------------------------------------------------
 ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const

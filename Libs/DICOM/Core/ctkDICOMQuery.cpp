@@ -24,6 +24,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QMutex>
 #include <QPair>
 #include <QSet>
 #include <QSqlQuery>
@@ -31,9 +32,11 @@
 #include <QStringList>
 #include <QVariant>
 
+// ctkCore includes
+#include <ctkPimpl.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
-#include "ctkLogger.h"
 #include "ctkDICOMJobResponseSet.h"
 
 // DCMTK includes
@@ -48,7 +51,28 @@
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogQuery = dcmtk::log4cplus::Logger::getRoot();
+
+#define LOG_AND_EMIT_DEBUG(debugStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogQuery, debugStr.toStdString().c_str()); \
+  emit signal(debugStr); \
+} \
+
+#define LOG_AND_EMIT_WARN(warnStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_WARN_STR(rootLogQuery, warnStr.toStdString().c_str()); \
+  emit signal(warnStr); \
+} \
+
+#define LOG_AND_EMIT_ERROR(errorStr, signal) \
+{ \
+  DCMTK_LOG4CPLUS_ERROR_STR(rootLogQuery, errorStr.toStdString().c_str()); \
+  emit signal(errorStr); \
+} \
 
 //------------------------------------------------------------------------------
 // A customized implementation so that Qt signals can be emitted
@@ -66,13 +90,20 @@ public:
                                          QRResponse *response,
                                          OFBool &waitForNextResponse)
   {
-    if (!this->query || this->query->wasCanceled())
+    if (!this->query)
     {
       return EC_IllegalCall;
     }
 
-    logger.debug ( "FIND RESPONSE" );
-    emit this->query->debug(/*no tr*/"Got a find response!");
+    if (this->query->wasCanceled())
+    {
+      // send cancel can fail and be ignored (but DCMTK will report still good == true).
+      // Therefore, we need to force the release of the association to cancel the worker
+      this->query->releaseAssociation();
+      return EC_IllegalCall;
+    }
+
+    LOG_AND_EMIT_DEBUG(QString("FIND RESPONSE"), this->query->debug);
     return this->DcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
   };
 };
@@ -89,6 +120,11 @@ public:
   /// Add StudyInstanceUID and SeriesInstanceUID that may be further retrieved
   void addStudyAndSeriesInstanceUID( const QString& studyInstanceUID, const QString& seriesInstanceUID );
 
+  /// \warning: releaseAssociation is not a thread safe method.
+  /// If called concurrently from different threads DCMTK can crash.
+  /// Therefore use this method instead of calling directly SCU->releaseAssociation()
+  OFCondition releaseAssociation();
+
   QString ConnectionName;
   QString CallingAETitle;
   QString CalledAETitle;
@@ -101,6 +137,8 @@ public:
   QList<QPair<QString,QString>> StudyAndSeriesInstanceUIDPairList;
   QMap<QString, DcmDataset*> StudyDatasets;
   bool Canceled;
+  bool AssociationClosing;
+  QMutex AssociationMutex;
   int MaximumPatientsQuery;
   QString JobUID;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
@@ -113,11 +151,12 @@ public:
 ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
 {
   this->QueryDcmDataset = QSharedPointer<DcmDataset>(new DcmDataset);
-  this->PresentationContext = 0;
   this->Port = 0;
   this->Canceled = false;
+  this->AssociationClosing = false;
   this->MaximumPatientsQuery = 25;
 
+  this->PresentationContext = 0;
   this->SCU = new ctkDICOMQuerySCUPrivate();
   this->SCU->setACSETimeout(10);
   this->SCU->setConnectionTimeout(10);
@@ -128,9 +167,7 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 {
   if (this->SCU && this->SCU->isConnected())
   {
-    // Warning: releaseAssociation is not a thread safe method.
-    // If called concurrently from different threads DCMTK can crash.
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
 
   if (this->SCU)
@@ -154,6 +191,28 @@ void ctkDICOMQueryPrivate::addStudyInstanceUIDAndDataset( const QString& studyIn
 }
 
 //------------------------------------------------------------------------------
+OFCondition ctkDICOMQueryPrivate::releaseAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+  {
+    return status;
+  }
+
+  QMutexLocker locker(&this->AssociationMutex);
+  if (this->AssociationClosing)
+  {
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->releaseAssociation();
+  this->AssociationClosing = false;
+
+  return status;
+}
+
+//------------------------------------------------------------------------------
 // ctkDICOMQuery methods
 
 //------------------------------------------------------------------------------
@@ -173,77 +232,23 @@ ctkDICOMQuery::~ctkDICOMQuery()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionName(const QString& connectionName)
-{
-  Q_D(ctkDICOMQuery);
-  d->ConnectionName = connectionName;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::connectionName() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->ConnectionName;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setCallingAETitle(const QString& callingAETitle)
-{
-  Q_D(ctkDICOMQuery);
-  d->CallingAETitle = callingAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::callingAETitle() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->CallingAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setCalledAETitle(const QString& calledAETitle)
-{
-  Q_D(ctkDICOMQuery);
-  d->CalledAETitle = calledAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::calledAETitle()const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->CalledAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setHost(const QString& host)
-{
-  Q_D(ctkDICOMQuery);
-  d->Host = host;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::host() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->Host;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setPort(int port)
-{
-  Q_D(ctkDICOMQuery);
-  d->Port = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQuery::port()const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->Port;
-}
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setConnectionName, ConnectionName);
+CTK_GET_CPP(ctkDICOMQuery, QString, connectionName, ConnectionName)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setCallingAETitle, CallingAETitle);
+CTK_GET_CPP(ctkDICOMQuery, QString, callingAETitle, CallingAETitle)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setCalledAETitle, CalledAETitle);
+CTK_GET_CPP(ctkDICOMQuery, QString, calledAETitle, CalledAETitle)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setHost, Host);
+CTK_GET_CPP(ctkDICOMQuery, QString, host, Host)
+CTK_SET_CPP(ctkDICOMQuery, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMQuery, int, port, Port)
+CTK_SET_CPP(ctkDICOMQuery, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_GET_CPP(ctkDICOMQuery, int, maximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMQuery, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionTimeout(int timeout)
+void ctkDICOMQuery::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMQuery);
   d->SCU->setACSETimeout(timeout);
@@ -255,20 +260,6 @@ int ctkDICOMQuery::connectionTimeout() const
 {
   Q_D(const ctkDICOMQuery);
   return d->SCU->getConnectionTimeout();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setMaximumPatientsQuery(int maximumPatientsQuery)
-{
-  Q_D(ctkDICOMQuery);
-  d->MaximumPatientsQuery = maximumPatientsQuery;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQuery::maximumPatientsQuery()
-{
-  Q_D(const ctkDICOMQuery);
-  return d->MaximumPatientsQuery;
 }
 
 //------------------------------------------------------------------------------
@@ -320,39 +311,22 @@ QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMQuery::jobResponseSetsShar
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setJobUID(const QString &jobUID)
-{
-  Q_D(ctkDICOMQuery);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::jobUID() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->JobUID;
-}
-
-//------------------------------------------------------------------------------
 bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 {
   Q_D(ctkDICOMQuery);
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   if (database.database().isOpen())
   {
-    logger.debug("DB open in Query");
-    emit progress(tr("DB open in Query"));
+    LOG_AND_EMIT_DEBUG(QString("DB open in Query"), debug);
   }
   else
   {
-    logger.warn("DB not open in Query");
-    emit progress(tr("DB not open in Query"));
+    LOG_AND_EMIT_WARN(QString("DB not open in Query"), warn);
   }
+
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -362,6 +336,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -384,50 +359,50 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString (DCM_QueryRetrieveLevel, "STUDY");
 
-  QString seriesDescription = this->applyFilters();
+  QString seriesDescription = this->applyFilters(d->Filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   OFList<QRResponse *> responses;
-
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
+
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (!status.good())
   {
-    logger.error("Find failed");
-    emit progress(tr("Find failed"));
-    d->SCU->releaseAssociation();
-    emit progress(100);
+    LOG_AND_EMIT_ERROR(QString("Find failed"), error);
+    d->releaseAssociation();
+    emit done(false);
     return false;
   }
-  logger.debug("Find succeeded");
-  emit progress(tr("Find succeeded"));
+
+  LOG_AND_EMIT_DEBUG(QString("Find succeeded"), debug)
+
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -440,10 +415,11 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
       OFString StudyInstanceUID;
       dataset->findAndGetOFString(DCM_StudyInstanceUID, StudyInstanceUID);
       d->addStudyInstanceUIDAndDataset(StudyInstanceUID.c_str(), dataset);
-      emit progress(tr("Processing: ") + QString(StudyInstanceUID.c_str()));
+      emit progress("Processing: " + QString(StudyInstanceUID.c_str()));
       emit progress(50);
       if (d->Canceled)
       {
+        emit done(false);
         return false;
       }
     }
@@ -476,12 +452,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     studyDataset->findAndGetElement(DCM_PatientName, patientName);
     studyDataset->findAndGetElement(DCM_PatientID, patientID);
 
-    logger.debug("Starting Series C-FIND for Study: " + studyInstanceUID);
-    emit progress(tr("Starting Series C-FIND for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_DEBUG(QString("Starting Series C-FIND for Study: %1").arg(studyInstanceUID), debug)
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled)
     {
-    return false;
+      emit done(false);
+      return false;
     }
 
     d->QueryDcmDataset->putAndInsertString (DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
@@ -504,27 +480,29 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
           database.insert(dataset, false /* do not store */, false /* no thumbnail */);
         }
       }
-      logger.debug ("Find succeeded on Series level for Study: " + studyInstanceUID);
-      emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
+
+      LOG_AND_EMIT_DEBUG(QString("Find succeeded at Series level for Study: %1").arg(studyInstanceUID), debug)
       emit progress(50 + (progressRatio * i++));
       if (d->Canceled)
       {
-    return false;
+        emit done(false);
+        return false;
       }
     }
     else
     {
-      logger.error ("Find on Series level failed for Study: " + studyInstanceUID);
-      emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
+      LOG_AND_EMIT_ERROR(QString("Find at Series level failed for Study: %1").arg(studyInstanceUID), error)
     }
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled)
     {
+    emit done(false);
     return false;
     }
   }
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   emit progress(100);
+  emit done(true);
   return true;
 }
 
@@ -533,12 +511,10 @@ bool ctkDICOMQuery::queryPatients()
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -547,6 +523,7 @@ bool ctkDICOMQuery::queryPatients()
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -557,23 +534,18 @@ bool ctkDICOMQuery::queryPatients()
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientID);
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientName);
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientBirthDate);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyID);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyInstanceUID);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDescription);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDate);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyTime);
-  d->QueryDcmDataset->insertEmptyElement(DCM_ModalitiesInStudy);
-  d->QueryDcmDataset->insertEmptyElement(DCM_AccessionNumber);
-  d->QueryDcmDataset->insertEmptyElement(DCM_NumberOfStudyRelatedSeries); // Number of series in the study
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "PATIENT");
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -582,25 +554,24 @@ bool ctkDICOMQuery::queryPatients()
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error)
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Patients C-FIND");
-  emit progress(tr("Starting Patients C-FIND"));
+  LOG_AND_EMIT_DEBUG(QString("Starting patients C-FIND"), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -621,9 +592,8 @@ bool ctkDICOMQuery::queryPatients()
       contResponses++;
       if (contResponses > d->MaximumPatientsQuery)
       {
-        logger.warn(QString("ctkDICOMQuery: the number of responses of the query task at patients level "
-                            "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery));
-
+        LOG_AND_EMIT_WARN(QString("The number of responses of the query task at patients level "
+                                  "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery), warn)
         break;
       }
       DcmDataset *dataset = (*it)->m_dataset;
@@ -635,25 +605,30 @@ bool ctkDICOMQuery::queryPatients()
       }
     }
 
-      JobResponseSet->setDatasets(datasetsMap);
-      d->JobResponseSets.append(JobResponseSet);
+    if (contResponses == 0)
+    {
+      LOG_AND_EMIT_WARN(QString("The patients query provided no results. Please refine your filters."), warn)
+    }
 
-      logger.debug("Find succeeded on Patient level");
-      emit progress(tr("Find succeeded on Patient level"));
+    JobResponseSet->setDatasets(datasetsMap);
+    d->JobResponseSets.append(JobResponseSet);
+
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at patient level"), debug)
   }
   else
   {
-    logger.error("Find on Patient level failed");
-    emit progress(tr("Find on Patient level failed"));
+    LOG_AND_EMIT_ERROR(QString("Find at patient level failed"), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -661,12 +636,11 @@ bool ctkDICOMQuery::queryPatients()
 bool ctkDICOMQuery::queryStudies(const QString& patientID)
 {
   Q_D(ctkDICOMQuery);
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
+
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -675,6 +649,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -696,12 +671,20 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "STUDY");
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["Modalities"] = d->Filters["Modalities"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -710,25 +693,24 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug);
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Studies C-FIND for Patient: " + patientID);
-  emit progress(tr("Starting Studies C-FIND for Patient: ") + patientID);
+  LOG_AND_EMIT_DEBUG(QString("Starting studies C-FIND for patient: %1").arg(patientID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -761,22 +743,22 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
-    logger.debug("Find succeeded on Study level for Patient: " + patientID);
-    emit progress(tr("Find succeeded on Study level for Patient: ") + patientID);
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at study level for patient: %1").arg(patientID), debug)
   }
   else
   {
-    logger.error("Find on Study level failed for Patient: " + patientID);
-    emit progress(tr("Find on Study level failed for Patient: ") + patientID);
+    LOG_AND_EMIT_ERROR(QString("Find at study level failed for patient: %1").arg(patientID), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -786,12 +768,10 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -800,6 +780,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -813,16 +794,23 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   d->QueryDcmDataset->insertEmptyElement(DCM_Modality);
   d->QueryDcmDataset->insertEmptyElement(DCM_NumberOfSeriesRelatedInstances); // Number of images in the series
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  filters["Series"] = d->Filters["Series"];
+  QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
-
-  // Now search each within each Study that was identified
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "SERIES");
 
   Uint16 presentationContext = 0;
@@ -830,25 +818,24 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error);
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug);
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Series C-FIND for Study: " + studyInstanceUID);
-  emit progress(tr("Starting Series C-FIND for Study: ") + studyInstanceUID);
+  LOG_AND_EMIT_DEBUG(QString("Starting series C-FIND for study: %1").arg(studyInstanceUID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -883,22 +870,22 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
-    logger.debug("Find succeeded on Series level for Study: " + studyInstanceUID);
-    emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at series level for study: %1").arg(studyInstanceUID), debug)
   }
   else
   {
-    logger.error("Find on Series level failed for Study: " + studyInstanceUID);
-    emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
+    LOG_AND_EMIT_ERROR(QString("Find at series level failed for study: %1").arg(studyInstanceUID), error)
   }
 
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -909,12 +896,10 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
 {
   Q_D(ctkDICOMQuery);
 
-  // In the following, we emit progress(int) after progress(QString), this
-  // is in case the connected object doesn't refresh its ui when the progress
-  // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -923,6 +908,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   // initSCU
   if (!this->initializeSCU())
   {
+    emit done(false);
     return false;
   }
 
@@ -933,41 +919,47 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   d->QueryDcmDataset->insertEmptyElement(DCM_Rows);
   d->QueryDcmDataset->insertEmptyElement(DCM_Columns);
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  filters["Series"] = d->Filters["Series"];
+  QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
-
-  // Now search each within each Study that was identified
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "IMAGE");
 
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   d->PresentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (d->PresentationContext == 0)
   {
-    logger.error("Failed to find acceptable presentation context");
-    emit progress(tr("Failed to find acceptable presentation context"));
+    LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error)
   }
   else
   {
-    logger.debug("Found useful presentation context");
-    emit progress(tr("Found useful presentation context"));
+    LOG_AND_EMIT_DEBUG(QString("Found useful presentation context"), debug)
   }
   emit progress(40);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  logger.debug("Starting Instances C-FIND for Series: " + seriesInstanceUID);
-  emit progress(tr("Starting Instances C-FIND for Series: ") + seriesInstanceUID);
+  LOG_AND_EMIT_DEBUG(QString("Starting sop instances C-FIND for series: %1").arg(seriesInstanceUID), debug)
   emit progress(50);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
@@ -1000,13 +992,12 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
         datasetsMap.insert(SOPInstanceUID.c_str(), dataset);
       }
     }
-    logger.debug("Find succeeded on Series level for Series: " + seriesInstanceUID);
-    emit progress(tr("Find succeeded on Series level for Series: ") + seriesInstanceUID);
+
+    LOG_AND_EMIT_DEBUG(QString("Find succeeded at sop instance level for series: %1").arg(seriesInstanceUID), debug)
   }
   else
   {
-    logger.error("Find on Series level failed for Series: " + seriesInstanceUID);
-    emit progress(tr("Find on Series level failed for Series: ") + seriesInstanceUID);
+    LOG_AND_EMIT_ERROR(QString("Find at sop instance level failed for series: %1").arg(seriesInstanceUID), error)
   }
 
   JobResponseSet->setDatasets(datasetsMap);
@@ -1015,10 +1006,12 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   emit progress(100);
   if (d->Canceled)
   {
+    emit done(false);
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
+  emit done(true);
   return true;
 }
 
@@ -1036,6 +1029,13 @@ void ctkDICOMQuery::cancel()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMQuery::releaseAssociation()
+{
+  Q_D(ctkDICOMQuery);
+  d->releaseAssociation();
+}
+
+//----------------------------------------------------------------------------
 bool ctkDICOMQuery::initializeSCU()
 {
   Q_D(ctkDICOMQuery);
@@ -1045,8 +1045,7 @@ bool ctkDICOMQuery::initializeSCU()
   d->SCU->setPeerHostName(OFString(this->host().toStdString().c_str()));
   d->SCU->setPeerPort(this->port());
 
-  logger.debug("Setting Transfer Syntaxes");
-  emit progress(tr("Setting Transfer Syntaxes"));
+  LOG_AND_EMIT_DEBUG(QString("Setting Transfer Syntaxes"), debug)
   emit progress(10);
   if (d->Canceled)
   {
@@ -1061,13 +1060,11 @@ bool ctkDICOMQuery::initializeSCU()
   d->SCU->addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
   if (!d->SCU->initNetwork().good())
   {
-    logger.error("Error initializing the network");
-    emit progress(tr("Error initializing the network"));
-    emit progress(100);
+    LOG_AND_EMIT_ERROR(QString("Error initializing the network"), error)
     return false;
   }
-  logger.debug("Negotiating Association");
-  emit progress(tr("Negotiating Association"));
+
+  LOG_AND_EMIT_DEBUG(QString("Negotiating Association"), debug)
   emit progress(20);
   if (d->Canceled)
   {
@@ -1077,9 +1074,7 @@ bool ctkDICOMQuery::initializeSCU()
   OFCondition result = d->SCU->negotiateAssociation();
   if (result.bad())
   {
-    logger.error("Error negotiating the association: " + QString(result.text()));
-    emit progress(tr("Error negotiating the association"));
-    emit progress(100);
+    LOG_AND_EMIT_ERROR(QString("Error negotiating the association: %1").arg(result.text()), error)
     return false;
   }
 
@@ -1087,7 +1082,7 @@ bool ctkDICOMQuery::initializeSCU()
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMQuery::applyFilters()
+QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
 {
   Q_D(ctkDICOMQuery);
 
@@ -1096,63 +1091,66 @@ QString ctkDICOMQuery::applyFilters()
    * Study Description, Modalities in Study, and Study Date are used.
    */
   QString seriesDescription;
-  foreach(QString key, d->Filters.keys())
+  foreach(QString key, filters.keys())
   {
-    if ( key == QString("Name") && !d->Filters[key].toString().isEmpty())
+    if (key == QString("Name") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_PatientName,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_PatientName,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("Study") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("ID") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_StudyDescription,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_PatientID,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("ID") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Study") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_PatientID,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_StudyDescription,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("AccessionNumber") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("AccessionNumber") && !filters[key].toString().isEmpty())
     {
-        // make the filter a wildcard in dicom style
-        d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
-            (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      // make the filter a wildcard in dicom style
+      d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Modalities") && filters[key].toStringList().count() != 0)
     {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
-      foreach (const QString& modality, d->Filters[key].toStringList())
+      foreach (const QString& modality, filters[key].toStringList())
       {
         modalitySearch += modality + QString("\\");
       }
       modalitySearch.chop(1); // remove final backslash
-      logger.debug("modalityInStudySearch " + modalitySearch);
-      d->QueryDcmDataset->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toLatin1().data() );
+
+      LOG_AND_EMIT_DEBUG(QString("modalityInStudySearch %1").arg(modalitySearch), debug)
+      d->QueryDcmDataset->putAndInsertString(DCM_ModalitiesInStudy, modalitySearch.toLatin1().data());
     }
     // Remember Series Description for later series query if we go through the keys now
-    else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Series") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      seriesDescription = "*" + d->Filters[key].toString() + "*";
+      seriesDescription = "*" + filters[key].toString() + "*";
     }
     else
     {
-      logger.debug("Ignoring unknown search key: " + key);
+      LOG_AND_EMIT_DEBUG(QString("Ignoring unknown search key: %1").arg(key), debug)
     }
   }
 
-  if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
+  if (filters.keys().contains("StartDate") && filters.keys().contains("EndDate") &&
+    !filters["StartDate"].toString().isEmpty() && !filters["EndDate"].toString().isEmpty())
   {
-    QString dateRange = d->Filters["StartDate"].toString() +
+    QString dateRange = filters["StartDate"].toString() +
                         QString("-") +
-                        d->Filters["EndDate"].toString();
-    d->QueryDcmDataset->putAndInsertString ( DCM_StudyDate, dateRange.toLatin1().data() );
-    logger.debug("Query on study date " + dateRange);
+                        filters["EndDate"].toString();
+    d->QueryDcmDataset->putAndInsertString (DCM_StudyDate, dateRange.toLatin1().data());
+
+    LOG_AND_EMIT_DEBUG(QString("Query on study date: %1").arg(dateRange), debug)
   }
 
   emit progress(30);

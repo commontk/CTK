@@ -54,6 +54,9 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
   Q_PROPERTY(QDateTime startDateTime READ startDateTime);
   Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
+  Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
+  Q_PROPERTY(QString log READ log);
+  Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
 
 public:
   explicit ctkAbstractJob();
@@ -71,16 +74,20 @@ public:
   ///@{
   /// Status
   /// Initialized: the object has been created and inserted in the JobsQueue map in the ctkJobScheduler
-  /// Queued: a worker is associated to the job and the worker has been inserted in the queue list of the QThreadPool (object owned by the ctkJobScheduler) with a priority
+  /// Queued: a worker is associated to the job and the worker has been inserted in the queue list of
+  ///         the QThreadPool (object owned by the ctkJobScheduler) with a priority
   /// Running: the job is running in another thread by the associated worker.
-  /// Stopped: the job has been stopped externally (a cancel request from the worker)
+  /// UserStopped: the job has been stopped externally (a cancel request from the worker)
+  /// AttemptFailed: the job encountered an internal failure, however, the task will be reattempted
+  ///                by a different job (as the logic returned false).
   /// Failed: the job failed internally (logic returns false).
   /// Finished: the job has been run successfully (logic returns true).
   enum JobStatus {
     Initialized = 0,
     Queued,
     Running,
-    Stopped,
+    UserStopped,
+    AttemptFailed,
     Failed,
     Finished,
   };
@@ -129,18 +136,30 @@ public:
   ///@}
 
   ///@{
-  /// CreationDateTime
+  /// Creation Date Time
   QDateTime creationDateTime() const;
   ///@}
 
   ///@{
-  /// StartDateTime
+  /// Start Date Time
   QDateTime startDateTime() const;
   ///@}
 
   ///@{
-  /// CompletionDateTime
+  /// Completion Date Time
   QDateTime completionDateTime() const;
+  ///@}
+
+  ///@{
+  /// Running ThreadID
+  QString runningThreadID() const;
+  void setRunningThreadID(QString runningThreadID);
+  ///@}
+
+  ///@{
+  /// Logged Text
+  QString log() const;
+  void addLog(QString log);
   ///@}
 
   /// Generate worker for job
@@ -150,7 +169,7 @@ public:
   Q_INVOKABLE virtual ctkAbstractJob* clone() const = 0;
 
   /// Logger report string formatting for specific job
-  Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;
+  Q_INVOKABLE virtual QString loggerReport(const QString& status) = 0;
 
   /// Return the QVariant value of this job.
   ///
@@ -159,9 +178,20 @@ public:
   /// \sa ctkJobDetail
   Q_INVOKABLE virtual QVariant toVariant();
 
+  /// Free used resources from job after worker is done
+  Q_INVOKABLE virtual void releaseResources() = 0;
+
+  ///@{
+  /// Destroy job object after worker is done
+  /// default: false
+  bool destroyAfterUse() const;
+  void setDestroyAfterUse(bool destroyAfterUse);
+  ///@}
+
 Q_SIGNALS:
   void started();
-  void canceled();
+  void userStopped();
+  void attemptFailed();
   void failed();
   void finished();
 
@@ -177,6 +207,9 @@ protected:
   QDateTime CreationDateTime;
   QDateTime StartDateTime;
   QDateTime CompletionDateTime;
+  QString RunningThreadID;
+  QString Log;
+  bool DestroyAfterUse;
 
 private:
   Q_DISABLE_COPY(ctkAbstractJob)
@@ -190,9 +223,11 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   {
     this->JobClass = job.className();
     this->JobUID = job.jobUID();
-    this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
-    this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
-    this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
+    this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->RunningThreadID = job.runningThreadID();
+    this->Logging = job.log();
   }
   virtual ~ctkJobDetail() = default;
 
@@ -201,6 +236,8 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   QString CreationDateTime;
   QString StartDateTime;
   QString CompletionDateTime;
+  QString RunningThreadID;
+  QString Logging;
 };
 Q_DECLARE_METATYPE(ctkJobDetail);
 

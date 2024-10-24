@@ -52,7 +52,7 @@ int ctkDICOMPatientItemWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(widget.filteringStudyDescription(), "");
   CHECK_QSTRING(widget.filteringSeriesDescription(), "");
   CHECK_INT(widget.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
-  CHECK_INT(widget.numberOfStudiesPerPatient(), 2);
+  CHECK_INT(widget.numberOfOpenedStudiesPerPatient(), 2);
   CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
 
   // Test setting and getting
@@ -66,8 +66,8 @@ int ctkDICOMPatientItemWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(widget.filteringSeriesDescription(), "series");
   widget.setFilteringDate(ctkDICOMPatientItemWidget::DateType::LastYear);
   CHECK_INT(widget.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
-  widget.setNumberOfStudiesPerPatient(6);
-  CHECK_INT(widget.numberOfStudiesPerPatient(), 6);
+  widget.setNumberOfOpenedStudiesPerPatient(6);
+  CHECK_INT(widget.numberOfOpenedStudiesPerPatient(), 6);
   widget.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
   CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
 

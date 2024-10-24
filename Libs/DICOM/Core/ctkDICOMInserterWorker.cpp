@@ -32,6 +32,9 @@
 #include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMJobResponseSet.h"
 
+// DCMTK includes
+#include <dcmtk/oflog/spi/logevent.h>
+
 static ctkLogger logger ("org.commontk.dicom.DICOMInserterWorker");
 
 //------------------------------------------------------------------------------
@@ -100,6 +103,9 @@ void ctkDICOMInserterWorker::run()
     return;
   }
 
+  QString currentThread = dcmtk::log4cplus::thread::getCurrentThreadName().c_str();
+  inserterJob->setRunningThreadID(currentThread);
+
   if (d->Inserter->wasCanceled())
   {
     this->onJobCanceled(d->Inserter->wasCanceled());
@@ -112,8 +118,12 @@ void ctkDICOMInserterWorker::run()
                        .arg(inserterJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
-  QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets = inserterJob->jobResponseSetsShared();
-  d->Inserter->addJobResponseSets(jobResponseSets);
+  QList<ctkDICOMJobResponseSet*> jobResponseSets = inserterJob->jobResponseSets();
+  if (!d->Inserter->addJobResponseSets(jobResponseSets))
+  {
+    inserterJob->setStatus(ctkAbstractJob::JobStatus::Failed);
+    return;
+  }
 
   if (d->Inserter->wasCanceled())
   {
@@ -121,11 +131,10 @@ void ctkDICOMInserterWorker::run()
     return;
   }
 
-  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
+  foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
   {
     emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
   }
-
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
 }
 

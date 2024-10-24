@@ -59,13 +59,18 @@ public:
   ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
   virtual ~ctkDICOMSchedulerPrivate();
 
+  bool isServerAllowed(ctkDICOMServer* server, const QStringList& allowedSeversForPatient);
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
+  bool isJobDuplicate(ctkDICOMJob* job);
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QList<QSharedPointer<ctkDICOMServer>> Servers;
+  QMap<QString, QMetaObject::Connection> ServersConnections;
   QMap<QString, QVariant> Filters;
 
   int MaximumPatientsQuery{25};
+
+  dcmtk::log4cplus::SharedAppenderPtr Appender;
 };
 
 #endif

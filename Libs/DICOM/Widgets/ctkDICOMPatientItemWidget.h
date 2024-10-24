@@ -1,4 +1,4 @@
-﻿/*=========================================================================
+/*=========================================================================
 
   Library:   CTK
 
@@ -46,8 +46,12 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_ENUMS(DateType)
   Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
+  Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
+  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
 
 public:
   typedef QWidget Superclass;
@@ -64,6 +68,24 @@ public:
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
+
+  ///@{
+  /// Patient Name
+  void setPatientName(const QString& patientName);
+  QString patientName() const;
+  ///@}
+
+  ///@{
+  /// Patient Birth Date
+  void setPatientBirthDate(const QString& patientBirthDate);
+  QString patientBirthDate() const;
+  ///@}
+
+  ///@{
+  /// Patient Sex
+  void setPatientSex(const QString& patientSex);
+  QString patientSex() const;
   ///@}
 
   ///@{
@@ -112,8 +134,8 @@ public:
   ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
-  void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
-  int numberOfStudiesPerPatient() const;
+  void setNumberOfOpenedStudiesPerPatient(int numberOfOpenedStudiesPerPatient);
+  int numberOfOpenedStudiesPerPatient() const;
   ///@}
 
   ///@{
@@ -155,16 +177,55 @@ public:
   /// Add/Remove study item widgets
   Q_INVOKABLE void addStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyItem(const QString& studyItem);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyInstanceUID(const QString& studyInstanceUID);
   ///@}
 
   /// Set selection for all studies/series
   Q_INVOKABLE void setSelection(bool selected);
 
+  ///@{
+  /// Allowed Servers
+  /// Empty by default
+  void setAllowedServers(const QStringList& allowedServers);
+  QStringList allowedServers() const;
+  Q_INVOKABLE void updateAllowedServersUIFromDB();
+  ///@}
+
+  enum OperationStatus
+  {
+    NoOperation = 0,
+    InProgress,
+    Completed,
+    Failed,
+  };
+
+  ///@{
+  /// Set the operation status
+  /// NoOperation by default
+  void setOperationStatus(const OperationStatus& status);
+  OperationStatus operationStatus() const;
+  ///@}
+
+  /// Last stopped job information operated by this widget
+  Q_INVOKABLE QString stoppedJobUID() const;
+
 public Q_SLOTS:
-  void generateStudies();
-  void updateGUIFromScheduler(const QVariant& data);
+  void generateStudies(bool query = true, bool retrieve = true);
+  void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
+  void updateGUIFromScheduler(QVariant);
+  void onJobStarted(QVariant);
+  void onJobUserStopped(QVariant);
+  void onJobFailed(QVariant);
+  void onJobFinished(QVariant);
+  void onInserterJobFinished(QVariant);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
+  void onPatientServersCheckableComboBoxChanged();
+
+Q_SIGNALS:
+  /// Emitted when the GUI finished to update after a studies query.
+  void updateGUIFinished();
 
 protected:
   QScopedPointer<ctkDICOMPatientItemWidgetPrivate> d_ptr;

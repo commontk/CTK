@@ -89,6 +89,9 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// SizeHintByMinMax by default
   /// SizeHintPolicy, sizeHintPolicy(), setSizeHintPolicy()
   Q_PROPERTY(SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
+  /// This property is true while the spinbox is setting a value.
+  /// \sa isSettingValue()
+  Q_PROPERTY(bool isSettingValue READ isSettingValue)
 
 public:
 
@@ -318,6 +321,14 @@ public Q_SLOTS:
   /// spinbox is not displayed.
   /// \sa isReadOnly
   void setReadOnly(bool readOnly);
+
+  /// Return true if the spinbox is in the progress of setting a value.
+  ///
+  /// Setting of value is performed in two steps: first the value is set in the spinbox
+  /// and then the valueChanged and decimalsChanged signals are emitted.
+  /// During this entire time, isSettingValue() returns true, because in some cases
+  /// it is important to know which of the sibling widgets initiated an update.
+  bool isSettingValue()const;
 
 Q_SIGNALS:
   /// Emitted every time the spinbox value is modified

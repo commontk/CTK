@@ -15,8 +15,6 @@
         <file>Icons/add.svg</file>
         <file>Icons/dns.svg</file>
         <file>Icons/save.svg</file>
-        <file>Icons/query.svg</file>
-        <file>Icons/wait.svg</file>
         <file>Icons/downloading.svg</file>
         <file>Icons/visible_off.svg</file>
         <file>Icons/visible_on.svg</file>
@@ -28,5 +26,14 @@
         <file>Icons/reset.svg</file>
         <file>Icons/error_red.svg</file>
         <file>Icons/select_all.svg</file>
+        <file>Icons/select_none.svg</file>
+        <file>Icons/query_failed.svg</file>
+        <file>Icons/query_success.svg</file>
+        <file>Icons/search_local.svg</file>
+        <file>Icons/query.svg</file>
+        <file>Icons/wait.svg</file>
+        <file>Icons/patient_failed.svg</file>
+        <file>Icons/patient_pending.svg</file>
+        <file>Icons/patient_success.svg</file>
     </qresource>
 </RCC>

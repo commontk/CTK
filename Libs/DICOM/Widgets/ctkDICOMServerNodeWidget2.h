@@ -29,6 +29,7 @@
 #include <QString>
 #include <QList>
 #include <QMap>
+#include <QVariant>
 class QTableWidgetItem;
 
 // ctkCore includes
@@ -88,12 +89,13 @@ public:
 
   /// Servers
   ///@{
-  Q_INVOKABLE int getNumberOfServers();
-  Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
-  Q_INVOKABLE void addServer(ctkDICOMServer* server);
+  Q_INVOKABLE int serversCount();
+  Q_INVOKABLE ctkDICOMServer* server(int id);
+  Q_INVOKABLE ctkDICOMServer* server(const QString& connectionName);
+  /// Return the row index added into the servers table. If -1 the the operation failed.
+  Q_INVOKABLE int addServer(ctkDICOMServer* server);
   Q_INVOKABLE void removeServer(const QString& connectionName);
-  Q_INVOKABLE void removeNthServer(int id);
+  Q_INVOKABLE void removeServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
@@ -104,23 +106,38 @@ public Q_SLOTS:
   /// Add an empty server node and make it current
   /// Return the row index added into the table
   int onAddServerNode();
-  /// Remove the current row (different from the checked rows)
+  /// Remove the current selected row (different from the checked rows)
   void onRemoveCurrentServerNode();
-  /// Test the current row (different from the checked rows)
-  void onTestCurrentServerNode();
+  /// Verify the current selected row (different from the checked rows)
+  void onVerifyCurrentServerNode();
+
+  void onJobStarted(QList<QVariant>);
+  void onJobUserStopped(QList<QVariant>);
+  void onJobFailed(QList<QVariant>);
+  void onJobFinished(QList<QVariant>);
 
   void readSettings();
   void saveSettings();
+  void onRestoreDefaultServers();
   void updateGUIState();
+  void updateGUIFromServerNodes();
+  void onItemSelectionChanged();
   void onSettingsModified();
+  void onCellSettingsModified(int row, int column);
+
+Q_SIGNALS:
+  /// Emitted when server settings are changed
+  void serversSettingsChanged();
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;
   enum ServerColumns
   {
     NameColumn = 0,
+    VerificationColumn,
     QueryRetrieveColumn,
     StorageColumn,
+    TrustedColumn,
     CallingAETitleColumn,
     CalledAETitleColumn,
     AddressColumn,

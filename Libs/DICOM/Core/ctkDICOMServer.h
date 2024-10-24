@@ -39,6 +39,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMServer : public QObject
   Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
   Q_PROPERTY(bool queryRetrieveEnabled READ queryRetrieveEnabled WRITE setQueryRetrieveEnabled);
   Q_PROPERTY(bool storageEnabled READ storageEnabled WRITE setStorageEnabled);
+  Q_PROPERTY(bool trustedEnabled READ trustedEnabled WRITE setTrustedEnabled);
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
@@ -61,15 +62,22 @@ public:
   ///@{
   /// Query/Retrieve operations
   /// true as default
-  void setQueryRetrieveEnabled(bool queryRetrieveEnabled);
+  void setQueryRetrieveEnabled(const bool& queryRetrieveEnabled);
   bool queryRetrieveEnabled() const;
   ///}@
 
   ///@{
   /// Storage operations
   /// true as default
-  void setStorageEnabled(bool storageEnabled);
+  void setStorageEnabled(const bool& storageEnabled);
   bool storageEnabled() const;
+  ///}@
+
+  ///@{
+  /// Trusted server
+  /// true as default
+  void setTrustedEnabled(const bool& trustedEnabled);
+  bool trustedEnabled() const;
   ///}@
 
   ///@{
@@ -95,7 +103,7 @@ public:
   ///@{
   /// [0, 65365] port on peer host
   /// 80 as default
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///}@
 
@@ -143,6 +151,10 @@ public:
 
   /// Create a copy of this Server.
   Q_INVOKABLE ctkDICOMServer* clone() const;
+
+Q_SIGNALS:
+  /// Emitted when a server is modified
+  void serverModified(const QString&);
 
 protected:
   QScopedPointer<ctkDICOMServerPrivate> d_ptr;

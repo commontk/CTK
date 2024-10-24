@@ -118,7 +118,7 @@ public:
   /// Utility function to convert a DICOM tag enum to string
   static QString dicomTagToString(const DcmTagKey& tag)
   {
-    return QString("%1,%2").arg(tag.getGroup(),4,16,QLatin1Char('0')).arg(tag.getElement(),4,16,QLatin1Char('0'));
+    return QString("%1,%2").arg(tag.getGroup(),4,16,QLatin1Char('0')).arg(tag.getElement(),4,16,QLatin1Char('0')).toUpper();
   }
 
   /// Register placeholder strings that still mean that a given field can be considered empty.

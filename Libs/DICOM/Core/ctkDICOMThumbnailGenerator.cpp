@@ -21,17 +21,21 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMThumbnailGenerator.h"
-#include "ctkLogger.h"
 
 // Qt includes
 #include <QDebug>
 #include <QDir>
 #include <QImage>
+#include <QPainter>
+#include <QtSvg/QSvgRenderer>
 
 // DCMTK includes
 #include "dcmtk/dcmimgle/dcmimage.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGenerator" );
+//------------------------------------------------------------------------------
+// Using dcmtk root log4cplus logger instead of ctkLogger because with ctkDICOMJobsAppender (dcmtk::log4cplus::Appender),
+// logging is filtered by threadID and reported in the GUI per job.
+dcmtk::log4cplus::Logger rootLogThumbnailGenerator = dcmtk::log4cplus::Logger::getRoot();
 
 //------------------------------------------------------------------------------
 class ctkDICOMThumbnailGeneratorPrivate
@@ -131,7 +135,8 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    logger.warn(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: %1").arg(DicomImage::getString(result));
+    DCMTK_LOG4CPLUS_WARN_STR(rootLogThumbnailGenerator, warn.toStdString().c_str());
     return false;
   }
   // Select first window defined in image. If none, compute min/max window as best guess.
@@ -179,7 +184,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   {
     if (!image.loadFromData( buffer ))
     {
-      qCritical() << Q_FUNC_INFO << "QImage couldn't created";
+      DCMTK_LOG4CPLUS_ERROR_STR(rootLogThumbnailGenerator, "QImage couldn't created");
       return false;
     }
   }
@@ -189,37 +194,60 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &thumbnailPath,
+                                                   QColor backgroundColor)
 {
   QImage image;
   if (this->generateThumbnail(dcmImage, image))
   {
-    return image.save(path,"PNG");
+    return image.save(thumbnailPath, "PNG");
   }
+
+  DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator, "Thumbnail generation failed, using a document icon instead.");
+  this->generateDocumentThumbnail(thumbnailPath, backgroundColor);
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, QImage& image)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, QImage& image)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
   return this->generateThumbnail(&dcmImage, image);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, const QString& thumbnailPath)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
   return this->generateThumbnail(&dcmImage, thumbnailPath);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor color)
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor backgroundColor)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)
   {
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
   }
-  image.fill(color);
+  image.fill(backgroundColor);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::generateDocumentThumbnail(const QString &thumbnailPath,
+                                                           QColor backgroundColor)
+{
+  QImage image;
+  this->generateBlankThumbnail(image, backgroundColor);
+  QPixmap pixmap = QPixmap::fromImage(image);
+  QPainter painter;
+  if (painter.begin(&pixmap))
+  {
+    painter.setRenderHint(QPainter::Antialiasing);
+    QSvgRenderer renderer(QString(":Icons/text_document.svg"));
+    renderer.render(&painter);
+    painter.end();
+  }
+  image = pixmap.toImage();
+  image.save(thumbnailPath, "PNG");
 }
