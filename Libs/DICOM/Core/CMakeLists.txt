@@ -172,6 +172,17 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+# Support namespaced DCMTK targets
+set(_target_libraries)
+foreach(target_library IN LISTS KIT_target_libraries)
+  if(TARGET DCMTK::${target_library})
+    list(APPEND _target_libraries DCMTK::${target_library})
+  else()
+    list(APPEND _target_libraries ${target_library})
+  endif()
+endforeach()
+set(KIT_target_libraries ${_target_libraries})
+
 list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql Qt${CTK_QT_VERSION}::Svg)
 
 # create a dcm query/retrieve service config file that points to the build dir
