@@ -176,7 +176,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   /* create output buffer for DicomImage class */
   QByteArray buffer;
   /* copy header to output buffer and resize it for pixel data */
-  buffer.append(header.toUtf8());
+  buffer.append(header.toUtf8().data());
   buffer.resize(length);
 
   /* render pixel data to buffer */
@@ -211,14 +211,14 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, QImage& image)
 {
-  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
+  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8().data());
   return this->generateThumbnail(&dcmImage, image);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, const QString& thumbnailPath)
 {
-  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
+  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8().data());
   return this->generateThumbnail(&dcmImage, thumbnailPath);
 }
 

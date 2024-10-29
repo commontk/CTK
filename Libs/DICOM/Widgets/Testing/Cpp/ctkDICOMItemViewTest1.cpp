@@ -55,7 +55,7 @@ int ctkDICOMItemViewTest1( int argc, char * argv [] )
 
   QString dicomFilePath(arguments.at(0));
 
-  DicomImage img(QDir::toNativeSeparators(dicomFilePath).toUtf8());
+  DicomImage img(QDir::toNativeSeparators(dicomFilePath).toUtf8().data());
   QImage image;
   QImage image2(200, 200, QImage::Format_RGB32);
 
