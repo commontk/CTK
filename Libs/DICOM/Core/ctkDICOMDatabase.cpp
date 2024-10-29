@@ -2433,7 +2433,7 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
   }
   else
   {
-    DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
+    DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8().data());
     return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath, backgroundColor);
   }
 }

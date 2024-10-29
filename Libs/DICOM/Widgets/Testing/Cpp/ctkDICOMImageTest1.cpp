@@ -54,7 +54,7 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
 
   QString dicomFilePath(arguments.at(0));
 
-  DicomImage dcmtkImage(QDir::toNativeSeparators(dicomFilePath).toUtf8());
+  DicomImage dcmtkImage(QDir::toNativeSeparators(dicomFilePath).toUtf8().data());
   ctkDICOMImage ctkImage(&dcmtkImage);
 
   QLabel qtImage;
