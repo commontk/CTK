@@ -347,14 +347,13 @@ public:
   /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
   ///                       (corresponding file will be found via the database)
-  /// @param fileName Full path to a dicom file to load. Note that this string
-  /// can either be a file path or a URL since the database can have one or
-  /// both of these fields as of schema version 0.8.0.  Since the fileValue
-  /// api is widely used, this overload allows either value to be used to retrieve
-  /// values from the tag cache.  If a value is found for the fileName the
-  /// fileName it is returned; if not, the fileName is used as a URL.  If no
-  /// value is found for the URL, the fileName is used as a path to a dicom file
-  /// where the value is looked up.
+  /// @param fileName Local file path or URL to a dicom file. Since schema version 0.8.0,
+  ///                 the database can store element values for instances that are not available locally,
+  ///                 but their location is specified via a URL.
+  ///                 If an instance is found using by fileName as local file path then the fileName argument is
+  ///                 considered to be a local file path, otherwise the fileName argument is considered to be a URL.
+  ///                 If the value is not found in the database and the fileName argument is a local file path
+  ///                 then the local file is parsed and the value is retrieved from it.
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
   /// @Returns empty string if element is missing or excluded from storage.
@@ -362,6 +361,8 @@ public:
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
+
+  /// Convert between string and (unsigned short int, unsigned short int) representation of a DICOM tag.
   Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
   Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
 
