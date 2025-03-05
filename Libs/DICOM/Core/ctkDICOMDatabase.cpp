@@ -2583,43 +2583,45 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
     return "";
   }
 
-  // Read from cache, if available
+  // Read value from the database, if the instance is found there
 
-  // first, try treating argument as filePath
+  // First, try treating argument as filePath
   QString sopInstanceUID = this->instanceForFile(fileName);
-
-  // second, try treating argument as a url
+  // Second, try treating argument as a url
   bool isUrl = false;
   if (sopInstanceUID.isEmpty())
   {
-    isUrl = true;
     sopInstanceUID = this->instanceForURL(fileName);
+    if (!sopInstanceUID.isEmpty())
+    {
+      // Found instance. This means that the database fields are populated
+      // from a remote file (not a local file).
+      isUrl = true;
+    }
+  }
+  if (!sopInstanceUID.isEmpty())
+  {
+    // The instance is available in the database, look for the value
+    tag = tag.toUpper();
+    QString value = this->cachedTag(sopInstanceUID, tag);
+    if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+    {
+      return "";
+    }
+    if (!value.isEmpty())
+    {
+      return value;
+    }
   }
 
-  if (sopInstanceUID.isEmpty())
-  {
-    return "";
-  }
-
-  // third, look for the value
-  tag = tag.toUpper();
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
-  {
-    return "";
-  }
-  if (!value.isEmpty())
-  {
-    return value;
-  }
+  // The instance is not in the database, read the value from file
 
   if (isUrl)
   {
+    // local file is not available
     return "";
   }
-
-  // Read value from file as a fallback
-  value = d->readValueFromFile(fileName, sopInstanceUID, tag);
+  QString value = d->readValueFromFile(fileName, sopInstanceUID, tag);
   return value;
 }
 
