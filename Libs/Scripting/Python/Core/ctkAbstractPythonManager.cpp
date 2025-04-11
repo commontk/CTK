@@ -669,7 +669,7 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
     if (PyObject_HasAttrString(object, "__dict__"))
     {
       dict = PyObject_GetAttrString(object, "__dict__");
-    }\
+    }
     prevObject = object;
   }
   return object;
