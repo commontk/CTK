@@ -367,6 +367,7 @@ QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
       value = PyObject_GetAttr(object, key);
       if (!value)
       {
+        PyErr_Clear();
         continue;
       }
       QString key_str(PyString_AsString(key));
@@ -465,6 +466,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   }
   if (!object)
   {
+    PyErr_Clear();
     return QStringList();
   }
 
@@ -514,7 +516,16 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
           line_code.append('.'); // add the point again in case we need to continue to fill line_code
           object = PyObject_GetAttrString(main_object,instantiated_class_name.toLatin1().data());
 
-          results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
+          if (object)
+          {
+            results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
+          }
+          else
+          {
+            // failed to invoke callable, no completions are available
+            PyErr_Clear();
+            results.clear();
+          }
         }
       }
       else
@@ -537,6 +548,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
         }
         else
         {
+          PyErr_Clear();
           // not a valid attribute, no completions are available
           results.clear();
         }
