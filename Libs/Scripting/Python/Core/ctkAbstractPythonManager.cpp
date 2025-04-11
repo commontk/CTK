@@ -500,12 +500,19 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
         // Attempt to instantiate the associated python class
         PyObject* classToInstantiate;
         if (PyDict_Check(object))
+        {
           classToInstantiate = PyDict_GetItemString(object, tmpName.data());
+          Py_XINCREF(classToInstantiate);
+        }
         else
+        {
           classToInstantiate = PyObject_GetAttrString(object, tmpName.data());
+        }
 
         if (classToInstantiate)
         {
+          Py_DECREF(classToInstantiate);
+
           QString code = " = ";
           code.prepend(instantiated_class_name);
           line_code.remove(line_code.size()-1,1); // remove the last char which is a dot
