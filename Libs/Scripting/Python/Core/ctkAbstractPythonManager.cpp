@@ -468,12 +468,6 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
     return QStringList();
   }
 
-//  PyObject* object = PyDict_GetItemString(dict, module.toLatin1().data());
-//  if (!object)
-//    {
-//    return QStringList();
-//    }
-//  Py_INCREF(object);
 
   PyObject* main_object = object; // save the module object (usually __main__ or __main__.__builtins__)
   QString instantiated_class_name = "_ctkAbstractPythonManager_autocomplete_tmp";
@@ -503,8 +497,8 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 
         // Attempt to instantiate the associated python class
         PyObject* classToInstantiate;
-        if (PyDict_Check(dict))
-          classToInstantiate = PyDict_GetItemString(dict, tmpName.data());
+        if (PyDict_Check(object))
+          classToInstantiate = PyDict_GetItemString(object, tmpName.data());
         else
           classToInstantiate = PyObject_GetAttrString(object, tmpName.data());
 
@@ -520,7 +514,6 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
           line_code.append('.'); // add the point again in case we need to continue to fill line_code
           object = PyObject_GetAttrString(main_object,instantiated_class_name.toLatin1().data());
 
-          dict = object;
           results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
         }
       }
@@ -535,7 +528,6 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
         else
         {
           object = PyObject_GetAttrString(object, tmpName.data());
-          dict = object;
         }
         Py_DECREF(prevObj);
 
