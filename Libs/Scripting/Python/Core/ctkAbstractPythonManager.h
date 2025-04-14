@@ -129,6 +129,7 @@ public:
   /// By default the attributes are looked up from \c __main__.
   /// If the argument \c appendParenthesis is set to True, "()" will be appended to attributes
   /// being Python callable.
+  Q_INVOKABLE
   QStringList pythonAttributes(const QString& pythonVariableName,
                                const QString& module = QLatin1String("__main__"),
                                bool appendParenthesis = false) const;
