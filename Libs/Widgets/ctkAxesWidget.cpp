@@ -258,7 +258,7 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
     {
     //if (d->HighlightAxes)
       {
-      QPen pen;
+      QPen pen(this->palette().color(QPalette::Active, QPalette::WindowText));
       if (d->HighlightAxis == (i + 1)) // axes start at 1
         {
         pen.setWidth(3);
