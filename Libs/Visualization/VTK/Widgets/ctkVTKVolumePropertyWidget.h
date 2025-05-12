@@ -48,6 +48,12 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
   /// True by default.
   Q_PROPERTY(bool thresholdToggleVisibility READ isThresholdToggleVisible WRITE setThresholdToggleVisible)
 
+  ///
+  /// The current component of the volume property.
+  /// Represents the index of a component in the volume property, starting from 0.
+  /// Must be a integer between 0 <= index < VTK_MAX_VRCOMP. Defaults to 0 (first component).
+  Q_PROPERTY(int currentComponent READ currentComponent WRITE setCurrentComponent)
+
 public:
   ctkVTKVolumePropertyWidget(QWidget* parent = 0);
   virtual ~ctkVTKVolumePropertyWidget();
@@ -117,6 +123,9 @@ public Q_SLOTS:
   /// Set charts gradient extent
   void setChartsGradientExtent(double extent[2]);
   void setChartsGradientExtent(double min, double max);
+
+  int currentComponent() const;
+  void setCurrentComponent(int component);
 
 Q_SIGNALS:
   void thresholdEnabledChanged(bool enable);
