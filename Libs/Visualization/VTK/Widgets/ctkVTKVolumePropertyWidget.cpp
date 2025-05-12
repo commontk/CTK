@@ -219,17 +219,26 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   vtkPiecewiseFunction* opacityFunction = 0;
   vtkPiecewiseFunction* gradientFunction = 0;
   bool scalarColorMapping = true;
-  if (d->VolumeProperty)
+  bool currentComponentValid = d->VolumeProperty
+                            && d->CurrentComponent >= 0
+                            && d->CurrentComponent < VTK_MAX_VRCOMP;
+
+  d->ScalarOpacityThresholdWidget->setEnabled(currentComponentValid);
+  d->ScalarOpacityWidget->setEnabled(currentComponentValid);
+  d->ScalarColorWidget->setEnabled(currentComponentValid);
+  d->GradientWidget->setEnabled(currentComponentValid);
+
+  if (currentComponentValid)
   {
     colorTransferFunction =
-      d->VolumeProperty->GetRGBTransferFunction()->GetSize() ?
-      d->VolumeProperty->GetRGBTransferFunction() : 0;
+      d->VolumeProperty->GetRGBTransferFunction(d->CurrentComponent)->GetSize() ?
+      d->VolumeProperty->GetRGBTransferFunction(d->CurrentComponent) : 0;
     opacityFunction =
-      d->VolumeProperty->GetScalarOpacity()->GetSize() ?
-      d->VolumeProperty->GetScalarOpacity() : 0;
+      d->VolumeProperty->GetScalarOpacity(d->CurrentComponent)->GetSize() ?
+      d->VolumeProperty->GetScalarOpacity(d->CurrentComponent) : 0;
     gradientFunction =
-      d->VolumeProperty->GetGradientOpacity()->GetSize() ?
-      d->VolumeProperty->GetGradientOpacity() : 0;
+      d->VolumeProperty->GetGradientOpacity(d->CurrentComponent)->GetSize() ?
+      d->VolumeProperty->GetGradientOpacity(d->CurrentComponent) : 0;
     scalarColorMapping = d->VolumeProperty->GetIndependentComponents();
   }
 
@@ -260,7 +269,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   // function, because that function has no effect.
   d->ScalarColorGroupBox->setVisible(scalarColorMapping);
 
-  if (d->VolumeProperty)
+  if (currentComponentValid)
   {
     d->InterpolationComboBox->setCurrentIndex(
       d->VolumeProperty->GetInterpolationType() == VTK_NEAREST_INTERPOLATION ? 0 : 1);
@@ -277,6 +286,12 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
 void ctkVTKVolumePropertyWidget::updateRange()
 {
   Q_D(ctkVTKVolumePropertyWidget);
+
+  if (!d->VolumeProperty || d->CurrentComponent < 0 || d->CurrentComponent >= VTK_MAX_VRCOMP)
+  {
+    // No volume property or invalid component, do not update the range
+    return;
+  }
 
   double range[2] = {0.0};
   d->computeIntensityRange(range);
@@ -434,6 +449,26 @@ QList<double> ctkVTKVolumePropertyWidget::chartsGradientExtent()const
   QList<double> extent;
   extent << extentArray[0] << extentArray[1] << extentArray[2] << extentArray[3];
   return extent;
+}
+
+// ----------------------------------------------------------------------------
+int ctkVTKVolumePropertyWidget::currentComponent() const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  return d->CurrentComponent;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setCurrentComponent(int component)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (d->CurrentComponent == component)
+  {
+    return;
+  }
+
+  d->CurrentComponent = component;
+  this->updateFromVolumeProperty();
 }
 
 // ----------------------------------------------------------------------------
