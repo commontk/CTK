@@ -226,7 +226,7 @@ void ctkVTKChartView::setTitle(const QString& newTitle)
 QString ctkVTKChartView::title()const
 {
   Q_D(const ctkVTKChartView);
-  return QString(d->Chart->GetTitle());
+  return QString::fromStdString(d->Chart->GetTitle());
 }
 
 // ----------------------------------------------------------------------------
