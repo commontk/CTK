@@ -51,6 +51,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(QString modality READ modality WRITE setModality);
   Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription);
   Q_PROPERTY(bool isCloud READ isCloud);
+  Q_PROPERTY(bool isRetrieving READ isRetrieving);
+  Q_PROPERTY(bool isRetrieveFailed READ isRetrieveFailed);
   Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed);
   Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID);
   Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID);
@@ -124,7 +126,9 @@ public:
 
   /// Force retrieve for series. If the series was already fetched,
   /// it will be retrieved again.
-  void forceRetrieve();
+  Q_INVOKABLE void forceRetrieve();
+  bool isRetrieving();
+  bool isRetrieveFailed();
 
   ///@{
   /// in case the retrieve job failed

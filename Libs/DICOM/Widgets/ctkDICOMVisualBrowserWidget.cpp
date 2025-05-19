@@ -1113,7 +1113,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
         break;
       }
 
-      if (seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
+      if (seriesItemWidget->isRetrieving())
       {
         wait = true;
         break;
