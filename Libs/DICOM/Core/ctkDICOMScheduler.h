@@ -30,7 +30,7 @@
 
 // ctkCore includes
 #include <ctkJobScheduler.h>
-class ctkAbstractJob;
+#include <ctkAbstractJob.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
@@ -192,10 +192,16 @@ public:
                                        const QStringList& studyInstanceUIDs = {},
                                        const QStringList& seriesInstanceUIDs = {},
                                        const QStringList& sopInstanceUIDs = {});
-  Q_INVOKABLE QList<QSharedPointer<ctkAbstractJob>> getJobsByDICOMUIDs(const QStringList& patientIDs = {},
-                                                                       const QStringList& studyInstanceUIDs = {},
-                                                                       const QStringList& seriesInstanceUIDs = {},
-                                                                       const QStringList& sopInstanceUIDs = {});
+  QList<QSharedPointer<ctkAbstractJob>> getJobsByDICOMUIDs(const QStringList& patientIDs = {},
+                                                           const QStringList& studyInstanceUIDs = {},
+                                                           const QStringList& seriesInstanceUIDs = {},
+                                                           const QStringList& sopInstanceUIDs = {},
+                                                           QList<ctkAbstractJob::JobStatus> statusFilters =
+                                                           {
+                                                             ctkAbstractJob::JobStatus::Initialized,
+                                                             ctkAbstractJob::JobStatus::Queued,
+                                                             ctkAbstractJob::JobStatus::Running
+                                                           });
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
   ///@}
