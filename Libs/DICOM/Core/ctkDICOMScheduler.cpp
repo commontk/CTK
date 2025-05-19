@@ -851,7 +851,8 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
 QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(const QStringList &patientIDs,
                                                                             const QStringList &studyInstanceUIDs,
                                                                             const QStringList &seriesInstanceUIDs,
-                                                                            const QStringList &sopInstanceUIDs)
+                                                                            const QStringList &sopInstanceUIDs,
+                                                                            QList<ctkAbstractJob::JobStatus> statusFilters)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -896,10 +897,15 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
         continue;
       }
 
-      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+      if (
+        (
+          (!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
           (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
           (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID()))
+        )
+        && (statusFilters.isEmpty() || statusFilters.contains(job->status()))
+      )
       {
         jobs.push_back(job);
       }

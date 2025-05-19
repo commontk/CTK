@@ -112,6 +112,7 @@ public:
   bool IsCloud;
   bool RetrieveFailed;
   bool RetrieveSeries;
+  bool IsRetrieving;
   bool IsLoaded;
   bool IsVisible;
   bool ThumbnailIsGenerating;
@@ -133,6 +134,7 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->IsCloud = false;
   this->RetrieveFailed = false;
   this->RetrieveSeries = false;
+  this->IsRetrieving = false;
   this->IsLoaded = false;
   this->IsVisible = false;
   this->StopJobs = false;
@@ -420,12 +422,6 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath
     return;
   }
 
-  if (dicomFilePath.isEmpty())
-  {
-    logger.debug("drawThumbnail failed, dicomFilePath is empty. \n");
-    return;
-  }
-
   if (patientID.isEmpty())
   {
     logger.debug("drawThumbnail failed, patientID is empty. \n");
@@ -469,6 +465,12 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& dicomFilePath
     QString thumbnailPath = this->DicomDatabase->thumbnailPathForInstance(studyInstanceUID, seriesInstanceUID, sopInstanceUID);
     if (thumbnailPath.isEmpty() && !this->ThumbnailIsGenerating)
     {
+      if (dicomFilePath.isEmpty())
+      {
+        logger.debug("drawThumbnail failed, dicomFilePath is empty. \n");
+        return;
+      }
+
       QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
       this->ThumbnailIsGenerating = true;
       this->Scheduler->generateThumbnail(dicomFilePath, patientID, studyInstanceUID, seriesInstanceUID,
@@ -674,19 +676,12 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnStarted()
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFailed()
 {
-  this->ReferenceSeriesInserterJobUID = "";
-  this->ReferenceInstanceInserterJobUID = "";
   this->RetrieveFailed = true;
+  this->IsRetrieving = false;
 
   QString file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
-  if (file.isEmpty())
-  {
-    return;
-  }
-
   QStringList instancesList = this->DicomDatabase->instancesForSeries(this->SeriesInstanceUID);
   int numberOfFrames = instancesList.count();
-
   this->drawThumbnail(file,
                       this->PatientID,
                       this->StudyInstanceUID,
@@ -726,6 +721,7 @@ void ctkDICOMSeriesItemWidgetPrivate::updateRetrieveUIOnFinished()
     this->IsCloud = false;
     this->SeriesThumbnail->operationProgressBar()->hide();
   }
+  this->IsRetrieving = false;
 
   this->drawThumbnail(this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID),
                       this->PatientID,
@@ -774,7 +770,6 @@ CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesNumber, SeriesNum
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesNumber, SeriesNumber);
 CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setModality, Modality);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, modality, Modality);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setStopJobs, StopJobs);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, stopJobs, StopJobs);
 CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setRaiseJobsPriority, RaiseJobsPriority);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, raiseJobsPriority, RaiseJobsPriority);
@@ -805,16 +800,44 @@ QString ctkDICOMSeriesItemWidget::seriesDescription() const
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMSeriesItemWidget::setStopJobs(bool stopJobs)
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  d->StopJobs = stopJobs;
+  if (d->StopJobs && d->IsRetrieving)
+  {
+    d->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::Failed);
+    d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/error_red.svg"));
+    d->updateRetrieveUIOnFailed();
+  }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidget::forceRetrieve()
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
   d->IsCloud = true;
   d->RetrieveFailed = false;
+  d->IsRetrieving = true;
   d->StopJobs = false;
   d->DicomDatabase->removeSeries(d->SeriesInstanceUID, false, false);
   d->ThumbnailImage = QImage();
   this->generateInstances(true);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMSeriesItemWidget::isRetrieving()
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  return d->IsRetrieving;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMSeriesItemWidget::isRetrieveFailed()
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  return d->RetrieveFailed;
 }
 
 //----------------------------------------------------------------------------
@@ -961,7 +984,7 @@ void ctkDICOMSeriesItemWidget::onJobStarted(const QVariant &data)
   {
     d->SeriesThumbnail->setOperationStatus(ctkThumbnailLabel::InProgress);
     d->SeriesThumbnail->setStatusIcon(QIcon(":/Icons/pending.svg"));
-
+    d->IsRetrieving = true;
     if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
     {
       d->ReferenceInstanceInserterJobUID = "";
@@ -996,9 +1019,9 @@ void ctkDICOMSeriesItemWidget::onJobUserStopped(const QVariant &data)
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      d->updateRetrieveUIOnFailed();
+      d->ReferenceSeriesInserterJobUID = "";
     }
-
+    d->updateRetrieveUIOnFailed();
     d->StoppedJobUID = td.JobUID;
   }
 }
@@ -1025,9 +1048,9 @@ void ctkDICOMSeriesItemWidget::onJobFailed(const QVariant &data)
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
-      d->updateRetrieveUIOnFailed();
+      d->ReferenceSeriesInserterJobUID = "";
     }
-
+    d->updateRetrieveUIOnFailed();
     d->StoppedJobUID = td.JobUID;
   }
 }
