@@ -256,17 +256,14 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   // Drawing the lines
   for (int i = 0; i < 6; ++i)
   {
-    //if (d->HighlightAxes)
+    QPen pen(this->palette().color(this->isEnabled() ? QPalette::Active : QPalette::Inactive, QPalette::WindowText));
+    if (d->HighlightAxis == (i + 1)) // axes start at 1
     {
-      QPen pen;
-      if (d->HighlightAxis == (i + 1)) // axes start at 1
-      {
-        pen.setWidth(3);
-        //pen.setColor(QColor(64, 64, 72)); // Payne's grey
-        pen.setColor(this->palette().color(QPalette::Active, QPalette::Highlight));
-      }
-      painter.setPen(pen);
+      pen.setWidth(3);
+      //pen.setColor(QColor(64, 64, 72)); // Payne's grey
+      pen.setColor(this->palette().color(QPalette::Active, QPalette::Highlight));
     }
+    painter.setPen(pen);
     painter.drawLine(center, positions[i]);
   }
 
