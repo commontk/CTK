@@ -175,7 +175,7 @@ public:
 
   ///@{
   /// Add/Remove study item widgets
-  Q_INVOKABLE void addStudyItemWidget(const QString& studyItem);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* addStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyItem(const QString& studyItem);
   Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyInstanceUID(const QString& studyInstanceUID);
@@ -211,7 +211,7 @@ public:
   Q_INVOKABLE QString stoppedJobUID() const;
 
 public Q_SLOTS:
-  void generateStudies(bool query = true, bool retrieve = true);
+  void generateStudies(bool query = true, bool retrieve = true, bool createUI = true);
   void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
   void updateGUIFromScheduler(QVariant);
   void onJobStarted(QVariant);
