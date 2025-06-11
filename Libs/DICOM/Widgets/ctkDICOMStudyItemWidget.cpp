@@ -73,6 +73,7 @@ public:
   int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   void addEmptySeriesItemWidget(int rowIndex, int columnIndex);
   ctkDICOMSeriesItemWidget* isSeriesItemAlreadyAdded(const QString& seriesItem);
+  void updateSeriesSelectionInternal();
 
   QString FilteringSeriesDescription;
   QStringList FilteringModalities;
@@ -95,6 +96,9 @@ public:
   bool QueryOn;
   bool RetrieveOn;
   int FilteredSeriesCount;
+
+  QList<QTableWidgetItem*> PreviousSeriesSelection;
+  QList<QTableWidgetItem*> CurrentSeriesSelection;
 };
 
 //----------------------------------------------------------------------------
@@ -138,6 +142,9 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
                           this->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
     }
   }
+
+  this->CurrentSeriesSelection.clear();
+  this->PreviousSeriesSelection.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -154,6 +161,10 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parent)
                    q, SLOT(onStudySelectionClicked(bool)));
   QObject::connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
                    q, SLOT(onOperationStatusButtonClicked(bool)));
+  QObject::connect(this->SeriesListTableWidget, SIGNAL(itemSelectionChanged()),
+                   q, SLOT(onSeriesListTableWidgetSelectionChanged()));
+  QObject::connect(this->SeriesListTableWidget, SIGNAL(itemPressed(QTableWidgetItem*)),
+                   q, SLOT(onSeriesListTableWidgetItemPressed(QTableWidgetItem*)));
 }
 
 //------------------------------------------------------------------------------
@@ -393,6 +404,13 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdd
   }
 
   return seriesItemWidgetFound;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidgetPrivate::updateSeriesSelectionInternal()
+{
+  this->PreviousSeriesSelection = this->CurrentSeriesSelection;
+  this->CurrentSeriesSelection = this->SeriesListTableWidget->selectedItems();
 }
 
 //----------------------------------------------------------------------------
@@ -745,6 +763,20 @@ ctkDICOMSeriesItemWidget *ctkDICOMStudyItemWidget::seriesItemWidgetBySeriesInsta
 }
 
 //------------------------------------------------------------------------------
+QList<QTableWidgetItem *> ctkDICOMStudyItemWidget::previousSelectedSeriesItems() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  return d->PreviousSeriesSelection;
+}
+
+//------------------------------------------------------------------------------
+QList<QTableWidgetItem *> ctkDICOMStudyItemWidget::currentSelectedSeriesItems() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  return d->CurrentSeriesSelection;
+}
+
+//------------------------------------------------------------------------------
 ctkCollapsibleGroupBox* ctkDICOMStudyItemWidget::collapsibleGroupBox()
 {
   Q_D(ctkDICOMStudyItemWidget);
@@ -952,4 +984,27 @@ void ctkDICOMStudyItemWidget::onOperationStatusButtonClicked(bool)
                         "Please initiate a new job if further processing is required.").arg(d->StoppedJobUID));
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidget::onSeriesListTableWidgetSelectionChanged()
+{
+  Q_D(ctkDICOMStudyItemWidget);
+
+  if (QApplication::mouseButtons() != Qt::NoButton || QApplication::keyboardModifiers() != Qt::NoModifier)
+  {
+    // do not update id the selection is changed by mouse or keyboard,
+    // because the selection is already updated by onSeriesListTableWidgetItemPressed.
+    return;
+  }
+
+  d->updateSeriesSelectionInternal();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidget::onSeriesListTableWidgetItemPressed(QTableWidgetItem *item)
+{
+  Q_D(ctkDICOMStudyItemWidget);
+  Q_UNUSED(item);
+  d->updateSeriesSelectionInternal();
 }

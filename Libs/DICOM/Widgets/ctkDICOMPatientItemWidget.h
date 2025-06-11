@@ -179,6 +179,7 @@ public:
   Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyItem(const QString& studyItem);
   Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetByStudyInstanceUID(const QString& studyInstanceUID);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* studyItemWidgetBySeriesInstanceUID(const QString& seriesInstanceUID);
   ///@}
 
   /// Set selection for all studies/series
