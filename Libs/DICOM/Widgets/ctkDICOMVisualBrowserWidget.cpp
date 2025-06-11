@@ -1291,10 +1291,12 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSer
       continue;
     }
     QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
+    QList<QTableWidgetItem*> selectedItems = studyItemWidget->currentSelectedSeriesItems();
+    QList<QTableWidgetItem*> previousSelectedItems = studyItemWidget->previousSelectedSeriesItems();
+
     foreach (QTableWidgetItem* selectedItem, selectedItems)
     {
-      if (!selectedItem)
+      if (!selectedItem || previousSelectedItems.contains(selectedItem))
       {
         continue;
       }
@@ -1306,7 +1308,18 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSer
 
       if (seriesItemWidget == selectedSeriesItemWidget)
       {
+        // Deselect series in all other study item widgets except the one containing the selected series
         seriesListTableWidget->itemClicked(selectedItem);
+
+        foreach (ctkDICOMStudyItemWidget* otherStudyItemWidget, studyItemWidgetsList)
+        {
+          if (!otherStudyItemWidget || otherStudyItemWidget == studyItemWidget)
+          {
+            continue;
+          }
+          otherStudyItemWidget->onSeriesListTableWidgetItemPressed();
+        }
+
         return;
       }
     }
