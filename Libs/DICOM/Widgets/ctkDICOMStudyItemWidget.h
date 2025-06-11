@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QWidget>
 class QTableWidget;
+class QTableWidgetItem;
 
 // ctkWidgets includes
 class ctkCollapsibleGroupBox;
@@ -188,6 +189,8 @@ public:
   Q_INVOKABLE void removeSeriesItemWidget(const QString& seriesItem);
   Q_INVOKABLE ctkDICOMSeriesItemWidget* seriesItemWidgetBySeriesItem(const QString& seriesItem);
   Q_INVOKABLE ctkDICOMSeriesItemWidget* seriesItemWidgetBySeriesInstanceUID(const QString& seriesInstanceUID);
+  Q_INVOKABLE QList<QTableWidgetItem*> previousSelectedSeriesItems() const;
+  Q_INVOKABLE QList<QTableWidgetItem*> currentSelectedSeriesItems() const;
   ///@}
 
   /// Collapsible group box.
@@ -220,6 +223,8 @@ public Q_SLOTS:
   void onJobFinished(const QVariant&);
   void onStudySelectionClicked(bool);
   void onOperationStatusButtonClicked(bool);
+  void onSeriesListTableWidgetItemPressed(QTableWidgetItem *item = nullptr);
+  void onSeriesListTableWidgetSelectionChanged();
 
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.
