@@ -838,6 +838,25 @@ ctkDICOMStudyItemWidget *ctkDICOMPatientItemWidget::studyItemWidgetByStudyInstan
 }
 
 //------------------------------------------------------------------------------
+ctkDICOMStudyItemWidget *ctkDICOMPatientItemWidget::studyItemWidgetBySeriesInstanceUID(const QString& seriesInstanceUID)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  for (int studyIndex = 0; studyIndex < d->StudyItemWidgetsList.size(); ++studyIndex)
+  {
+    ctkDICOMStudyItemWidget* studyItemWidget =
+      qobject_cast<ctkDICOMStudyItemWidget*>(d->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget || !studyItemWidget->seriesItemWidgetBySeriesInstanceUID(seriesInstanceUID))
+    {
+      continue;
+    }
+
+    return studyItemWidget;
+  }
+
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMPatientItemWidget::setSelection(bool selected)
 {
   Q_D(ctkDICOMPatientItemWidget);
