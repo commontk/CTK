@@ -151,7 +151,7 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
       sopIstanceUID, QThread::LowPriority, QStringList("Test"));
   }
 
-  CHECK_INT(scheduler.numberOfJobs(), numberOfImages);
+  CHECK_INT(scheduler.numberOfRunningJobs(), numberOfImages);
   scheduler.waitForFinish(false, true);
 
   instances = database.instancesForSeries(seriesIstanceUID);
