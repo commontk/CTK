@@ -1113,7 +1113,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
         break;
       }
 
-      if (seriesItemWidget->isCloud() && !seriesItemWidget->retrieveFailed())
+      if (seriesItemWidget->isRetrieving())
       {
         wait = true;
         break;
@@ -1291,10 +1291,12 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSer
       continue;
     }
     QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-    QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
+    QList<QTableWidgetItem*> selectedItems = studyItemWidget->currentSelectedSeriesItems();
+    QList<QTableWidgetItem*> previousSelectedItems = studyItemWidget->previousSelectedSeriesItems();
+
     foreach (QTableWidgetItem* selectedItem, selectedItems)
     {
-      if (!selectedItem)
+      if (!selectedItem || previousSelectedItems.contains(selectedItem))
       {
         continue;
       }
@@ -1306,7 +1308,18 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSer
 
       if (seriesItemWidget == selectedSeriesItemWidget)
       {
+        // Deselect series in all other study item widgets except the one containing the selected series
         seriesListTableWidget->itemClicked(selectedItem);
+
+        foreach (ctkDICOMStudyItemWidget* otherStudyItemWidget, studyItemWidgetsList)
+        {
+          if (!otherStudyItemWidget || otherStudyItemWidget == studyItemWidget)
+          {
+            continue;
+          }
+          otherStudyItemWidget->onSeriesListTableWidgetItemPressed();
+        }
+
         return;
       }
     }
@@ -1678,11 +1691,13 @@ void ctkDICOMVisualBrowserWidgetPrivate::getPatientsMetadata(bool queryRetrieve)
       continue;
     }
 
-    bool query = queryRetrieve;
+    QSettings settings;
+    bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+    bool query = queryRetrieve && queryRetrieveEnabled;
     bool retrieve = false;
     if (patientItemWidget == currentPatientItemWidget)
     {
-      retrieve = queryRetrieve;
+      retrieve = queryRetrieve && queryRetrieveEnabled;
     }
 
     patientItemWidget->generateStudies(query, retrieve);
@@ -2832,15 +2847,15 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
 
   foreach (const QString& uid, selectedSeriesUIDs)
   {
-    d->DicomDatabase->removeSeries(uid, false, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removeSeries(uid, false, true);
   }
   foreach (const QString& uid, selectedStudyUIDs)
   {
-    d->DicomDatabase->removeStudy(uid, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removeStudy(uid, true);
   }
   foreach (const QString& uid, selectedPatientItems)
   {
-    d->DicomDatabase->removePatient(uid, level == ctkDICOMModel::RootType);
+    d->DicomDatabase->removePatient(uid, true);
   }
   QApplication::restoreOverrideCursor();
 }
@@ -3322,7 +3337,9 @@ void ctkDICOMVisualBrowserWidget::onPatientItemChanged(int index)
     return;
   }
 
-  patientItem->generateStudies();
+  QSettings settings;
+  bool queryRetrieveEnabled = settings.value("DICOM/QueryRetrieveEnabled", "").toBool();
+  patientItem->generateStudies(queryRetrieveEnabled, queryRetrieveEnabled);
 }
 
 //------------------------------------------------------------------------------
