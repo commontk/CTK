@@ -36,7 +36,9 @@ configure_file(
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+if(NOT PYTHON_LIBRARY)
+  ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
+endif()
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
