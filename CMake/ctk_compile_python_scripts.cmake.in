@@ -95,7 +95,7 @@ else()
 endif()
 
 execute_process(
-  COMMAND "@PYTHON_EXECUTABLE@" "@compile_all_script@"
+  COMMAND "@Python3_EXECUTABLE@" "@compile_all_script@"
   RESULT_VARIABLE result_var
   )
 if(NOT result_var STREQUAL 0)
