@@ -75,21 +75,19 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   # Python is required
-  if(NOT PYTHONLIBS_FOUND)
-    find_package(PythonLibs)
-    if(NOT PYTHONLIBS_FOUND)
-      message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
-    endif()
+  if(NOT Python3_Development_FOUND)
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
   endif()
 
-  # Variable expected by FindPython3 CMake module
-  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  set(Python3_LIBRARY ${PYTHON_LIBRARY})
-  set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
-  set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
-  find_package(Python3 COMPONENTS Development REQUIRED)
+  ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
 
-  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+  # Bridge Python3_ results to legacy PYTHON_ variables needed by
+  # FindPythonQt and downstream superbuild projects
+  set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+  set(PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS})
+  set(PYTHON_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
+  set(PYTHON_LIBRARY ${PYTHON_LIBRARY})  # already extracted above
+  set(PYTHON_LIBRARIES ${Python3_LIBRARIES})
 
   set(revision_tag ec7e1416e17fae645f3b99a8df4533719e17cbf6) # patched-v3.6.1-2025-12-22-469f01f6a
   if(${proj}_REVISION_TAG)
@@ -299,10 +297,15 @@ set(PythonQt_DIR ${PYTHONQT_INSTALL_DIR})
 mark_as_superbuild(
   VARS
     PYTHONQT_INSTALL_DIR:PATH
-    PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
-    PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    # FindPython3 variables (modern)
+    Python3_EXECUTABLE:FILEPATH
+    Python3_INCLUDE_DIRS:PATH
+    Python3_LIBRARIES:FILEPATH
+    # Legacy variables needed by FindPythonQt and older projects
+    PYTHON_EXECUTABLE:FILEPATH
+    PYTHON_INCLUDE_DIR:PATH
     PYTHON_INCLUDE_DIR2:PATH
-    PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+    PYTHON_LIBRARY:FILEPATH
   LABELS "FIND_PACKAGE_VARS"
   )
 mark_as_superbuild(
