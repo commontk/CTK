@@ -98,7 +98,7 @@ endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   include_directories(
-    ${PYTHON_INCLUDE_DIRS}
+    ${Python3_INCLUDE_DIRS}
     ${PYTHONQT_INCLUDE_DIR}
     )
 endif()
@@ -192,7 +192,7 @@ endif()
 if(${VTK_VERSION} VERSION_LESS "8.90")
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+  ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
   list(APPEND VTK_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
   if(${VTK_VERSION_MAJOR} GREATER 5)
     list(APPEND VTK_LIBRARIES vtkWrappingPythonCore)
