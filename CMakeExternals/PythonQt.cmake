@@ -73,14 +73,14 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   # Python is required
-  if(NOT PYTHONLIBS_FOUND)
-    find_package(PythonLibs)
-    if(NOT PYTHONLIBS_FOUND)
+  if(NOT Python3_Development_FOUND)
+    find_package(Python3 COMPONENTS Development)
+    if(NOT Python3_Development_FOUND)
       message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
     endif()
   endif()
 
-  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+  ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     set(revision_tag 37b0d31e5d313f5682f774bd8d5d41f5018a2ce9) # patched-v3.6.1-2025-06-13-a2687828e
   else()
@@ -145,7 +145,7 @@ set(PythonQt_DIR ${PYTHONQT_INSTALL_DIR})
 mark_as_superbuild(
   VARS
     PYTHONQT_INSTALL_DIR:PATH
-    PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
+    Python3_EXECUTABLE:FILEPATH # FindPythonInterp expects Python3_EXECUTABLE variable to be defined
     PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     PYTHON_INCLUDE_DIR2:PATH
     PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
