@@ -74,4 +74,4 @@ void ctkSearchBoxTester::testSignals()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkSearchBoxTest)
-#include "moc_ctkSearchBoxTest.cpp"
+#include "ctkSearchBoxTest.moc"

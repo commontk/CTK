@@ -144,4 +144,4 @@ void ctkPushButtonTester::testDefaults()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkPushButtonTest)
-#include "moc_ctkPushButtonTest.cpp"
+#include "ctkPushButtonTest.moc"

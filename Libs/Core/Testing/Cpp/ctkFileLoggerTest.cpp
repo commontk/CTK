@@ -20,4 +20,4 @@ void ctkFileLoggerTester::initTestCase()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkFileLoggerTest)
-#include "moc_ctkFileLoggerTest.cpp"
+#include "ctkFileLoggerTest.moc"

@@ -181,7 +181,10 @@ foreach(target_library IN LISTS KIT_target_libraries)
 endforeach()
 set(KIT_target_libraries ${_target_libraries})
 
-list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql Qt${CTK_QT_VERSION}::Svg)
+list(APPEND KIT_target_libraries
+        Qt${CTK_QT_VERSION}::Sql
+        Qt${CTK_QT_VERSION}::Svg
+     )
 
 # create a dcm query/retrieve service config file that points to the build dir
 set (DCMQRSCP_STORE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing)

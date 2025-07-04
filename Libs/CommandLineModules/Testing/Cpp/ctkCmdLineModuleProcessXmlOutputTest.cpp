@@ -65,4 +65,4 @@ void ctkCmdLineModuleProcessXmlOutputTester::testValidXmlOutput()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleProcessXmlOutputTest)
-#include "moc_ctkCmdLineModuleProcessXmlOutputTest.cpp"
+#include "ctkCmdLineModuleProcessXmlOutputTest.moc"

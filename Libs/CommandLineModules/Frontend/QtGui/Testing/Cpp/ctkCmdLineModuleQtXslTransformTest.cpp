@@ -476,4 +476,4 @@ void ctkCmdLineModuleQtXslTransformTester::testXslExtraTransformation_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleQtXslTransformTest)
-#include "moc_ctkCmdLineModuleQtXslTransformTest.cpp"
+#include "ctkCmdLineModuleQtXslTransformTest.moc"

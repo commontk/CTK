@@ -217,4 +217,4 @@ void ctkRangeSliderTester::testHandleMouseEvents_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkRangeSliderTest)
-#include "moc_ctkRangeSliderTest.cpp"
+#include "ctkRangeSliderTest.moc"

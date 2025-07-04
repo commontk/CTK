@@ -128,4 +128,4 @@ void ctkVTKPropertyWidgetTester::testProperties()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkVTKPropertyWidgetTest)
-#include "moc_ctkVTKPropertyWidgetTest.cpp"
+#include "ctkVTKPropertyWidgetTest.moc"

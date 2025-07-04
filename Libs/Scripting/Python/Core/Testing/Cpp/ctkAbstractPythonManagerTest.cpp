@@ -501,4 +501,4 @@ void ctkAbstractPythonManagerTester::testPythonObject_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkAbstractPythonManagerTest)
-#include "moc_ctkAbstractPythonManagerTest.cpp"
+#include "ctkAbstractPythonManagerTest.moc"

@@ -5,11 +5,6 @@
 function(ctkFunctionCreateCmdLineModule name)
   set(_src_files ${ARGN})
   list(APPEND _src_files ctkCmdLineModule${name}.cpp)
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    qt5_add_resources(_src_files ctkCmdLineModule${name}.qrc)
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
 
   ctk_add_executable_utf8(ctkCmdLineModule${name} ${_src_files})
 

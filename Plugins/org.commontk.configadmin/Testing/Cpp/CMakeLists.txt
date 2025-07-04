@@ -6,8 +6,6 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
-
 set(test_executable ${PROJECT_NAME}CppTests)
 
 set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib} CTKCore)

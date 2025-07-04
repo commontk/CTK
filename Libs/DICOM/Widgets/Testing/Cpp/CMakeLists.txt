@@ -22,10 +22,6 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMVisualBrowserWidgetTest1.cpp
   )
 
-set(Tests_MOC_CPPS
-  ctkDICOMBrowserTest.cpp
-  )
-
 include_directories(
   ${CMAKE_SOURCE_DIR}/Libs/Testing
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -33,12 +29,6 @@ include_directories(
 
 find_package(Qt${CTK_QT_VERSION} COMPONENTS Test REQUIRED)
 set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
-
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_generate_mocs(${Tests_MOC_CPPS})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)

@@ -98,4 +98,4 @@ void ctkPathListWidgetWithButtonsTester::testButtons()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkPathListWidgetWithButtonsTest)
-#include "moc_ctkPathListWidgetWithButtonsTest.cpp"
+#include "ctkPathListWidgetWithButtonsTest.moc"

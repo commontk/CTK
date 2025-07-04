@@ -101,12 +101,6 @@ set(Tests_Helpers_MOC_CPPS
   )
 
 set(Tests_Helpers_MOC_CPP)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-  qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
 
 if(HAVE_BFD)
   ctk_add_executable_utf8(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)

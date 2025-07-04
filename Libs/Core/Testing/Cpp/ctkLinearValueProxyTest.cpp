@@ -506,4 +506,4 @@ void ctkLinearValueProxyTester::testProxyModified_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkLinearValueProxyTest)
-#include "moc_ctkLinearValueProxyTest.cpp"
+#include "ctkLinearValueProxyTest.moc"

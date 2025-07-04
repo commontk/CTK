@@ -292,4 +292,4 @@ void ctkCmdLineModuleQtCustomizationTester::testCustomization()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleQtCustomizationTest)
-#include "moc_ctkCmdLineModuleQtCustomizationTest.cpp"
+#include "ctkCmdLineModuleQtCustomizationTest.moc"

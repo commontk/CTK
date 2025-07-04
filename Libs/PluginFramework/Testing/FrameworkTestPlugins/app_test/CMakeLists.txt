@@ -37,11 +37,6 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_wrap_cpp(MY_MOC_CXX ${MOC_SRCS})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
 set(test_executable ${fw_lib}AppTests)
 
 ctk_add_executable_utf8(${test_executable} ${SRCS} ${MY_MOC_CXX})

@@ -71,44 +71,24 @@ macro(ctkMacroBuildApp)
     )
 
   # Make sure variable are cleared
-  set(MY_UI_CPP)
-  set(MY_MOC_CPP)
-  set(MY_QRC_SRCS)
 
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    # Wrap
-    if(MY_MOC_SRCS)
-      # this is a workaround for Visual Studio. The relative include paths in the generated
-      # moc files can get very long and can't be resolved by the MSVC compiler.
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
-      endforeach()
-    endif()
-    QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-    if(DEFINED MY_RESOURCES)
-      QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+  if( CTK_QT_VERSION EQUAL "5" )
+    add_definitions(-DHAVE_QT5)
+  elseif(CTK_QT_VERSION EQUAL "6")
+    add_definitions(-DHAVE_QT6)
   endif()
-
   source_group("Resources" FILES
+    ${MY_MOC_SRCS}
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
-    )
-
-  source_group("Generated" FILES
-    ${MY_QRC_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
     )
 
   # Create executable
   ctk_add_executable_utf8(${proj_name}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_MOC_SRCS}
+    ${MY_RESOURCES}
+    ${MY_UI_FORMS}
     )
 
   # Set labels associated with the target.

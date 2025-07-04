@@ -125,4 +125,4 @@ void ctkDoubleRangeSliderTester::testSingleStep_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkDoubleRangeSliderTest)
-#include "moc_ctkDoubleRangeSliderTest.cpp"
+#include "ctkDoubleRangeSliderTest.moc"

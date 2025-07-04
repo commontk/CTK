@@ -104,41 +104,10 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   # Make sure variable are cleared
-  set(MY_MOC_CPP)
-  set(MY_UI_CPP)
-  set(MY_QRC_SRCS)
 
   # Wrap
-  if(MY_MOC_SRCS)
-    # this is a workaround for Visual Studio. The relative include paths in the generated
-    # moc files can get very long and can't be resolved by the MSVC compiler.
-    if(CTK_QT_VERSION VERSION_EQUAL "5")
-      foreach(moc_src ${MY_MOC_SRCS})
-        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
-      endforeach()
-    else()
-      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-    endif()
-  endif()
   if(MY_GENERATE_MOC_SRCS)
-    QT5_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS})
-  endif()
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    if(Qt5Widgets_FOUND)
-      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
-    elseif(MY_UI_FORMS)
-      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
-
-  if(DEFINED MY_RESOURCES AND NOT MY_RESOURCES STREQUAL "")
-    if(CTK_QT_VERSION VERSION_EQUAL "5")
-      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
-    else()
-      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-    endif()
+    set(CMAKE_AUTOMOC ON)
   endif()
 
   source_group("Resources" FILES
@@ -147,17 +116,17 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     )
 
   source_group("Generated" FILES
-    ${MY_QRC_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
+    ${MY_RESOURCES}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
     ${MOC_CPP_DECORATOR}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
+    ${MY_RESOURCES}
     )
 
   # Set labels associated with the target.

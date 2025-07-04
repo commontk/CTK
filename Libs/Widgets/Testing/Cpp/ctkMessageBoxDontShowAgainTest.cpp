@@ -597,4 +597,4 @@ void ctkMessageBoxDontShowAgainTester::testVisible()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkMessageBoxDontShowAgainTest)
-#include "moc_ctkMessageBoxDontShowAgainTest.cpp"
+#include "ctkMessageBoxDontShowAgainTest.moc"

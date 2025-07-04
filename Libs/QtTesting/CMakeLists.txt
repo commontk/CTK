@@ -152,8 +152,13 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 list(APPEND KIT_target_libraries
   Qt${CTK_QT_VERSION}::Xml
-  Qt${CTK_QT_VERSION}::XmlPatterns
+)
+
+if( CTK_QT_VERSION EQUAL "5")
+  list(APPEND KIT_target_libraries
+    Qt${CTK_QT_VERSION}::XmlPatterns
   )
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

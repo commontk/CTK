@@ -357,4 +357,4 @@ void ctkCoordinatesWidgetTester::testDecimalsByShortcuts_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCoordinatesWidgetTest)
-#include "moc_ctkCoordinatesWidgetTest.cpp"
+#include "ctkCoordinatesWidgetTest.moc"

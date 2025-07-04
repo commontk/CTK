@@ -81,9 +81,14 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 list(APPEND KIT_target_libraries
   Qt${CTK_QT_VERSION}::Concurrent
-  Qt${CTK_QT_VERSION}::XmlPatterns
   Qt${CTK_QT_VERSION}::Widgets
   )
+if(CTK_QT_VERSION EQUAL "5")
+  # Qt6 no longer supports XML, need other library  Qt${CTK_QT_VERSION}::XmlPatterns
+  list(APPEND KIT_target_libraries
+    Qt${CTK_QT_VERSION}::XmlPatterns
+  )
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

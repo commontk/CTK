@@ -40,12 +40,7 @@ set(KIT_HELPER_SRCS
   ctkVTKObjectTestHelper.cpp
   )
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
-  include_directories(${Qt5Widgets_INCLUDE_DIRS})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 #
 # Tests
