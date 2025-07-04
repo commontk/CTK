@@ -64,7 +64,6 @@ set(KIT_SRCS
   ctkDICOMRetrieveWorker_p.h
   ctkDICOMScheduler.cpp
   ctkDICOMScheduler.h
-  ctkDICOMScheduler_p.h
   ctkDICOMServer.cpp
   ctkDICOMServer.h
   ctkDICOMStorageListener.cpp
@@ -144,7 +143,6 @@ set(KIT_MOC_SRCS
   ctkDICOMRetrieveWorker.h
   ctkDICOMRetrieveWorker_p.h
   ctkDICOMScheduler.h
-  ctkDICOMScheduler_p.h
   ctkDICOMServer.h
   ctkDICOMStorageListener.h
   ctkDICOMStorageListenerJob.h

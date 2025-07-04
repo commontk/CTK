@@ -33,7 +33,6 @@
 // CTK includes
 #include "ctkAbstractJob.h"
 #include "ctkJobScheduler.h"
-#include "ctkJobScheduler_p.h"
 #include "ctkAbstractWorker.h"
 #include "ctkLogger.h"
 

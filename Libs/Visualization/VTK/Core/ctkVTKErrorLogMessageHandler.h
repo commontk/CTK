@@ -35,6 +35,7 @@ class ctkVTKErrorLogMessageHandlerPrivate;
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKErrorLogMessageHandler :
     public ctkErrorLogAbstractMessageHandler
 {
+  Q_OBJECT
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 

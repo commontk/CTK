@@ -69,6 +69,7 @@ QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
 
 class ctkDICOMWidgetMetadataDialog : public QDialog
 {
+  Q_OBJECT
 public:
   ctkDICOMWidgetMetadataDialog(QWidget* parent = 0)
     : QDialog(parent)
@@ -4073,3 +4074,5 @@ bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& u
     return false;
   }
 }
+
+#include "ctkDICOMVisualBrowserWidget.moc"

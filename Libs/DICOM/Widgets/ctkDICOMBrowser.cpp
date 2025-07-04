@@ -66,8 +66,8 @@
 
 #include "ui_ctkDICOMBrowser.h"
 
-class ctkDICOMMetadataDialog : public QDialog
-{
+class ctkDICOMMetadataDialog : public QDialog {
+  Q_OBJECT
 public:
   ctkDICOMMetadataDialog(QWidget *parent = 0)
     : QDialog(parent)
@@ -1869,3 +1869,5 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     qWarning() << Q_FUNC_INFO << " failed: invalid level";
   }
 }
+
+#include "ctkDICOMBrowser.moc"

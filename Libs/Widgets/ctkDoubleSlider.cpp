@@ -40,6 +40,7 @@
 //-----------------------------------------------------------------------------
 class ctkSlider: public QSlider
 {
+  Q_OBJECT
 public:
   ctkSlider(QWidget* parent);
   using QSlider::initStyleOption;
@@ -680,3 +681,5 @@ void ctkDoubleSlider::onValueProxyModified()
   this->setValue(d->Slider->property("inputValue").toDouble());
   this->blockSignals(wasBlockingSignals);
 }
+
+#include "ctkDoubleSlider.moc"

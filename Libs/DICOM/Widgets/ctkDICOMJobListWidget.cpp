@@ -40,8 +40,8 @@
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMJobListWidget");
 
 //----------------------------------------------------------------------------
-class ProgressBarDelegate : public QStyledItemDelegate
-{
+class ProgressBarDelegate : public QStyledItemDelegate {
+  Q_OBJECT
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
   void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -79,6 +79,7 @@ public:
 //----------------------------------------------------------------------------
 class QCenteredItemModel : public QStandardItemModel
 {
+  Q_OBJECT
 public:
   using QStandardItemModel::QStandardItemModel;
 
@@ -1368,3 +1369,5 @@ void ctkDICOMJobListWidget::onClearAllButtonClicked()
 
   QApplication::restoreOverrideCursor();
 }
+
+#include "ctkDICOMJobListWidget.moc"

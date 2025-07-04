@@ -504,8 +504,8 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
 // ctkPythonConsolePrivate
 
 //----------------------------------------------------------------------------
-class ctkPythonConsolePrivate : public ctkConsolePrivate
-{
+class ctkPythonConsolePrivate : public ctkConsolePrivate {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkPythonConsole);
 public:
   ctkPythonConsolePrivate(ctkPythonConsole& object);
@@ -724,3 +724,5 @@ void ctkPythonConsole::reset()
 
   this->Superclass::reset();
 }
+
+#include "ctkPythonConsole.moc"

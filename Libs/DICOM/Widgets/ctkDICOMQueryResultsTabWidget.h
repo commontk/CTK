@@ -31,6 +31,7 @@
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryResultsTabWidget : public QTabWidget
 {
+    Q_OBJECT
 public:
   typedef QTabWidget Superclass;
   explicit ctkDICOMQueryResultsTabWidget(QWidget* parent=0);

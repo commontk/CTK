@@ -71,7 +71,6 @@ set(KIT_SRCS
   ctkHighPrecisionTimer.cpp
   ctkJobScheduler.cpp
   ctkJobScheduler.h
-  ctkJobScheduler_p.h
   ctkLinearValueProxy.cpp
   ctkLinearValueProxy.h
   ctkLogger.cpp
@@ -121,7 +120,6 @@ set(KIT_MOC_SRCS
   ctkErrorLogTerminalOutput.h
   ctkFileLogger.h
   ctkJobScheduler.h
-  ctkJobScheduler_p.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkModelTester.h
@@ -138,7 +136,6 @@ set_source_files_properties(
   ctkAbstractJob.h
   ctkAbstractWorker.h
   ctkJobScheduler.h
-  ctkJobScheduler_p.h
   WRAP_EXCLUDE
   )
 

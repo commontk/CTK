@@ -29,8 +29,8 @@
 class ctkDICOMListenerWidgetPrivate;
 
 /// \ingroup DICOM_Widgets
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMListenerWidget : public QWidget
-{
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMListenerWidget : public QWidget {
+  Q_OBJECT
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMListenerWidget(QWidget* parent=0);
