@@ -191,59 +191,11 @@ set(Tests_SRCS
   ctkSettingsPanelTest2Helper.h
   )
 
-set(Tests_MOC_SRCS
-  ctkExampleDerivedWorkflowWidgetStep.h
-  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
-  ctkSettingsPanelTest2Helper.h
-  )
-
 if(CTK_USE_QTTESTING)
   include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
-  ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
-set(Tests_MOC_CPPS
-  ctkConsoleTest.cpp
-  ctkCoordinatesWidgetTest.cpp
-  ctkCoordinatesWidgetValueProxyTest.cpp
-  ctkDoubleRangeSliderTest.cpp
-  ctkDoubleRangeSliderValueProxyTest.cpp
-  ctkDoubleSliderTest.cpp
-  ctkDoubleSliderValueProxyTest.cpp
-  ctkDoubleSpinBoxTest.cpp
-  ctkDoubleSpinBoxValueProxyTest.cpp
-  ctkFlatProxyModelTest.cpp
-  ctkFontButtonTest.cpp
-  ctkLanguageComboBoxTest.cpp
-  ctkMatrixWidgetTest.cpp
-  ctkMessageBoxDontShowAgainTest.cpp
-  ctkPathListWidgetTest.cpp
-  ctkPathListWidgetWithButtonsTest.cpp
-  ctkPushButtonTest.cpp
-  ctkRangeSliderTest.cpp
-  ctkRangeWidgetTest.cpp
-  ctkRangeWidgetValueProxyTest.cpp
-  ctkSearchBoxTest.cpp
-  ctkSettingsPanelTest.cpp
-  ctkSliderWidgetTest.cpp
-  ctkSliderWidgetValueProxyTest.cpp
-  )
-
-set(Tests_MOC_CPP)
-set(Tests_UI_CPP)
-set(Tests_RESOURCES_SRCS)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_wrap_cpp(Tests_MOC_CPP ${Tests_MOC_SRCS})
-  qt5_generate_mocs(${Tests_MOC_CPPS})
-  if(TEST_UI_FORMS)
-    qt5_wrap_ui(Tests_UI_CPP ${Tests_UI_FORMS})
-  endif()
-  qt5_add_resources(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 if(CTK_QT_VERSION VERSION_EQUAL "5")
