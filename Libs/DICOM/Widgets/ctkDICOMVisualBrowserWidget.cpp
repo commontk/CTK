@@ -67,11 +67,11 @@ QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
 QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
 
-class ctkDICOMMetadataDialog : public QDialog
+class ctkDICOMWidgetMetadataDialog : public QDialog
 {
   Q_OBJECT
 public:
-  ctkDICOMMetadataDialog(QWidget* parent = 0)
+  ctkDICOMWidgetMetadataDialog(QWidget* parent = 0)
     : QDialog(parent)
   {
     this->setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::Window);
@@ -83,7 +83,7 @@ public:
     layout->addWidget(this->tagListWidget);
   }
 
-  virtual ~ctkDICOMMetadataDialog()
+  virtual ~ctkDICOMWidgetMetadataDialog()
   {
   }
 
@@ -216,7 +216,7 @@ public:
   int SeriesAddedDuringImport;
   int InstancesAddedDuringImport;
   ctkFileDialog* ImportDialog;
-  ctkDICOMMetadataDialog* MetadataDialog;
+  ctkDICOMWidgetMetadataDialog* MetadataDialog;
 
   // Settings key that stores database directory
   QString DatabaseDirectorySettingsKey;
@@ -277,7 +277,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->Indexer->setDatabase(this->DicomDatabase.data());
   this->Indexer->setBackgroundImportEnabled(true);
 
-  this->MetadataDialog = new ctkDICOMMetadataDialog();
+  this->MetadataDialog = new ctkDICOMWidgetMetadataDialog();
   this->MetadataDialog->setObjectName("DICOMMetadata");
   this->MetadataDialog->setWindowTitle(ctkDICOMVisualBrowserWidget::tr("DICOM File Metadata"));
 
