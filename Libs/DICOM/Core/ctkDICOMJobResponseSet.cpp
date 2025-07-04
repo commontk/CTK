@@ -35,8 +35,8 @@
 static ctkLogger logger("org.commontk.dicom.DICOMJobResponseSet");
 
 //------------------------------------------------------------------------------
-class ctkDICOMJobResponseSetPrivate : public QObject
-{
+class ctkDICOMJobResponseSetPrivate : public QObject {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDICOMJobResponseSet);
 
 protected:
@@ -296,3 +296,5 @@ QVariant ctkDICOMJobResponseSet::toVariant()
 {
   return QVariant::fromValue(ctkDICOMJobDetail(*this));
 }
+
+#include "ctkDICOMJobResponseSet.moc"

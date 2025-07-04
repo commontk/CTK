@@ -23,7 +23,6 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
-#include <ctkJobScheduler_p.h>
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
@@ -35,7 +34,6 @@
 #include "ctkDICOMQueryJob.h"
 #include "ctkDICOMRetrieveJob.h"
 #include "ctkDICOMScheduler.h"
-#include "ctkDICOMScheduler_p.h"
 #include "ctkDICOMServer.h"
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMUtil.h"
@@ -1184,5 +1182,4 @@ void ctkDICOMScheduler::onJobFailed(ctkAbstractJob* job)
   ctkJobScheduler::onJobFailed(job);
 }
 
-#include "moc_ctkDICOMScheduler_p.cpp"
 #include "moc_ctkDICOMScheduler.cpp"
