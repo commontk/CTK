@@ -37,6 +37,7 @@ class ctkVTKAbstractMatrixWidgetPrivate;
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractMatrixWidget
   : public ctkMatrixWidget
 {
+  Q_OBJECT
 public:
   /// Self/Superclass typedef
   typedef ctkMatrixWidget   Superclass;
