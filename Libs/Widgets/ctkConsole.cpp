@@ -1522,8 +1522,8 @@ QString ctkConsole::stdInRedirectCallBack(void * callData)
 
 namespace
 {
-class InputEventLoop : public QEventLoop
-{
+class InputEventLoop : public QEventLoop {
+  Q_OBJECT
 public:
   InputEventLoop(QApplication * app, QObject * parentObject = 0) :
     QEventLoop(parentObject), App(app){}
@@ -1534,7 +1534,6 @@ public:
   }
   QApplication * App;
 };
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1576,3 +1575,5 @@ void ctkConsole::setMaxVisibleCompleterItems(int count)
   }
   this->completer()->setMaxVisibleItems(count);
 }
+
+#include "ctkConsole.moc"

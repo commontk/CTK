@@ -211,6 +211,7 @@ public:
 //------------------------------------------------------------------------------
 class ctkDICOMRetrievePrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC( ctkDICOMRetrieve );
 
 protected:
@@ -1124,3 +1125,5 @@ void ctkDICOMRetrieve::releaseAssociation()
   Q_D(ctkDICOMRetrieve);
   d->releaseAssociation();
 }
+
+#include "ctkDICOMRetrieve.moc"
