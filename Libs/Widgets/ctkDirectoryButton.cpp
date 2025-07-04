@@ -255,6 +255,7 @@ QString ctkDirectoryButton::browse()
   // See https://bugreports.qt-project.org/browse/QTBUG-10244
   class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     ExcludeReadOnlyFilterProxyModel(QPalette palette, QObject *parent)
       : QSortFilterProxyModel(parent)
@@ -346,3 +347,5 @@ Qt::TextElideMode ctkDirectoryButton::elideMode()const
   Q_D(const ctkDirectoryButton);
   return d->PushButton->elideMode();
 }
+
+#include "ctkDirectoryButton.moc"

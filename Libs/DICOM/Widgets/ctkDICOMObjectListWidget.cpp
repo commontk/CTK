@@ -38,8 +38,8 @@
 #include <ctkLogger.h>
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget");
 
-class qRecursiveTreeProxyFilter : public QSortFilterProxyModel
-{
+class qRecursiveTreeProxyFilter : public QSortFilterProxyModel {
+  Q_OBJECT
 public:
   qRecursiveTreeProxyFilter(QObject *parent = NULL):
     QSortFilterProxyModel(parent)
@@ -470,3 +470,5 @@ bool ctkDICOMObjectListWidget::isThumbnailVisible()const
   Q_D(const ctkDICOMObjectListWidget);
   return d->thumbnailVisible;
 }
+
+#include "ctkDICOMObjectListWidget.moc"

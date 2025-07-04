@@ -43,6 +43,7 @@ namespace
 //-----------------------------------------------------------------------------
   class ctkMatrixDoubleSpinBox : public ctkDoubleSpinBox
   {
+    Q_OBJECT
   public:
     ctkMatrixDoubleSpinBox(QWidget * parentWidget)
       : ctkDoubleSpinBox(parentWidget)
@@ -68,6 +69,7 @@ namespace
 // Reimplemented to display the numbers with the matrix decimals.
 class ctkMatrixItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   ctkMatrixItemDelegate(ctkMatrixWidget* matrixWidget)
     : QStyledItemDelegate(matrixWidget)
@@ -513,3 +515,5 @@ QTableWidgetItem* ctkMatrixWidget::widgetItem(int i, int j)
   QTableWidgetItem* item = d->Table->item(i, j);
   return item;
 }
+
+#include "ctkMatrixWidget.moc"

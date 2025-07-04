@@ -179,6 +179,7 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class FileFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     FileFilterProxyModel(ctkPathListWidget::PathOptions fileOptions)
       : FileOptions(fileOptions)
@@ -254,6 +255,7 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class DirFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     DirFilterProxyModel(ctkPathListWidget::PathOptions dirOptions)
       : DirOptions(dirOptions)
@@ -714,3 +716,4 @@ QToolButton *ctkPathListButtonsWidget::buttonRemove() const
   Q_D(const ctkPathListButtonsWidget);
   return d->RemoveButton;
 }
+#include "ctkPathListButtonsWidget.moc"
