@@ -120,6 +120,12 @@ macro(ctkMacroBuildLibWrapper)
     KIT_PYTHONQT_SRCS "${MY_SRCS}" FALSE ${HAS_DECORATOR})
   if(HAS_DECORATOR)
     list(APPEND KIT_PYTHONQT_SRCS ${DECORATOR_HEADER})
+    if(NOT CMAKE_AUTOMOC)
+            message(FATAL_ERROR "qt5_wrap_cpp is deprecated in CMakified Qt5\n"
+                    "versions and removed in Qt6. CMAKE_AUTOMOC must be turned ON.\n"
+                    "and ${DECORATOR_HEADER} must be added to the sources."
+            )
+    endif()
   endif()
   add_library(${lib_name}PythonQt ${MY_WRAPPER_LIBRARY_TYPE} ${KIT_PYTHONQT_SRCS})
   target_link_libraries(${lib_name}PythonQt ${lib_name} ${my_EXTRA_PYTHON_LIBRARIES})

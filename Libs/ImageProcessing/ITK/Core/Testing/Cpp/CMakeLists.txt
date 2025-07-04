@@ -27,6 +27,14 @@ include_directories(
  )
 
 #
+# Test helpers
+#
+
+#set(KIT_HELPER_SRCS
+#  ctkVTKObjectTestHelper.cpp
+#  )
+
+#
 # Tests
 #
 

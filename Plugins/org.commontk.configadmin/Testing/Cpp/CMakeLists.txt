@@ -2,6 +2,10 @@ set(SRCS
   ctkConfigAdminImplTestMain.cpp
 )
 
+set(MOC_SRCS )
+
+set(MY_MOC_CXX )
+
 set(test_executable ${PROJECT_NAME}CppTests)
 
 set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib} CTKCore)

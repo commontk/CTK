@@ -4,10 +4,7 @@
 # no extensive error checking yet.
 function(ctkFunctionCreateCmdLineModule name)
   set(_src_files ${ARGN})
-  list(APPEND _src_files
-    ctkCmdLineModule${name}.cpp
-    ctkCmdLineModule${name}.qrc
-    )
+  list(APPEND _src_files ctkCmdLineModule${name}.cpp)
 
   ctk_add_executable_utf8(ctkCmdLineModule${name} ${_src_files})
 
