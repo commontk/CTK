@@ -62,8 +62,8 @@ QColor ctkDICOMServerNodeWidget2ServerSuccesColor(Qt::darkGreen);
 QColor ctkDICOMServerNodeWidget2ServerProgressColor(Qt::darkCyan);
 QColor ctkDICOMServerNodeWidget2ServerFailedColor(Qt::darkRed);
 
-class QSelectionColorStyledItemDelegate : public QStyledItemDelegate
-{
+class QSelectionColorStyledItemDelegate : public QStyledItemDelegate {
+  Q_OBJECT
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
   void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
@@ -90,6 +90,7 @@ public:
 
 class QCheckStateStyledItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
   void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
@@ -1790,3 +1791,5 @@ void ctkDICOMServerNodeWidget2::stopAllJobs()
   d->Scheduler->stopAllJobs(true, false);
   QApplication::restoreOverrideCursor();
 }
+
+#include "ctkDICOMServerNodeWidget2.moc"

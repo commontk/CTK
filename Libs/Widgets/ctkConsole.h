@@ -318,8 +318,8 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkConsole::EditorHints);
 
 //-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter
-{
+class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter {
+  Q_OBJECT
 public:
 
   /// Update the completion model given a string.  The given string
@@ -343,6 +343,5 @@ protected:
 
   QStringList AutocompletePreferenceList;
 };
-
 
 #endif

@@ -88,8 +88,8 @@ static QFileSystemModel* globalFileSystemModelForDirectories()
 
 //-----------------------------------------------------------------------------
 /// Completer class with built-in file system model
-class ctkFileCompleter : public QCompleter
-{
+class ctkFileCompleter : public QCompleter {
+  Q_OBJECT
 public:
   ctkFileCompleter(QObject* o, bool showFiles);
 
@@ -954,4 +954,5 @@ QSize ctkPathLineEdit::sizeHint()const
 }
 
 #include "moc_ctkPathLineEdit.cpp"
+
 #include "ctkPathLineEdit.moc"

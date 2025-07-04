@@ -139,46 +139,12 @@ void ctkPathListButtonsWidgetPrivate::on_PathListWidget_selectionChanged(const Q
   this->RemoveButton->setEnabled(hasSelection);
 }
 
-//-----------------------------------------------------------------------------
-QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
-{
-  Q_Q(ctkPathListButtonsWidget);
-
-  if (!this->PathListWidget) return QStringList();
-
-  QString caption;
-  if (multiple)
-  {
-    caption = tr("Select one or more files");
-  }
-  else
-  {
-    caption = tr("Select a file");
-  }
-
-  QFileDialog fileDialog(q, caption);
-  fileDialog.setOption(QFileDialog::ReadOnly, true);
-
-  if (multiple)
-  {
-    fileDialog.setFileMode(QFileDialog::ExistingFiles);
-  }
-  else
-  {
-    fileDialog.setFileMode(QFileDialog::ExistingFile);
-  }
-
-  QString currentPath = this->PathListWidget->currentPath(true);
-  currentPath = currentPath.left(currentPath.lastIndexOf('/') + 1);
-  if (!currentPath.isEmpty())
-  {
-    fileDialog.setDirectory(currentPath);
-  }
-
+namespace {
   // We use a proxy model as a workaround for the broken QFileDialog::setFilter() method.
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class FileFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     FileFilterProxyModel(ctkPathListWidget::PathOptions fileOptions)
       : FileOptions(fileOptions)
@@ -221,6 +187,44 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   private:
     ctkPathListWidget::PathOptions FileOptions;
   };
+}
+
+//-----------------------------------------------------------------------------
+QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
+{
+  Q_Q(ctkPathListButtonsWidget);
+
+  if (!this->PathListWidget) return QStringList();
+
+  QString caption;
+  if (multiple)
+  {
+    caption = tr("Select one or more files");
+  }
+  else
+  {
+    caption = tr("Select a file");
+  }
+
+  QFileDialog fileDialog(q, caption);
+  fileDialog.setReadOnly(true);
+
+  if (multiple)
+  {
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+  }
+  else
+  {
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+  }
+
+  QString currentPath = this->PathListWidget->currentPath(true);
+  currentPath = currentPath.left(currentPath.lastIndexOf('/') + 1);
+  if (!currentPath.isEmpty())
+  {
+    fileDialog.setDirectory(currentPath);
+  }
+
 
   fileDialog.setProxyModel(new FileFilterProxyModel(this->PathListWidget->fileOptions()));
 
@@ -230,30 +234,12 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   }
   return QStringList();
 }
-
-//-----------------------------------------------------------------------------
-QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
-{
-  Q_Q(ctkPathListButtonsWidget);
-
-  if (!this->PathListWidget) return QStringList();
-
-  QString caption = tr("Select a directory");
-  QFileDialog fileDialog(q, caption);
-
-  fileDialog.setFileMode(QFileDialog::Directory);
-  fileDialog.setOption(QFileDialog::ShowDirsOnly);
-
-  QString currentPath = this->PathListWidget->currentPath(true);
-  if (!currentPath.isEmpty())
-  {
-    fileDialog.setDirectory(currentPath);
-  }
-
+namespace {
   // We use a proxy model as a workaround for the broken QFileDialog::setFilter() method.
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class DirFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     DirFilterProxyModel(ctkPathListWidget::PathOptions dirOptions)
       : DirOptions(dirOptions)
@@ -274,17 +260,36 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
       }
       // Do not check for the Writable flag, since it makes navigation from
       // non-writable folders to writable sub-folders hard.
-//      if (DirOptions.testFlag(ctkPathListWidget::Writable) &&
-//          !fileInfo.isWritable())
-//      {
-//        return false;
-//      }
+      //      if (DirOptions.testFlag(ctkPathListWidget::Writable) &&
+      //          !fileInfo.isWritable())
+      //      {
+      //        return false;
+      //      }
       return true;
     }
 
   private:
     ctkPathListWidget::PathOptions DirOptions;
   };
+}
+//-----------------------------------------------------------------------------
+QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
+{
+  Q_Q(ctkPathListButtonsWidget);
+
+  if (!this->PathListWidget) return QStringList();
+
+  QString caption = tr("Select a directory");
+  QFileDialog fileDialog(q, caption);
+
+  fileDialog.setFileMode(QFileDialog::Directory);
+  fileDialog.setOption(QFileDialog::ShowDirsOnly);
+
+  QString currentPath = this->PathListWidget->currentPath(true);
+  if (!currentPath.isEmpty())
+  {
+    fileDialog.setDirectory(currentPath);
+  }
 
   fileDialog.setProxyModel(new DirFilterProxyModel(this->PathListWidget->directoryOptions()));
 
@@ -714,3 +719,4 @@ QToolButton *ctkPathListButtonsWidget::buttonRemove() const
   Q_D(const ctkPathListButtonsWidget);
   return d->RemoveButton;
 }
+#include "ctkPathListButtonsWidget.moc"

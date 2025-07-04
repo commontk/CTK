@@ -36,6 +36,7 @@ static ctkLogger logger("org.commontk.dicom.DICOMServer");
 //------------------------------------------------------------------------------
 class ctkDICOMServerPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDICOMServer);
 
 protected:
@@ -291,3 +292,5 @@ ctkDICOMServer *ctkDICOMServer::clone() const
 
   return newServer;
 }
+
+#include "ctkDICOMServer.moc"

@@ -64,7 +64,6 @@ set(KIT_SRCS
   ctkDICOMRetrieveWorker_p.h
   ctkDICOMScheduler.cpp
   ctkDICOMScheduler.h
-  ctkDICOMScheduler_p.h
   ctkDICOMServer.cpp
   ctkDICOMServer.h
   ctkDICOMStorageListener.cpp
@@ -109,6 +108,53 @@ set_source_files_properties(
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDisplayedFieldGeneratorAbstractRule.h
   WRAP_EXCLUDE
+  )
+
+# Headers that should run through moc
+set(KIT_MOC_SRCS
+  ctkDICOMAbstractThumbnailGenerator.h
+  ctkDICOMDatabase.h
+  ctkDICOMDisplayedFieldGenerator.h
+  ctkDICOMDisplayedFieldGenerator_p.h
+  ctkDICOMDisplayedFieldGeneratorRuleFactory.h
+  ctkDICOMEcho.h
+  ctkDICOMEchoJob.h
+  ctkDICOMEchoJob_p.h
+  ctkDICOMEchoWorker.h
+  ctkDICOMEchoWorker_p.h
+  ctkDICOMIndexer.h
+  ctkDICOMIndexer_p.h
+  ctkDICOMInserter.h
+  ctkDICOMInserterJob.h
+  ctkDICOMInserterWorker.h
+  ctkDICOMInserterWorker_p.h
+  ctkDICOMJob.h
+  ctkDICOMJobResponseSet.h
+  ctkDICOMFilterProxyModel.h
+  ctkDICOMModel.h
+  ctkDICOMQuery.h
+  ctkDICOMQueryJob.h
+  ctkDICOMQueryJob_p.h
+  ctkDICOMQueryWorker.h
+  ctkDICOMQueryWorker_p.h
+  ctkDICOMRetrieve.h
+  ctkDICOMRetrieveJob.h
+  ctkDICOMRetrieveJob_p.h
+  ctkDICOMRetrieveWorker.h
+  ctkDICOMRetrieveWorker_p.h
+  ctkDICOMScheduler.h
+  ctkDICOMServer.h
+  ctkDICOMStorageListener.h
+  ctkDICOMStorageListenerJob.h
+  ctkDICOMStorageListenerJob_p.h
+  ctkDICOMStorageListenerWorker.h
+  ctkDICOMStorageListenerWorker_p.h
+  ctkDICOMTester.h
+  ctkDICOMThumbnailGenerator.h
+  ctkDICOMThumbnailGeneratorJob.h
+  ctkDICOMThumbnailGeneratorJob_p.h
+  ctkDICOMThumbnailGeneratorWorker.h
+  ctkDICOMThumbnailGeneratorWorker_p.h
   )
 
 # UI files
