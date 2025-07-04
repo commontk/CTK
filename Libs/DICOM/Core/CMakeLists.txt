@@ -68,7 +68,6 @@ set(KIT_SRCS
   ctkDICOMRetrieveWorker_p.h
   ctkDICOMScheduler.cpp
   ctkDICOMScheduler.h
-  ctkDICOMScheduler_p.h
   ctkDICOMSeriesFilterProxyModel.cpp
   ctkDICOMSeriesFilterProxyModel.h
   ctkDICOMSeriesModel.cpp
@@ -147,8 +146,6 @@ set(KIT_MOC_SRCS
   ctkDICOMJobResponseSet.h
   ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
-  ctkDICOMPatientFilterProxyModel.h
-  ctkDICOMPatientModel.h
   ctkDICOMQuery.h
   ctkDICOMQueryJob.h
   ctkDICOMQueryJob_p.h
@@ -160,12 +157,6 @@ set(KIT_MOC_SRCS
   ctkDICOMRetrieveWorker.h
   ctkDICOMRetrieveWorker_p.h
   ctkDICOMScheduler.h
-  ctkDICOMScheduler_p.h
-  ctkDICOMSeriesFilterProxyModel.h
-  ctkDICOMSeriesModel.h
-  ctkDICOMStudyFilterProxyModel.h
-  ctkDICOMStudyMergedFilterProxyModel.h
-  ctkDICOMStudyModel.h
   ctkDICOMServer.h
   ctkDICOMStorageListener.h
   ctkDICOMStorageListenerJob.h

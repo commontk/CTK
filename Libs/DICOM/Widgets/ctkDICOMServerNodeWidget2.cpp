@@ -62,8 +62,8 @@ QColor ctkDICOMServerNodeWidget2ServerSuccesColor(Qt::darkGreen);
 QColor ctkDICOMServerNodeWidget2ServerProgressColor(Qt::darkCyan);
 QColor ctkDICOMServerNodeWidget2ServerFailedColor(Qt::darkRed);
 
-class QSelectionColorStyledItemDelegate : public QStyledItemDelegate
-{
+class QSelectionColorStyledItemDelegate : public QStyledItemDelegate {
+  Q_OBJECT
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
   void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
@@ -90,6 +90,7 @@ public:
 
 class QCheckStateStyledItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
   void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
@@ -1797,15 +1798,17 @@ void ctkDICOMServerNodeWidget2::stopAllJobs()
 }
 
 //----------------------------------------------------------------------------
-ctkCollapsibleGroupBox *ctkDICOMServerNodeWidget2::storageCollapsibleGroupBox() const
+ctkCollapsibleGroupBox* ctkDICOMServerNodeWidget2::storageCollapsibleGroupBox() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   return d->StorageCollapsibleGroupBox;
 }
 
 //----------------------------------------------------------------------------
-ctkCollapsibleGroupBox *ctkDICOMServerNodeWidget2::serversCollapsibleGroupBox() const
+ctkCollapsibleGroupBox* ctkDICOMServerNodeWidget2::serversCollapsibleGroupBox() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   return d->ServersCollapsibleGroupBox;
 }
+
+#include "ctkDICOMServerNodeWidget2.moc"
