@@ -49,8 +49,6 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
-
 set(test_executable ${fw_lib}CppTests)
 
 ctk_add_executable_utf8(${test_executable} ${SRCS} ${MY_MOC_CXX})

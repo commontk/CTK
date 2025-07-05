@@ -35,8 +35,9 @@ class ctkVTKAbstractMatrixWidgetPrivate;
 /// of other classes (ctkVTKTransformWidget?) that don't want to expose
 /// setMatrix() publicly.
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractMatrixWidget
-  : public ctkMatrixWidget
+    : public ctkMatrixWidget
 {
+  Q_OBJECT
 public:
   /// Self/Superclass typedef
   typedef ctkMatrixWidget   Superclass;

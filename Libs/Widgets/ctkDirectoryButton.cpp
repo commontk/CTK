@@ -249,12 +249,11 @@ void ctkDirectoryButton::setAcceptMode(QFileDialog::AcceptMode mode)
   d->AcceptMode = mode;
 }
 
-//-----------------------------------------------------------------------------
-QString ctkDirectoryButton::browse()
-{
+namespace {
   // See https://bugreports.qt-project.org/browse/QTBUG-10244
   class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     ExcludeReadOnlyFilterProxyModel(QPalette palette, QObject *parent)
       : QSortFilterProxyModel(parent)
@@ -275,6 +274,10 @@ QString ctkDirectoryButton::browse()
     }
     QPalette Palette;
   };
+}
+//-----------------------------------------------------------------------------
+QString ctkDirectoryButton::browse()
+{
 
   Q_D(ctkDirectoryButton);
   // Use a ctkFileDialog (vs QFileDialog) for the AcceptSave mode so it does not
@@ -346,3 +349,5 @@ Qt::TextElideMode ctkDirectoryButton::elideMode()const
   Q_D(const ctkDirectoryButton);
   return d->PushButton->elideMode();
 }
+
+#include "ctkDirectoryButton.moc"

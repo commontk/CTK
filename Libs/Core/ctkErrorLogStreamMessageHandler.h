@@ -32,6 +32,7 @@ class ctkErrorLogStreamMessageHandlerPrivate;
 class CTK_CORE_EXPORT ctkErrorLogStreamMessageHandler
   : public ctkErrorLogAbstractMessageHandler
 {
+  Q_OBJECT
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
