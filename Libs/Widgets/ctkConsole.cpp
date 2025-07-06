@@ -50,7 +50,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Qt includes
 #include <QAbstractItemView>
-#include <QAction>
+#include <QtGlobal>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <QtWidgets/QAction>
+#else
+#  include <QtGui/QAction>   // or just <QAction>
+#endif
 #include <QApplication>
 #include <QClipboard>
 #include <QCompleter>
