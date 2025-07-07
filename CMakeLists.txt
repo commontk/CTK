@@ -811,6 +811,8 @@ set(CTK_LIB_QtTesting ${CTK_USE_QTTESTING})
 if(CTK_USE_QTTESTING)
   list(APPEND CTK_LIBS QtTesting)
   list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting^^CTK_LIB_QtTesting")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/Libs/QtTesting)
 endif()
 
 #message(STATUS target_directories:${target_directories})
