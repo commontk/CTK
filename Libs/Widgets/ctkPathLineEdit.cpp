@@ -21,11 +21,7 @@
 // Qt includes
 #include <QAbstractItemView>
 #include <QApplication>
-#include <QComboBox>
-#include <QCompleter>
-#include <QDebug>
 #include <QFileDialog>
-#include <QFileSystemModel>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QRegExp>
@@ -33,7 +29,6 @@
 #include <QRegularExpressionValidator>
 #include <QSettings>
 #include <QStyleOptionComboBox>
-#include <QToolButton>
 
 // CTK includes
 #include "ctkPathLineEdit.h"
@@ -52,74 +47,39 @@
 
 namespace // hide private implementation details
 {
-
-//-----------------------------------------------------------------------------
-static QFileSystemModel* globalFileSystemModelForFiles()
-{
-  static QFileSystemModel* m = NULL;
-  if (!m)
+  //-----------------------------------------------------------------------------
+  static QFileSystemModel* globalFileSystemModelForFiles()
   {
-    m = new QFileSystemModel();
+    static QFileSystemModel* m = NULL;
+    if (!m)
+    {
+      m = new QFileSystemModel();
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-    // Prevent slow browsing of network drives
-    m->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
+      // Prevent slow browsing of network drives
+      m->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
 #endif
-    m->setRootPath("");
+      m->setRootPath("");
+    }
+    return m;
   }
-  return m;
-}
 
-//-----------------------------------------------------------------------------
-static QFileSystemModel* globalFileSystemModelForDirectories()
-{
-  static QFileSystemModel* m = NULL;
-  if (!m)
+  //-----------------------------------------------------------------------------
+  static QFileSystemModel* globalFileSystemModelForDirectories()
   {
-    m = new QFileSystemModel();
+    static QFileSystemModel* m = NULL;
+    if (!m)
+    {
+      m = new QFileSystemModel();
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-    // Prevent slow browsing of network drives
-    m->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
+      // Prevent slow browsing of network drives
+      m->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
 #endif
-    m->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
-    m->setRootPath("");
+      m->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
+      m->setRootPath("");
+    }
+    return m;
   }
-  return m;
-}
-
-//-----------------------------------------------------------------------------
-/// Completer class with built-in file system model
-class ctkFileCompleter : public QCompleter {
-  Q_OBJECT
-public:
-  ctkFileCompleter(QObject* o, bool showFiles);
-
-  // Ensure auto-completed file always uses forward-slash as separator
-  QString pathFromIndex(const QModelIndex& idx) const override;
-
-  // Helper function for getting the current model casted to QFileSystemModel
-  QFileSystemModel* fileSystemModel() const;
-
-  // Adds path to the file system model.
-  // This also automatically adds all children to the model.
-  void addPathToIndex(const QString& path);
-
-  // Switch between showing files or folders only
-  void setShowFiles(bool show);
-  bool showFiles();
-
-  // Set name filter. If filters is empty then all folder/file names are displayed
-  // and the global shared file system models are used. If name filters are set then
-  // a custom custom file system is created for the widget.
-  void setNameFilters(const QStringList& filters);
-
-  // Since nameFilters() function may be relevant when more work will be done,
-  // it is commented to quiet the "-Wunused-function" warning.
-  //
-  // QStringList nameFilters() const;
-
-protected:
-  QFileSystemModel* CustomFileSystemModel;
-};
+} // end of anonymous namespace
 
 //-----------------------------------------------------------------------------
 ctkFileCompleter::ctkFileCompleter(QObject* o, bool showFiles)
@@ -168,8 +128,7 @@ bool ctkFileCompleter::showFiles()
 }
 
 //-----------------------------------------------------------------------------
-void ctkFileCompleter::setNameFilters(const QStringList& filters)
-{
+void ctkFileCompleter::setNameFilters(const QStringList& filters) {
   if (filters.empty())
   {
     // no name filter set use the global file system models
@@ -244,59 +203,6 @@ void ctkFileCompleter::addPathToIndex(const QString& path)
     fileSystemModel->index(path);
   }
 }
-
-} // end of anonymous namespace
-
-//-----------------------------------------------------------------------------
-class ctkPathLineEditPrivate
-{
-  Q_DECLARE_PUBLIC(ctkPathLineEdit);
-  Q_GADGET
-
-protected:
-  ctkPathLineEdit* const q_ptr;
-
-public:
-  ctkPathLineEditPrivate(ctkPathLineEdit& object);
-  void init();
-  QSize recomputeSizeHint(QSize& sh)const;
-  void updateFilter();
-
-  void adjustPathLineEditSize();
-
-  void _q_recomputeCompleterPopupSize();
-
-  void createPathLineEditWidget(bool useComboBox);
-  QString settingKey()const;
-
-  QLineEdit*            LineEdit;
-  QComboBox*            ComboBox;
-  QToolButton*          BrowseButton;       //!< "..." button
-
-  int                   MinimumContentsLength;
-  ctkPathLineEdit::SizeAdjustPolicy SizeAdjustPolicy;
-
-  QString               Label;              //!< used in file dialogs
-  QStringList           NameFilters;        //!< Regular expression (in wildcard mode) used to help the user to complete the line
-  QDir::Filters         Filters;            //!< Type of path (file, dir...)
-#ifdef USE_QFILEDIALOG_OPTIONS
-  QFileDialog::Options DialogOptions;
-#else
-  ctkPathLineEdit::Options DialogOptions;
-#endif
-
-  bool                  HasValidInput;      //!< boolean that stores the old state of valid input
-  QString               SettingKey;
-
-  static QString        sCurrentDirectory;   //!< Content the last value of the current directory
-  static int            sMaxHistory;     //!< Size of the history, if the history is full and a new value is added, the oldest value is dropped
-
-  mutable QSize SizeHint;
-  mutable QSize MinimumSizeHint;
-
-  ctkFileCompleter* Completer;
-  QRegularExpressionValidator* Validator;
-};
 
 QString ctkPathLineEditPrivate::sCurrentDirectory = "";
 int ctkPathLineEditPrivate::sMaxHistory = 5;
@@ -952,7 +858,3 @@ QSize ctkPathLineEdit::sizeHint()const
   Q_D(const ctkPathLineEdit);
   return d->recomputeSizeHint(d->SizeHint);
 }
-
-#include "moc_ctkPathLineEdit.cpp"
-
-#include "ctkPathLineEdit.moc"
