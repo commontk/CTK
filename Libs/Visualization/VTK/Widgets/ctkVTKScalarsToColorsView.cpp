@@ -194,7 +194,11 @@ vtkPlot* ctkVTKScalarsToColorsView
     vtkSmartPointer<vtkPiecewiseFunctionItem>::New();
   item->SetPiecewiseFunction(piecewiseTF);
   QColor defaultColor = this->palette().highlight().color();
+#if VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9,3,0)
+  item->SetColorF(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF());
+#else
   item->SetColor(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF());
+#endif
   item->SetMaskAboveCurve(true);
   this->addPlot(item);
   if (editable)
