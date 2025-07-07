@@ -35,7 +35,6 @@ class ctkDICOMServerPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMServer : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(RetrieveProtocol)
   Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
   Q_PROPERTY(bool queryRetrieveEnabled READ queryRetrieveEnabled WRITE setQueryRetrieveEnabled);
   Q_PROPERTY(bool storageEnabled READ storageEnabled WRITE setStorageEnabled);
@@ -116,6 +115,7 @@ public:
     CMOVE
     // WADO // To Do
   };
+  Q_ENUM(RetrieveProtocol)
   void setRetrieveProtocol(RetrieveProtocol protocol);
   RetrieveProtocol retrieveProtocol() const;
   Q_INVOKABLE void setRetrieveProtocolAsString(const QString& protocolString);

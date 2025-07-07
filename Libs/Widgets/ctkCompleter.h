@@ -52,7 +52,6 @@ class ctkCompleterPrivate;
 class CTK_WIDGETS_EXPORT ctkCompleter: public QCompleter
 {
   Q_OBJECT
-  Q_ENUMS(ModelFiltering)
   /// FilterStartsWith is the default behavior (same as QCompleter).The
   /// completer filters out strings that don't start with \sa completionPrefix
   /// FilterContains is the most permissive filter, the completer filters out
@@ -74,6 +73,7 @@ public:
     FilterContains,
     FilterWordStartsWith
   };
+  Q_ENUM(ModelFiltering)
 
   ModelFiltering modelFiltering()const;
   void setModelFiltering(ModelFiltering filter);

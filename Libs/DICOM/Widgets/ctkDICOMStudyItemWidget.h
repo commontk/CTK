@@ -48,7 +48,6 @@ class ctkDICOMStudyItemWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
 {
   Q_OBJECT;
-  Q_ENUMS(ThumbnailSizeOption)
   Q_PROPERTY(QString studyItem READ studyItem WRITE setStudyItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
@@ -117,6 +116,7 @@ public:
     Medium,
     Large,
   };
+  Q_ENUM(ThumbnailSizeOption)
 
   ///@{
   /// Set the thumbnail size: small, medium, large

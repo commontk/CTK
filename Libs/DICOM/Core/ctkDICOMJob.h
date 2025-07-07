@@ -40,7 +40,6 @@
 class CTK_DICOM_CORE_EXPORT ctkDICOMJob : public ctkAbstractJob
 {
   Q_OBJECT
-  Q_ENUMS(DICOMLevel)
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
   Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID);
@@ -60,7 +59,8 @@ public:
     Studies,
     Series,
     Instances
-  }; Q_ENUM(DICOMLevels);
+  };
+  Q_ENUM(DICOMLevels)
 
   ///@{
   /// DICOM Level

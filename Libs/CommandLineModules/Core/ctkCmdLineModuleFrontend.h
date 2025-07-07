@@ -52,7 +52,6 @@ struct ctkCmdLineModuleFrontendPrivate;
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontend : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(ParameterValueRole)
 
 public:
 
@@ -89,6 +88,7 @@ public:
      */
     UserRole = 8
   };
+  Q_ENUM(ParameterValueRole)
 
   enum ParameterFilter {
     /** Parameters with channel = "input" */

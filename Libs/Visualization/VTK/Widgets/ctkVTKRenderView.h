@@ -37,7 +37,6 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public ctkVTKAbstr
              WRITE setOrientationWidgetVisible)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
   Q_PROPERTY(double pitchRollYawIncrement READ pitchRollYawIncrement WRITE setPitchRollYawIncrement)
-  Q_ENUMS(RotateDirection)
   Q_PROPERTY(RotateDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
   Q_PROPERTY(RotateDirection rollDirection READ rollDirection WRITE setRollDirection)
   Q_PROPERTY(RotateDirection yawDirection READ yawDirection WRITE setYawDirection)
@@ -51,6 +50,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public ctkVTKAbstr
 public:
 
   enum RotateDirection { PitchUp, PitchDown, RollLeft, RollRight, YawLeft, YawRight };
+  Q_ENUM(RotateDirection)
 
   typedef ctkVTKAbstractView Superclass;
   explicit ctkVTKRenderView(QWidget* parent = 0);

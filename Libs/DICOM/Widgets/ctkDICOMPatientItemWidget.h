@@ -43,7 +43,6 @@ class ctkDICOMStudyItemWidget;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
 {
   Q_OBJECT;
-  Q_ENUMS(DateType)
   Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
@@ -105,6 +104,7 @@ public:
     LastMonth,
     LastYear
   };
+  Q_ENUM(DateType)
 
   ///@{
   /// Available values:

@@ -39,7 +39,6 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMModel
 {
   Q_OBJECT
   typedef QAbstractItemModel Superclass;
-  Q_ENUMS(IndexType)
   /// startLevel contains the hierarchy depth the model contains
   Q_PROPERTY(IndexType endLevel READ endLevel WRITE setEndLevel);
 public:
@@ -56,6 +55,7 @@ public:
     SeriesType,
     ImageType
   };
+  Q_ENUM(IndexType)
 
   explicit ctkDICOMModel(QObject* parent = 0);
   virtual ~ctkDICOMModel();

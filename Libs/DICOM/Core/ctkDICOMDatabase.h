@@ -55,7 +55,6 @@ class ctkDICOMJobResponseSet;
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(InsertResult)
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(bool isInMemory READ isInMemory)
   Q_PROPERTY(QString lastError READ lastError)
@@ -289,6 +288,7 @@ public:
     NotInserted,
     Inserted
   };
+  Q_ENUM(InsertResult)
   Q_INVOKABLE InsertResult insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
 
   /// When a DICOM file is stored in the database (insert is called with storeFile=true) then
