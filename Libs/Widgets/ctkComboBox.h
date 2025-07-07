@@ -92,7 +92,7 @@ public:
     /// a visible vertical scrollbar.
     ScrollWithNoVScrollBar
   };
-  Q_ENUM(ScrollEffect)
+  Q_ENUM(ScrollEffect);
   /// Return the scrollWheelEffect property value.
   /// \sa scrollEffect
   ScrollEffect scrollWheelEffect()const;
