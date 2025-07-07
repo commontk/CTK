@@ -106,7 +106,6 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   /// The default value is AdjustToMinimumContentsLength to prevent displaying
   /// of a long path making the layout too wide.
   Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
-  Q_ENUMS(SizeAdjustPolicy)
 
   /// This property holds the minimum number of characters that should fit into
   /// the path line edit.
@@ -168,7 +167,7 @@ public:
     /// use this policy on large models.
     AdjustToMinimumContentsLength
   };
-
+  Q_ENUM(SizeAdjustPolicy)
   /** Default constructor
   */
   ctkPathLineEdit(QWidget *parent = 0);

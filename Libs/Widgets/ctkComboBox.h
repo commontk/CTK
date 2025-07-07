@@ -55,7 +55,6 @@ class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
   /// Current item's user data as string (Qt::UserRole role)
   Q_PROPERTY(QString currentUserDataAsString READ currentUserDataAsString WRITE setCurrentUserDataAsString)
 
-  Q_ENUMS(ScrollEffect);
 public:
   /// Constructor, build a ctkComboBox that behaves like QComboBox.
   explicit ctkComboBox(QWidget* parent = 0);
@@ -93,6 +92,7 @@ public:
     /// a visible vertical scrollbar.
     ScrollWithNoVScrollBar
   };
+  Q_ENUM(ScrollEffect)
   /// Return the scrollWheelEffect property value.
   /// \sa scrollEffect
   ScrollEffect scrollWheelEffect()const;

@@ -81,7 +81,7 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(int cursorLine READ cursorLine)
   Q_FLAGS(EditorHint EditorHints)
   Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
-  Q_ENUMS(Qt::ScrollBarPolicy)
+  Q_ENUM(Qt::ScrollBarPolicy)
   Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy)
   Q_PROPERTY(QList<QKeySequence> completerShortcuts READ completerShortcuts WRITE setCompleterShortcuts)
   Q_FLAGS(RunFileOption RunFileOptions)

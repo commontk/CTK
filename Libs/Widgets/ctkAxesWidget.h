@@ -34,7 +34,6 @@ class ctkAxesWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(Axis)
   Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged)
   Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset)
   Q_PROPERTY(QStringList axesLabels READ axesLabels WRITE setAxesLabels)
@@ -50,6 +49,7 @@ public :
     Anterior,
     Posterior,
   };
+  Q_ENUM(Axis)
 
   ctkAxesWidget(QWidget *parent = 0);
   virtual ~ctkAxesWidget();

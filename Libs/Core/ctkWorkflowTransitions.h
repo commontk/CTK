@@ -132,8 +132,6 @@ struct CTK_CORE_EXPORT ctkWorkflowInterstepTransitionEvent : public QEvent
 class CTK_CORE_EXPORT ctkWorkflowInterstepTransition : public QAbstractTransition
 {
   Q_OBJECT
-  Q_ENUMS(InterstepTransitionType)
-
 public:
 
   enum InterstepTransitionType
@@ -144,7 +142,7 @@ public:
     StoppingWorkflow,
     TransitionToPreviousStartingStepAfterSuccessfulGoToFinishStep
   };
-
+  Q_ENUM(InterstepTransitionType)
   ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType)
     : TransitionType(newTransitionType){}
   ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType, const QString& newId)

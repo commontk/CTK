@@ -43,9 +43,6 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 {
   Q_OBJECT
 
-  Q_ENUMS(AnimationEffect)
-  Q_ENUMS(VerticalDirection)
-
   /// This property controls the effect to apply when the popup is being
   /// opened or closed. The total duration and the easing curve of the effect
   /// are controlled by \a effectDuration and \easingCurve respectively.
@@ -111,6 +108,7 @@ public:
     ScrollEffect,
     FadeEffect
   };
+  Q_ENUM(AnimationEffect)
 
   /// Return the animationEffect property value.
   /// \sa animationEffect
@@ -151,6 +149,7 @@ public:
     TopToBottom = 1,
     BottomToTop = 2
   };
+  Q_ENUM(VerticalDirection)
 
   /// Return the verticalDirection property value.
   /// \sa verticalDirection

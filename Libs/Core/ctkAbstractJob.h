@@ -41,7 +41,6 @@ class ctkAbstractWorker;
 class CTK_CORE_EXPORT ctkAbstractJob : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(JobStatus);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
   Q_PROPERTY(QString className READ className);
   Q_PROPERTY(JobStatus status READ status WRITE setStatus);
@@ -91,6 +90,7 @@ public:
     Failed,
     Finished,
   };
+  Q_ENUM(JobStatus)
   JobStatus status() const;
   virtual void setStatus(JobStatus status);
   ///@}

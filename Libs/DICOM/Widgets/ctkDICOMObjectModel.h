@@ -43,7 +43,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectModel
   Q_OBJECT
   typedef QStandardItemModel Superclass;
   //Q_PROPERTY(setFile);
-  Q_ENUMS(ColumnIndex)
 
 public:
 
@@ -59,6 +58,7 @@ public:
     VRColumn = 3,
     LengthColumn = 4
   };
+  Q_ENUM(ColumnIndex)
 
 protected:
   QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;

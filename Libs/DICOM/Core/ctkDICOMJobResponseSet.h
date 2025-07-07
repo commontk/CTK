@@ -39,7 +39,6 @@ class ctkDICOMJobResponseSetPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMJobResponseSet : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(JobType)
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath);
   Q_PROPERTY(bool copyFile READ copyFile WRITE setCopyFile);
   Q_PROPERTY(bool overwriteExistingDataset READ overwriteExistingDataset WRITE setOverwriteExistingDataset);
@@ -92,6 +91,7 @@ public:
     Echo,
     ThumbnailGenerator,
   };
+  Q_ENUM(JobType)
   void setJobType(JobType jobType);
   JobType jobType() const;
   QString jobTypeString() const;
