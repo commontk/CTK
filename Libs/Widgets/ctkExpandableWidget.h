@@ -47,7 +47,7 @@ class CTK_WIDGETS_EXPORT ctkExpandableWidget: public QFrame
   /// Bottom right corner of the widget with a Qt::Horizontal|Qt::Vertical resize
   /// movements of freedom by default.
   /// \sa ctkSizeGrip::orientations, sizeGripInside, sizeGripMargins
-  Q_PROPERTY(Qt::Orientations orientations READ orientations WRITE setOrientations)
+  Q_PROPERTY(Qt::Orientations orientations READ orientations WRITE setOrientations NOTIFY orientationsChanged);
 
   /// This property controls whether the size grip widget overlays the children
   /// widgets or it is moved into its own margin.
@@ -56,7 +56,7 @@ class CTK_WIDGETS_EXPORT ctkExpandableWidget: public QFrame
   /// the layout contents margins though.
   /// true by default.
   /// \sa sizeGripMargins, orientations
-  Q_PROPERTY(bool sizeGripInside READ isSizeGripInside WRITE setSizeGripInside)
+  Q_PROPERTY(bool sizeGripInside READ isSizeGripInside WRITE setSizeGripInside NOTIFY sizeGripInsideChanged);
 
   /// This property controls the extra padding to give to the size grip widget.
   /// Depending on the contents of ctkExpandableWidget, the location of the size
@@ -65,7 +65,12 @@ class CTK_WIDGETS_EXPORT ctkExpandableWidget: public QFrame
   /// When tweaking this property, you may want to make sure it works for all
   /// styles and platforms.
   /// \sa sizeGripInside, orientations
-  Q_PROPERTY(QSize sizeGripMargins READ sizeGripMargins WRITE setSizeGripMargins)
+  Q_PROPERTY(QSize sizeGripMargins READ sizeGripMargins WRITE setSizeGripMargins NOTIFY sizeGripMarginsChanged);
+
+Q_SIGNALS:
+  void orientationsChanged(const Qt::Orientations &);
+  void sizeGripInsideChanged(bool);
+  void sizeGripMarginsChanged(const QSize &);
 
 public:
   typedef QFrame Superclass;

@@ -1411,7 +1411,7 @@ QString ctkDICOMDatabasePrivate::convertConnectionInfoToJson(const QStringList& 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
-CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
+CTK_SET_CPP_EMIT(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath, useShortStoragePathChanged);
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods
@@ -4021,6 +4021,7 @@ void ctkDICOMDatabase::setLoadedSeries(const QStringList &seriesList)
 {
   Q_D(ctkDICOMDatabase);
   d->LoadedSeries = seriesList;
+  emit loadedSeriesChanged(seriesList);
 }
 
 //------------------------------------------------------------------------------
@@ -4035,6 +4036,7 @@ void ctkDICOMDatabase::setVisibleSeries(const QStringList &seriesList)
 {
   Q_D(ctkDICOMDatabase);
   d->VisibleSeries = seriesList;
+  emit visibleSeriesChanged(seriesList);
 }
 
 //------------------------------------------------------------------------------

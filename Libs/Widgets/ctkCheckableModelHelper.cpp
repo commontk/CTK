@@ -406,6 +406,7 @@ void ctkCheckableModelHelper::setPropagateDepth(int depth)
       this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
       this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
   }
+  emit propagateDepthChanged(depth);
 }
 
 //-----------------------------------------------------------------------------
@@ -428,6 +429,7 @@ void ctkCheckableModelHelper::setForceCheckability(bool force)
   {
     d->propagateCheckStateToChildren(this->rootIndex());
   }
+  emit forceCheckabilityChanged(force);
 }
 
 //-----------------------------------------------------------------------------
@@ -442,6 +444,7 @@ void ctkCheckableModelHelper::setDefaultCheckState(Qt::CheckState defaultCheckSt
 {
   Q_D(ctkCheckableModelHelper);
   d->DefaultCheckState = defaultCheckState;
+  emit defaultCheckStateChanged(defaultCheckState);
 }
 
 //-----------------------------------------------------------------------------

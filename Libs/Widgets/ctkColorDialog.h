@@ -35,7 +35,7 @@ class ctkColorDialogPrivate;
 class CTK_WIDGETS_EXPORT ctkColorDialog : public QColorDialog
 {
   Q_OBJECT
-  Q_PROPERTY(QString colorName READ colorName WRITE setColorName)
+  Q_PROPERTY(QString colorName READ colorName WRITE setColorName NOTIFY colorNameChanged);
 
 public:
   /// Constructor
@@ -121,7 +121,7 @@ public Q_SLOTS:
   void setColorName(const QString& name);
 
 Q_SIGNALS:
-  void currentColorNameChanged(const QString& colorName);
+  void colorNameChanged(const QString& colorName);
 
 protected Q_SLOTS:
   void resetColorName();

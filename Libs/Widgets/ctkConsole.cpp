@@ -1197,27 +1197,27 @@ void ctkConsole::setCompleter(ctkConsoleCompleter* completer)
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, promptColor, PromptColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setPromptColor, PromptColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setPromptColor, PromptColor, promptColorChanged);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, outputTextColor, OutputTextColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setOutputTextColor, OutputTextColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setOutputTextColor, OutputTextColor, outputTextColorChanged);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, errorTextColor, ErrorTextColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setErrorTextColor, ErrorTextColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setErrorTextColor, ErrorTextColor, errorTextColorChanged);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, stdinTextColor, StdinTextColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setStdinTextColor, StdinTextColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setStdinTextColor, StdinTextColor, stdinTextColorChanged);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, commandTextColor, CommandTextColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setCommandTextColor, CommandTextColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setCommandTextColor, CommandTextColor, commandTextColorChanged);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QColor, welcomeTextColor, WelcomeTextColor);
-CTK_SET_CPP(ctkConsole, const QColor&, setWelcomeTextColor, WelcomeTextColor);
+CTK_SET_CPP_EMIT(ctkConsole, const QColor&, setWelcomeTextColor, WelcomeTextColor, welcomeTextColorChanged);
 
 //-----------------------------------------------------------------------------
 QColor ctkConsole::backgroundColor()const
@@ -1236,21 +1236,22 @@ void ctkConsole::setBackgroundColor(const QColor& newColor)
     return;
   }
   QPalette pal = this->palette();
+  emit this->backgroundColorChanged(newColor);
   pal.setColor(QPalette::Base, newColor);
   d->setPalette(pal);
 }
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QString, ps1, Ps1);
-CTK_SET_CPP(ctkConsole, const QString&, setPs1, Ps1);
+CTK_SET_CPP_EMIT(ctkConsole, const QString&, setPs1, Ps1, ps1Changed);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, QString, ps2, Ps2);
-CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
+CTK_SET_CPP_EMIT(ctkConsole, const QString&, setPs2, Ps2, ps2Changed);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, ctkConsole::EditorHints, editorHints, EditorHints);
-CTK_SET_CPP(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints);
+CTK_SET_CPP_EMIT(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints, editorHintsChanged);
 
 //-----------------------------------------------------------------------------
 int ctkConsole::cursorPosition() const
@@ -1296,6 +1297,7 @@ void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolic
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+  emit this->scrollBarPolicyChanged(newScrollBarPolicy);
 }
 
 //-----------------------------------------------------------------------------
@@ -1306,6 +1308,7 @@ void ctkConsole::setCompleterShortcuts(const QList<QKeySequence>& keys)
 {
   Q_D(ctkConsole);
   d->CompleterShortcuts = keys;
+  emit this->completerShortcutsChanged(keys);
 }
 
 //-----------------------------------------------------------------------------
@@ -1327,6 +1330,7 @@ void ctkConsole::setRunFileOptions(const RunFileOptions& newOptions)
   Q_D(ctkConsole);
   d->RunFileButton->setVisible(newOptions.testFlag(ctkConsole::RunFileButton));
   d->RunFileAction->setEnabled(newOptions.testFlag(ctkConsole::RunFileShortcut));
+  emit this->runFileOptionsChanged(newOptions);
 }
 
 //-----------------------------------------------------------------------------
@@ -1341,6 +1345,7 @@ void ctkConsole::setCommandBuffer(const QString& command)
 {
   Q_D(ctkConsole);
   d->replaceCommandBuffer(command);
+  emit this->commandBufferChanged(command);
 }
 
 //-----------------------------------------------------------------------------
@@ -1357,6 +1362,7 @@ void ctkConsole::setCommandHistory(const QStringList& commandHistory)
   d->CommandHistory = commandHistory;
   d->CommandHistory.append("");
   d->CommandPosition = d->CommandHistory.size()-1;
+  emit this->commandHistoryChanged(commandHistory);
 }
 
 //-----------------------------------------------------------------------------
@@ -1571,6 +1577,7 @@ void ctkConsole::setMaxVisibleCompleterItems(int count)
     return;
   }
   this->completer()->setMaxVisibleItems(count);
+  emit this->maxVisibleCompleterItemsChanged(count);
 }
 
 #include "ctkConsole.moc"

@@ -124,6 +124,7 @@ void ctkSearchBox::setShowSearchIcon(bool show)
 {
   Q_D(ctkSearchBox);
   d->showSearchIcon = show;
+  emit this->showSearchIconChanged(show);
   this->update();
 }
 
@@ -158,6 +159,7 @@ void ctkSearchBox::setSearchIcon(const QIcon& icon)
 {
   Q_D(ctkSearchBox);
   d->searchIcon = icon;
+  emit this->searchIconChanged(icon);
   this->update();
 }
 
@@ -173,6 +175,7 @@ void ctkSearchBox::setClearIcon(const QIcon& icon)
 {
   Q_D(ctkSearchBox);
   d->clearIcon = icon;
+  emit this->clearIconChanged(icon);
   this->update();
 }
 

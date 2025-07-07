@@ -369,6 +369,7 @@ void ctkRangeSlider::setMinimumValue( int min )
 {
   Q_D(ctkRangeSlider);
   this->setValues( min, qMax(d->m_MaximumValue,min) );
+  emit minimumValueChanged(d->m_MinimumValue);
 }
 
 // --------------------------------------------------------------------------
@@ -383,6 +384,7 @@ void ctkRangeSlider::setMaximumValue( int max )
 {
   Q_D(ctkRangeSlider);
   this->setValues( qMin(d->m_MinimumValue, max), max );
+  emit maximumValueChanged(d->m_MaximumValue);
 }
 
 // --------------------------------------------------------------------------
@@ -460,6 +462,7 @@ void ctkRangeSlider::setMinimumPosition(int l)
 {
   Q_D(const ctkRangeSlider);
   this->setPositions(l, qMax(l, d->m_MaximumPosition));
+  emit minimumPositionChanged(d->m_MinimumPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -467,6 +470,7 @@ void ctkRangeSlider::setMaximumPosition(int u)
 {
   Q_D(const ctkRangeSlider);
   this->setPositions(qMin(d->m_MinimumPosition, u), u);
+  emit maximumPositionChanged(d->m_MaximumPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -520,6 +524,7 @@ void ctkRangeSlider::setSymmetricMoves(bool symmetry)
 {
   Q_D(ctkRangeSlider);
   d->m_SymmetricMoves = symmetry;
+  emit symmetricMovesChanged(d->m_SymmetricMoves);
 }
 
 // --------------------------------------------------------------------------
@@ -817,6 +822,7 @@ void ctkRangeSlider::setHandleToolTip(const QString& _toolTip)
 {
   Q_D(ctkRangeSlider);
   d->m_HandleToolTip = _toolTip;
+  emit handleToolTipChanged(d->m_HandleToolTip);
 }
 
 // --------------------------------------------------------------------------

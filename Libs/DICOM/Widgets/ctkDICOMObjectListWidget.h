@@ -33,10 +33,10 @@ class ctkDICOMObjectListWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectListWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile)
-  Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList)
-  Q_PROPERTY(QString filterExpression READ filterExpression WRITE setFilterExpression)
-  Q_PROPERTY(bool thumbnailVisible READ isThumbnailVisible WRITE setThumbnailVisible)
+  Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile NOTIFY currentFileChanged);
+  Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList NOTIFY fileListChanged);
+  Q_PROPERTY(QString filterExpression READ filterExpression WRITE setFilterExpression NOTIFY filterExpressionChanged);
+  Q_PROPERTY(bool thumbnailVisible READ isThumbnailVisible WRITE setThumbnailVisible NOTIFY thumbnailVisibleChanged);
 
 public:
   typedef QWidget Superclass;
@@ -70,6 +70,11 @@ private:
 
 Q_SIGNALS:
   void doubleClicked(const QModelIndex&);
+
+  void currentFileChanged(const QString &);
+  void fileListChanged(const QStringList &);
+  void filterExpressionChanged(const QString &);
+  void thumbnailVisibleChanged(bool);
 
 public Q_SLOTS:
   void setCurrentFile(const QString& newFileName);

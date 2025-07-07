@@ -323,6 +323,7 @@ void ctkWorkflowButtonBoxWidget::setBackButtonFormat(const QString& format)
 {
   Q_D(ctkWorkflowButtonBoxWidget);
   d->BackButtonFormat = format;
+  emit backButtonFormatChanged(format);
   d->updateBackButton(d->Workflow ? d->Workflow->currentStep() : 0);
 }
 
@@ -335,6 +336,7 @@ void ctkWorkflowButtonBoxWidget::setNextButtonFormat(const QString& format)
 {
   Q_D(ctkWorkflowButtonBoxWidget);
   d->NextButtonFormat = format;
+  emit nextButtonFormatChanged(format);
   d->updateNextButton(d->Workflow ? d->Workflow->currentStep() : 0);
 }
 
@@ -347,6 +349,7 @@ void ctkWorkflowButtonBoxWidget::setGoToButtonsFormat(const QString& format)
 {
   Q_D(ctkWorkflowButtonBoxWidget);
   d->GoToButtonsFormat = format;
+  emit goToButtonsFormatChanged(format);
   d->updateGoToButtons(d->Workflow ? d->Workflow->currentStep() : 0);
 }
 
@@ -355,9 +358,9 @@ CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkWorkflow*, workflow, Workflow);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkPushButton*, backButton, BackButton);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QBoxLayout::Direction, direction, Direction);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideGoToButtons, HideGoToButtons);
-CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideGoToButtons, HideGoToButtons);
+CTK_SET_CPP_EMIT(ctkWorkflowButtonBoxWidget, bool, setHideGoToButtons, HideGoToButtons, setHideGoToButtons);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideInvalidButtons, HideInvalidButtons);
-CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalidButtons);
+CTK_SET_CPP_EMIT(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalidButtons, hideInvalidButtonsChanged);
 
 //-----------------------------------------------------------------------------
 // TODO will be list of next buttons for branching workflow

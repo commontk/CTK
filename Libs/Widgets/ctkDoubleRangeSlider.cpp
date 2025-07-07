@@ -243,6 +243,7 @@ void ctkDoubleRangeSlider::setMinimum(double newMin)
   }
   double oldMin = d->Minimum;
   d->Minimum = newMin;
+  emit minimumChanged(newMin);
   if (d->Minimum >= d->MinValue)
   {
     d->updateMinOffset(d->Minimum);
@@ -285,6 +286,7 @@ void ctkDoubleRangeSlider::setMaximum(double newMax)
   }
   double oldMax = d->Maximum;
   d->Maximum = newMax;
+  emit maximumChanged(newMax);
   if (d->Maximum <= d->MinValue)
   {
     d->updateMinOffset(d->Maximum);
@@ -384,6 +386,7 @@ void ctkDoubleRangeSlider::setMinimumPosition(double newMinPos)
   }
   int newIntMinPos = d->toInt(newMinPos);
   d->Slider->setMinimumPosition(newIntMinPos);
+  emit this->minimumPositionChanged(this->minimumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -409,6 +412,7 @@ void ctkDoubleRangeSlider::setMaximumPosition(double newMaxPos)
   }
   int newIntMaxPos = d->toInt(newMaxPos);
   d->Slider->setMaximumPosition(newIntMaxPos);
+  emit this->maximumPositionChanged(this->maximumPosition());
 }
 
 // --------------------------------------------------------------------------
@@ -449,6 +453,7 @@ void ctkDoubleRangeSlider::setMinimumValue(double newMinValue)
   }
   newMinValue = qBound(d->Minimum, newMinValue, d->Maximum);
   d->updateMinOffset(newMinValue);
+  emit this->minimumValueChanged(this->minimumValue());
   if (newMinValue >= d->MaxValue)
   {
     d->updateMaxOffset(newMinValue);
@@ -498,6 +503,7 @@ void ctkDoubleRangeSlider::setMaximumValue(double newMaxValue)
   }
   newMaxValue = qBound(d->Minimum, newMaxValue, d->Maximum);
   d->updateMaxOffset(newMaxValue);
+  emit this->maximumValueChanged(this->maximumValue());
   if (newMaxValue <= d->MinValue)
   {
     d->updateMinOffset(newMaxValue);
@@ -593,6 +599,7 @@ void ctkDoubleRangeSlider::setSingleStep(double newStep)
     return;
   }
   d->SingleStep = newStep;
+  emit singleStepChanged(newStep);
   // The following can fire A LOT of signals that shouldn't be fired.
   bool oldBlockSignals = this->blockSignals(true);
   d->updateMinOffset(d->MinValue);
@@ -654,6 +661,7 @@ void ctkDoubleRangeSlider::setTickInterval(double newInterval)
   }
   int newIntInterval = d->toInt(newInterval);
   d->Slider->setTickInterval(newIntInterval);
+  emit this->tickIntervalChanged(newInterval);
 }
 
 // --------------------------------------------------------------------------
@@ -668,6 +676,7 @@ void ctkDoubleRangeSlider::setTickPosition(QSlider::TickPosition newTickPosition
 {
   Q_D(ctkDoubleRangeSlider);
   d->Slider->setTickPosition(newTickPosition);
+  emit this->tickPositionChanged(newTickPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -682,6 +691,7 @@ void ctkDoubleRangeSlider::setTracking(bool enable)
 {
   Q_D(ctkDoubleRangeSlider);
   d->Slider->setTracking(enable);
+  emit this->trackingChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -708,6 +718,7 @@ void ctkDoubleRangeSlider::setOrientation(Qt::Orientation newOrientation)
   }
   // d->Slider will take care of calling updateGeometry
   d->Slider->setOrientation(newOrientation);
+  emit this->orientationChanged(newOrientation);
 }
 
 // --------------------------------------------------------------------------
@@ -729,6 +740,7 @@ void ctkDoubleRangeSlider::setSymmetricMoves(bool symmetry)
 {
   Q_D(ctkDoubleRangeSlider);
   d->Slider->setSymmetricMoves(symmetry);
+  emit this->symmetricMovesChanged(symmetry);
 }
 
 // --------------------------------------------------------------------------

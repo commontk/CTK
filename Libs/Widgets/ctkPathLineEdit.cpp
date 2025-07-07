@@ -496,7 +496,10 @@ const QString& ctkPathLineEdit::label()const
 void ctkPathLineEdit::setNameFilters(const QStringList &nameFilters)
 {
   Q_D(ctkPathLineEdit);
-  d->NameFilters = nameFilters;
+  if (nameFilters != d->NameFilters) {
+    d->NameFilters = nameFilters;
+    emit nameFiltersChanged(nameFilters);
+  }
   d->updateFilter();
 }
 
@@ -513,6 +516,7 @@ void ctkPathLineEdit::setFilters(const Filters &filters)
   Q_D(ctkPathLineEdit);
   d->Filters = QFlags<QDir::Filter>(static_cast<int>(filters));
   d->updateFilter();
+  emit filtersChanged(filters);
 }
 
 //-----------------------------------------------------------------------------
@@ -530,7 +534,10 @@ void ctkPathLineEdit::setOptions(const Options& dialogOptions)
 #endif
 {
   Q_D(ctkPathLineEdit);
-  d->DialogOptions = dialogOptions;
+  if ( d->DialogOptions != dialogOptions) {
+    d->DialogOptions = dialogOptions;
+    emit optionsChanged(dialogOptions);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -711,6 +718,7 @@ void ctkPathLineEdit::setCurrentPath(const QString& path)
 {
   Q_D(ctkPathLineEdit);
   d->LineEdit->setText(path);
+  emit currentPathChanged(path);
   if (d->LineEdit->hasAcceptableInput())
   {
     QFileInfo fileInfo(path);
@@ -766,10 +774,13 @@ QString ctkPathLineEdit::settingKey()const
 }
 
 //------------------------------------------------------------------------------
-void ctkPathLineEdit::setSettingKey(const QString& key)
-{
+void ctkPathLineEdit::setSettingKey(const QString& key) {
   Q_D(ctkPathLineEdit);
-  d->SettingKey = key;
+  if (d->SettingKey != key)
+  {
+    d->SettingKey = key;
+    emit settingKeyChanged(key);
+  }
   this->retrieveHistory();
 }
 
@@ -785,6 +796,7 @@ void ctkPathLineEdit::setShowBrowseButton(bool visible)
 {
   Q_D(ctkPathLineEdit);
   d->BrowseButton->setVisible(visible);
+  emit showBrowseButtonChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -799,6 +811,7 @@ void ctkPathLineEdit::setShowHistoryButton(bool visible)
 {
   Q_D(ctkPathLineEdit);
   d->createPathLineEditWidget(visible);
+  emit showHistoryButtonChanged(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -814,8 +827,11 @@ void ctkPathLineEdit::setSizeAdjustPolicy(ctkPathLineEdit::SizeAdjustPolicy poli
   Q_D(ctkPathLineEdit);
   if (policy == d->SizeAdjustPolicy)
     return;
-
-  d->SizeAdjustPolicy = policy;
+  if (d->SizeAdjustPolicy != policy)
+  {
+    d->SizeAdjustPolicy = policy;
+    emit sizeAdjustPolicyChanged(policy);
+  }
   d->SizeHint = QSize();
   d->adjustPathLineEditSize();
   this->updateGeometry();
@@ -835,6 +851,7 @@ void ctkPathLineEdit::setMinimumContentsLength(int length)
   if (d->MinimumContentsLength == length || length < 0) return;
 
   d->MinimumContentsLength = length;
+  emit minimumContentsLengthChanged(length);
 
   if (d->SizeAdjustPolicy == AdjustToContents ||
       d->SizeAdjustPolicy == AdjustToMinimumContentsLength)

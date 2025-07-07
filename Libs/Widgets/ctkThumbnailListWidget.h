@@ -34,9 +34,9 @@ class ctkThumbnailLabel;
 class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int currentThumbnail READ currentThumbnail WRITE setCurrentThumbnail)
-  Q_PROPERTY(Qt::Orientation flow READ flow WRITE setFlow)
-  Q_PROPERTY(QSize thumbnailSize READ thumbnailSize WRITE setThumbnailSize)
+  Q_PROPERTY(int currentThumbnail READ currentThumbnail WRITE setCurrentThumbnail NOTIFY currentThumbnailChanged);
+  Q_PROPERTY(Qt::Orientation flow READ flow WRITE setFlow NOTIFY flowChanged);
+  Q_PROPERTY(QSize thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged);
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailListWidget(QWidget* parent=0);
@@ -75,6 +75,10 @@ public Q_SLOTS:
 Q_SIGNALS:
   void selected(const ctkThumbnailLabel& widget);
   void doubleClicked(const ctkThumbnailLabel& widget);
+
+  void currentThumbnailChanged(int);
+  void flowChanged(const Qt::Orientation &);
+  void thumbnailSizeChanged(const QSize &);
 
 protected Q_SLOTS:
   void onThumbnailSelected(const ctkThumbnailLabel& widget);

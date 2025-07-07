@@ -225,6 +225,7 @@ void ctkSettingsPanel::setSettings(QSettings* settings)
   }
   d->Settings = settings;
   this->reloadSettings();
+  emit settingsChanged(settings);
 }
 
 // --------------------------------------------------------------------------
@@ -286,7 +287,7 @@ void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
   }
   if (oldVal != newVal)
   {
-    emit settingChanged(key, newVal);
+    emit oneSettingChanged(key, newVal);
   }
 }
 
@@ -420,7 +421,7 @@ void ctkSettingsPanel::applySettings()
     if (prop.previousValue() != prop.value())
     {
       prop.setPreviousValue(prop.value());
-      emit settingChanged(key, prop.value());
+      emit oneSettingChanged(key, prop.value());
     }
   }
 }

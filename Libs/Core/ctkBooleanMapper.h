@@ -66,10 +66,10 @@ class CTK_CORE_EXPORT ctkBooleanMapper : public QObject
   Q_PROPERTY(QString valueAsString READ valueAsString WRITE setValueAsString NOTIFY valueAsStringChanged STORED false )
 
   /// 1 by default
-  Q_PROPERTY(QVariant trueValue READ trueValue WRITE setTrueValue )
+  Q_PROPERTY(QVariant trueValue READ trueValue WRITE setTrueValue NOTIFY trueValueChanged)
 
   /// 0 by default
-  Q_PROPERTY(QVariant falseValue READ falseValue WRITE setFalseValue )
+  Q_PROPERTY(QVariant falseValue READ falseValue WRITE setFalseValue NOTIFY falseValueChanged)
 public:
   /// Map the property \a property of the object.
   /// The mapper becomes a child of \a object and will be destructed when
@@ -108,6 +108,9 @@ Q_SIGNALS:
   void complementChanged(bool complement);
   void valueAsIntChanged(int value);
   void valueAsStringChanged(const QString& value);
+
+  void trueValueChanged(const QVariant& value);
+  void falseValueChanged(const QVariant& value);
 
 protected Q_SLOTS:
   void emitValueChanged();

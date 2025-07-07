@@ -173,6 +173,7 @@ void ctkCheckBox::setIndicatorIcon(const QIcon& newIcon)
 {
   Q_D(ctkCheckBox);
   d->IconStyle->IndicatorIcon = newIcon;
+  emit this->indicatorIconChanged(newIcon);
   this->update();
 }
 
@@ -188,6 +189,7 @@ void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
 {
   Q_D(ctkCheckBox);
   d->IconStyle->IndicatorSize = newSize;
+  emit this->indicatorIconSizeChanged(newSize);
   this->update();
 }
 

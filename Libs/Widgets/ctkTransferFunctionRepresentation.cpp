@@ -116,6 +116,7 @@ void ctkTransferFunctionRepresentation::setVerticalGradientColor( QColor vertica
 {
   Q_D( ctkTransferFunctionRepresentation );
   d->VerticalGradientColor = verticalGradientColor;
+  emit verticalGradientColorChanged( verticalGradientColor );
 }
 
 //-----------------------------------------------------------------------------

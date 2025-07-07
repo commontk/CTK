@@ -40,13 +40,13 @@ struct ctkErrorLogContext;
 class CTK_CORE_EXPORT ctkErrorLogAbstractModel : public QSortFilterProxyModel
 {
   Q_OBJECT
-  Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping)
-  Q_PROPERTY(ctkErrorLogTerminalOutput::TerminalOutputs terminalOutputs READ terminalOutputs WRITE setTerminalOutputs)
-  Q_PROPERTY(bool asynchronousLogging READ asynchronousLogging WRITE  setAsynchronousLogging)
-  Q_PROPERTY(QString filePath READ filePath WRITE  setFilePath)
-  Q_PROPERTY(int numberOfFilesToKeep READ numberOfFilesToKeep WRITE  setNumberOfFilesToKeep)
-  Q_PROPERTY(bool fileLoggingEnabled READ fileLoggingEnabled WRITE  setFileLoggingEnabled)
-  Q_PROPERTY(QString fileLoggingPattern READ fileLoggingPattern WRITE setFileLoggingPattern)
+  Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping NOTIFY logEntryGroupingChanged)
+  Q_PROPERTY(ctkErrorLogTerminalOutput::TerminalOutputs terminalOutputs READ terminalOutputs WRITE setTerminalOutputs NOTIFY terminalOutputsChanged)
+  Q_PROPERTY(bool asynchronousLogging READ asynchronousLogging WRITE  setAsynchronousLogging NOTIFY asynchronousLoggingChanged)
+  Q_PROPERTY(QString filePath READ filePath WRITE  setFilePath NOTIFY filePathChanged)
+  Q_PROPERTY(int numberOfFilesToKeep READ numberOfFilesToKeep WRITE  setNumberOfFilesToKeep NOTIFY numberOfFilesToKeepChanged)
+  Q_PROPERTY(bool fileLoggingEnabled READ fileLoggingEnabled WRITE  setFileLoggingEnabled NOTIFY fileLoggingEnabledChanged)
+  Q_PROPERTY(QString fileLoggingPattern READ fileLoggingPattern WRITE setFileLoggingPattern NOTIFY fileLoggingPatternChanged)
   Q_PROPERTY(QStringList msgHandlerNames READ msgHandlerNames CONSTANT)
 
 public:
@@ -163,7 +163,7 @@ Q_SIGNALS:
   /// Since an entryAdded() signal with more parameters was added, this signal is somewhat redundant,
   /// but it is kept for backward compatibility.
   /// \sa addEntry()
-  void entryAdded(ctkErrorLogLevel::LogLevel logLevel);
+  void entryAdded(const ctkErrorLogLevel::LogLevel & logLevel);
 
   /// Called when an entry is added.
   /// \sa addEntry()
@@ -176,6 +176,14 @@ Q_SIGNALS:
   void entryPosted(const QDateTime& currentDateTime, const QString& threadId,
     ctkErrorLogLevel::LogLevel logLevel,
     const QString& origin, const ctkErrorLogContext& context, const QString& text);
+
+  void logEntryGroupingChanged(bool);
+  void terminalOutputsChanged(const ctkErrorLogTerminalOutput::TerminalOutputs &);
+  void asynchronousLoggingChanged(bool);
+  void filePathChanged(const QString& filePath);
+  void numberOfFilesToKeepChanged(int);
+  void fileLoggingEnabledChanged(bool);
+  void fileLoggingPatternChanged(const QString& fileLoggingPattern);
 
 protected:
   QScopedPointer<ctkErrorLogAbstractModelPrivate> d_ptr;

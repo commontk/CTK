@@ -94,23 +94,23 @@ ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet() = default;
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, filePath, FilePath);
-CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setCopyFile, CopyFile);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, bool, setCopyFile, CopyFile, copyFileChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, bool, copyFile, CopyFile);
-CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setOverwriteExistingDataset, OverwriteExistingDataset);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, bool, setOverwriteExistingDataset, OverwriteExistingDataset, overwriteExistingDatasetChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, bool, overwriteExistingDataset, OverwriteExistingDataset);
-CTK_SET_CPP(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, setJobType, JobType);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, setJobType, JobType, jobTypeChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, jobType, JobType);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setJobUID, JobUID);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setJobUID, JobUID, jobUIDChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, jobUID, JobUID);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setPatientID, PatientID);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setPatientID, PatientID,patientIDChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, patientID, PatientID);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setStudyInstanceUID, StudyInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setStudyInstanceUID, StudyInstanceUID, studyInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, studyInstanceUID, StudyInstanceUID);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setSeriesInstanceUID, SeriesInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setSeriesInstanceUID, SeriesInstanceUID, seriesInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, seriesInstanceUID, SeriesInstanceUID);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setSOPInstanceUID, SOPInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setSOPInstanceUID, SOPInstanceUID, sopInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, sopInstanceUID, SOPInstanceUID);
-CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setConnectionName, ConnectionName);
+CTK_SET_CPP_EMIT(ctkDICOMJobResponseSet, const QString&, setConnectionName, ConnectionName, connectionNameChanged);
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, connectionName, ConnectionName);
 
 //----------------------------------------------------------------------------
@@ -127,6 +127,7 @@ void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
   QSharedPointer<ctkDICOMItem> dataset =
     QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
   dataset->InitializeFromFile(filePath);
+  emit filePathChanged(filePath);
 
   DcmItem dcmItem = dataset->GetDcmItem();
   OFString SOPInstanceUID;

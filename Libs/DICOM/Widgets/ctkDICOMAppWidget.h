@@ -37,10 +37,10 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(ctkDICOMDatabase* database READ database CONSTANT)
-  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
-  Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
-  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
-  Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory NOTIFY databaseDirectoryChanged);
+  Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode NOTIFY searchWidgetPopUpModeChanged);
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache NOTIFY tagsToPrecacheChanged);
+  Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary NOTIFY displayImportSummaryChanged);
 
 public:
   typedef QWidget Superclass;
@@ -109,6 +109,9 @@ Q_SIGNALS:
   /// Emitted when the directory import operation has completed
   void directoryImported();
 
+  void searchWidgetPopUpModeChanged(bool);
+  void tagsToPrecacheChanged(const QStringList &);
+  void displayImportSummaryChanged(bool);
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
 protected Q_SLOTS:

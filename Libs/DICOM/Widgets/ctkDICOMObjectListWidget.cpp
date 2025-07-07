@@ -249,6 +249,7 @@ void ctkDICOMObjectListWidget::setCurrentFile(const QString& newFileName)
 {
   Q_D(ctkDICOMObjectListWidget);
   d->setPathLabel(newFileName);
+  emit currentFileChanged(newFileName);
 }
 
 // --------------------------------------------------------------------------
@@ -256,6 +257,7 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
 {
   Q_D(ctkDICOMObjectListWidget);
   d->fileList = fileList;
+  emit fileListChanged(d->fileList);
   if (d->fileList.size() > 0)
   {
     d->currentFile = d->fileList[0];
@@ -425,6 +427,7 @@ void ctkDICOMObjectListWidget::setFilterExpression(const QString& expr)
 {
   Q_D(ctkDICOMObjectListWidget);
   d->filterExpression = expr;
+  emit filterExpressionChanged(d->filterExpression);
   d->setFilterExpressionInModel(d->filterModel, expr);
 }
 
@@ -445,6 +448,7 @@ void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
     return;
   }
   d->thumbnailVisible = visible;
+  emit thumbnailVisibleChanged(visible);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
   QSignalBlocker blocker(d->showThumbnailButton);

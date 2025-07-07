@@ -42,20 +42,20 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
-  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
-  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
-  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
-  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
-  Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
-  Q_PROPERTY(Qt::Alignment spinBoxTextAlignment READ spinBoxTextAlignment WRITE setSpinBoxTextAlignment)
-  Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
-  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
-  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue NOTIFY minimumValueChanged)
+  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue NOTIFY maximumValueChanged)
+  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix NOTIFY prefixChanged)
+  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY suffixChanged)
+  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval NOTIFY tickIntervalChanged)
+  Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth NOTIFY autoSpinBoxWidthChanged)
+  Q_PROPERTY(Qt::Alignment spinBoxTextAlignment READ spinBoxTextAlignment WRITE setSpinBoxTextAlignment NOTIFY spinBoxTextAlignmentChanged)
+  Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment NOTIFY spinBoxAlignmentChanged)
+  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking NOTIFY trackingChanged)
+  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves NOTIFY symmetricMovesChanged)
   Q_PROPERTY(double customSpinBoxesLimitsMin READ customSpinBoxesLimitsMin CONSTANT)
   Q_PROPERTY(double customSpinBoxesLimitsMax READ customSpinBoxesLimitsMax CONSTANT)
 
@@ -226,6 +226,20 @@ Q_SIGNALS:
   void maximumValueIsChanging(double value);
   void valuesChanged(double minValue, double maxValue);
   void rangeChanged(double min, double max);
+
+  void decimalsChanged(int decimals);
+  void singleStepChanged(double step);
+  void minimumChanged(double minimum);
+  void maximumChanged(double maximum);
+
+  void prefixChanged(const QString& prefix);
+  void suffixChanged(const QString& suffix);
+  void tickIntervalChanged(double ti);
+  void autoSpinBoxWidthChanged(bool autoWidth);
+  void spinBoxTextAlignmentChanged(Qt::Alignment alignment);
+  void spinBoxAlignmentChanged(Qt::Alignment alignment);
+  void trackingChanged(bool enable);
+  void symmetricMovesChanged(bool symmetry);
 
 protected Q_SLOTS:
   virtual void startChanging();

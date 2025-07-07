@@ -1587,6 +1587,7 @@ void ctkDICOMServerNodeWidget2::setStorageAETitle(const QString& storageAETitle)
   Q_D(const ctkDICOMServerNodeWidget2);
   d->StorageAETitle->setText(storageAETitle);
   this->onSettingsModified();
+  emit storageAETitleChanged(storageAETitle);
 }
 
 //----------------------------------------------------------------------------
@@ -1602,6 +1603,7 @@ void ctkDICOMServerNodeWidget2::setStoragePort(int storagePort)
   Q_D(const ctkDICOMServerNodeWidget2);
   d->StoragePort->setText(QString::number(storagePort));
   this->onSettingsModified();
+  emit storagePortChanged(storagePort);
 }
 
 //----------------------------------------------------------------------------

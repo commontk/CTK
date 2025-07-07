@@ -230,7 +230,7 @@ void ctkColorDialog::setColorName(const QString& name)
     return;
   }
   d->ColorName = name;
-  emit currentColorNameChanged(d->ColorName);
+  emit colorNameChanged(d->ColorName);
 }
 
 //------------------------------------------------------------------------------

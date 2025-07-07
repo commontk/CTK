@@ -198,6 +198,7 @@ void ctkCollapsibleGroupBox::setCollapsedHeight(int heightInPixels)
 {
   Q_D(ctkCollapsibleGroupBox);
   d->CollapsedHeight = heightInPixels;
+  emit collapsedHeightChanged(heightInPixels);
 }
 
 //-----------------------------------------------------------------------------

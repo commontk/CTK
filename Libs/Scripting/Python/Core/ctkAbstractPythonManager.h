@@ -41,8 +41,8 @@ class PythonQtObjectPtr;
 class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool systemExitExceptionHandlerEnabled READ systemExitExceptionHandlerEnabled WRITE setSystemExitExceptionHandlerEnabled)
-  Q_PROPERTY(bool redirectStdOutCallbackEnabled READ redirectStdOutCallbackEnabled WRITE setRedirectStdOutCallbackEnabled)
+  Q_PROPERTY(bool systemExitExceptionHandlerEnabled READ systemExitExceptionHandlerEnabled WRITE setSystemExitExceptionHandlerEnabled NOTIFY systemExitExceptionHandlerEnabledChanged);
+  Q_PROPERTY(bool redirectStdOutCallbackEnabled READ redirectStdOutCallbackEnabled WRITE setRedirectStdOutCallbackEnabled NOTIFY redirectStdOutCallbackEnabledChanged);
 
 public:
   typedef QObject Superclass;
@@ -180,6 +180,9 @@ Q_SIGNALS:
   //! exception is raised.
   //! \sa setSystemExitExceptionHandlerEnabled(bool), PythonQt::systemExitExceptionRaised(int)
   void systemExitExceptionRaised(int exitCode);
+
+  void systemExitExceptionHandlerEnabledChanged(bool);
+  void redirectStdOutCallbackEnabledChanged(bool);
 
 protected Q_SLOTS:
   void printStderr(const QString&);

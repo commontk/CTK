@@ -312,6 +312,7 @@ void ctkMatrixWidget::setColumnCount(int rc)
 {
   Q_D(ctkMatrixWidget);
   d->Table->setColumnCount(rc);
+  emit columnCountChanged(rc);
   d->validateItems();
   d->updateGeometries();
 }
@@ -328,6 +329,7 @@ void ctkMatrixWidget::setRowCount(int rc)
 {
   Q_D(ctkMatrixWidget);
   d->Table->setRowCount(rc);
+  emit rowCountChanged(rc);
   d->validateItems();
   d->updateGeometries();
 }
@@ -345,13 +347,14 @@ void ctkMatrixWidget::setEditable(bool newEditable)
   Q_D(ctkMatrixWidget);
   d->Table->setEditTriggers(
     newEditable ? QTableWidget::DoubleClicked : QTableWidget::NoEditTriggers);
+  emit editableChanged(newEditable);
 }
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkMatrixWidget, double, minimum, Minimum);
 CTK_GET_CPP(ctkMatrixWidget, double, maximum, Maximum);
 CTK_GET_CPP(ctkMatrixWidget, double, singleStep, SingleStep);
-CTK_SET_CPP(ctkMatrixWidget, double, setSingleStep, SingleStep);
+CTK_SET_CPP_EMIT(ctkMatrixWidget, double, setSingleStep, SingleStep, singleStepChanged);
 CTK_GET_CPP(ctkMatrixWidget, int, decimals, Decimals);
 
 // --------------------------------------------------------------------------
@@ -359,6 +362,7 @@ void ctkMatrixWidget::setMinimum(double newMinimum)
 {
   Q_D(ctkMatrixWidget);
   d->Minimum = newMinimum;
+  emit minimumChanged(newMinimum);
   d->Maximum = qMax(newMinimum, d->Maximum);
   d->validateItems();
 }
@@ -369,6 +373,7 @@ void ctkMatrixWidget::setMaximum(double newMaximum)
   Q_D(ctkMatrixWidget);
   d->Minimum = qMin(d->Minimum, newMaximum);
   d->Maximum = newMaximum;
+  emit maximumChanged(newMaximum);
   d->validateItems();
 }
 
@@ -390,6 +395,7 @@ void ctkMatrixWidget::setDecimals(int decimals)
     return;
   }
   d->Decimals = qMax(0, decimals);
+  emit decimalsChanged(d->Decimals);
   this->update();
   this->emit decimalsChanged(d->Decimals);
 }
@@ -407,6 +413,7 @@ void ctkMatrixWidget
 {
   Q_D(ctkMatrixWidget);
   d->DecimalsOption = newDecimalsOption;
+  emit decimalsOptionChanged(d->DecimalsOption);
 }
 
 // --------------------------------------------------------------------------
@@ -518,6 +525,7 @@ void ctkMatrixWidget::setValues(const QVector<double> & vector)
   {
     this->emit matrixChanged();
   }
+  emit valuesChanged(vector);
 }
 
 // --------------------------------------------------------------------------

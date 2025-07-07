@@ -72,7 +72,7 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMQueryJob, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP_EMIT(ctkDICOMQueryJob, const int&, setMaximumPatientsQuery, MaximumPatientsQuery, maximumPatientsQueryChanged);
 CTK_GET_CPP(ctkDICOMQueryJob, int, maximumPatientsQuery, MaximumPatientsQuery)
 
 //----------------------------------------------------------------------------

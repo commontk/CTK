@@ -59,7 +59,7 @@ class CTK_WIDGETS_EXPORT ctkCompleter: public QCompleter
   /// FilterWordStartsWith is useful when strings contain space separated words
   /// and \sa completionPrefix applies to the beginning of any of the words in the
   /// string.
-  Q_PROPERTY(ModelFiltering modelFiltering READ modelFiltering WRITE setModelFiltering)
+  Q_PROPERTY(ModelFiltering modelFiltering READ modelFiltering WRITE setModelFiltering NOTIFY modelFilteringChanged);
 
 public:
   ctkCompleter(QObject* parent = 0);
@@ -86,6 +86,9 @@ public:
   /// instead.
   QAbstractItemModel* sourceModel()const;
   void setSourceModel(QAbstractItemModel* model);
+
+Q_SIGNALS:
+    void modelFilteringChanged(const ModelFiltering &);
 
 protected:
   QScopedPointer<ctkCompleterPrivate> d_ptr;

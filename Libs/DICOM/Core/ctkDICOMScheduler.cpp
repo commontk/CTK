@@ -1013,6 +1013,7 @@ void ctkDICOMScheduler::setMaximumPatientsQuery(int maximumPatientsQuery)
 {
   Q_D(ctkDICOMScheduler);
   d->MaximumPatientsQuery = maximumPatientsQuery;
+  emit maximumPatientsQueryChanged(d->MaximumPatientsQuery);
 }
 
 //------------------------------------------------------------------------------

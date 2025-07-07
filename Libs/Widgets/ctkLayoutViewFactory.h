@@ -45,7 +45,9 @@ class CTK_WIDGETS_EXPORT ctkLayoutViewFactory: public QObject
   /// This property controls whether the views are cached and reused
   /// from a previous layout. True by default.
   /// \sa useCachedViews(), setUseCachedViews()
-  Q_PROPERTY(bool useCachedViews READ useCachedViews WRITE setUseCachedViews);
+  Q_PROPERTY(bool useCachedViews READ useCachedViews WRITE setUseCachedViews NOTIFY useCachedViewsChanged);
+Q_SIGNALS:
+      void useCachedViewsChanged(bool);
 public:
   /// Constructor
   ctkLayoutViewFactory(QObject* parent = 0);

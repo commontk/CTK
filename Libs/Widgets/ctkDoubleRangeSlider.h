@@ -41,18 +41,18 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkDoubleRangeSlider : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
-  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
-  Q_PROPERTY(double minimumPosition READ minimumPosition WRITE setMinimumPosition)
-  Q_PROPERTY(double maximumPosition READ maximumPosition WRITE setMaximumPosition)
-  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
-  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
-  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
-  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged);
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged);
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged);
+  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue NOTIFY minimumValueChanged);
+  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue NOTIFY maximumValueChanged);
+  Q_PROPERTY(double minimumPosition READ minimumPosition WRITE setMinimumPosition NOTIFY minimumPositionChanged);
+  Q_PROPERTY(double maximumPosition READ maximumPosition WRITE setMaximumPosition NOTIFY maximumPositionChanged);
+  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking NOTIFY trackingChanged);
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged);
+  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval NOTIFY tickIntervalChanged);
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition NOTIFY tickPositionChanged);
+  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves NOTIFY symmetricMovesChanged);
 public:
   // Superclass typedef
   typedef QWidget Superclass;
@@ -227,6 +227,15 @@ Q_SIGNALS:
   /// Warning: don't confound with valuesChanged(double, double);
   /// \sa QAbstractSlider::rangeChanged()
   void rangeChanged(double min, double max);
+
+  void minimumChanged(double);
+  void maximumChanged(double);
+  void singleStepChanged(double);
+  void trackingChanged(bool);
+  void orientationChanged(const Qt::Orientation &);
+  void tickIntervalChanged(double);
+  void tickPositionChanged(const QSlider::TickPosition &);
+  void symmetricMovesChanged(bool);
 
 public Q_SLOTS:
   ///

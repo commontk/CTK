@@ -175,6 +175,7 @@ void ctkDirectoryButton::setCaption(const QString& caption)
 {
   Q_D(ctkDirectoryButton);
   d->DialogCaption = caption;
+  emit captionChanged(d->DialogCaption);
 }
 
 //-----------------------------------------------------------------------------
@@ -189,6 +190,7 @@ void ctkDirectoryButton::setText(const QString& text)
 {
   Q_D(ctkDirectoryButton);
   d->DisplayText = text;
+  emit textChanged(d->DisplayText);
   d->updateDisplayText();
 }
 
@@ -204,6 +206,7 @@ void ctkDirectoryButton::setIcon(const QIcon& newIcon)
 {
   Q_D(const ctkDirectoryButton);
   return d->PushButton->setIcon(newIcon);
+  emit iconChanged(newIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -222,6 +225,7 @@ void ctkDirectoryButton::setOptions(const Options& dialogOptions)
 {
   Q_D(ctkDirectoryButton);
   d->DialogOptions = dialogOptions;
+  emit this->optionsChanged(d->DialogOptions);
 }
 
 //-----------------------------------------------------------------------------
@@ -247,6 +251,7 @@ void ctkDirectoryButton::setAcceptMode(QFileDialog::AcceptMode mode)
 {
   Q_D(ctkDirectoryButton);
   d->AcceptMode = mode;
+  emit this->acceptModeChanged(mode);
 }
 
 namespace {
@@ -322,6 +327,7 @@ void ctkDirectoryButton::setElideMode(Qt::TextElideMode newElideMode)
 {
   Q_D(ctkDirectoryButton);
   d->PushButton->setElideMode(newElideMode);
+  emit this->elideModeChanged(newElideMode);
 
   // Allow horizontal shrinking of the button if and only if elide is enabled.
   // The internal pushbutton is not accessible from outside, therefore we must

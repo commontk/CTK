@@ -41,10 +41,14 @@ class ctkDICOMStorageListenerJobPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListenerJob : public ctkDICOMJob
 {
   Q_OBJECT
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(QString AETitle READ AETitle WRITE setAETitle);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged);
+  Q_PROPERTY(QString AETitle READ AETitle WRITE setAETitle NOTIFY AETitleChanged);
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout NOTIFY connectionTimeoutChanged);
 
+Q_SIGNALS:
+  void portChanged(int);
+  void AETitleChanged(const QString &);
+  void connectionTimeoutChanged(int);
 public:
   typedef ctkDICOMJob Superclass;
   explicit ctkDICOMStorageListenerJob();

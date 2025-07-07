@@ -74,22 +74,22 @@ class ctkFileDialog;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
 {
   Q_OBJECT;
-  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
-  Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
-  Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
-  Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID);
-  Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
-  Q_PROPERTY(QString filteringStudyDescription READ filteringStudyDescription WRITE setFilteringStudyDescription);
-  Q_PROPERTY(ctkDICOMPatientItemWidget::DateType filteringDate READ filteringDate WRITE setFilteringDate);
-  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
-  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
-  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
-  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
-  Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
-  Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
-  Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
-  Q_PROPERTY(int storagePort READ storagePort WRITE setStoragePort);
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory NOTIFY databaseDirectoryChanged)
+  Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey NOTIFY databaseDirectorySettingsKeyChanged)
+  Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase NOTIFY databaseDirectoryBaseChanged)
+  Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID NOTIFY filteringPatientIDChanged);
+  Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName NOTIFY filteringPatientNameChanged);
+  Q_PROPERTY(QString filteringStudyDescription READ filteringStudyDescription WRITE setFilteringStudyDescription NOTIFY filteringStudyDescriptionChanged);
+  Q_PROPERTY(ctkDICOMPatientItemWidget::DateType filteringDate READ filteringDate WRITE setFilteringDate NOTIFY filteringDateChanged);
+  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription NOTIFY filteringSeriesDescriptionChanged);
+  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities NOTIFY filteringModalitiesChanged);
+  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient NOTIFY numberOfOpenedStudiesPerPatientChanged);
+  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged);
+  Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle NOTIFY storageAETitleChanged);
+  Q_PROPERTY(int storagePort READ storagePort WRITE setStoragePort NOTIFY storagePortChanged);
+  Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible NOTIFY sendActionVisibleChanged)
+  Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible NOTIFY deleteActionVisibleChanged)
+  Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode NOTIFY importDirectoryModeChanged)
 
 public:
   typedef QWidget Superclass;
@@ -414,6 +414,23 @@ Q_SIGNALS:
   void sendRequested(const QStringList&);
   /// Emitted when the directory import operation has completed
   void directoryImported();
+
+  void databaseDirectorySettingsKeyChanged(const QString &);
+  void databaseDirectoryBaseChanged(const QString &);
+
+  void filteringPatientIDChanged(const QString &);
+  void filteringPatientNameChanged(const QString &);
+  void filteringStudyDescriptionChanged(const QString &);
+  void filteringDateChanged(const ctkDICOMPatientItemWidget::DateType &);
+  void filteringSeriesDescriptionChanged(const QString &);
+  void filteringModalitiesChanged(const QStringList &);
+  void numberOfOpenedStudiesPerPatientChanged(int);
+  void thumbnailSizeChanged(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &);
+  void storageAETitleChanged(const QString &);
+  void storagePortChanged(int);
+  void sendActionVisibleChanged(bool);
+  void deleteActionVisibleChanged(bool);
+  void importDirectoryModeChanged(const ctkDICOMVisualBrowserWidget::ImportDirectoryMode &);
 
 protected:
   QScopedPointer<ctkDICOMVisualBrowserWidgetPrivate> d_ptr;

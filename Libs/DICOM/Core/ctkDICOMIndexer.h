@@ -37,8 +37,8 @@ class ctkDICOMIndexerPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool backgroundImportEnabled READ isBackgroundImportEnabled WRITE setBackgroundImportEnabled)
-  Q_PROPERTY(bool followSymlinks READ followSymlinks WRITE setFollowSymlinks)
+  Q_PROPERTY(bool backgroundImportEnabled READ isBackgroundImportEnabled WRITE setBackgroundImportEnabled NOTIFY backgroundImportEnabledChanged);
+  Q_PROPERTY(bool followSymlinks READ followSymlinks WRITE setFollowSymlinks NOTIFY followSymlinksChanged);
   Q_PROPERTY(bool importing READ isImporting CONSTANT)
 
 public:
@@ -123,14 +123,17 @@ public:
 
 Q_SIGNALS:
   /// Description of current phase of the indexing (parsing, importing, ...)
-  void progressStep(QString);
+  void progressStep(const QString &);
   /// Detailed information about the current progress (e.g., name of currently processed file)
-  void progressDetail(QString);
+  void progressDetail(const QString &);
   /// Progress in percentage
   void progress(int);
   /// Indexing is completed.
   void indexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded);
   void updatingDatabase(bool);
+
+  void backgroundImportEnabledChanged(bool);
+  void followSymlinksChanged(bool);
 
 public Q_SLOTS:
   /// Stop indexing (all completed indexing results will be added to the database)

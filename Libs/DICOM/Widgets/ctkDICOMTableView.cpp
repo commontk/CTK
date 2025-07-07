@@ -405,6 +405,7 @@ ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString q
   Q_D(ctkDICOMTableView);
   d->init();
   this->setQueryTableName(queryTableName);
+  emit queryChanged(this->uidsForAllRows());
 }
 
 //------------------------------------------------------------------------------
@@ -469,6 +470,7 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 {
   Q_D(ctkDICOMTableView);
   d->queryForeignKey = foreignKey;
+  emit queryChanged(this->uidsForAllRows());
 }
 
 //------------------------------------------------------------------------------
@@ -951,6 +953,7 @@ bool ctkDICOMTableView::setBatchUpdate(bool enable)
     return d->batchUpdate;
   }
   d->batchUpdate = enable;
+  emit batchUpdateChanged(d->batchUpdate);
   if (!d->batchUpdate)
   {
     // Process pending modification events
@@ -980,6 +983,7 @@ void ctkDICOMTableView::setHeaderVisible(bool visible)
 {
   Q_D(ctkDICOMTableView);
   return d->headerWidget->setVisible(visible);
+  emit headerVisibleChanged(visible);
 }
 
 //------------------------------------------------------------------------------

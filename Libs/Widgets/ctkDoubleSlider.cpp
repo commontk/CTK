@@ -216,12 +216,14 @@ ctkDoubleSlider::~ctkDoubleSlider()
 void ctkDoubleSlider::setMinimum(double min)
 {
   this->setRange(min, qMax(min, this->maximum()));
+  emit this->minimumChanged(min);
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMaximum(double max)
 {
   this->setRange(qMin(this->minimum(), max), max);
+  emit this->maximumChanged(max);
 }
 
 // --------------------------------------------------------------------------
@@ -317,6 +319,7 @@ void ctkDoubleSlider::setSliderPosition(double newPosition)
   }
   int newIntPosition = d->toInt(newPosition);
   d->Slider->setSliderPosition(newIntPosition);
+  emit this->sliderPositionChanged(newPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -381,6 +384,7 @@ void ctkDoubleSlider::setSingleStep(double newStep)
     return;
   }
   d->SingleStep = newStep;
+  emit this->singleStepChanged(newStep);
   d->updateOffset(d->Value);
   // update the new values of the QSlider
   bool oldBlockSignals = d->Slider->blockSignals(true);
@@ -418,6 +422,7 @@ void ctkDoubleSlider::setPageStep(double newStep)
 {
   Q_D(ctkDoubleSlider);
   d->PageStep = newStep;
+  emit this->pageStepChanged(newStep);
   int intPageStep = d->toInt(d->PageStep);
   d->Slider->setPageStep(intPageStep);
 }
@@ -437,6 +442,7 @@ void ctkDoubleSlider::setTickInterval(double newInterval)
   Q_D(ctkDoubleSlider);
   int newIntInterval = d->toInt(newInterval);
   d->Slider->setTickInterval(newIntInterval);
+  emit this->tickIntervalChanged(newInterval);
 }
 
 // --------------------------------------------------------------------------
@@ -451,6 +457,7 @@ void ctkDoubleSlider::setTickPosition(QSlider::TickPosition newTickPosition)
 {
   Q_D(ctkDoubleSlider);
   d->Slider->setTickPosition(newTickPosition);
+  emit this->tickPositionChanged(newTickPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -465,6 +472,7 @@ void ctkDoubleSlider::setTracking(bool enable)
 {
   Q_D(ctkDoubleSlider);
   d->Slider->setTracking(enable);
+  emit this->trackingChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -479,6 +487,7 @@ void ctkDoubleSlider::setInvertedAppearance(bool invertedAppearance)
 {
   Q_D(ctkDoubleSlider);
   d->Slider->setInvertedAppearance(invertedAppearance);
+  emit this->invertedAppearanceChanged(invertedAppearance);
 }
 
 // --------------------------------------------------------------------------
@@ -493,6 +502,7 @@ void ctkDoubleSlider::setInvertedControls(bool invertedControls)
 {
   Q_D(ctkDoubleSlider);
   d->Slider->setInvertedControls(invertedControls);
+  emit this->invertedControlsChanged(invertedControls);
 }
 
 // --------------------------------------------------------------------------
@@ -526,6 +536,7 @@ void ctkDoubleSlider::setOrientation(Qt::Orientation newOrientation)
   }
   // d->Slider will take care of calling updateGeometry
   d->Slider->setOrientation(newOrientation);
+  emit this->orientationChanged(newOrientation);
 }
 
 // --------------------------------------------------------------------------
@@ -540,6 +551,7 @@ void ctkDoubleSlider::setHandleToolTip(const QString& toolTip)
 {
   Q_D(ctkDoubleSlider);
   d->HandleToolTip = toolTip;
+  emit this->handleToolTipChanged(toolTip);
 }
 
 // --------------------------------------------------------------------------

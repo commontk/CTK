@@ -44,11 +44,11 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool filterActive READ filterActive CONSTANT)
-  Q_PROPERTY(bool batchUpdate READ isBatchUpdate WRITE setBatchUpdate)
-  Q_PROPERTY(bool headerVisible READ isHeaderVisible WRITE setHeaderVisible)
+  Q_PROPERTY(bool batchUpdate READ isBatchUpdate WRITE setBatchUpdate NOTIFY batchUpdateChanged);
+  Q_PROPERTY(bool headerVisible READ isHeaderVisible WRITE setHeaderVisible NOTIFY headerVisibleChanged);
   Q_PROPERTY(QTableView* tblDicomDatabaseView READ tableView CONSTANT)
-  Q_PROPERTY(QString queryTableName READ queryTableName WRITE setQueryTableName)
-  Q_PROPERTY(QString queryForeignKey READ queryForeignKey WRITE setQueryForeignKey)
+  Q_PROPERTY(QString queryTableName READ queryTableName WRITE setQueryTableName NOTIFY queryTableNameChanged);
+  Q_PROPERTY(QString queryForeignKey READ queryForeignKey WRITE setQueryForeignKey NOTIFY queryForeignKeyChanged);
   Q_PROPERTY(QStringList currentSelection READ currentSelection CONSTANT)
 
 public:
@@ -372,6 +372,11 @@ Q_SIGNALS:
   void queryChanged(const QStringList &uids);
 
   void doubleClicked(const QModelIndex&);
+
+  void batchUpdateChanged(bool);
+  void headerVisibleChanged(bool);
+  void queryTableNameChanged(const QString &);
+  void queryForeignKeyChanged(const QString &);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;

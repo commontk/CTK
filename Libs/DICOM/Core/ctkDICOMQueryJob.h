@@ -43,8 +43,9 @@ class ctkDICOMServer;
 class CTK_DICOM_CORE_EXPORT ctkDICOMQueryJob : public ctkDICOMJob
 {
   Q_OBJECT
-  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
-
+  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery NOTIFY maximumPatientsQueryChanged);
+Q_SIGNALS:
+   void maximumPatientsQueryChanged(int);
 public:
   typedef ctkDICOMJob Superclass;
   explicit ctkDICOMQueryJob();

@@ -58,9 +58,9 @@ ctkCoreSettingsPrivate::~ctkCoreSettingsPrivate()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkCoreSettings, QString, applicationHomeDirectory, ApplicationHomeDirectory);
-CTK_SET_CPP(ctkCoreSettings, const QString&, setApplicationHomeDirectory, ApplicationHomeDirectory);
+CTK_SET_CPP_EMIT(ctkCoreSettings, const QString&, setApplicationHomeDirectory, ApplicationHomeDirectory, applicationHomeDirectoryChanged);
 CTK_GET_CPP(ctkCoreSettings, QString, applicationHomePlaceholder, ApplicationHomePlaceholder);
-CTK_SET_CPP(ctkCoreSettings, const QString&, setApplicationHomePlaceholder, ApplicationHomePlaceholder);
+CTK_SET_CPP_EMIT(ctkCoreSettings, const QString&, setApplicationHomePlaceholder, ApplicationHomePlaceholder, applicationHomePlaceholderChanged);
 
 //-----------------------------------------------------------------------------
 ctkCoreSettings::ctkCoreSettings(const QString& organization,

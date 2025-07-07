@@ -50,19 +50,19 @@ class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
   Q_PROPERTY(QStringList paths READ paths WRITE setPaths NOTIFY pathsChanged)
 
   /// The mode for this ctkPathListWidget.
-  Q_PROPERTY(Mode mode READ mode WRITE setMode)
+  Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged);
 
   /// Constraints on the file type.
-  Q_PROPERTY(PathOptions fileOptions READ fileOptions WRITE setFileOptions)
+  Q_PROPERTY(PathOptions fileOptions READ fileOptions WRITE setFileOptions NOTIFY fileOptionsChanged);
 
   /// Constraints on the directory type.
-  Q_PROPERTY(PathOptions directoryOptions READ directoryOptions WRITE setDirectoryOptions)
+  Q_PROPERTY(PathOptions directoryOptions READ directoryOptions WRITE setDirectoryOptions NOTIFY directoryOptionsChanged);
 
   /// The icon to be shown for a file entry.
-  Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon RESET unsetFileIcon)
+  Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon RESET unsetFileIcon NOTIFY fileIconChanged )
 
   /// The icon to be shown for a directory entry.
-  Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon)
+  Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon NOTIFY directoryIconChanged)
 
   Q_FLAGS(PathOption PathOptions)
 
@@ -298,6 +298,12 @@ Q_SIGNALS:
   /// \param currentAbsolutePath The new current path entry.
   /// \param previousAbsolutePath The path entry that previously had the focus.
   void currentPathChanged(const QString& currentAbsolutePath, const QString& previousAbsolutePath);
+
+  void modeChanged(const Mode &);
+  void fileOptionsChanged(const PathOptions &);
+  void directoryOptionsChanged(const PathOptions &);
+  void fileIconChanged(const QIcon &);
+  void directoryIconChanged(const QIcon &);
 
 protected:
   QScopedPointer<ctkPathListWidgetPrivate> d_ptr;

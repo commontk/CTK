@@ -43,13 +43,13 @@ class ctkDICOMStudyItemWidget;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
 {
   Q_OBJECT;
-  Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
-  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
-  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
-  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
-  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
+  Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem NOTIFY patientItemChanged);
+  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID NOTIFY patientIDChanged);
+  Q_PROPERTY(QString patientName READ patientName WRITE setPatientName NOTIFY patientNameChanged);
+  Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient NOTIFY numberOfOpenedStudiesPerPatientChanged);
+  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged);
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged);
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus NOTIFY operationStatusChanged);
   Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
@@ -210,6 +210,14 @@ public:
   /// Last stopped job information operated by this widget
   Q_INVOKABLE QString stoppedJobUID() const;
 
+Q_SIGNALS:
+  void patientItemChanged(const QString &);
+  void patientIDChanged(const QString &);
+  void patientNameChanged(const QString &);
+  void numberOfOpenedStudiesPerPatientChanged(int);
+  void thumbnailSizeChanged(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &);
+  void allowedServersChanged(const QStringList &);
+  void operationStatusChanged(const OperationStatus &);
 public Q_SLOTS:
   void generateStudies(bool query = true, bool retrieve = true);
   void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");

@@ -913,11 +913,11 @@ void ctkWorkflow::goBackward(const QString& desiredBranchId)
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflow, bool, goBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess);
-CTK_SET_CPP(ctkWorkflow, bool, setGoBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess);
+CTK_SET_CPP_EMIT(ctkWorkflow, bool, setGoBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess, goBackToOriginStepUponSuccessChanged);
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflow, bool, verbose, Verbose);
-CTK_SET_CPP(ctkWorkflow, bool, setVerbose, Verbose);
+CTK_SET_CPP_EMIT(ctkWorkflow, bool, setVerbose, Verbose, verboseChanged);
 
 // --------------------------------------------------------------------------
 void ctkWorkflow::goToStep(const QString& targetId)

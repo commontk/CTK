@@ -106,6 +106,7 @@ void ctkTreeComboBox::setVisibleModelColumn(int index)
 {
   Q_D(ctkTreeComboBox);
   d->VisibleModelColumn = index;
+  emit this->visibleModelColumnChanged(index);
 }
 
 // -------------------------------------------------------------------------

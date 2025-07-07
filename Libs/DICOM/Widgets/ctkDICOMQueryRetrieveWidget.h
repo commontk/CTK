@@ -64,7 +64,7 @@ Q_SIGNALS:
   /// Signal emit when studies have been retrieved (user clicked on the
   /// "Retrieve" button) or when the widget is cancelled (user clicked on the
   /// "Cancel" button).
-  void studiesRetrieved(QStringList);
+  void studiesRetrieved(const QStringList &);
   /// Signal to emit when cancel button pressed (after studiesRetrieved is emitted)
   void canceled();
 

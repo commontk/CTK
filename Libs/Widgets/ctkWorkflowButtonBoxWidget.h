@@ -55,33 +55,37 @@ class CTK_WIDGETS_EXPORT ctkWorkflowButtonBoxWidget : public QWidget
   /// "[<-]{backButtonText|\"Back\"}(back:description)" by default.
   /// \sa backButtonFormat(), setBackButtonFormat(),
   /// ctkWorkflow::formatButton(), nextButtonFormat, goToButtonFormat
-  Q_PROPERTY(QString backButtonFormat
-             READ backButtonFormat WRITE setBackButtonFormat)
+  Q_PROPERTY(QString backButtonFormat READ backButtonFormat WRITE setBackButtonFormat NOTIFY backButtonFormatChanged);
 
   /// This property controls the text, icon and tooltip of the next button.
   /// "{nextButtonText|\"Next\"}(next:description)[->]" by default.
   /// \sa nextButtonFormat(), setNextButtonFormat(),
   /// ctkWorkflow::formatButton(), backButtonFormat, goToButtonFormat
-  Q_PROPERTY(QString nextButtonFormat
-             READ nextButtonFormat WRITE setNextButtonFormat)
+  Q_PROPERTY(QString nextButtonFormat READ nextButtonFormat WRITE setNextButtonFormat NOTIFY nextButtonFormatChanged);
 
   /// This property controls the text, icon and tooltip of the goTo/finish
   /// button.
   /// "[icon]{stepid|\"Finish\"}" by default.
   /// \sa goToButtonsFormat(), setGoToButtonsFormat(),
   /// ctkWorkflow::formatButton(), backButtonFormat, nextButtonFormat
-  Q_PROPERTY(QString goToButtonsFormat
-             READ goToButtonsFormat WRITE setGoToButtonsFormat)
+  Q_PROPERTY(QString goToButtonsFormat READ goToButtonsFormat WRITE setGoToButtonsFormat NOTIFY goToButtonsFormatChanged);
 
   /// This property controls whether the goTo buttons are visible or hidden.
   /// False (visible) by default.
   /// \sa hideInvalidButtons
-  Q_PROPERTY(bool hideGoToButtons READ hideGoToButtons WRITE setHideGoToButtons)
+  Q_PROPERTY(bool hideGoToButtons READ hideGoToButtons WRITE setHideGoToButtons NOTIFY hideGoToButtonsChanged);
 
   /// This property controls whether the back, next or goTo buttons are hidden when disabled.
   /// Note that buttons can also be hidden via ctkWorkflowWidgetStep::buttonHints.
   /// \sa ctkWofklowWidgetStep::buttonBoxHints
-  Q_PROPERTY(bool hideInvalidButtons READ hideInvalidButtons WRITE setHideInvalidButtons)
+  Q_PROPERTY(bool hideInvalidButtons READ hideInvalidButtons WRITE setHideInvalidButtons NOTIFY hideInvalidButtonsChanged);
+
+Q_SIGNALS:
+  void backButtonFormatChanged(const QString &);
+  void nextButtonFormatChanged(const QString &);
+  void goToButtonsFormatChanged(const QString &);
+  void hideGoToButtonsChanged(bool);
+  void hideInvalidButtonsChanged(bool);
 
 public:
   typedef QWidget Superclass;

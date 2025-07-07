@@ -66,12 +66,12 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString label READ label WRITE setLabel)
+  Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
 
-  Q_PROPERTY(Filters filters READ filters WRITE setFilters)
+  Q_PROPERTY(Filters filters READ filters WRITE setFilters NOTIFY filtersChanged)
   Q_FLAGS(Filters)
 
-  Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath USER true)
+  Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath USER true NOTIFY currentPathChanged)
 
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
@@ -79,7 +79,7 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 #ifdef USE_QFILEDIALOG_OPTIONS
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
-  Q_PROPERTY(Options options READ options WRITE setOptions)
+  Q_PROPERTY(Options options READ options WRITE setOptions NOTIFY optionsChanged)
   Q_FLAGS(Option Options)
 #endif
 
@@ -91,36 +91,36 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   /// Setting the key automatically retrieve the history from settings
   /// Empty by default.
   /// \sa retrieveHistory(), addCurrentPathToHistory(), showHistoryButton
-  Q_PROPERTY(QString settingKey READ settingKey WRITE setSettingKey )
+  Q_PROPERTY(QString settingKey READ settingKey WRITE setSettingKey NOTIFY settingKeyChanged)
 
   /// This property controls whether the browse ("...") button is visible or
   /// not. Clicking on the button calls opens a dialog to select the current path.
   /// True by default
   /// \sa browse()
-  Q_PROPERTY(bool showBrowseButton READ showBrowseButton WRITE setShowBrowseButton)
+  Q_PROPERTY(bool showBrowseButton READ showBrowseButton WRITE setShowBrowseButton NOTIFY showBrowseButtonChanged)
 
   /// This property controls whether the history button (arrow button that opens
   /// the history menu) is visible or not.
   /// True by default.
   /// \sa retrieveHistory(), addCurrentPathToHistory(), settingKey
-  Q_PROPERTY(bool showHistoryButton READ showHistoryButton WRITE setShowHistoryButton)
+  Q_PROPERTY(bool showHistoryButton READ showHistoryButton WRITE setShowHistoryButton NOTIFY showHistoryButtonChanged)
 
   /// This property holds the policy describing how the size of the path line edit widget
   /// changes when the content changes.
   /// The default value is AdjustToMinimumContentsLength to prevent displaying
   /// of a long path making the layout too wide.
-  Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
+  Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy NOTIFY sizeAdjustPolicyChanged)
 
   /// This property holds the minimum number of characters that should fit into
   /// the path line edit.
   /// The default value is 0.
   /// If this property is set to a positive value, the minimumSizeHint() and sizeHint() take it into account.
-  Q_PROPERTY(int minimumContentsLength READ minimumContentsLength WRITE setMinimumContentsLength)
+  Q_PROPERTY(int minimumContentsLength READ minimumContentsLength WRITE setMinimumContentsLength NOTIFY minimumContentsLengthChanged)
 
   /// This property holds the list of regular expressions (in wildcard mode) used to help the user
   /// complete a line.
   /// For example: "Images (*.jpg *.gif *.png)"
-  Q_PROPERTY(QStringList nameFilters READ nameFilters WRITE setNameFilters)
+  Q_PROPERTY(QStringList nameFilters READ nameFilters WRITE setNameFilters NOTIFY nameFiltersChanged)
 
 public:
   enum Filter { Dirs        = 0x001,
@@ -251,7 +251,15 @@ Q_SIGNALS:
   void validInputChanged(bool);
 
   void currentPathChanged(const QString& path);
-
+  void labelChanged(const QString& label);
+  void filtersChanged(const ctkPathLineEdit::Filters& filters);
+  void optionsChanged(const ctkPathLineEdit::Options& options);
+  void settingKeyChanged(const QString& key);
+  void showBrowseButtonChanged(bool visible);
+  void showHistoryButtonChanged(bool visible);
+  void minimumContentsLengthChanged(int length);
+  void nameFiltersChanged(const QStringList& nameFilters);
+  void sizeAdjustPolicyChanged(const ctkPathLineEdit::SizeAdjustPolicy & policy);
 public Q_SLOTS:
   void setCurrentPath(const QString& path);
 

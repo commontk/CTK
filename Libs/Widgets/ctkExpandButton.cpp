@@ -80,6 +80,7 @@ void ctkExpandButton::setMirrorOnExpand(bool newBehavior)
 {
   Q_D(ctkExpandButton);
   d->mirrorOnExpand = newBehavior;
+  emit mirrorOnExpandChanged(d->mirrorOnExpand);
   this->updateIcon();
 }
 
@@ -115,6 +116,7 @@ void ctkExpandButton::setOrientation(Qt::Orientation newOrientation)
         QStyle::SP_ToolBarVerticalExtensionButton, &opt);
     d->orientation = Qt::Vertical;
   }
+  emit orientationChanged(d->orientation);
   this->updateIcon();
 }
 

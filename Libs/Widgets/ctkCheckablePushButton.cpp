@@ -144,6 +144,7 @@ ctkCheckablePushButton::~ctkCheckablePushButton()
 void ctkCheckablePushButton::setIndicatorAlignment(Qt::Alignment indicatorAlignment)
 {
   this->setIconAlignment(indicatorAlignment);
+  emit indicatorAlignmentChanged(indicatorAlignment);
 }
 
 //-----------------------------------------------------------------------------
@@ -196,6 +197,7 @@ void ctkCheckablePushButton::setCheckBoxControlsButton(bool b)
 {
   Q_D(ctkCheckablePushButton);
   d->CheckBoxControlsButton = b;
+  emit checkBoxControlsButtonChanged(b);
   if (b)
   {
     // synchronize checkstate with the checkable property.
@@ -245,6 +247,7 @@ void ctkCheckablePushButton::setCheckBoxUserCheckable(bool b)
 {
   Q_D(ctkCheckablePushButton);
   d->CheckBoxUserCheckable = b;
+  emit checkBoxUserCheckableChanged(b);
   this->update();
 }
 

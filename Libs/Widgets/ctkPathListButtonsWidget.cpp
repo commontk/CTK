@@ -383,6 +383,7 @@ void ctkPathListButtonsWidget::setAddFilesButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setVisible(visible);
+  emit this->showAddFilesButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -397,6 +398,7 @@ void ctkPathListButtonsWidget::setAddDirectoryButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setVisible(visible);
+  emit this->showAddDirectoryButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -411,6 +413,7 @@ void ctkPathListButtonsWidget::setRemoveButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setVisible(visible);
+  emit this->showRemoveButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -425,6 +428,7 @@ void ctkPathListButtonsWidget::setEditButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setVisible(visible);
+  emit this->showEditButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -460,6 +464,7 @@ void ctkPathListButtonsWidget::setTextAddFilesButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setText(text);
+  emit this->showAddFilesButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -467,6 +472,7 @@ void ctkPathListButtonsWidget::setTextAddDirectoryButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setText(text);
+  emit this->showAddDirectoryButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -474,6 +480,7 @@ void ctkPathListButtonsWidget::setTextRemoveButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setText(text);
+  emit this->showRemoveButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -481,6 +488,7 @@ void ctkPathListButtonsWidget::setTextEditButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setText(text);
+  emit this->showEditButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -516,6 +524,7 @@ void ctkPathListButtonsWidget::setToolTipAddFilesButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setToolTip(toolTip);
+  emit this->showAddFilesButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -523,6 +532,7 @@ void ctkPathListButtonsWidget::setToolTipAddDirectoryButton(const QString& toolT
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setToolTip(toolTip);
+  emit this->showAddDirectoryButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -530,6 +540,7 @@ void ctkPathListButtonsWidget::setToolTipRemoveButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setToolTip(toolTip);
+  emit this->showRemoveButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -537,6 +548,7 @@ void ctkPathListButtonsWidget::setToolTipEditButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setToolTip(toolTip);
+  emit this->toolTipEditButtonChanged(toolTip);
 }
 
 //-----------------------------------------------------------------------------
@@ -572,6 +584,7 @@ void ctkPathListButtonsWidget::setIconAddFilesButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setIcon(icon);
+  emit this->iconAddFilesButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -579,6 +592,7 @@ void ctkPathListButtonsWidget::setIconAddDirectoryButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setIcon(icon);
+  emit this->iconAddDirectoryButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -586,6 +600,7 @@ void ctkPathListButtonsWidget::setIconRemoveButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setIcon(icon);
+  emit this->iconRemoveButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -593,6 +608,7 @@ void ctkPathListButtonsWidget::setIconEditButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setIcon(icon);
+  emit this->iconEditButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -638,6 +654,7 @@ void ctkPathListButtonsWidget::setButtonsAutoRaise(bool autoRaise)
   d->AddDirectoryButton->setAutoRaise(autoRaise);
   d->RemoveButton->setAutoRaise(autoRaise);
   d->EditButton->setAutoRaise(autoRaise);
+  emit this->buttonsAutoRaiseChanged(autoRaise);
 }
 
 //-----------------------------------------------------------------------------
@@ -650,6 +667,7 @@ int ctkPathListButtonsWidget::buttonSpacing() const
 void ctkPathListButtonsWidget::setButtonSpacing(int spacing)
 {
   this->layout()->setSpacing(spacing);
+  emit this->buttonSpacingChanged(spacing);
 }
 
 //-----------------------------------------------------------------------------
@@ -677,6 +695,7 @@ void ctkPathListButtonsWidget::setOrientation(Qt::Orientation orientation)
   {
     newLayout = new QHBoxLayout;
   }
+  emit this->orientationChanged(orientation);
   newLayout->setContentsMargins(0,0,0,0);
   newLayout->setSpacing(oldLayout->spacing());
 
@@ -688,6 +707,7 @@ void ctkPathListButtonsWidget::setOrientation(Qt::Orientation orientation)
       newLayout->addWidget(item->widget());
     }
   }
+
   delete oldLayout;
   this->setLayout(newLayout);
 }

@@ -226,6 +226,7 @@ void ctkFlatProxyModel::setStartFlattenLevel(int level)
 {
   Q_D(ctkFlatProxyModel);
   d->StartFlattenLevel = level;
+  emit this->startFlattenLevelChanged(d->StartFlattenLevel);
   Q_ASSERT( d->StartFlattenLevel <= d->EndFlattenLevel);
 }
 
@@ -241,6 +242,7 @@ void ctkFlatProxyModel::setEndFlattenLevel(int level)
 {
   Q_D(ctkFlatProxyModel);
   d->EndFlattenLevel = level;
+  emit this->endFlattenLevelChanged(d->EndFlattenLevel);
   Q_ASSERT( d->EndFlattenLevel >= d->EndFlattenLevel);
 }
 
@@ -256,6 +258,7 @@ void ctkFlatProxyModel::setHideLevel(int level)
 {
   Q_D(ctkFlatProxyModel);
   d->HideLevel = level;
+  emit this->hideLevelChanged(d->HideLevel);
 }
 
 // ----------------------------------------------------------------------------

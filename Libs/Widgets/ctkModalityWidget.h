@@ -35,8 +35,8 @@ class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList modalities READ modalities CONSTANT)
-  Q_PROPERTY(QStringList selectedModalities READ selectedModalities WRITE setSelectedModalities)
-  Q_PROPERTY(QStringList visibleModalities READ visibleModalities WRITE setVisibleModalities)
+  Q_PROPERTY(QStringList selectedModalities READ selectedModalities WRITE setSelectedModalities NOTIFY selectedModalitiesChanged)
+  Q_PROPERTY(QStringList visibleModalities READ visibleModalities WRITE setVisibleModalities NOTIFY visibleModalitiesChanged)
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -101,6 +101,7 @@ Q_SIGNALS:
   /// Note: When the user click on "Any", it only emits the signal
   /// once (and not after each item is selected/unselected).
   void selectedModalitiesChanged(const QStringList modalities);
+  void visibleModalitiesChanged(const QStringList modalities);
 
 protected Q_SLOTS:
   void onAnyChanged(int state);

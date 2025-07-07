@@ -96,6 +96,7 @@ void ctkDICOMThumbnailGenerator::setWidth(int width)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   d->Width = width;
+  emit this->widthChanged(width);
 }
 
 //------------------------------------------------------------------------------
@@ -110,6 +111,7 @@ void ctkDICOMThumbnailGenerator::setHeight(int height)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   d->Height = height;
+  emit this->heightChanged(height);
 }
 
 //------------------------------------------------------------------------------
@@ -124,6 +126,7 @@ void ctkDICOMThumbnailGenerator::setSmoothResize(bool on)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   d->SmoothResize = on;
+  emit this->smoothResizeChanged(on);
 }
 
 //------------------------------------------------------------------------------

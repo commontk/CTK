@@ -360,6 +360,7 @@ void ctkPathListWidget::setFileIcon(const QIcon& icon)
 {
   Q_D(ctkPathListWidget);
   d->FileIcon = icon;
+  d->fileOptionsChanged();
 }
 
 // --------------------------------------------------------------------------
@@ -381,6 +382,7 @@ void ctkPathListWidget::setDirectoryIcon(const QIcon& icon)
 {
   Q_D(ctkPathListWidget);
   d->DirectoryIcon = icon;
+  emit this->directoryIconChanged(icon);
 }
 
 // --------------------------------------------------------------------------
@@ -406,6 +408,7 @@ void ctkPathListWidget::setFileOptions(PathOptions fileOptions)
     d->FileOptions = fileOptions;
     d->fileOptionsChanged();
   }
+  emit this->fileOptionsChanged(fileOptions);
 }
 
 // --------------------------------------------------------------------------
@@ -424,6 +427,7 @@ void ctkPathListWidget::setDirectoryOptions(PathOptions directoryOptions)
     d->DirectoryOptions = directoryOptions;
     d->directoryOptionsChanged();
   }
+  emit this->directoryOptionsChanged(directoryOptions);
 }
 
 // --------------------------------------------------------------------------
@@ -659,6 +663,7 @@ void ctkPathListWidget::setMode(ctkPathListWidget::Mode mode)
 {
   Q_D(ctkPathListWidget);
   d->Mode = mode;
+  emit this->modeChanged(mode);
 }
 
 // --------------------------------------------------------------------------

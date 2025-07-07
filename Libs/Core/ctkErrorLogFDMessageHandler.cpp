@@ -170,6 +170,7 @@ void ctkFDHandler::setEnabled(bool value)
   {
     terminalOutput->setFileDescriptor(this->SavedFDNumber);
   }
+  emit this->enabledChanged(this->enabled());
 }
 
 // --------------------------------------------------------------------------

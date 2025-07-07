@@ -306,6 +306,7 @@ void ctkScreenshotDialog::setBaseFileName(const QString& newBaseName)
 {
   Q_D(ctkScreenshotDialog);
   d->ImageNameLineEdit->setText(newBaseName);
+  emit this->baseFileNameChanged(newBaseName);
 }
 
 //-----------------------------------------------------------------------------
@@ -320,6 +321,7 @@ void ctkScreenshotDialog::setDirectory(const QString& newDirectory)
 {
   Q_D(ctkScreenshotDialog);
   d->DirectoryPathLineEdit->setCurrentPath(newDirectory);
+  emit this->directoryChanged(newDirectory);
 }
 
 //-----------------------------------------------------------------------------
@@ -334,6 +336,7 @@ void ctkScreenshotDialog::setDelay(int seconds)
 {
   Q_D(ctkScreenshotDialog);
   d->DelaySpinBox->setValue(seconds);
+  emit this->delayChanged(seconds);
 }
 
 //-----------------------------------------------------------------------------

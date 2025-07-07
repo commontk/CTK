@@ -44,16 +44,16 @@ class ctkComboBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
 {
   Q_OBJECT
-  Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText)
-  Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
-  Q_PROPERTY(bool forceDefault READ isDefaultForced WRITE forceDefault)
-  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+  Q_PROPERTY(QString defaultText READ defaultText WRITE setDefaultText NOTIFY defaultTextChanged);
+  Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon NOTIFY defaultIconChanged);
+  Q_PROPERTY(bool forceDefault READ isDefaultForced WRITE forceDefault NOTIFY forceDefaultChanged);
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode NOTIFY elideModeChanged);
   /// This property controls the behavior of the mouse scroll wheel.
   /// ScrollOn by default.
   /// /sa scrollWheelEffect, setScrollWheelEffect
-  Q_PROPERTY(ScrollEffect scrollWheelEffect READ scrollWheelEffect WRITE setScrollWheelEffect)
+  Q_PROPERTY(ScrollEffect scrollWheelEffect READ scrollWheelEffect WRITE setScrollWheelEffect NOTIFY scrollWheelEffectChanged);
   /// Current item's user data as string (Qt::UserRole role)
-  Q_PROPERTY(QString currentUserDataAsString READ currentUserDataAsString WRITE setCurrentUserDataAsString)
+  Q_PROPERTY(QString currentUserDataAsString READ currentUserDataAsString WRITE setCurrentUserDataAsString NOTIFY currentUserDataAsStringChanged);
 
 public:
   /// Constructor, build a ctkComboBox that behaves like QComboBox.
@@ -121,6 +121,13 @@ protected:
 
 Q_SIGNALS:
   void returnRelease();
+
+  void defaultTextChanged(const QString &);
+  void defaultIconChanged(const QIcon &);
+  void forceDefaultChanged(bool);
+  void elideModeChanged(const Qt::TextElideMode &);
+  void scrollWheelEffectChanged(const ScrollEffect &);
+  void currentUserDataAsStringChanged(const QString &);
 
 protected:
   QScopedPointer<ctkComboBoxPrivate> d_ptr;

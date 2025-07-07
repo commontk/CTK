@@ -47,7 +47,10 @@ class  ctkDICOMSchedulerPrivate; // Forward decalaration needed within this file
 class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
 {
   Q_OBJECT
-  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
+  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery NOTIFY maximumPatientsQueryChanged);
+
+Q_SIGNALS:
+  void maximumPatientsQueryChanged(int maximumPatientsQuery);
 
 public:
   typedef ctkJobScheduler Superclass;

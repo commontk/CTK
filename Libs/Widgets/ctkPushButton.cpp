@@ -230,6 +230,7 @@ void ctkPushButton::setButtonTextAlignment(Qt::Alignment newButtonTextAlignment)
 {
   Q_D(ctkPushButton);
   d->ButtonTextAlignment = newButtonTextAlignment;
+  emit this->buttonTextAlignmentChanged(d->ButtonTextAlignment);
   this->update();
 }
 
@@ -245,6 +246,7 @@ void ctkPushButton::setIconAlignment(Qt::Alignment newIconAlignment)
 {
   Q_D(ctkPushButton);
   d->IconAlignment = newIconAlignment;
+  emit this->iconAlignmentChanged(d->IconAlignment);
   this->update();
 }
 
@@ -260,6 +262,7 @@ void ctkPushButton::setElideMode(Qt::TextElideMode newElideMode)
 {
   Q_D(ctkPushButton);
   d->ElideMode = newElideMode;
+  emit this->elideModeChanged(d->ElideMode);
   this->update();
   this->updateGeometry();
 }
