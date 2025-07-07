@@ -90,7 +90,7 @@ public:
     Failed,
     Finished,
   };
-  Q_ENUM(JobStatus)
+  Q_ENUM(JobStatus);
   JobStatus status() const;
   virtual void setStatus(JobStatus status);
   ///@}

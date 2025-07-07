@@ -96,7 +96,7 @@ public:
     FileInput,
     SingleInput
   };
-  Q_ENUM(ExecuteStringMode)
+  Q_ENUM(ExecuteStringMode);
 
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.

@@ -60,7 +60,7 @@ public:
     Series,
     Instances
   };
-  Q_ENUM(DICOMLevels)
+  Q_ENUM(DICOMLevels);
 
   ///@{
   /// DICOM Level
