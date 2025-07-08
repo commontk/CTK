@@ -46,7 +46,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
   Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
-  Q_PROPERTY(QList<QPair<QString,QString>> studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried);
+  Q_PROPERTY(QList<QPair<QString,QString>> studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried CONSTANT);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:

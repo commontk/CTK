@@ -96,7 +96,7 @@ class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
   /// If a viewport appears or disappears from the layout
   /// then the onViewportUsageChanged() method is called.
   /// \sa viewport(), setViewport(), onViewportUsageChanged()
-  Q_PROPERTY(QStringList viewportNames READ viewportNames)
+  Q_PROPERTY(QStringList viewportNames READ viewportNames CONSTANT)
 
 public:
   /// Constructor

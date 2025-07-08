@@ -42,7 +42,7 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
-  Q_PROPERTY(QString className READ className);
+  Q_PROPERTY(QString className READ className CONSTANT);
   Q_PROPERTY(JobStatus status READ status WRITE setStatus);
   Q_PROPERTY(bool persistent READ isPersistent WRITE setIsPersistent);
   Q_PROPERTY(bool retryCounter READ retryCounter WRITE setRetryCounter);
@@ -50,11 +50,11 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
   Q_PROPERTY(bool maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType);
   Q_PROPERTY(QThread::Priority priority READ priority WRITE setPriority);
-  Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
-  Q_PROPERTY(QDateTime startDateTime READ startDateTime);
-  Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
+  Q_PROPERTY(QDateTime creationDateTime READ creationDateTime CONSTANT);
+  Q_PROPERTY(QDateTime startDateTime READ startDateTime CONSTANT);
+  Q_PROPERTY(QDateTime completionDateTime READ completionDateTime CONSTANT);
   Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
-  Q_PROPERTY(QString log READ log);
+  Q_PROPERTY(QString log READ log CONSTANT);
   Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
 
 public:

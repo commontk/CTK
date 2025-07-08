@@ -39,7 +39,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
   Q_OBJECT
   Q_PROPERTY(bool backgroundImportEnabled READ isBackgroundImportEnabled WRITE setBackgroundImportEnabled)
   Q_PROPERTY(bool followSymlinks READ followSymlinks WRITE setFollowSymlinks)
-  Q_PROPERTY(bool importing READ isImporting)
+  Q_PROPERTY(bool importing READ isImporting CONSTANT)
 
 public:
   explicit ctkDICOMIndexer(QObject *parent = 0);

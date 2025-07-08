@@ -35,7 +35,7 @@ class ctkDICOMDatabase;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(ctkDICOMDatabase* database READ database)
+  Q_PROPERTY(ctkDICOMDatabase* database READ database CONSTANT)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)

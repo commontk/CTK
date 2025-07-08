@@ -52,7 +52,7 @@ class CTK_CORE_EXPORT ctkBooleanMapper : public QObject
 {
   Q_OBJECT
   /// This property contains the name of the object mapped property.
-  Q_PROPERTY(QByteArray propertyName READ propertyName)
+  Q_PROPERTY(QByteArray propertyName READ propertyName CONSTANT)
 
   /// This property holds the mapped property.
   /// It is the value of the mapped object property
