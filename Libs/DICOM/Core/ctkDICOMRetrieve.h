@@ -48,8 +48,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
   Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
-  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID CONSTANT);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID CONSTANT);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:

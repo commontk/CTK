@@ -52,7 +52,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
-  Q_PROPERTY(QString cleanText READ cleanText)
+  Q_PROPERTY(QString cleanText READ cleanText CONSTANT)
   /// This property holds the precision of the spin box, in decimals.
   /// Sets how many decimals the spinbox will use for displaying and
   /// interpreting doubles.
@@ -89,7 +89,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   Q_PROPERTY(SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
   /// This property is true while the spinbox is setting a value.
   /// \sa isSettingValue()
-  Q_PROPERTY(bool isSettingValue READ isSettingValue)
+  Q_PROPERTY(bool isSettingValue READ isSettingValue CONSTANT)
 
 public:
 

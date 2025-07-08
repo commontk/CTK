@@ -56,8 +56,8 @@ class CTK_WIDGETS_EXPORT ctkRangeWidget : public QWidget
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
-  Q_PROPERTY(double customSpinBoxesLimitsMin READ customSpinBoxesLimitsMin)
-  Q_PROPERTY(double customSpinBoxesLimitsMax READ customSpinBoxesLimitsMax)
+  Q_PROPERTY(double customSpinBoxesLimitsMin READ customSpinBoxesLimitsMin CONSTANT)
+  Q_PROPERTY(double customSpinBoxesLimitsMax READ customSpinBoxesLimitsMax CONSTANT)
 
 public:
   /// Superclass typedef

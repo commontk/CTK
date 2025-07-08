@@ -50,7 +50,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
   Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
-  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
   typedef QWidget Superclass;

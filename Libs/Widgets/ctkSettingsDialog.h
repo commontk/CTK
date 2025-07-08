@@ -51,7 +51,7 @@ class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
   /// This property is \c true if at least one OptionRestartRequired setting is
   /// changed. It doesn't imply that the user accepted to restart the
   /// application.
-  Q_PROPERTY(bool restartRequired READ isRestartRequired);
+  Q_PROPERTY(bool restartRequired READ isRestartRequired CONSTANT);
 
 public:
   /// Superclass typedef

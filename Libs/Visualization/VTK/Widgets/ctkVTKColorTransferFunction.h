@@ -38,11 +38,11 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKColorTransferFunction: public c
 {
   Q_OBJECT;
   QVTK_OBJECT;
-  Q_PROPERTY(int count READ count)
-  Q_PROPERTY(bool editable READ isEditable)
-  Q_PROPERTY(bool discrete READ isDiscrete)
-  Q_PROPERTY(QVariant minValue READ minValue)
-  Q_PROPERTY(QVariant maxValue READ maxValue)
+  Q_PROPERTY(int count READ count CONSTANT)
+  Q_PROPERTY(bool editable READ isEditable CONSTANT)
+  Q_PROPERTY(bool discrete READ isDiscrete CONSTANT)
+  Q_PROPERTY(QVariant minValue READ minValue CONSTANT)
+  Q_PROPERTY(QVariant maxValue READ maxValue CONSTANT)
 public:
   /// Please note that ctkVTKColorTransferFunction methods only work only if
   /// colorTransferFunction is set.

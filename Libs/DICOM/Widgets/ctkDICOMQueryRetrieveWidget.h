@@ -40,7 +40,7 @@ class ctkDICOMQueryRetrieveWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
 Q_OBJECT;
-Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
+Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager CONSTANT)
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);

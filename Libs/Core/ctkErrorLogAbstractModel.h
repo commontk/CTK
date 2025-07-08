@@ -47,7 +47,7 @@ class CTK_CORE_EXPORT ctkErrorLogAbstractModel : public QSortFilterProxyModel
   Q_PROPERTY(int numberOfFilesToKeep READ numberOfFilesToKeep WRITE  setNumberOfFilesToKeep)
   Q_PROPERTY(bool fileLoggingEnabled READ fileLoggingEnabled WRITE  setFileLoggingEnabled)
   Q_PROPERTY(QString fileLoggingPattern READ fileLoggingPattern WRITE setFileLoggingPattern)
-  Q_PROPERTY(QStringList msgHandlerNames READ msgHandlerNames)
+  Q_PROPERTY(QStringList msgHandlerNames READ msgHandlerNames CONSTANT)
 
 public:
   typedef QSortFilterProxyModel Superclass;

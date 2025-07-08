@@ -34,7 +34,7 @@ class ctkModalityWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QStringList modalities READ modalities)
+  Q_PROPERTY(QStringList modalities READ modalities CONSTANT)
   Q_PROPERTY(QStringList selectedModalities READ selectedModalities WRITE setSelectedModalities)
   Q_PROPERTY(QStringList visibleModalities READ visibleModalities WRITE setVisibleModalities)
 public:

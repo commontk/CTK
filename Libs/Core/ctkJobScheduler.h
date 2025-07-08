@@ -46,9 +46,9 @@ class ctkJobSchedulerPrivate; //Forward declaration needed within this file
 class CTK_CORE_EXPORT ctkJobScheduler : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int numberOfJobs READ numberOfJobs);
-  Q_PROPERTY(int numberOfPersistentJobs READ numberOfPersistentJobs);
-  Q_PROPERTY(int numberOfRunningJobs READ numberOfRunningJobs);
+  Q_PROPERTY(int numberOfJobs READ numberOfJobs CONSTANT);
+  Q_PROPERTY(int numberOfPersistentJobs READ numberOfPersistentJobs CONSTANT);
+  Q_PROPERTY(int numberOfRunningJobs READ numberOfRunningJobs CONSTANT);
   Q_PROPERTY(int freezeJobsScheduling READ freezeJobsScheduling WRITE setFreezeJobsScheduling);
   Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
   Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);

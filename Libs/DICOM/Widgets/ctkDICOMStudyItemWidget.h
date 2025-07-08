@@ -54,16 +54,16 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(QString title READ title WRITE setTitle);
   Q_PROPERTY(QString description READ description WRITE setDescription);
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed);
-  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
+  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow CONSTANT);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
+  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel CONSTANT);
   Q_PROPERTY(int selection READ selection WRITE setSelection);
   Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
   Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
-  Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount);
+  Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount CONSTANT);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
   Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
-  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
   typedef QWidget Superclass;

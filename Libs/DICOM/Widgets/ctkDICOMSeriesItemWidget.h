@@ -50,15 +50,15 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(QString seriesNumber READ seriesNumber WRITE setSeriesNumber);
   Q_PROPERTY(QString modality READ modality WRITE setModality);
   Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription);
-  Q_PROPERTY(bool isCloud READ isCloud);
+  Q_PROPERTY(bool isCloud READ isCloud CONSTANT);
   Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed);
-  Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID);
-  Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID);
+  Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID CONSTANT);
+  Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID CONSTANT);
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
-  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
   typedef QWidget Superclass;

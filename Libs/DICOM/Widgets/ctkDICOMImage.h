@@ -40,7 +40,7 @@ class DicomImage;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMImage : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(unsigned long frameCount READ frameCount);
+  Q_PROPERTY(unsigned long frameCount READ frameCount CONSTANT);
 public:
   ///  \brief Construct a ctkDICOMImage
   /// The dicomImage pointer must remain valid during all the life of
