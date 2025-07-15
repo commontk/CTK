@@ -116,7 +116,7 @@ ctkDirectoryButton::ctkDirectoryButton(const QString& dir,
 {
   Q_D(ctkDirectoryButton);
   d->init();
-  d->Directory = QDir(dir);
+  d->Directory.setPath(dir);
   d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
 }
@@ -129,7 +129,7 @@ ctkDirectoryButton::ctkDirectoryButton(
 {
   Q_D(ctkDirectoryButton);
   d->init();
-  d->Directory = QDir(dir);
+  d->Directory.setPath(dir);
   d->PushButton->setText(d->DisplayAbsolutePath ? d->Directory.absolutePath() : d->Directory.path());
   d->PushButton->setIcon(icon);
 }
@@ -153,7 +153,7 @@ void ctkDirectoryButton::setDirectory(const QString& dir)
     return;
   }
 
-  d->Directory = newDirectory;
+  d->Directory.setPath(newDirectory.absolutePath());
   d->updateDisplayText();
 
   emit directorySelected(d->DisplayAbsolutePath ?
