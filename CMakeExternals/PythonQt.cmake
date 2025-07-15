@@ -82,7 +82,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(revision_tag 37b0d31e5d313f5682f774bd8d5d41f5018a2ce9) # patched-v3.6.1-2025-06-13-a2687828e
+    set(revision_tag update-to-new-python3-find_package) # patched-v3.6.1-2025-06-13-a2687828e, with find_package(Python3 ) updates
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -98,7 +98,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                       GIT_TAG ${revision_tag})
   else()
-    set(location_args GIT_REPOSITORY "https://github.com/commontk/PythonQt.git"
+    set(location_args GIT_REPOSITORY "https://github.com/hjmjohnson/PythonQt.git"
                       GIT_TAG ${revision_tag})
   endif()
 
