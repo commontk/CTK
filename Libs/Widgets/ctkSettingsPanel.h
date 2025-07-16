@@ -35,7 +35,6 @@ class ctkSettingsPanelPrivate;
 class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(SettingOption)
   Q_FLAGS(SettingOptions)
 
   Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
@@ -58,6 +57,7 @@ public:
     OptionRequireRestart = 0x0001,
     OptionAll_Mask = ~0
   };
+  Q_ENUM(SettingOption)
   Q_DECLARE_FLAGS(SettingOptions, SettingOption)
   /// Add an entry into the settings uniquely defined by the \a key name and the
   /// current value of the property.

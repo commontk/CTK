@@ -67,7 +67,6 @@ class CTK_WIDGETS_EXPORT ctkWorkflowWidgetStep : public QWidget, public ctkWorkf
   Q_PROPERTY(QString backButtonText READ backButtonText WRITE setBackButtonText)
   Q_PROPERTY(QString nextButtonText READ nextButtonText WRITE setNextButtonText)
   Q_FLAGS(ButtonBoxHint ButtonBoxHints)
-  Q_ENUMS(ButtonBoxHint)
   Q_PROPERTY(ButtonBoxHints buttonBoxHints READ buttonBoxHints WRITE setButtonBoxHints)
 public:
 
@@ -79,6 +78,7 @@ public:
     NextButtonDisabled = 0x8,
     ButtonBoxHidden = 0x10
   };
+  Q_ENUM(ButtonBoxHint)
   Q_DECLARE_FLAGS(ButtonBoxHints, ButtonBoxHint)
 
   explicit ctkWorkflowWidgetStep(QWidget* newParent = 0);
