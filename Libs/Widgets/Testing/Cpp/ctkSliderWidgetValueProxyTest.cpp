@@ -239,4 +239,4 @@ void ctkSliderWidgetValueProxyTester::testDecimalsOption_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkSliderWidgetValueProxyTest)
-#include "moc_ctkSliderWidgetValueProxyTest.cpp"
+#include "ctkSliderWidgetValueProxyTest.moc"

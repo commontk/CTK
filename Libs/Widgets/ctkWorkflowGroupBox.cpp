@@ -98,9 +98,9 @@ ctkWorkflowGroupBox::~ctkWorkflowGroupBox()
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowGroupBox, bool, hideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
-CTK_SET_CPP(ctkWorkflowGroupBox, bool, setHideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps);
+CTK_SET_CPP_EMIT(ctkWorkflowGroupBox, bool, setHideWidgetsOfNonCurrentSteps, HideWidgetsOfNonCurrentSteps, hideWidgetsOfNonCurrentStepsChanged);
 CTK_GET_CPP(ctkWorkflowGroupBox, bool, errorTextEnabled, ErrorTextEnabled);
-CTK_SET_CPP(ctkWorkflowGroupBox, bool, setErrorTextEnabled, ErrorTextEnabled);
+CTK_SET_CPP_EMIT(ctkWorkflowGroupBox, bool, setErrorTextEnabled, ErrorTextEnabled, errorTextEnabledChanged);
 CTK_GET_CPP(ctkWorkflowGroupBox, QLayout*, clientAreaLayout, ClientAreaLayout);
 
 // --------------------------------------------------------------------------
@@ -196,6 +196,7 @@ void ctkWorkflowGroupBox::setPreText(const QString& newPreText)
 {
   Q_D(ctkWorkflowGroupBox);
   d->PreTextBrowser->setPlainText(newPreText);
+  emit preTextChanged(newPreText);
 }
 
 // --------------------------------------------------------------------------
@@ -210,6 +211,7 @@ void ctkWorkflowGroupBox::setPostText(const QString& newPostText)
 {
   Q_D(ctkWorkflowGroupBox);
   d->PostTextBrowser->setPlainText(newPostText);
+  emit postTextChanged(newPostText);
 }
 
 // --------------------------------------------------------------------------
@@ -238,6 +240,7 @@ void ctkWorkflowGroupBox::setTitleFormat(const QString& format)
 {
   Q_D(ctkWorkflowGroupBox);
   d->TitleFormat = format;
+  emit titleFormatChanged(format);
   this->updateGroupBox(d->StepShownCurrently);
 }
 
@@ -253,6 +256,7 @@ void ctkWorkflowGroupBox::setSubTitleFormat(const QString& format)
 {
   Q_D(ctkWorkflowGroupBox);
   d->SubTitleFormat = format;
+  emit subTitleFormatChanged(format);
   this->updateGroupBox(d->StepShownCurrently);
 }
 
@@ -268,5 +272,6 @@ void ctkWorkflowGroupBox::setErrorTextFormat(const QString& format)
 {
   Q_D(ctkWorkflowGroupBox);
   d->ErrorTextFormat = format;
+  emit errorTextFormatChanged(format);
   this->updateGroupBox(d->StepShownCurrently);
 }

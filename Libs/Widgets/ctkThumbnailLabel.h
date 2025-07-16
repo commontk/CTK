@@ -46,31 +46,31 @@ class CTK_WIDGETS_EXPORT ctkThumbnailLabel : public QWidget
   Q_OBJECT
   /// If the text is empty, the space allocated for the text is hidden
   /// Empty by default
-  Q_PROPERTY(QString text READ text WRITE setText)
+  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
   /// Position of the text relative to the pixmap.
   /// Qt::AlignTop | Qt::AlignHCenter by default.
   /// For now, if the alignment is HCenter|VCenter (same location than the
   /// pixmap), no text is shown.
-  Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition)
+  Q_PROPERTY(Qt::Alignment textPosition READ textPosition WRITE setTextPosition NOTIFY textPositionChanged)
   /// Optional pixmap for the label.
   /// No pixmap by default
-  Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+  Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap NOTIFY pixmapChanged)
   /// Progress bar status.
-  Q_PROPERTY(int operationProgress READ operationProgress WRITE setOperationProgress)
+  Q_PROPERTY(int operationProgress READ operationProgress WRITE setOperationProgress NOTIFY operationProgressChanged)
   /// Operation status.
-  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus)
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus NOTIFY operationStatusChanged)
   /// Set status icon.
-  Q_PROPERTY(QIcon statusIcon READ statusIcon WRITE setStatusIcon)
+  Q_PROPERTY(QIcon statusIcon READ statusIcon WRITE setStatusIcon NOTIFY statusIconChanged)
   /// Controls the quality of the resizing of the pixmap.
   /// Qt::FastTransformation by default
-  Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode)
+  Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode NOTIFY transformationModeChanged)
   /// Control whether or not the label is selected. When selected, a rectangle
   /// is drawn around the widget with the \a selectedColor color.
   /// Not selected by default
-  Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
+  Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
   /// Color of the selected rectangle.
   /// Palette highlight color by default
-  Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor)
+  Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor NOTIFY selectedColorChanged)
 public:
   typedef QWidget Superclass;
   explicit ctkThumbnailLabel(QWidget* parent=0);
@@ -136,6 +136,16 @@ Q_SIGNALS:
   void selected(const ctkThumbnailLabel& widget);
   void doubleClicked(const ctkThumbnailLabel& widget);
   void statusPushButtonClicked(bool);
+
+  void textChanged(const QString& text);
+  void textPositionChanged(const Qt::Alignment& alignment);
+  void pixmapChanged(const QPixmap& pixmap);
+  void operationProgressChanged(const int& progress);
+  void operationStatusChanged(const OperationStatus& status);
+  void statusIconChanged(const QIcon& icon);
+  void transformationModeChanged(const Qt::TransformationMode& mode);
+  void selectedChanged(const bool& selected);
+  void selectedColorChanged(const QColor& color);
 };
 
 #endif

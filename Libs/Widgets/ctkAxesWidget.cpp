@@ -211,6 +211,7 @@ void ctkAxesWidget::setAutoReset(bool newAutoReset)
     disconnect(this, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
                this, SLOT(setCurrentAxisToNone()));
   }
+  emit autoResetChanged(d->AutoReset);
 }
 
 //-----------------------------------------------------------------------------
@@ -303,6 +304,7 @@ bool ctkAxesWidget::setAxesLabels(const QStringList& labels)
   }
 
   d->AxesLabels = labels.mid(0, 6);
+  emit axesLabelsChanged(d->AxesLabels);
   this->repaint();
   return true;
 }

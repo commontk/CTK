@@ -160,32 +160,11 @@ macro(ctkMacroBuildPlugin)
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  # Make sure variable are cleared
-  set(MY_MOC_CPP)
-  set(MY_UI_CPP)
-  set(MY_QRC_SRCS)
-
-  # Wrap
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(target)
-    if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
-      set(target TARGET ${lib_name})
-    endif()
-    if(MY_MOC_SRCS)
-      # this is a workaround for Visual Studio. The relative include paths in the generated
-      # moc files can get very long and can't be resolved by the MSVC compiler.
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5 ${MY_MOC_OPTIONS} ${target})
-      endforeach()
-    endif()
-    QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-    if(DEFINED MY_RESOURCES)
-      QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+  if( CTK_QT_VERSION EQUAL "5" )
+    add_definitions(-DHAVE_QT5)
+  elseif(CTK_QT_VERSION EQUAL "6")
+    add_definitions(-DHAVE_QT6)
   endif()
-
   # Add the generated manifest qrc file
   set(manifest_qrc_src )
   ctkFunctionGeneratePluginManifest(manifest_qrc_src
@@ -209,7 +188,7 @@ macro(ctkMacroBuildPlugin)
     set_property(SOURCE ${manifest_qrc_src} APPEND
                    PROPERTY OBJECT_DEPENDS ${manifest_headers_dep})
   endif()
-  list(APPEND MY_QRC_SRCS ${manifest_qrc_src})
+  list(APPEND MY_RESOURCES ${manifest_qrc_src})
 
   # Create translation files (.ts and .qm)
   set(_plugin_qm_files )
@@ -219,7 +198,9 @@ macro(ctkMacroBuildPlugin)
     set_source_files_properties(${MY_TRANSLATIONS}
                                 PROPERTIES OUTPUT_LOCATION ${_translations_dir})
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-      qt5_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    qt5_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+  elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+    qt6_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -249,7 +230,7 @@ macro(ctkMacroBuildPlugin)
   # Add any other additional resource files
   if(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
     string(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
-    ctkMacroGeneratePluginResourcefile(MY_QRC_SRCS
+    ctkMacroGeneratePluginResourcefile(MY_RESOURCES
       NAME ${_plugin_symbolicname}_cached.qrc
       PREFIX ${Plugin-SymbolicName}
       RESOURCES ${_plugin_cached_resources_in_source_tree}
@@ -263,17 +244,17 @@ macro(ctkMacroBuildPlugin)
     )
 
   source_group("Generated" FILES
-    ${MY_QRC_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
+    ${MY_RESOURCES}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
     ${_plugin_qm_files}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
-    ${MY_UI_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
+    ${MY_RESOURCES}
     ${_plugin_qm_files}
     )
 

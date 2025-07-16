@@ -49,21 +49,21 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
   /// This property holds the height in pixels of the contents (excludes the button)
   /// when the button is collapsed.
   /// 14 pixels by default (same as ctkCollapsibleGroupBox)
-  Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
+  Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight NOTIFY collapsedHeightChanged);
 
   /// This property holds whether the button border is raised.
   /// This property's default is false. If this property is set, most styles will not pain the button
   /// background unless the button is being pressed.
   /// \sa isFlat(), setFlat(), QPushButton::flat
-  Q_PROPERTY(bool flat READ isFlat WRITE setFlat)
+  Q_PROPERTY(bool flat READ isFlat WRITE setFlat NOTIFY flatChanged);
 
-  Q_PROPERTY(QFrame::Shape contentsFrameShape READ contentsFrameShape WRITE setContentsFrameShape)
-  Q_PROPERTY(QFrame::Shadow contentsFrameShadow READ contentsFrameShadow WRITE setContentsFrameShadow)
-  Q_PROPERTY(int contentsLineWidth READ contentsLineWidth WRITE setContentsLineWidth)
-  Q_PROPERTY(int contentsMidLineWidth READ contentsMidLineWidth WRITE setContentsMidLineWidth)
+  Q_PROPERTY(QFrame::Shape contentsFrameShape READ contentsFrameShape WRITE setContentsFrameShape NOTIFY contentsFrameShapeChanged);
+  Q_PROPERTY(QFrame::Shadow contentsFrameShadow READ contentsFrameShadow WRITE setContentsFrameShadow NOTIFY contentsFrameShadowChanged);
+  Q_PROPERTY(int contentsLineWidth READ contentsLineWidth WRITE setContentsLineWidth NOTIFY contentsLineWidthChanged);
+  Q_PROPERTY(int contentsMidLineWidth READ contentsMidLineWidth WRITE setContentsMidLineWidth NOTIFY contentsMidLineWidthChanged);
 
-  Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
-  Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
+  Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment NOTIFY buttonTextAlignmentChanged);
+  Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment NOTIFY indicatorAlignmentChanged);
 
 public:
   ctkCollapsibleButton(QWidget *parent = 0);
@@ -149,6 +149,16 @@ Q_SIGNALS:
   /// Signal emitted when the widget is collapsed or expanded.
   /// See signal toggled(bool) for the opposite.
   void contentsCollapsed(bool);
+
+  void collapsedHeightChanged(int);
+  void flatChanged(bool);
+  void contentsFrameShapeChanged(const QFrame::Shape &);
+  void contentsFrameShadowChanged(const QFrame::Shadow &);
+  void contentsLineWidthChanged(int);
+  void contentsMidLineWidthChanged(int);
+  void buttonTextAlignmentChanged(const Qt::Alignment &);
+  void indicatorAlignmentChanged(const Qt::Alignment &);
+
 
 protected Q_SLOTS:
   ///

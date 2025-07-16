@@ -67,10 +67,11 @@ QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
 QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
 
-class ctkDICOMMetadataDialog : public QDialog
+class ctkDICOMWidgetMetadataDialog : public QDialog
 {
+  Q_OBJECT
 public:
-  ctkDICOMMetadataDialog(QWidget* parent = 0)
+  ctkDICOMWidgetMetadataDialog(QWidget* parent = 0)
     : QDialog(parent)
   {
     this->setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::Window);
@@ -82,7 +83,7 @@ public:
     layout->addWidget(this->tagListWidget);
   }
 
-  virtual ~ctkDICOMMetadataDialog()
+  virtual ~ctkDICOMWidgetMetadataDialog()
   {
   }
 
@@ -215,7 +216,7 @@ public:
   int SeriesAddedDuringImport;
   int InstancesAddedDuringImport;
   ctkFileDialog* ImportDialog;
-  ctkDICOMMetadataDialog* MetadataDialog;
+  ctkDICOMWidgetMetadataDialog* MetadataDialog;
 
   // Settings key that stores database directory
   QString DatabaseDirectorySettingsKey;
@@ -255,7 +256,7 @@ public:
 };
 
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectoryBase, DatabaseDirectoryBase);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, const QString&, setDatabaseDirectoryBase, DatabaseDirectoryBase);
+CTK_SET_CPP_EMIT(ctkDICOMVisualBrowserWidget, const QString&, setDatabaseDirectoryBase, DatabaseDirectoryBase, databaseDirectoryBaseChanged);
 
 //----------------------------------------------------------------------------
 // ctkDICOMVisualBrowserWidgetPrivate methods
@@ -276,7 +277,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->Indexer->setDatabase(this->DicomDatabase.data());
   this->Indexer->setBackgroundImportEnabled(true);
 
-  this->MetadataDialog = new ctkDICOMMetadataDialog();
+  this->MetadataDialog = new ctkDICOMWidgetMetadataDialog();
   this->MetadataDialog->setObjectName("DICOMMetadata");
   this->MetadataDialog->setWindowTitle(ctkDICOMVisualBrowserWidget::tr("DICOM File Metadata"));
 
@@ -1797,13 +1798,13 @@ CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringStudyDescription, Fil
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMPatientItemWidget::DateType, filteringDate, FilteringDate);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QStringList, filteringModalities, FilteringModalities);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
+CTK_SET_CPP_EMIT(ctkDICOMVisualBrowserWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient, numberOfOpenedStudiesPerPatientChanged);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, int, numberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize);
+CTK_SET_CPP_EMIT (ctkDICOMVisualBrowserWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize, thumbnailSizeChanged);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionVisible);
+CTK_SET_CPP_EMIT(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionVisible,sendActionVisibleChanged);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isSendActionVisible, SendActionVisible);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible);
+CTK_SET_CPP_EMIT(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible, deleteActionVisibleChanged);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isDeleteActionVisible, DeleteActionVisible);
 
 //----------------------------------------------------------------------------
@@ -1815,6 +1816,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectorySettingsKey(const QString&
   QSettings settings;
   QString databaseDirectory = ctk::absolutePathFromInternal(settings.value(d->DatabaseDirectorySettingsKey, "").toString(), d->DatabaseDirectoryBase);
   this->setDatabaseDirectory(databaseDirectory);
+  emit databaseDirectoryChanged(databaseDirectory);
 }
 
 //----------------------------------------------------------------------------
@@ -1906,6 +1908,7 @@ void ctkDICOMVisualBrowserWidget::setStorageAETitle(const QString& storageAETitl
 {
   Q_D(const ctkDICOMVisualBrowserWidget);
   d->ServerNodeWidget->setStorageAETitle(storageAETitle);
+  emit storageAETitleChanged(storageAETitle);
 }
 
 //----------------------------------------------------------------------------
@@ -1920,6 +1923,7 @@ void ctkDICOMVisualBrowserWidget::setStoragePort(int storagePort)
 {
   Q_D(const ctkDICOMVisualBrowserWidget);
   d->ServerNodeWidget->setStoragePort(storagePort);
+  emit storagePortChanged(storagePort);
 }
 
 //----------------------------------------------------------------------------
@@ -2026,6 +2030,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringPatientID(const QString& filtering
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringPatientID = filteringPatientID;
   d->FilteringPatientIDSearchBox->setText(d->FilteringPatientID);
+  emit filteringPatientIDChanged(d->FilteringPatientID);
 }
 
 //------------------------------------------------------------------------------
@@ -2034,6 +2039,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringPatientName(const QString& filteri
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringPatientName = filteringPatientName;
   d->FilteringPatientNameSearchBox->setText(d->FilteringPatientName);
+  emit filteringPatientNameChanged(d->FilteringPatientName);
 }
 
 //------------------------------------------------------------------------------
@@ -2042,6 +2048,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringStudyDescription(const QString& fi
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringStudyDescription = filteringStudyDescription;
   d->FilteringStudyDescriptionSearchBox->setText(d->FilteringStudyDescription);
+  emit filteringStudyDescriptionChanged(d->FilteringStudyDescription);
 }
 
 //------------------------------------------------------------------------------
@@ -2050,6 +2057,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringDate(const ctkDICOMPatientItemWidg
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringDate = filteringDate;
   d->FilteringDateComboBox->setCurrentIndex(d->FilteringDate);
+  emit filteringDateChanged(d->FilteringDate);
 }
 
 //------------------------------------------------------------------------------
@@ -2058,6 +2066,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringSeriesDescription(const QString& f
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringSeriesDescription = filteringSeriesDescription;
   d->FilteringSeriesDescriptionSearchBox->setText(d->FilteringSeriesDescription);
+  emit filteringSeriesDescriptionChanged(d->FilteringSeriesDescription);
 }
 
 //------------------------------------------------------------------------------
@@ -2066,6 +2075,7 @@ void ctkDICOMVisualBrowserWidget::setFilteringModalities(const QStringList& filt
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringModalities = filteringModalities;
   d->updateModalityCheckableComboBox();
+  emit filteringModalitiesChanged(d->FilteringModalities);
 }
 
 //------------------------------------------------------------------------------
@@ -4073,3 +4083,5 @@ bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& u
     return false;
   }
 }
+
+#include "ctkDICOMVisualBrowserWidget.moc"

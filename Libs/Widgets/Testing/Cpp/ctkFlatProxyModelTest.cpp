@@ -268,4 +268,4 @@ void ctkFlatProxyModelTester::testModel()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkFlatProxyModelTest)
-#include "moc_ctkFlatProxyModelTest.cpp"
+#include "ctkFlatProxyModelTest.moc"

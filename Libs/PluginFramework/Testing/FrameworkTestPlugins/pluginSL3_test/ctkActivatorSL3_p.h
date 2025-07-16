@@ -38,8 +38,8 @@ class ctkActivatorSL3 :
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
   Q_PLUGIN_METADATA(IID "pluginSL3_test")
-  Q_PROPERTY(bool serviceAdded READ serviceAdded)
-  Q_PROPERTY(bool serviceRemoved READ serviceRemoved)
+  Q_PROPERTY(bool serviceAdded READ serviceAdded CONSTANT)
+  Q_PROPERTY(bool serviceRemoved READ serviceRemoved CONSTANT)
 
 public:
 

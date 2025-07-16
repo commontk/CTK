@@ -44,10 +44,16 @@ class ctkModelTesterPrivate;
 class CTK_CORE_EXPORT ctkModelTester: public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool nestedInserts READ nestedInserts WRITE setNestedInserts);
-  Q_PROPERTY(bool testDataEnabled READ testDataEnabled WRITE setTestDataEnabled);
-  Q_PROPERTY(bool throwOnError READ throwOnError WRITE setThrowOnError);
-  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose);
+  Q_PROPERTY(bool nestedInserts READ nestedInserts WRITE setNestedInserts NOTIFY nestedInsertsChanged);
+  Q_PROPERTY(bool testDataEnabled READ testDataEnabled WRITE setTestDataEnabled NOTIFY testDataEnabledChanged);
+  Q_PROPERTY(bool throwOnError READ throwOnError WRITE setThrowOnError NOTIFY throwOnErrorChanged);
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose NOTIFY verboseChanged);
+
+Q_SIGNALS:
+  void nestedInsertsChanged(bool nestedInserts);
+  void testDataEnabledChanged(bool testDataEnabled);
+  void throwOnErrorChanged(bool throwOnError);
+  void verboseChanged(bool verbose);
 public:
   ///
   /// Constructor

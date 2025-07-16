@@ -275,6 +275,7 @@ void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
     return;
   }
   PythonQt::self()->setSystemExitExceptionHandlerEnabled(value);
+  emit this->systemExitExceptionHandlerEnabledChanged(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -297,6 +298,7 @@ void ctkAbstractPythonManager::setRedirectStdOutCallbackEnabled(bool value)
     return;
   }
   PythonQt::self()->setRedirectStdOutCallbackEnabled(value);
+  emit this->redirectStdOutCallbackEnabledChanged(value);
 }
 
 //-----------------------------------------------------------------------------

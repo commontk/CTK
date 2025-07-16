@@ -249,6 +249,7 @@ void ctkLanguageComboBox::setDefaultLanguage(const QString& localeCode)
 {
   Q_D(ctkLanguageComboBox);
   d->DefaultLanguage = localeCode;
+  emit this->defaultLanguageChanged(d->DefaultLanguage);
   d->updateLanguageItems();
 }
 
@@ -263,6 +264,7 @@ void ctkLanguageComboBox::setCurrentLanguage(const QString &language)
 {
   int index = this->findData(QVariant(language));
   this->setCurrentIndex(index);
+  emit this->currentLanguageNameChanged(language);
 }
 
 // ----------------------------------------------------------------------------
@@ -280,6 +282,7 @@ QString ctkLanguageComboBox::directory() const
 void ctkLanguageComboBox::setDirectory(const QString& dir)
 {
   this->setDirectories(QStringList() << dir);
+  emit this->directoryChanged(dir);
 }
 
 // ----------------------------------------------------------------------------
@@ -294,6 +297,7 @@ void ctkLanguageComboBox::setDirectories(const QStringList& dir)
 {
   Q_D(ctkLanguageComboBox);
   d->LanguageDirectories = dir;
+  emit this->directoriesChanged(dir);
   d->updateLanguageItems();
 }
 
@@ -327,5 +331,6 @@ void ctkLanguageComboBox::setCountryFlagsVisible(bool visible)
     return;
   }
   d->CountryFlagsVisible = visible;
+  emit this->countryFlagsVisibleChanged(d->CountryFlagsVisible);
   d->updateLanguageItems();
 }

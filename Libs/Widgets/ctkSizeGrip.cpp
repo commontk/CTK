@@ -110,6 +110,7 @@ void ctkSizeGrip::setOrientations(Qt::Orientations newOrientations)
 {
   Q_D(ctkSizeGrip);
   d->Orientations = newOrientations;
+  emit orientationsChanged(d->Orientations);
   QCursor newCursor;
   QSizePolicy newSizePolicy;
   switch(d->Orientations)
@@ -160,6 +161,7 @@ void ctkSizeGrip::setResizeWidget(bool resize)
 {
   Q_D(ctkSizeGrip);
   d->Resize = resize;
+  emit resizeWidgetChanged(d->Resize);
   this->setWidgetSizeHint(d->WidgetSizeHint);
 }
 

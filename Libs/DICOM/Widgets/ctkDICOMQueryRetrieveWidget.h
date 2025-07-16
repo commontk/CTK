@@ -40,7 +40,7 @@ class ctkDICOMQueryRetrieveWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
 Q_OBJECT;
-Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
+Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager CONSTANT)
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
@@ -64,7 +64,7 @@ Q_SIGNALS:
   /// Signal emit when studies have been retrieved (user clicked on the
   /// "Retrieve" button) or when the widget is cancelled (user clicked on the
   /// "Cancel" button).
-  void studiesRetrieved(QStringList);
+  void studiesRetrieved(const QStringList &);
   /// Signal to emit when cancel button pressed (after studiesRetrieved is emitted)
   void canceled();
 

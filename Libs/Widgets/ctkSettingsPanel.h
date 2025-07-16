@@ -35,10 +35,9 @@ class ctkSettingsPanelPrivate;
 class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(SettingOption)
   Q_FLAGS(SettingOptions)
 
-  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings NOTIFY settingsChanged);
 
 public:
   /// Superclass typedef
@@ -58,6 +57,7 @@ public:
     OptionRequireRestart = 0x0001,
     OptionAll_Mask = ~0
   };
+  Q_ENUM(SettingOption)
   Q_DECLARE_FLAGS(SettingOptions, SettingOption)
   /// Add an entry into the settings uniquely defined by the \a key name and the
   /// current value of the property.
@@ -132,7 +132,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   /// Fired anytime a property is modified.
-  void settingChanged(const QString& key, const QVariant& value);
+  void oneSettingChanged(const QString& key, const QVariant& value);
+
+  /// Fired anytime all properties are modified (i.e. replaced
+  void settingsChanged(QSettings* settings);
 
 protected:
   /// Return the default value of a property identified by its settings \a key

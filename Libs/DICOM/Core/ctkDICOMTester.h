@@ -39,11 +39,18 @@ class ctkDICOMTesterPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMTester : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString dcmqrscpExecutable READ dcmqrscpExecutable WRITE setDCMQRSCPExecutable)
-  Q_PROPERTY(QString dcmqrscpConfigFile READ dcmqrscpConfigFile WRITE setDCMQRSCPConfigFile)
-  Q_PROPERTY(QString storeSCUExecutable READ storeSCUExecutable WRITE setStoreSCUExecutable)
-  Q_PROPERTY(QString storeSCPExecutable READ storeSCPExecutable WRITE setStoreSCPExecutable)
-  Q_PROPERTY(int dcmqrscpPort READ dcmqrscpPort WRITE setDCMQRSCPPort)
+  Q_PROPERTY(QString dcmqrscpExecutable READ dcmqrscpExecutable WRITE setDCMQRSCPExecutable NOTIFY dcmqrscpExecutableChanged)
+  Q_PROPERTY(QString dcmqrscpConfigFile READ dcmqrscpConfigFile WRITE setDCMQRSCPConfigFile NOTIFY dcmqrscpConfigFileChanged)
+  Q_PROPERTY(QString storeSCUExecutable READ storeSCUExecutable WRITE setStoreSCUExecutable NOTIFY storeSCUExecutableChanged)
+  Q_PROPERTY(QString storeSCPExecutable READ storeSCPExecutable WRITE setStoreSCPExecutable NOTIFY storeSCPExecutableChanged)
+  Q_PROPERTY(int dcmqrscpPort READ dcmqrscpPort WRITE setDCMQRSCPPort NOTIFY dcmqrscpPortChanged)
+
+Q_SIGNALS:
+  void dcmqrscpExecutableChanged(const QString & value);
+  void dcmqrscpConfigFileChanged(const QString & value);
+  void storeSCUExecutableChanged(const QString & value);
+  void storeSCPExecutableChanged(const QString & value);
+  void dcmqrscpPortChanged(int value);
 public:
   ctkDICOMTester(QObject* parent = 0);
   explicit ctkDICOMTester(const QString& dcmqrscp, const QString& configFile, QObject* parent = 0);

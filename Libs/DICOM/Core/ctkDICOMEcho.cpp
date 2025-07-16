@@ -140,17 +140,17 @@ ctkDICOMEcho::ctkDICOMEcho(QObject* parentObject)
 ctkDICOMEcho::~ctkDICOMEcho() = default;
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMEcho, const QString&, setConnectionName, ConnectionName);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const QString&, setConnectionName, ConnectionName, connectionNameChanged);
 CTK_GET_CPP(ctkDICOMEcho, QString, connectionName, ConnectionName)
-CTK_SET_CPP(ctkDICOMEcho, const QString&, setCallingAETitle, CallingAETitle);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const QString&, setCallingAETitle, CallingAETitle, callingAETitleChanged);
 CTK_GET_CPP(ctkDICOMEcho, QString, callingAETitle, CallingAETitle)
-CTK_SET_CPP(ctkDICOMEcho, const QString&, setCalledAETitle, CalledAETitle);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const QString&, setCalledAETitle, CalledAETitle,calledAETitleChanged);
 CTK_GET_CPP(ctkDICOMEcho, QString, calledAETitle, CalledAETitle)
-CTK_SET_CPP(ctkDICOMEcho, const QString&, setHost, Host);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const QString&, setHost, Host,hostChanged);
 CTK_GET_CPP(ctkDICOMEcho, QString, host, Host)
-CTK_SET_CPP(ctkDICOMEcho, const int&, setPort, Port);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const int&, setPort, Port, portChanged);
 CTK_GET_CPP(ctkDICOMEcho, int, port, Port)
-CTK_SET_CPP(ctkDICOMEcho, const QString&, setJobUID, JobUID);
+CTK_SET_CPP_EMIT(ctkDICOMEcho, const QString&, setJobUID, JobUID, jobUIDChanged);
 CTK_GET_CPP(ctkDICOMEcho, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
@@ -159,6 +159,7 @@ void ctkDICOMEcho::setConnectionTimeout(const int& timeout)
   Q_D(ctkDICOMEcho);
   d->SCU->setACSETimeout(timeout);
   d->SCU->setConnectionTimeout(timeout);
+  emit connectionTimeoutChanged(timeout);
 }
 
 //-----------------------------------------------------------------------------

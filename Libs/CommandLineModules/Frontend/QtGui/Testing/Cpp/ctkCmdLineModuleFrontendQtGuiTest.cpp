@@ -240,4 +240,4 @@ void ctkCmdLineModuleFrontendQtGuiTester::testValueSetterAndGetter_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleFrontendQtGuiTest)
-#include "moc_ctkCmdLineModuleFrontendQtGuiTest.cpp"
+#include "ctkCmdLineModuleFrontendQtGuiTest.moc"

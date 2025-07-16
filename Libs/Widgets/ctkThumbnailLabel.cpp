@@ -193,6 +193,7 @@ void ctkThumbnailLabel::setText(const QString &text)
   d->TextPushButton->setText(text);
   d->TextPushButton->setVisible((!d->TextPushButton->text().isEmpty() || !d->TextPushButton->icon().isNull())  &&
     ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter));
+  emit textChanged(text);
 }
 
 //----------------------------------------------------------------------------
@@ -207,6 +208,7 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
 {
   Q_D(ctkThumbnailLabel);
   d->TextPosition = position;
+  emit textPositionChanged(position);
   int textIndex = -1;
   for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
   {
@@ -268,6 +270,7 @@ void ctkThumbnailLabel::setOperationStatus(const OperationStatus &status)
 {
   Q_D(ctkThumbnailLabel);
   d->Status = status;
+  emit operationStatusChanged(status);
 }
 
 //----------------------------------------------------------------------------
@@ -284,6 +287,7 @@ void ctkThumbnailLabel::setStatusIcon(const QIcon &icon)
   d->TextPushButton->setIcon(icon);
   d->TextPushButton->setVisible((!d->TextPushButton->text().isEmpty() || !d->TextPushButton->icon().isNull())  &&
     ! (d->TextPosition & Qt::AlignHCenter && d->TextPosition & Qt::AlignVCenter));
+  emit statusIconChanged(icon);
 }
 
 //----------------------------------------------------------------------------
@@ -305,6 +309,7 @@ void ctkThumbnailLabel::setOperationProgress(const int &progress)
 {
   Q_D(ctkThumbnailLabel);
   d->OperationProgressBar->setValue(progress);
+  emit operationProgressChanged(progress);
 }
 
 //----------------------------------------------------------------------------
@@ -313,6 +318,7 @@ void ctkThumbnailLabel::setPixmap(const QPixmap &pixmap)
   Q_D(ctkThumbnailLabel);
 
   d->OriginalThumbnail = pixmap;
+  emit pixmapChanged(pixmap);
   d->updateThumbnail();
 }
 
@@ -336,6 +342,7 @@ void ctkThumbnailLabel::setTransformationMode(Qt::TransformationMode mode)
 {
   Q_D(ctkThumbnailLabel);
   d->TransformationMode = mode;
+  emit transformationModeChanged(mode);
   d->updateThumbnail();
 }
 
@@ -359,6 +366,7 @@ void ctkThumbnailLabel::setSelected(bool flag)
 {
   Q_D(ctkThumbnailLabel);
   d->SelectedFlag = flag;
+  emit selectedChanged(flag);
   this->update();
 }
 
@@ -374,6 +382,7 @@ void ctkThumbnailLabel::setSelectedColor(const QColor& color)
 {
   Q_D(ctkThumbnailLabel);
   d->SelectedColor = color;
+  emit selectedColorChanged(color);
   this->update();
 }
 

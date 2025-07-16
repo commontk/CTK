@@ -233,6 +233,7 @@ void ctkActionsWidget::setActionsWithNoShortcutVisible(bool show)
 {
   Q_D(ctkActionsWidget);
   d->SortFilterActionsProxyModel->setActionsWithNoShortcutVisible(show);
+  emit this->actionsWithNoShortcutVisibleChanged(show);
 }
 
 //-----------------------------------------------------------------------------
@@ -247,6 +248,7 @@ void ctkActionsWidget::setMenuActionsVisible(bool show)
 {
   Q_D(ctkActionsWidget);
   d->SortFilterActionsProxyModel->setMenuActionsVisible(show);
+  emit this->menuActionsVisibleChanged(show);
 }
 
 //-----------------------------------------------------------------------------
@@ -262,6 +264,7 @@ void ctkActionsWidget::setSortColumn(int column)
   Q_D(ctkActionsWidget);
   d->ActionsTreeView->sortByColumn(column, Qt::AscendingOrder);
   d->ActionsTreeView->setSortingEnabled(column != -1);
+  emit this->sortColumnChanged(column);
 }
 
 //-----------------------------------------------------------------------------

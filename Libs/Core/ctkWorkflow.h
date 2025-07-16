@@ -39,10 +39,9 @@ class QAbstractState;
 class CTK_CORE_EXPORT ctkWorkflow : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(TransitionDirectionality)
-  Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
-  Q_PROPERTY(bool goBackToOriginStepUponSuccess READ goBackToOriginStepUponSuccess WRITE setGoBackToOriginStepUponSuccess)
-  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
+  Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false CONSTANT)
+  Q_PROPERTY(bool goBackToOriginStepUponSuccess READ goBackToOriginStepUponSuccess WRITE setGoBackToOriginStepUponSuccess NOTIFY goBackToOriginStepUponSuccessChanged)
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose NOTIFY verboseChanged)
 
 public:
 
@@ -77,6 +76,7 @@ public:
     Forward,
     Backward
   };
+  Q_ENUM(TransitionDirectionality)
 
   /// \brief Creates a transition between two steps, and adds the two steps to the workflow if they
   /// have not been previously added. (Cannot add two steps with the same id).
@@ -242,6 +242,9 @@ Q_SIGNALS:
   /// Emitted when a step is registered with this workflow
   /// \sa addTransition
   void stepRegistered(ctkWorkflowStep* step);
+
+  void goBackToOriginStepUponSuccessChanged(bool goBackToOriginStepUponSuccess);
+  void verboseChanged(bool verbose);
 
 protected:
   QScopedPointer<ctkWorkflowPrivate> d_ptr;

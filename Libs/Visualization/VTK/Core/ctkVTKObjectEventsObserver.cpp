@@ -278,6 +278,7 @@ void ctkVTKObjectEventsObserver::setStrictTypeCheck(bool check)
 {
   Q_D(ctkVTKObjectEventsObserver);
   d->StrictTypeCheck = check;
+  emit this->strictTypeCheckChanged(check);
 }
 
 //-----------------------------------------------------------------------------

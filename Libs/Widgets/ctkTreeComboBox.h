@@ -52,7 +52,10 @@ class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
   Q_OBJECT
   /// Column index visible in the view. If \sa visibleModelColumn is -1
   /// (default) then all columns are visible.
-  Q_PROPERTY(int visibleModelColumn READ visibleModelColumn WRITE setVisibleModelColumn)
+  Q_PROPERTY(int visibleModelColumn READ visibleModelColumn WRITE setVisibleModelColumn NOTIFY visibleModelColumnChanged);
+
+Q_SIGNALS:
+  void visibleModelColumnChanged(int);
 public:
   typedef QComboBox Superclass;
   explicit ctkTreeComboBox(QWidget* parent = 0);

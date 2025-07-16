@@ -45,18 +45,18 @@ class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
-  Q_PROPERTY(double sliderPosition READ sliderPosition WRITE setSliderPosition)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
-  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
-  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
-  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
-  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance)
-  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
+  Q_PROPERTY(double sliderPosition READ sliderPosition WRITE setSliderPosition NOTIFY sliderPositionChanged)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged)
+  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep NOTIFY pageStepChanged)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval NOTIFY tickIntervalChanged)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition NOTIFY tickPositionChanged)
+  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking NOTIFY trackingChanged)
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
+  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip NOTIFY handleToolTipChanged)
+  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance NOTIFY invertedAppearanceChanged)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls NOTIFY invertedControlsChanged)
 
 public:
   /// Superclass typedef
@@ -256,6 +256,19 @@ Q_SIGNALS:
   /// Warning: don't confound with valuesChanged(double, double);
   /// \sa QAbstractSlider::rangeChanged()
   void rangeChanged(double min, double max);
+
+  void sliderPositionChanged(double position);
+  void singleStepChanged(double step);
+  void pageStepChanged(double step);
+  void minimumChanged(double min);
+  void maximumChanged(double max);
+  void tickIntervalChanged(double interval);
+  void tickPositionChanged(const QSlider::TickPosition & position);
+  void trackingChanged(bool enable);
+  void orientationChanged(const Qt::Orientation & orientation);
+  void handleToolTipChanged(const QString& toolTip);
+  void invertedAppearanceChanged(bool invertedAppearance);
+  void invertedControlsChanged(bool invertedControls);
 
 protected Q_SLOTS:
   void onValueChanged(int value);

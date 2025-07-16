@@ -314,6 +314,7 @@ void ctkPopupWidget::setActive(bool active)
     }
     qApp->removeEventFilter(d);
   }
+  emit this->activeChanged(d->Active);
 }
 
 // -------------------------------------------------------------------------
@@ -344,6 +345,7 @@ void ctkPopupWidget::setAutoShow(bool mode)
 {
   Q_D(ctkPopupWidget);
   d->AutoShow = mode;
+  emit this->autoShowChanged(d->AutoShow);
   QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
 }
 
@@ -359,6 +361,7 @@ void ctkPopupWidget::setShowDelay(int delay)
 {
   Q_D(ctkPopupWidget);
   d->ShowDelay = delay;
+  emit this->showDelayChanged(d->ShowDelay);
 }
 
 // -------------------------------------------------------------------------
@@ -373,6 +376,7 @@ void ctkPopupWidget::setAutoHide(bool mode)
 {
   Q_D(ctkPopupWidget);
   d->AutoHide = mode;
+  emit this->autoHideChanged(d->AutoHide);
   QTimer::singleShot(d->HideDelay, this, SLOT(updatePopup()));
 }
 
@@ -388,6 +392,7 @@ void ctkPopupWidget::setHideDelay(int delay)
 {
   Q_D(ctkPopupWidget);
   d->HideDelay = delay;
+  emit this->hideDelayChanged(d->HideDelay);
 }
 
 // -------------------------------------------------------------------------

@@ -56,7 +56,7 @@ class CTK_WIDGETS_EXPORT ctkFontButton: public QPushButton
   /// * uu 'u' if underline, nothing otherwise
   /// Note that the listing order matches the replacement order.
   /// fff-sss by default.
-  Q_PROPERTY(QString fontTextFormat READ fontTextFormat WRITE setFontTextFormat)
+  Q_PROPERTY(QString fontTextFormat READ fontTextFormat WRITE setFontTextFormat NOTIFY fontTextFormatChanged);
 
 public:
   /// Constructor
@@ -92,6 +92,9 @@ Q_SIGNALS:
   /// Programmatically or by the user via the file dialog that pop up when
   /// clicking on the button.
   void currentFontChanged(const QFont&);
+
+  void fontTextFormatChanged(const QString &);
+
 protected:
   QScopedPointer<ctkFontButtonPrivate> d_ptr;
 

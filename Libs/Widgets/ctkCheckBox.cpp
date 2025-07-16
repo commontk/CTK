@@ -29,8 +29,8 @@
 #include <iostream>
 
 // ----------------------------------------------------------------------------
-class ctkCheckBoxStyle : public ctkProxyStyle
-{
+class ctkCheckBoxStyle : public ctkProxyStyle {
+  Q_OBJECT
 public:
   typedef ctkProxyStyle Superclass;
   ctkCheckBoxStyle(QStyle* baseStyle, QObject* parent = 0);
@@ -173,6 +173,7 @@ void ctkCheckBox::setIndicatorIcon(const QIcon& newIcon)
 {
   Q_D(ctkCheckBox);
   d->IconStyle->IndicatorIcon = newIcon;
+  emit this->indicatorIconChanged(newIcon);
   this->update();
 }
 
@@ -188,6 +189,7 @@ void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
 {
   Q_D(ctkCheckBox);
   d->IconStyle->IndicatorSize = newSize;
+  emit this->indicatorIconSizeChanged(newSize);
   this->update();
 }
 
@@ -197,3 +199,5 @@ QSize ctkCheckBox::indicatorIconSize() const
   Q_D(const ctkCheckBox);
   return d->IconStyle->IndicatorSize;
 }
+
+#include "ctkCheckBox.moc"

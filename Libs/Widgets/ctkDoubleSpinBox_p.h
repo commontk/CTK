@@ -36,7 +36,10 @@ class ctkQDoubleSpinBox: public QDoubleSpinBox
   /// control similarly in the other way round or not. The property is switched off by
   /// default.
   /// \sa invertedControls(), setInvertedControls()
-  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls NOTIFY invertedControlsChanged);
+
+Q_SIGNALS:
+  void invertedControlsChanged(bool);
 public:
   typedef QDoubleSpinBox Superclass;
   ctkQDoubleSpinBox(ctkDoubleSpinBoxPrivate* pimpl, QWidget* widget);

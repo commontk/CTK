@@ -243,6 +243,7 @@ void ctkLayoutManager::setSpacing(int spacing)
 {
   Q_D(ctkLayoutManager);
   d->Spacing = spacing;
+  emit this->spacingChanged(spacing);
   this->refresh();
 }
 

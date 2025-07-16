@@ -42,7 +42,10 @@ class ctkErrorLogFDMessageHandler;
 class ctkFDHandler : public QThread
 {
   Q_OBJECT
-  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled)
+  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged);
+
+Q_SIGNALS:
+   void enabledChanged(bool);
 public:
   typedef ctkFDHandler Self;
 

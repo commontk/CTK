@@ -269,6 +269,7 @@ void ctkErrorLogAbstractModel::setTerminalOutputs(
   Q_D(ctkErrorLogAbstractModel);
   d->StdErrTerminalOutput.setEnabled(terminalOutput & ctkErrorLogTerminalOutput::StandardOutput);
   d->StdOutTerminalOutput.setEnabled(terminalOutput & ctkErrorLogTerminalOutput::StandardError);
+  emit this->terminalOutputsChanged(terminalOutput);
 }
 
 //------------------------------------------------------------------------------
@@ -459,6 +460,7 @@ void ctkErrorLogAbstractModel::setLogEntryGrouping(bool value)
 {
   Q_D(ctkErrorLogAbstractModel);
   d->LogEntryGrouping = value;
+  emit this->logEntryGroupingChanged(value);
 }
 
 //------------------------------------------------------------------------------
@@ -493,6 +495,7 @@ void ctkErrorLogAbstractModel::setAsynchronousLogging(bool value)
     value ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 
   d->AsynchronousLogging = value;
+  emit this->asynchronousLoggingChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -507,6 +510,7 @@ void ctkErrorLogAbstractModel::setFilePath(const QString& filePath)
 {
   Q_D(ctkErrorLogAbstractModel);
   return d->FileLogger.setFilePath(filePath);
+  emit this->filePathChanged(filePath);
 }
 
 // --------------------------------------------------------------------------
@@ -520,7 +524,8 @@ int ctkErrorLogAbstractModel::numberOfFilesToKeep()const
 void ctkErrorLogAbstractModel::setNumberOfFilesToKeep(int value)
 {
   Q_D(ctkErrorLogAbstractModel);
-  return d->FileLogger.setNumberOfFilesToKeep(value);
+  d->FileLogger.setNumberOfFilesToKeep(value);
+  emit this->numberOfFilesToKeepChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -535,6 +540,7 @@ void ctkErrorLogAbstractModel::setFileLoggingEnabled(bool value)
 {
   Q_D(ctkErrorLogAbstractModel);
   d->FileLogger.setEnabled(value);
+  emit this->fileLoggingEnabledChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -549,6 +555,7 @@ void ctkErrorLogAbstractModel::setFileLoggingPattern(const QString& value)
 {
   Q_D(ctkErrorLogAbstractModel);
   d->FileLoggingPattern = value;
+  emit this->fileLoggingPatternChanged(value);
 }
 
 // --------------------------------------------------------------------------

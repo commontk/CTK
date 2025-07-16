@@ -54,7 +54,7 @@ class CTK_WIDGETS_EXPORT ctkSizeGrip
   /// side for Qt::Vertical, right side for Qt::Horizontal and bottom
   /// right corner for Qt::Horizontal|Qt::Vertical.
   /// Qt::Horizontal|Qt::Vertical by default.
-  Q_PROPERTY(Qt::Orientations orientations READ orientations WRITE setOrientations)
+  Q_PROPERTY(Qt::Orientations orientations READ orientations WRITE setOrientations NOTIFY orientationsChanged);
 
   /// This property holds the sizeHint set by the user via the size grip or
   /// programmatically using \a setWidgetSizeHint().
@@ -64,14 +64,14 @@ class CTK_WIDGETS_EXPORT ctkSizeGrip
   /// horizontal), the width component of the widget sizeHint is 0.
   /// If \a orientations is solely horizontal, the widgets izeHint height is 0.
   /// (0,0) by default (meaning the default widget sizehint should be used).
-  Q_PROPERTY(QSize widgetSizeHint READ widgetSizeHint WRITE setWidgetSizeHint)
+  Q_PROPERTY(QSize widgetSizeHint READ widgetSizeHint WRITE setWidgetSizeHint NOTIFY widgetSizeHintChanged);
 
   /// This property holds whether the size grip resizes the widget or not.
   /// If the size grip doesn't resize the widget, it still returns a valid
   /// \a widgetSizeHint that can be used by a third party.
   /// By default, the widget is resized.
   /// \tbd it is experimental and not really working.
-  Q_PROPERTY(bool resizeWidget READ resizeWidget WRITE setResizeWidget)
+  Q_PROPERTY(bool resizeWidget READ resizeWidget WRITE setResizeWidget NOTIFY resizeWidgetChanged);
 
 public:
   typedef QWidget Superclass;
@@ -114,8 +114,9 @@ public Q_SLOTS:
   void setWidgetSizeHint(QSize sizeHint);
 
 Q_SIGNALS:
-  void widgetSizeHintChanged(QSize sizeHint);
-
+  void widgetSizeHintChanged(const QSize &);
+  void orientationsChanged(const Qt::Orientations &);
+  void resizeWidgetChanged(bool);
 protected:
   QScopedPointer<ctkSizeGripPrivate> d_ptr;
 

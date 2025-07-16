@@ -216,6 +216,7 @@ void ctkDICOMTester::setDCMQRSCPExecutable(const QString& dcmqrscp)
 {
   Q_D(ctkDICOMTester);
   d->DCMQRSCPExecutable = dcmqrscp;
+  emit dcmqrscpExecutableChanged(dcmqrscp);
 }
 
 //------------------------------------------------------------------------------
@@ -230,6 +231,7 @@ void ctkDICOMTester::setDCMQRSCPConfigFile(const QString& configFile)
 {
   Q_D(ctkDICOMTester);
   d->DCMQRSCPConfigFile = configFile;
+  emit dcmqrscpConfigFileChanged(configFile);
 }
 
 //------------------------------------------------------------------------------
@@ -243,6 +245,7 @@ void ctkDICOMTester::setStoreSCUExecutable(const QString& storeSCU)
 {
   Q_D(ctkDICOMTester);
   d->StoreSCUExecutable = storeSCU;
+  emit storeSCUExecutableChanged(storeSCU);
 }
 
 //------------------------------------------------------------------------------
@@ -257,6 +260,7 @@ void ctkDICOMTester::setStoreSCPExecutable(const QString& storeSCP)
 {
   Q_D(ctkDICOMTester);
   d->StoreSCPExecutable = storeSCP;
+  emit storeSCPExecutableChanged(storeSCP);
 }
 
 //------------------------------------------------------------------------------
@@ -271,6 +275,7 @@ void ctkDICOMTester::setDCMQRSCPPort(int port)
 {
   Q_D(ctkDICOMTester);
   d->DCMQRSCPPort = port;
+  emit dcmqrscpPortChanged(port);
 }
 
 //------------------------------------------------------------------------------

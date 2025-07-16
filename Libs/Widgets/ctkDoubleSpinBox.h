@@ -45,16 +45,14 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(SetMode)
   Q_FLAGS(DecimalsOption DecimalsOptions)
-  Q_ENUMS(SizeHintPolicy)
 
-  Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
-  Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
-  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
-  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
-  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
-  Q_PROPERTY(QString cleanText READ cleanText)
+  Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged)
+  Q_PROPERTY(bool frame READ hasFrame WRITE setFrame NOTIFY frameChanged)
+  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly NOTIFY readOnlyChanged)
+  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix NOTIFY prefixChanged)
+  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY suffixChanged)
+  Q_PROPERTY(QString cleanText READ cleanText CONSTANT)
   /// This property holds the precision of the spin box, in decimals.
   /// Sets how many decimals the spinbox will use for displaying and
   /// interpreting doubles.
@@ -70,28 +68,28 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// The default (DecimalsByShortcuts|InsertDecimals) behaves as a QDoubleSpinbox
   /// with an explicit control of decimals via shortcuts.
   /// \sa DecimalsOptions, decimals
-  Q_PROPERTY(DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  Q_PROPERTY(DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption NOTIFY decimalsOptionChanged)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged)
   /// \sa setMode, decimals
   Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
   /// This property controls how setValue behaves.
   /// \sa SetMode, setMode(), setSetMode(), value
-  Q_PROPERTY(SetMode setMode READ setMode WRITE setSetMode)
+  Q_PROPERTY(SetMode setMode READ setMode WRITE setSetMode NOTIFY setModeChanged)
   /// This property controls whether decreasing the value by the mouse
   /// button or mouse wheel increases the value of the widget, and inverts the
   /// control similarly in the other way round or not. The property is switched off by
   /// default.
   /// \sa invertedControls(), setInvertedControls()
-  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls NOTIFY invertedControlsChanged)
   /// This property controls the size hint of the spinbox.
   /// SizeHintByMinMax by default
   /// SizeHintPolicy, sizeHintPolicy(), setSizeHintPolicy()
-  Q_PROPERTY(SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
+  Q_PROPERTY(SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy NOTIFY sizeHintPolicyChanged)
   /// This property is true while the spinbox is setting a value.
   /// \sa isSettingValue()
-  Q_PROPERTY(bool isSettingValue READ isSettingValue)
+  Q_PROPERTY(bool isSettingValue READ isSettingValue CONSTANT)
 
 public:
 
@@ -110,6 +108,7 @@ public:
     SetAlways,
     SetIfDifferent,
   };
+  Q_ENUM(SetMode)
 
   /// DecimalsOption enums the input style of the spinbox decimals.
   /// Default option is DecimalsByShortcuts.
@@ -160,6 +159,7 @@ public:
     SizeHintByMinMax,
     SizeHintByValue
   };
+  Q_ENUM(SizeHintPolicy)
 
   typedef QWidget Superclass;
 
@@ -342,6 +342,20 @@ Q_SIGNALS:
 
   /// Signal emitted when the decimals of the displayed are changed.
   void decimalsChanged(int);
+
+  void alignmentChanged(const Qt::Alignment &);
+  void frameChanged(bool);
+  void readOnlyChanged(bool);
+  void prefixChanged(const QString&);
+  void suffixChanged(const QString&);
+  void decimalsOptionChanged(const ctkDoubleSpinBox::DecimalsOptions &);
+  void minimumChanged(double);
+  void maximumChanged(double);
+  void singleStepChanged(double);
+  void setModeChanged(const ctkDoubleSpinBox::SetMode &);
+  void invertedControlsChanged(bool);
+  void sizeHintPolicyChanged(const ctkDoubleSpinBox::SizeHintPolicy &);
+
 
 protected:
   ctkDoubleSpinBoxPrivate* const d_ptr;

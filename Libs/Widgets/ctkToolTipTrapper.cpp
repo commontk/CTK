@@ -157,6 +157,7 @@ void ctkToolTipTrapper::setToolTipsTrapped(bool toolTipsTrapped)
                                                    toolTipsTrapped,
                                                    d->ToolTipsWordWrapped);
   d->ToolTipsTrapped = toolTipsTrapped;
+  emit this->toolTipsTrappedChanged(toolTipsTrapped);
   if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
   {
     QCoreApplication::instance()->installEventFilter(this);
@@ -181,6 +182,7 @@ void ctkToolTipTrapper::setToolTipsWordWrapped(bool toolTipsWordWrapped)
                                                    d->ToolTipsTrapped,
                                                    toolTipsWordWrapped);
   d->ToolTipsWordWrapped = toolTipsWordWrapped;
+  emit this->toolTipsWordWrappedChanged(toolTipsWordWrapped);
   if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
   {
     QCoreApplication::instance()->installEventFilter(this);

@@ -42,17 +42,22 @@ class CTK_WIDGETS_EXPORT ctkPushButton : public QPushButton
   /// Set the alignment of the text on the button,
   /// Qt::AlignHCenter|Qt::AlignVCenter by default.
   /// \sa textAlignment(), setTextAlignment(), iconAlignment
-  Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
+  Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment NOTIFY buttonTextAlignmentChanged)
 
   /// Set the alignment of the icon with regard to the text.
   /// Qt::AlignLeft|Qt::AlignVCenter by default.
   /// \sa iconAlignment(), setIconAlignment(), textAlignment
-  Q_PROPERTY(Qt::Alignment iconAlignment READ iconAlignment WRITE setIconAlignment)
+  Q_PROPERTY(Qt::Alignment iconAlignment READ iconAlignment WRITE setIconAlignment NOTIFY iconAlignmentChanged)
 
   /// Set the shortening of the button text by eliding.
   /// Qt::ElideNone by default.
   /// \sa elideMode(), setElideMode()
-  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode NOTIFY elideModeChanged)
+
+Q_SIGNALS:
+  void buttonTextAlignmentChanged(const Qt::Alignment &);
+  void iconAlignmentChanged(const Qt::Alignment &);
+  void elideModeChanged(const Qt::TextElideMode &);
 
 public:
   ctkPushButton(QWidget *parent = 0);

@@ -49,15 +49,19 @@ class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
   Q_OBJECT
   /// Show an icon at left side of the line edit, indicating that the text
   /// field is used to search/filter something. The default is <code>false</code>.
-  Q_PROPERTY(bool showSearchIcon READ showSearchIcon WRITE setShowSearchIcon)
+  Q_PROPERTY(bool showSearchIcon READ showSearchIcon WRITE setShowSearchIcon NOTIFY showSearchIconChanged);
 
   /// The QIcon to use for the search icon at the left. The default is a
   /// magnifying glass icon.
-  Q_PROPERTY(QIcon searchIcon READ searchIcon WRITE setSearchIcon)
+  Q_PROPERTY(QIcon searchIcon READ searchIcon WRITE setSearchIcon NOTIFY searchIconChanged);
   /// The QIcon to use for the clear icon. The default is a round grey button
   /// with a white cross.
-  Q_PROPERTY(QIcon clearIcon READ clearIcon WRITE setClearIcon)
+  Q_PROPERTY(QIcon clearIcon READ clearIcon WRITE setClearIcon NOTIFY clearIconChanged);
 
+Q_SIGNALS:
+  void showSearchIconChanged(bool);
+  void searchIconChanged(const QIcon &);
+  void clearIconChanged(const QIcon &);
 public:
   /// Superclass typedef
   typedef QLineEdit Superclass;

@@ -272,4 +272,4 @@ void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkDoubleSpinBoxValueProxyTest)
-#include "moc_ctkDoubleSpinBoxValueProxyTest.cpp"
+#include "ctkDoubleSpinBoxValueProxyTest.moc"

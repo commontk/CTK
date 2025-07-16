@@ -52,7 +52,6 @@ class ctkCompleterPrivate;
 class CTK_WIDGETS_EXPORT ctkCompleter: public QCompleter
 {
   Q_OBJECT
-  Q_ENUMS(ModelFiltering)
   /// FilterStartsWith is the default behavior (same as QCompleter).The
   /// completer filters out strings that don't start with \sa completionPrefix
   /// FilterContains is the most permissive filter, the completer filters out
@@ -60,7 +59,7 @@ class CTK_WIDGETS_EXPORT ctkCompleter: public QCompleter
   /// FilterWordStartsWith is useful when strings contain space separated words
   /// and \sa completionPrefix applies to the beginning of any of the words in the
   /// string.
-  Q_PROPERTY(ModelFiltering modelFiltering READ modelFiltering WRITE setModelFiltering)
+  Q_PROPERTY(ModelFiltering modelFiltering READ modelFiltering WRITE setModelFiltering NOTIFY modelFilteringChanged);
 
 public:
   ctkCompleter(QObject* parent = 0);
@@ -74,6 +73,7 @@ public:
     FilterContains,
     FilterWordStartsWith
   };
+  Q_ENUM(ModelFiltering)
 
   ModelFiltering modelFiltering()const;
   void setModelFiltering(ModelFiltering filter);
@@ -86,6 +86,9 @@ public:
   /// instead.
   QAbstractItemModel* sourceModel()const;
   void setSourceModel(QAbstractItemModel* model);
+
+Q_SIGNALS:
+    void modelFilteringChanged(const ModelFiltering &);
 
 protected:
   QScopedPointer<ctkCompleterPrivate> d_ptr;

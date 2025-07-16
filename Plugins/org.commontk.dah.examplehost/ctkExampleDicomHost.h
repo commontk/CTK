@@ -92,7 +92,7 @@ public Q_SLOTS:
 Q_SIGNALS:
 
 
-  void giveAvailableScreen(QRect rect);
+  void giveAvailableScreen(const QRect & rect);
 
 protected:
   QEventLoop BlockingLoopForExiting;

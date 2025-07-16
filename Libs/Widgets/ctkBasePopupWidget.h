@@ -43,16 +43,13 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 {
   Q_OBJECT
 
-  Q_ENUMS(AnimationEffect)
-  Q_ENUMS(VerticalDirection)
-
   /// This property controls the effect to apply when the popup is being
   /// opened or closed. The total duration and the easing curve of the effect
   /// are controlled by \a effectDuration and \easingCurve respectively.
   /// ScrollEffect by default.
   /// \sa AnimationEffect, animationEffect(), setAnimationEffect(),
   /// effectDuration, easingCurve
-  Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect)
+  Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect NOTIFY animationEffectChanged)
 
   /// The property controls the \a animationEffect duration in ms.
   /// If the popup state (open or close) is being changed during the animation,
@@ -60,31 +57,31 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
   /// the current state (geometry, transparency...) to the new final state.
   /// Default to 333ms
   /// \sa effectDuration(), setEffectDuration(), animationEffect, easingCurve
-  Q_PROPERTY( int effectDuration READ effectDuration WRITE setEffectDuration);
+  Q_PROPERTY( int effectDuration READ effectDuration WRITE setEffectDuration NOTIFY effectDurationChanged);
 
   /// The property controls the behavior of the opening or closing curve of the
   /// animation effect.
   /// QEasingCurve::InOutQuad by default
   /// \sa easingCurve(), setEasingCurve(), animationEffect, effectDuration
-  Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve);
+  Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve NOTIFY easingCurveChanged);
 
   /// Where is the popup in relation to the BaseWidget
   /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom.
   /// Qt::AlignJustify | Qt::AlignBottom by default
-  Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment);
+  Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged);
 
   /// Direction of the scrolling effect, can be Qt::Vertical, Qt::Horizontal or
   /// both Qt::Vertical|Qt::Horizontal.
   /// Vertical by default
-  Q_PROPERTY( Qt::Orientations orientation READ orientation WRITE setOrientation);
+  Q_PROPERTY( Qt::Orientations orientation READ orientation WRITE setOrientation NOTIFY orientationChanged);
 
   /// Control where the popup opens vertically.
   /// TopToBottom by default
-  Q_PROPERTY( ctkBasePopupWidget::VerticalDirection verticalDirection READ verticalDirection WRITE setVerticalDirection);
+  Q_PROPERTY( ctkBasePopupWidget::VerticalDirection verticalDirection READ verticalDirection WRITE setVerticalDirection NOTIFY verticalDirectionChanged);
 
   /// Control where the popup opens horizontally.
   /// LeftToRight by default
-  Q_PROPERTY( Qt::LayoutDirection horizontalDirection READ horizontalDirection WRITE setHorizontalDirection);
+  Q_PROPERTY( Qt::LayoutDirection horizontalDirection READ horizontalDirection WRITE setHorizontalDirection NOTIFY horizontalDirectionChanged);
 
 public:
   typedef QFrame Superclass;
@@ -111,6 +108,7 @@ public:
     ScrollEffect,
     FadeEffect
   };
+  Q_ENUM(AnimationEffect)
 
   /// Return the animationEffect property value.
   /// \sa animationEffect
@@ -151,6 +149,7 @@ public:
     TopToBottom = 1,
     BottomToTop = 2
   };
+  Q_ENUM(VerticalDirection)
 
   /// Return the verticalDirection property value.
   /// \sa verticalDirection
@@ -182,11 +181,21 @@ Q_SIGNALS:
   /// \sa showPopup(), hidePopup()
   void popupOpened(bool open);
 
+  void animationEffectChanged(const AnimationEffect & effect);
+  void effectDurationChanged(int duration);
+  void easingCurveChanged(const QEasingCurve::Type & easingCurve);
+  void alignmentChanged(const Qt::Alignment & alignment);
+  void orientationChanged(const Qt::Orientations & orientation);
+  void verticalDirectionChanged(const VerticalDirection & direction);
+  void horizontalDirectionChanged(const Qt::LayoutDirection & direction);
+  void effectAlphaChanged(double alpha);
+  void effectGeometryChanged(const QRect & geometry);
+
 protected:
   explicit ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parent = 0);
   QScopedPointer<ctkBasePopupWidgetPrivate> d_ptr;
-  Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false)
-  Q_PROPERTY(QRect effectGeometry READ effectGeometry WRITE setEffectGeometry DESIGNABLE false)
+  Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false NOTIFY effectAlphaChanged)
+  Q_PROPERTY(QRect effectGeometry READ effectGeometry WRITE setEffectGeometry DESIGNABLE false NOTIFY effectGeometryChanged)
 
   double effectAlpha()const;
   QRect effectGeometry()const;

@@ -192,6 +192,7 @@ void ctkCrosshairLabel::setShowCrosshair(bool newShow)
   }
 
   d->ShowCrosshair = newShow;
+  emit this->showCrosshairChanged(d->ShowCrosshair);
   this->update();
 }
 
@@ -208,6 +209,7 @@ void ctkCrosshairLabel::setCrosshairPen(const QPen& newPen)
   }
 
   d->CrosshairPen = newPen;
+  emit this->crosshairPenChanged(d->CrosshairPen);
   this->update();
 }
 
@@ -228,6 +230,7 @@ void ctkCrosshairLabel::setCrosshairColor(const QColor& newColor)
   }
 
   d->CrosshairPen.setColor(newColor);
+  emit this->crosshairColorChanged(d->CrosshairPen.color());
   this->update();
 }
 
@@ -248,6 +251,7 @@ void ctkCrosshairLabel::setLineWidth(int newWidth)
   }
 
   d->CrosshairPen.setWidth(newWidth);
+  emit this->lineWidthChanged(d->CrosshairPen.width());
   this->update();
 }
 
@@ -265,6 +269,7 @@ void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
   }
 
   d->CrosshairType = newType;
+  emit this->crosshairTypeChanged(d->CrosshairType);
   this->update();
 }
 
@@ -291,6 +296,7 @@ void ctkCrosshairLabel::setMarginColor(const QColor& newColor)
     this->setPalette(palette);
     this->update();
   }
+  emit this->marginColorChanged(newColor);
 }
 
 // --------------------------------------------------------------------------
@@ -306,6 +312,7 @@ void ctkCrosshairLabel::setBullsEyeWidth(int newWidth)
   }
 
   d->BullsEyeWidth = newWidth;
+  emit
   this->update();
 }
 

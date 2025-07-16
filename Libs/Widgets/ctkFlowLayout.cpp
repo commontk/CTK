@@ -244,6 +244,7 @@ void ctkFlowLayout::setOrientation(Qt::Orientation orientation)
 {
   Q_D(ctkFlowLayout);
   d->Orientation = orientation;
+  emit this->orientationChanged(orientation);
   this->invalidate();
 }
 
@@ -252,6 +253,7 @@ void ctkFlowLayout::setPreferredExpandingDirections(Qt::Orientations directions)
 {
   Q_D(ctkFlowLayout);
   d->PreferredDirections = directions;
+  emit this->preferredExpandingDirectionsChanged(directions);
 }
 
 // --------------------------------------------------------------------------
@@ -273,6 +275,7 @@ void ctkFlowLayout::setHorizontalSpacing(int spacing)
 {
   Q_D(ctkFlowLayout);
   d->HorizontalSpacing = spacing;
+  emit this->horizontalSpacingChanged(spacing);
   this->invalidate();
 }
 
@@ -292,6 +295,7 @@ void ctkFlowLayout::setVerticalSpacing(int spacing)
 {
   Q_D(ctkFlowLayout);
   d->VerticalSpacing = spacing;
+  emit this->verticalSpacingChanged(spacing);
   this->invalidate();
 }
 
@@ -311,6 +315,7 @@ void ctkFlowLayout::setAlignItems(bool align)
 {
   Q_D(ctkFlowLayout);
   d->AlignItems = align;
+  emit this->alignItemsChanged(align);
   this->invalidate();
 }
 

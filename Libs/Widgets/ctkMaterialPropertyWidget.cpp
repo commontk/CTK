@@ -126,6 +126,7 @@ void ctkMaterialPropertyWidget::setInterpolationMode(ctkMaterialPropertyWidget::
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->InterpolationModeComboBox->setCurrentIndex(newInterpolationMode);
+  emit interpolationModeChanged(newInterpolationMode);
 }
 
 // --------------------------------------------------------------------------
@@ -140,6 +141,7 @@ void ctkMaterialPropertyWidget::setColor(const QColor& newColor)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->ColorPickerButton->setColor(newColor);
+  emit colorChanged(newColor);
 }
 
 // --------------------------------------------------------------------------
@@ -154,6 +156,7 @@ void ctkMaterialPropertyWidget::setOpacity(double newOpacity)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->OpacitySliderSpinBox->setValue(newOpacity);
+  emit opacityChanged(newOpacity);
 }
 
 // --------------------------------------------------------------------------
@@ -168,6 +171,7 @@ void ctkMaterialPropertyWidget::setAmbient(double newAmbient)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->AmbientSliderSpinBox->setValue(newAmbient);
+  emit ambientChanged(newAmbient);
 }
 
 // --------------------------------------------------------------------------
@@ -182,6 +186,7 @@ void ctkMaterialPropertyWidget::setDiffuse(double newDiffuse)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->DiffuseSliderSpinBox->setValue(newDiffuse);
+  emit diffuseChanged(newDiffuse);
 }
 
 // --------------------------------------------------------------------------
@@ -196,6 +201,7 @@ void ctkMaterialPropertyWidget::setSpecular(double newSpecular)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->SpecularSliderSpinBox->setValue(newSpecular);
+  emit specularChanged(newSpecular);
 }
 
 // --------------------------------------------------------------------------
@@ -210,6 +216,7 @@ void ctkMaterialPropertyWidget::setSpecularPower(double newSpecularPower)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->SpecularPowerSliderSpinBox->setValue(newSpecularPower);
+  emit specularPowerChanged(newSpecularPower);
 }
 
 // --------------------------------------------------------------------------
@@ -224,6 +231,7 @@ void ctkMaterialPropertyWidget::setMetallic(double newMetallic)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->MetallicSliderSpinBox->setValue(newMetallic);
+  emit metallicChanged(newMetallic);
 }
 
 // --------------------------------------------------------------------------
@@ -238,6 +246,7 @@ void ctkMaterialPropertyWidget::setRoughness(double newRoughness)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->RoughnessSliderSpinBox->setValue(newRoughness);
+  emit roughnessChanged(newRoughness);
 }
 
 // --------------------------------------------------------------------------
@@ -252,6 +261,7 @@ void ctkMaterialPropertyWidget::setBackfaceCulling(bool newBackfaceCulling)
 {
   Q_D(const ctkMaterialPropertyWidget);
   d->BackfaceCullingCheckBox->setChecked(newBackfaceCulling);
+  emit backfaceCullingChanged(newBackfaceCulling);
 }
 
 // --------------------------------------------------------------------------
@@ -464,6 +474,7 @@ void ctkMaterialPropertyWidget::setInterpolationModeVisible(bool show)
   Q_D(ctkMaterialPropertyWidget);
   d->InterpolationModeLabel->setVisible(show);
   d->InterpolationModeComboBox->setVisible(show);
+  emit interpolationModeVisibleChanged(show);
 }
 
 // --------------------------------------------------------------------------

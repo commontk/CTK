@@ -51,36 +51,36 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   /// to prevent user from selecting read-only folder. The caveat is that writable folder existing
   /// in a readonly one won't be selectable.
   /// AcceptOpen by default.
-  Q_PROPERTY(QFileDialog::AcceptMode acceptMode READ acceptMode WRITE setAcceptMode)
+  Q_PROPERTY(QFileDialog::AcceptMode acceptMode READ acceptMode WRITE setAcceptMode NOTIFY acceptModeChanged);
 
   /// This property stores the selected directory.
   Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged USER true)
 
   /// This property holds the title of the file dialog used to select a new directory
   /// If caption is not set, internally use QWidget::tooltip()
-  Q_PROPERTY(QString caption READ caption WRITE setCaption)
+  Q_PROPERTY(QString caption READ caption WRITE setCaption NOTIFY captionChanged);
 
   /// This property holds the text to display on the button. If null (by
   /// default), the current directory path is displayed instead.
-  Q_PROPERTY(QString text READ text WRITE setText)
+  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged);
 
   /// This property holds the icon displayed on the button. QStyle::SP_DirIcon
   /// by default.
-  Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
+  Q_PROPERTY(QIcon icon READ icon WRITE setIcon NOTIFY iconChanged);
 
   /// This property controls how to display long paths.
   /// By default elide mode is Qt::ElideMiddle (long paths are displayed
   /// by replacing the center of by ellipses) to avoid displaying a long path
   /// requiring lot of horizontal space.
-  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode NOTIFY elideModeChanged);
 
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instantiating a QFileDialog in ctkDirectoryButton::browse()
 #ifdef USE_QFILEDIALOG_OPTIONS
-  Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
+  Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions NOTIFY optionsChanged);
 #else
-  Q_PROPERTY(Options options READ options WRITE setOptions)
+  Q_PROPERTY(Options              options READ options WRITE setOptions NOTIFY optionsChanged);
   Q_FLAGS(Option Options);
 #endif
 
@@ -181,6 +181,19 @@ Q_SIGNALS:
   /// the current directory.
   /// \sa directoryChanged
   void directorySelected(const QString&);
+
+  void acceptModeChanged(const QFileDialog::AcceptMode &);
+  void captionChanged(const QString &);
+  void textChanged(const QString &);
+  void iconChanged(const QIcon &);
+  void elideModeChanged(const Qt::TextElideMode &);
+
+#ifdef USE_QFILEDIALOG_OPTIONS
+  void optionsChanged(const QFileDialog::Options &);
+#else
+  void optionsChanged(const ctkDirectoryButton::Options &);
+#endif
+
 
 protected:
   QScopedPointer<ctkDirectoryButtonPrivate> d_ptr;

@@ -215,8 +215,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void progress(int);
-  void progressDetail(QString);
-  void progressStep(QString);
+  void progressDetail(const QString &);
+  void progressStep(const QString &);
   void updatingDatabase(bool);
   void indexingComplete(int, int, int, int);
 

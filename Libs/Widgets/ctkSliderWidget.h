@@ -49,22 +49,22 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   /// 2 by default.
   /// \sa decimals(), setDecimals(), decimalsChanged()
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(double value READ value WRITE setValue)
-  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
-  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
-  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
-  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_PROPERTY(SynchronizeSiblings synchronizeSiblings READ synchronizeSiblings WRITE setSynchronizeSiblings)
-  Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
-  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
-  Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
-  Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider);
-  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance)
-  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged)
+  Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep NOTIFY pageStepChanged)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+  Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
+  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix NOTIFY prefixChanged)
+  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY suffixChanged)
+  Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval NOTIFY tickIntervalChanged)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition NOTIFY tickPositionChanged)
+  Q_PROPERTY(SynchronizeSiblings synchronizeSiblings READ synchronizeSiblings WRITE setSynchronizeSiblings NOTIFY synchronizeSiblingsChanged)
+  Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment NOTIFY spinBoxAlignmentChanged)
+  Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking NOTIFY trackingChanged)
+  Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible NOTIFY spinBoxVisibleChanged);
+  Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider NOTIFY popupSliderChanged);
+  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance NOTIFY invertedAppearanceChanged)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls NOTIFY invertedControlsChanged)
 
 public:
 
@@ -296,6 +296,21 @@ Q_SIGNALS:
   /// This signal is emitted whenever the number of decimals is changed.
   /// \sa decimals, SynchronizeDecimals
   void decimalsChanged(int decimals);
+  void singleStepChanged(double step);
+  void pageStepChanged(double step);
+  void minimumChanged(double minimum);
+  void maximumChanged(double maximum);
+  void prefixChanged(const QString& prefix);
+  void suffixChanged(const QString& suffix);
+  void tickIntervalChanged(double tick);
+  void tickPositionChanged(const QSlider::TickPosition & position);
+  void synchronizeSiblingsChanged(const SynchronizeSiblings & options);
+  void spinBoxAlignmentChanged(const Qt::Alignment & alignment);
+  void trackingChanged(bool enable);
+  void spinBoxVisibleChanged(bool visible);
+  void popupSliderChanged(bool popup);
+  void invertedAppearanceChanged(bool invertedAppearance);
+  void invertedControlsChanged(bool invertedControls);
 
 protected Q_SLOTS:
 

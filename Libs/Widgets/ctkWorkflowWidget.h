@@ -44,7 +44,10 @@ class ctkWorkflowWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkWorkflowWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool showButtonBoxWidget READ showButtonBoxWidget WRITE setShowButtonBoxWidget)
+  Q_PROPERTY(bool showButtonBoxWidget READ showButtonBoxWidget WRITE setShowButtonBoxWidget NOTIFY showButtonBoxWidgetChanged)
+
+Q_SIGNALS:
+  void showButtonBoxWidgetChanged(bool);
 public:
 
   typedef QWidget Superclass;

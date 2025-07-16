@@ -43,22 +43,26 @@ class ctkDICOMStudyItemWidget;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
 {
   Q_OBJECT;
-  Q_PROPERTY(QString seriesItem READ seriesItem WRITE setSeriesItem);
-  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
-  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID);
-  Q_PROPERTY(QString seriesNumber READ seriesNumber WRITE setSeriesNumber);
-  Q_PROPERTY(QString modality READ modality WRITE setModality);
-  Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription);
-  Q_PROPERTY(bool isCloud READ isCloud);
-  Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed);
-  Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID);
-  Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID);
-  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
-  Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
-  Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
-  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
-  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
+
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged);
+
+  Q_PROPERTY(QString seriesItem READ seriesItem WRITE setSeriesItem NOTIFY seriesItemChanged);
+  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID NOTIFY patientIDChanged);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID NOTIFY studyInstanceUIDChanged);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID NOTIFY seriesInstanceUIDChanged);
+  Q_PROPERTY(QString seriesNumber READ seriesNumber WRITE setSeriesNumber NOTIFY seriesNumberChanged);
+  Q_PROPERTY(QString modality READ modality WRITE setModality NOTIFY modalityChanged);
+  Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs NOTIFY stopJobsChanged);
+  Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority NOTIFY raiseJobsPriorityChanged);
+  Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed NOTIFY retrieveFailedChanged);
+  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel NOTIFY thumbnailSizePixelChanged);
+
+  Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription NOTIFY seriesDescriptionChanged);
+
+  Q_PROPERTY(bool isCloud READ isCloud CONSTANT);
+  Q_PROPERTY(QString referenceSeriesInserterJobUID READ referenceSeriesInserterJobUID CONSTANT);
+  Q_PROPERTY(QString referenceInstanceInserterJobUID READ referenceInstanceInserterJobUID CONSTANT);
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
   typedef QWidget Superclass;
@@ -182,6 +186,20 @@ public:
 
   /// Last stopped job information operated by this widget
   Q_INVOKABLE QString stoppedJobUID() const;
+
+Q_SIGNALS:
+  void seriesItemChanged(const QString &);
+  void patientIDChanged(const QString &);
+  void studyInstanceUIDChanged(const QString &);
+  void seriesInstanceUIDChanged(const QString &);
+  void seriesNumberChanged(const QString &);
+  void modalityChanged(const QString &);
+  void seriesDescriptionChanged(const QString &);
+  void retrieveFailedChanged(bool);
+  void thumbnailSizePixelChanged(int);
+  void stopJobsChanged(bool);
+  void raiseJobsPriorityChanged(bool);
+  void allowedServersChanged(const QStringList &);
 
 public Q_SLOTS:
   void generateInstances(bool query = true, bool retrieve = true);

@@ -32,6 +32,8 @@
 // CTK includes
 #include "ctkCollapsibleButton.h"
 
+#include "ctkCollapsibleGroupBox.h"
+
 //-----------------------------------------------------------------------------
 class ctkCollapsibleButtonPrivate
 {
@@ -227,6 +229,7 @@ void ctkCollapsibleButton::setCollapsed(bool c)
   {
     // not sure if one should handle this case...
     this->collapse(c);
+    emit contentsCollapsed(c);
     return;
   }
   this->setChecked(!c);
@@ -244,6 +247,7 @@ void ctkCollapsibleButton::setCollapsedHeight(int h)
 {
   Q_D(ctkCollapsibleButton);
   d->CollapsedHeight = h;
+  emit collapsedHeightChanged(d->CollapsedHeight);
   this->updateGeometry();
 }
 
@@ -259,6 +263,7 @@ void ctkCollapsibleButton::setFlat(bool flat)
 {
   Q_D(ctkCollapsibleButton);
   d->Flat = flat;
+  emit flatChanged(d->Flat);
   this->update();
 }
 
@@ -341,6 +346,7 @@ void ctkCollapsibleButton::setContentsFrameShape(QFrame::Shape s)
 {
   Q_D(ctkCollapsibleButton);
   d->ContentsFrameShape = s;
+  emit contentsFrameShapeChanged(d->ContentsFrameShape);
 }
 
 //-----------------------------------------------------------------------------
@@ -355,6 +361,7 @@ void ctkCollapsibleButton::setContentsFrameShadow(QFrame::Shadow s)
 {
   Q_D(ctkCollapsibleButton);
   d->ContentsFrameShadow = s;
+  emit contentsFrameShadowChanged(d->ContentsFrameShadow);
 }
 
 //-----------------------------------------------------------------------------
@@ -369,6 +376,7 @@ void ctkCollapsibleButton::setContentsLineWidth(int w)
 {
   Q_D(ctkCollapsibleButton);
   d->ContentsLineWidth = w;
+  emit contentsLineWidthChanged(d->ContentsLineWidth);
 }
 
 //-----------------------------------------------------------------------------
@@ -383,6 +391,7 @@ void ctkCollapsibleButton::setContentsMidLineWidth(int w)
 {
   Q_D(ctkCollapsibleButton);
   d->ContentsMidLineWidth = w;
+  emit contentsMidLineWidthChanged(d->ContentsMidLineWidth);
 }
 
 //-----------------------------------------------------------------------------
@@ -390,6 +399,7 @@ void ctkCollapsibleButton::setButtonTextAlignment(Qt::Alignment textAlignment)
 {
   Q_D(ctkCollapsibleButton);
   d->TextAlignment = textAlignment;
+  emit buttonTextAlignmentChanged(d->TextAlignment);
   this->update();
 }
 
@@ -405,6 +415,7 @@ void ctkCollapsibleButton::setIndicatorAlignment(Qt::Alignment indicatorAlignmen
 {
   Q_D(ctkCollapsibleButton);
   d->IndicatorAlignment = indicatorAlignment;
+  emit indicatorAlignmentChanged(d->IndicatorAlignment);
   this->update();
 }
 

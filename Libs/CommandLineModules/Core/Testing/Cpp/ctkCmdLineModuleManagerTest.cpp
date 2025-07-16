@@ -398,4 +398,4 @@ void ctkCmdLineModuleManagerTester::testCaching()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleManagerTest)
-#include "moc_ctkCmdLineModuleManagerTest.cpp"
+#include "ctkCmdLineModuleManagerTest.moc"

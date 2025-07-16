@@ -14,8 +14,8 @@ class ctkEventDemo : public QObject {
     Q_OBJECT
 
 Q_SIGNALS:
-    void receiveEventSignal(QVariantList l);
-    void updateMessageSignal(QString message);
+    void receiveEventSignal(const QVariantList &l);
+    void updateMessageSignal(const QString & message);
 
 public Q_SLOTS:
     void receiveEvent(QVariantList l);

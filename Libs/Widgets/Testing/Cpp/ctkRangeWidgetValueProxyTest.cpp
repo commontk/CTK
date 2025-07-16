@@ -434,4 +434,4 @@ void ctkRangeWidgetValueProxyTester::testSetCoefficient_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkRangeWidgetValueProxyTest)
-#include "moc_ctkRangeWidgetValueProxyTest.cpp"
+#include "ctkRangeWidgetValueProxyTest.moc"

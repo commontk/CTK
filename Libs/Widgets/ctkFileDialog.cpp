@@ -222,6 +222,7 @@ void ctkFileDialog::setSelectionMode(QAbstractItemView::SelectionMode mode)
   {
     view->setSelectionMode(mode);
   }
+  emit this->SelectionModeChanged(mode);
 }
 
 //------------------------------------------------------------------------------

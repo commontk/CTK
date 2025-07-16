@@ -103,6 +103,7 @@ void ctkLayoutViewFactory::setUseCachedViews(bool cache)
 {
   Q_D(ctkLayoutViewFactory);
   d->UseCachedViews = cache;
+  emit useCachedViewsChanged(cache);
 }
 
 //-----------------------------------------------------------------------------
