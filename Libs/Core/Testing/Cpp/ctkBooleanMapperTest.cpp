@@ -176,4 +176,4 @@ void ctkBooleanMapperTester::testSignals()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkBooleanMapperTest)
-#include "moc_ctkBooleanMapperTest.cpp"
+#include "ctkBooleanMapperTest.moc"

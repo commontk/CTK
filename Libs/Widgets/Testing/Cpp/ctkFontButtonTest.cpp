@@ -165,4 +165,4 @@ void ctkFontButtonTester::testBrowseFont()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkFontButtonTest)
-#include "moc_ctkFontButtonTest.cpp"
+#include "ctkFontButtonTest.moc"

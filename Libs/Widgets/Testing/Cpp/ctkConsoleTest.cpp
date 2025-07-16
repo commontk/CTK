@@ -70,4 +70,4 @@ void ctkConsoleTester::testRunFile_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkConsoleTest)
-#include "moc_ctkConsoleTest.cpp"
+#include "ctkConsoleTest.moc"

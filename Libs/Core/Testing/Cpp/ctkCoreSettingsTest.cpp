@@ -172,4 +172,4 @@ int ctkCoreSettingsTest(int argc, char* argv[])
   return QTest::qExec(&tc, argc, argv);
 }
 
-#include "moc_ctkCoreSettingsTest.cpp"
+#include "ctkCoreSettingsTest.moc"

@@ -41,8 +41,8 @@
 #include <ctkCheckableModelHelper.h>
 
 // Similar to QComboBoxDelegate
-class ctkComboBoxDelegate : public QItemDelegate
-{
+class ctkComboBoxDelegate : public QItemDelegate {
+  Q_OBJECT
 public:
     ctkComboBoxDelegate(QObject *parent, QComboBox *cmb)
       : QItemDelegate(parent), ComboBox(cmb)
@@ -433,3 +433,5 @@ void ctkCheckableComboBox::keyReleaseEvent(QKeyEvent *event)
     emit this->returnRelease();
   }
 }
+
+#include "ctkCheckableComboBox.moc"
