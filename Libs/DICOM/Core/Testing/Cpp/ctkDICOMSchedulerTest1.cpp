@@ -151,7 +151,10 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
       sopIstanceUID, QThread::LowPriority, QStringList("Test"));
   }
 
-  CHECK_INT(scheduler.numberOfJobs(), numberOfImages);
+  // Check the number of running jobs instead of the total number of jobs
+  // because jobs are not automatically destroyed when they finish.
+  // This ensures the test is checking the active jobs accurately.
+  CHECK_INT(scheduler.numberOfRunningJobs(), numberOfImages);
   scheduler.waitForFinish(false, true);
 
   instances = database.instancesForSeries(seriesIstanceUID);
