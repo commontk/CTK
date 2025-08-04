@@ -36,7 +36,8 @@ ctkDICOMMetadataDialog::ctkDICOMMetadataDialog(QWidget* parent)
   : QDialog(parent)
 {
   this->setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::Window);
-  this->setModal(true);
+  // Set to non-modal to allow interaction with other windows for easier debugging and comparison
+  this->setModal(false);
   this->setSizeGripEnabled(true);
   QVBoxLayout* layout = new QVBoxLayout(this);
   layout->setMargin(0);
