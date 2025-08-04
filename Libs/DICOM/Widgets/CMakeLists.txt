@@ -26,6 +26,8 @@ set(KIT_SRCS
   ctkDICOMJobListWidget.h
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
+  ctkDICOMMetadataDialog.cpp
+  ctkDICOMMetadataDialog.h
   ctkDICOMQueryResultsTabWidget.cpp
   ctkDICOMQueryResultsTabWidget.h
   ctkDICOMQueryRetrieveWidget.cpp
@@ -63,6 +65,7 @@ set(KIT_MOC_SRCS
   ctkDICOMImage.h
   ctkDICOMImportWidget.h
   ctkDICOMJobListWidget.h
+  ctkDICOMMetadataDialog.h
   ctkDICOMObjectListWidget.h
   ctkDICOMObjectModel.h
   ctkDICOMQueryRetrieveWidget.h

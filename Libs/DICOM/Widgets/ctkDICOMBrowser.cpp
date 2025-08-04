@@ -57,6 +57,7 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMBrowser.h"
+#include "ctkDICOMMetadataDialog.h"
 #include "ctkDICOMObjectListWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
@@ -65,65 +66,6 @@
 #include "ctkDICOMTableView.h"
 
 #include "ui_ctkDICOMBrowser.h"
-
-class ctkDICOMMetadataDialog : public QDialog
-{
-public:
-  ctkDICOMMetadataDialog(QWidget *parent = 0)
-    : QDialog(parent)
-  {
-    this->setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::Window);
-    this->setModal(true);
-    this->setSizeGripEnabled(true);
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setMargin(0);
-    this->tagListWidget = new ctkDICOMObjectListWidget();
-    layout->addWidget(this->tagListWidget);
-  }
-
-  virtual ~ctkDICOMMetadataDialog()
-  {
-  }
-
-  void setFileList(const QStringList& fileList)
-  {
-    this->tagListWidget->setFileList(fileList);
-  }
-
-  void closeEvent(QCloseEvent *evt)
-  {
-    // just hide the window when close button is clicked
-    evt->ignore();
-    this->hide();
-  }
-
-  void showEvent(QShowEvent *event)
-  {
-    QDialog::showEvent(event);
-    // QDialog would reset window position and size when shown.
-    // Restore its previous size instead (user may look at metadata
-    // of different series one after the other and would be inconvenient to
-    // set the desired size manually each time).
-    if (!savedGeometry.isEmpty())
-    {
-      this->restoreGeometry(savedGeometry);
-      if (this->isMaximized())
-      {
-        this->setGeometry(QApplication::desktop()->availableGeometry(this));
-      }
-    }
-  }
-
-  void hideEvent(QHideEvent *event)
-  {
-    this->savedGeometry = this->saveGeometry();
-    QDialog::hideEvent(event);
-  }
-
-protected:
-  ctkDICOMObjectListWidget* tagListWidget;
-  QByteArray savedGeometry;
-};
 
 //----------------------------------------------------------------------------
 class ctkDICOMBrowserPrivate: public Ui_ctkDICOMBrowser
