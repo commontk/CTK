@@ -10,5 +10,10 @@ CMakeLists.txt.user*
 CMakeCache.txt
 CMakeFiles/cmake.check_cache
 
+# VS Code files ...
+.vscode/
+.history/
+*.vsix
+
 # ignore ctags file
 tags
