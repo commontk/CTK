@@ -45,9 +45,7 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(SetMode)
   Q_FLAGS(DecimalsOption DecimalsOptions)
-  Q_ENUMS(SizeHintPolicy)
 
   Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
   Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
@@ -110,6 +108,7 @@ public:
     SetAlways,
     SetIfDifferent,
   };
+  Q_ENUM(SetMode)
 
   /// DecimalsOption enums the input style of the spinbox decimals.
   /// Default option is DecimalsByShortcuts.
@@ -160,6 +159,7 @@ public:
     SizeHintByMinMax,
     SizeHintByValue
   };
+  Q_ENUM(SizeHintPolicy)
 
   typedef QWidget Superclass;
 

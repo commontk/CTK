@@ -53,7 +53,6 @@ class ctkMenuComboBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkMenuComboBox : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(EditableBehavior)
   /// This property holds the text shown on the combobox when there is no
   /// selected item.
   /// Empty by default.
@@ -83,6 +82,7 @@ public:
     EditableOnFocus,
     EditableOnPopup
   };
+  Q_ENUM(EditableBehavior)
 
   /// Superclass typedef
   typedef QWidget Superclass;

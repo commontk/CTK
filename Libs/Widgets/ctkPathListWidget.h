@@ -67,7 +67,6 @@ class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
   Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon)
 
   Q_FLAGS(PathOption PathOptions)
-  Q_ENUMS(Mode)
 
 public:
 
@@ -102,6 +101,7 @@ public:
     /// Allow only directory entries.
     DirectoriesOnly
   };
+  Q_ENUM(Mode)
 
   /// Superclass typedef
   typedef QListView Superclass;

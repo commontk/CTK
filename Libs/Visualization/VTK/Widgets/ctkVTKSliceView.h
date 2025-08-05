@@ -38,7 +38,6 @@ class vtkAlgorithmOutput;
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public ctkVTKAbstractView
 {
   Q_OBJECT
-  Q_ENUMS(RenderWindowLayoutType)
   Q_PROPERTY(RenderWindowLayoutType renderWindowLayoutType
              READ renderWindowLayoutType WRITE setRenderWindowLayoutType)
   Q_PROPERTY(QColor highlightedBoxColor READ highlightedBoxColor WRITE setHighlightedBoxColor)
@@ -55,6 +54,7 @@ public:
   /// within the different render view items.
   /// \sa setRenderWindowLayout() renderWindowLayoutType()
   enum RenderWindowLayoutType{LeftRightTopBottom = 0, LeftRightBottomTop};
+  Q_ENUM(RenderWindowLayoutType)
 
   /// Set active camera
   void setActiveCamera(vtkCamera * newActiveCamera);

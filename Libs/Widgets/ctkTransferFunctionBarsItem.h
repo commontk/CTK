@@ -37,7 +37,6 @@ class ctkTransferFunctionBarsItemPrivate;
 class CTK_WIDGETS_EXPORT ctkTransferFunctionBarsItem: public ctkTransferFunctionItem
 {
   Q_OBJECT
-  Q_ENUMS(LogMode)
   Q_PROPERTY(qreal barWidth READ barWidth WRITE setBarWidth)
   Q_PROPERTY(QColor barColor READ barColor WRITE setBarColor)
   Q_PROPERTY(LogMode logMode READ logMode WRITE setLogMode)
@@ -59,6 +58,7 @@ public:
     UseLog = 1,
     AutoLog =2
   };
+  Q_ENUM(LogMode)
   LogMode logMode() const;
   void setLogMode(const LogMode logMode);
 
