@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QWidget>
 class QTableWidget;
+class QTableWidgetItem;
 
 // ctkWidgets includes
 class ctkCollapsibleGroupBox;
@@ -53,7 +54,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
   Q_PROPERTY(QString title READ title WRITE setTitle);
-  Q_PROPERTY(QString description READ description WRITE setDescription);
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed);
   Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
@@ -93,12 +93,6 @@ public:
   /// Study title
   void setTitle(const QString& title);
   QString title() const;
-  ///@}
-
-  ///@{
-  /// Study Description
-  void setDescription(const QString& description);
-  QString description() const;
   ///@}
 
   ///@{
@@ -195,6 +189,8 @@ public:
   Q_INVOKABLE void removeSeriesItemWidget(const QString& seriesItem);
   Q_INVOKABLE ctkDICOMSeriesItemWidget* seriesItemWidgetBySeriesItem(const QString& seriesItem);
   Q_INVOKABLE ctkDICOMSeriesItemWidget* seriesItemWidgetBySeriesInstanceUID(const QString& seriesInstanceUID);
+  Q_INVOKABLE QList<QTableWidgetItem*> previousSelectedSeriesItems() const;
+  Q_INVOKABLE QList<QTableWidgetItem*> currentSelectedSeriesItems() const;
   ///@}
 
   /// Collapsible group box.
@@ -227,6 +223,8 @@ public Q_SLOTS:
   void onJobFinished(const QVariant&);
   void onStudySelectionClicked(bool);
   void onOperationStatusButtonClicked(bool);
+  void onSeriesListTableWidgetItemPressed(QTableWidgetItem *item = nullptr);
+  void onSeriesListTableWidgetSelectionChanged();
 
 Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.

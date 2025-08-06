@@ -73,6 +73,7 @@ public:
   int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   void addEmptySeriesItemWidget(int rowIndex, int columnIndex);
   ctkDICOMSeriesItemWidget* isSeriesItemAlreadyAdded(const QString& seriesItem);
+  void updateSeriesSelectionInternal();
 
   QString FilteringSeriesDescription;
   QStringList FilteringModalities;
@@ -95,6 +96,9 @@ public:
   bool QueryOn;
   bool RetrieveOn;
   int FilteredSeriesCount;
+
+  QList<QTableWidgetItem*> PreviousSeriesSelection;
+  QList<QTableWidgetItem*> CurrentSeriesSelection;
 };
 
 //----------------------------------------------------------------------------
@@ -138,6 +142,9 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
                           this->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
     }
   }
+
+  this->CurrentSeriesSelection.clear();
+  this->PreviousSeriesSelection.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -147,18 +154,17 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parent)
   this->setupUi(q);
 
   this->VisualDICOMBrowser = QSharedPointer<QWidget>(parent, skipDelete);
-
-  this->StudyDescriptionTextBrowser->hide();
-  this->StudyDescriptionTextBrowser->setReadOnly(true);
-  this->StudyDescriptionTextBrowser->setDisableMouseScroll(true);
   this->StudyItemCollapsibleGroupBox->setCollapsed(false);
-
   this->OperationStatusPushButton->hide();
 
   QObject::connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
                    q, SLOT(onStudySelectionClicked(bool)));
   QObject::connect(this->OperationStatusPushButton, SIGNAL(clicked(bool)),
                    q, SLOT(onOperationStatusButtonClicked(bool)));
+  QObject::connect(this->SeriesListTableWidget, SIGNAL(itemSelectionChanged()),
+                   q, SLOT(onSeriesListTableWidgetSelectionChanged()));
+  QObject::connect(this->SeriesListTableWidget, SIGNAL(itemPressed(QTableWidgetItem*)),
+                   q, SLOT(onSeriesListTableWidgetItemPressed(QTableWidgetItem*)));
 }
 
 //------------------------------------------------------------------------------
@@ -400,6 +406,13 @@ ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdd
   return seriesItemWidgetFound;
 }
 
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidgetPrivate::updateSeriesSelectionInternal()
+{
+  this->PreviousSeriesSelection = this->CurrentSeriesSelection;
+  this->CurrentSeriesSelection = this->SeriesListTableWidget->selectedItems();
+}
+
 //----------------------------------------------------------------------------
 // ctkDICOMStudyItemWidget methods
 
@@ -441,7 +454,42 @@ CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, stoppedJobUID, StoppedJobUID);
 void ctkDICOMStudyItemWidget::setTitle(const QString& title)
 {
   Q_D(ctkDICOMStudyItemWidget);
-  d->StudyItemCollapsibleGroupBox->setTitle(title);
+
+  QString studyIDText;
+  QString elidedText = title;
+  QString truncatedText = "";
+  QString studyIDSearchString = "  -  ID:";
+  int index = title.indexOf(studyIDSearchString);
+  if (index != -1)
+  {
+    studyIDText = title.mid(index);
+    elidedText = title.left(index);
+  }
+
+  QFontMetrics metrics(d->StudyItemCollapsibleGroupBox->font());
+  int textWidth = metrics.horizontalAdvance(elidedText);
+  int widgetWidth = this->width();
+  if (textWidth > widgetWidth)
+  {
+    elidedText = metrics.elidedText(elidedText, Qt::ElideRight, widgetWidth);
+    int ellipsisPos = elidedText.indexOf("…");
+    if (ellipsisPos != -1)
+    {
+      truncatedText = title.mid(ellipsisPos + 3);
+      elidedText += "    ";
+    }
+  }
+
+  d->StudyItemCollapsibleGroupBox->setTitle(elidedText);
+  if (truncatedText.isEmpty())
+  {
+    studyIDText.replace(" - ", "");
+    d->StudyItemCollapsibleGroupBox->setToolTip(studyIDText);
+  }
+  else
+  {
+    d->StudyItemCollapsibleGroupBox->setToolTip(title);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -449,49 +497,6 @@ QString ctkDICOMStudyItemWidget::title() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->StudyItemCollapsibleGroupBox->title();
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setDescription(const QString& description)
-{
-  Q_D(ctkDICOMStudyItemWidget);
-  if (description.isEmpty())
-  {
-    d->StudyDescriptionTextBrowser->hide();
-    return;
-  }
-
-  QFontMetrics metrics(d->StudyDescriptionTextBrowser->font());
-  int textWidth = metrics.horizontalAdvance(description);
-  int widgetWidth = this->width();
-  if (textWidth > widgetWidth)
-  {
-    int length = 0;
-    while (length < description.length() && metrics.horizontalAdvance(description.mid(0, length)) <= widgetWidth)
-    {
-      length++;
-    }
-
-    QString wrappedText = description;
-    if (length < description.length())
-    {
-      wrappedText.insert(length, "\n");
-    }
-    d->StudyDescriptionTextBrowser->setCollapsibleText(wrappedText);
-  }
-  else
-  {
-    d->StudyDescriptionTextBrowser->setPlainText(description);
-  }
-
-  d->StudyDescriptionTextBrowser->show();
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMStudyItemWidget::description() const
-{
-  Q_D(const ctkDICOMStudyItemWidget);
-  return d->StudyDescriptionTextBrowser->toPlainText();
 }
 
 //----------------------------------------------------------------------------
@@ -758,6 +763,20 @@ ctkDICOMSeriesItemWidget *ctkDICOMStudyItemWidget::seriesItemWidgetBySeriesInsta
 }
 
 //------------------------------------------------------------------------------
+QList<QTableWidgetItem *> ctkDICOMStudyItemWidget::previousSelectedSeriesItems() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  return d->PreviousSeriesSelection;
+}
+
+//------------------------------------------------------------------------------
+QList<QTableWidgetItem *> ctkDICOMStudyItemWidget::currentSelectedSeriesItems() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  return d->CurrentSeriesSelection;
+}
+
+//------------------------------------------------------------------------------
 ctkCollapsibleGroupBox* ctkDICOMStudyItemWidget::collapsibleGroupBox()
 {
   Q_D(ctkDICOMStudyItemWidget);
@@ -965,4 +984,27 @@ void ctkDICOMStudyItemWidget::onOperationStatusButtonClicked(bool)
                         "Please initiate a new job if further processing is required.").arg(d->StoppedJobUID));
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidget::onSeriesListTableWidgetSelectionChanged()
+{
+  Q_D(ctkDICOMStudyItemWidget);
+
+  if (QApplication::mouseButtons() != Qt::NoButton || QApplication::keyboardModifiers() != Qt::NoModifier)
+  {
+    // do not update id the selection is changed by mouse or keyboard,
+    // because the selection is already updated by onSeriesListTableWidgetItemPressed.
+    return;
+  }
+
+  d->updateSeriesSelectionInternal();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidget::onSeriesListTableWidgetItemPressed(QTableWidgetItem *item)
+{
+  Q_D(ctkDICOMStudyItemWidget);
+  Q_UNUSED(item);
+  d->updateSeriesSelectionInternal();
 }
