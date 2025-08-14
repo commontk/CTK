@@ -1075,9 +1075,9 @@ void ctkQImageView::update( bool zoomChanged,
           }
 
           QString spacingString = tr("Spacing = %1, %2, %3")
-            .arg(QString::number(this->xSpacing()), 'f', 3)
-            .arg(QString::number(this->ySpacing()), 'f', 3)
-            .arg(QString::number(this->sliceThickness()), 'f', 3);
+            .arg(QString::number(this->xSpacing(), 'f', 3))
+            .arg(QString::number(this->ySpacing(), 'f', 3))
+            .arg(QString::number(this->sliceThickness(), 'f', 3));
           QRectF spacingBound = painter.boundingRect( pointRect, textFlags,
             spacingString );
           QRectF spacingRect(
