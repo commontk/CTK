@@ -75,7 +75,7 @@ set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
 set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
 
 set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
-set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
+set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR Python3_INCLUDE_DIRS)
 set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
 
 set(QtSOAP_enabling_variable QtSOAP_LIBRARIES)
