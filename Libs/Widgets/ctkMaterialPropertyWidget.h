@@ -39,7 +39,6 @@ class QListWidgetItem;
 class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(InterpolationMode)
 
   /// This property holds the color of the material.
   Q_PROPERTY(QColor color  READ color WRITE setColor);
@@ -103,6 +102,7 @@ public:
     InterpolationPhong,
     InterpolationPBR
   };
+  Q_ENUM(InterpolationMode)
 
   /// Constructor
   explicit ctkMaterialPropertyWidget(QWidget* parent = 0);

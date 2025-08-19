@@ -58,7 +58,6 @@ class QModelIndex;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(ImportDirectoryMode)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
   Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
@@ -134,6 +133,7 @@ public:
     ImportDirectoryCopy = 0,
     ImportDirectoryAddLink
   };
+  Q_ENUM(ImportDirectoryMode)
 
   /// \brief Get value of ImportDirectoryMode settings.
   ///
