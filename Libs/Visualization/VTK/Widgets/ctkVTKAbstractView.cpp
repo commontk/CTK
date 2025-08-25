@@ -262,6 +262,7 @@ void ctkVTKAbstractView::forceRender()
     return;
   }
   d->RenderWindow->Render();
+  this->update();
 }
 
 //----------------------------------------------------------------------------
