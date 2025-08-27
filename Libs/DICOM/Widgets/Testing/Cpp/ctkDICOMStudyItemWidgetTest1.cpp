@@ -50,7 +50,7 @@ int ctkDICOMStudyItemWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(widget.studyItem(), "");
   CHECK_QSTRING(widget.patientID(), "");
   CHECK_QSTRING(widget.studyInstanceUID(), "");
-  CHECK_QSTRING(widget.title(), "Series");
+  CHECK_QSTRING(widget.title(), "Study ...");
   CHECK_QSTRING(widget.filteringSeriesDescription(), "");
   CHECK_BOOL(widget.collapsed(), false)
   CHECK_BOOL(widget.selection(), false)
