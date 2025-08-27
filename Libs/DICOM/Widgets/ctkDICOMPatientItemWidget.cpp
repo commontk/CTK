@@ -67,6 +67,7 @@ public:
   void init(QWidget* parentWidget);
   QString getPatientItemFromPatientID(const QString& patientID);
   QString formatDate(const QString&);
+  QString formatTime(const QString&);
   bool isStudyItemAlreadyAdded(const QString& studyItem);
   void clearLayout(QLayout* layout, bool deleteWidgets = true);
   void createStudies();
@@ -184,6 +185,14 @@ QString ctkDICOMPatientItemWidgetPrivate::formatDate(const QString& date)
   QString formattedDate = date;
   formattedDate.replace(QString("-"), QString(""));
   return QDate::fromString(formattedDate, "yyyyMMdd").toString();
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMPatientItemWidgetPrivate::formatTime(const QString& time)
+{
+  QString formattedTime = time;
+  formattedTime.replace(QString("-"), QString(""));
+  return QTime::fromString(formattedTime.left(6), "hhmmss").toString();
 }
 
 //----------------------------------------------------------------------------
@@ -354,14 +363,18 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     QString studyItem = studyItemWidget->studyItem();
     QString studyDateString = this->DicomDatabase->fieldForStudy("StudyDate", studyItem);
     studyDateString.replace(QString("-"), QString(""));
-    QDate studyDate = QDate::fromString(studyDateString, "yyyyMMdd");
-    long long julianDate = studyDate.toJulianDay();
+    QString studyTimeString = this->DicomDatabase->fieldForStudy("StudyTime", studyItem);
+    studyTimeString.replace(QString("-"), QString(""));
+    QDateTime studyDateTime = QDateTime::fromString(studyDateString + studyTimeString.left(6), "yyyyMMddhhmmss");
+    // Example: Convert studyDateTime to a timestamp in seconds since epoch
+    // If studyDateTime is 2024-06-01 12:34:56, timeStamp will be the number of seconds since 1970-01-01 00:00:00 UTC
+    long long timeStamp = studyDateTime.toSecsSinceEpoch();
     // Add some significance zeros to the sorting key
-    julianDate *= 100;
+    timeStamp *= 100;
     // QMap automatically sort in ascending with the key,
     // but we want descending (latest study should be in the first row)
-    long long key = LLONG_MAX - julianDate;
-    // Increase the key if JulianDay is already present
+    long long key = LLONG_MAX - timeStamp;
+    // Increase the key if timeStamp is already present
     while (studiesMap.contains(key))
     {
       key++;
@@ -721,32 +734,38 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   QString studyID = d->DicomDatabase->fieldForStudy("StudyID", studyItem);
   QString studyDate = d->DicomDatabase->fieldForStudy("StudyDate", studyItem);
   QString formattedStudyDate = d->formatDate(studyDate);
+  QString studyTime = d->DicomDatabase->fieldForStudy("StudyTime", studyItem);
+  QString formattedStudyTime = d->formatTime(studyTime);
   QString studyDescription = d->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
-  if (studyDescription.isEmpty())
-  {
-    studyDescription = ctkDICOMPatientItemWidget::tr("UNDEFINED");
-  }
   ctkDICOMStudyItemWidget* studyItemWidget =
     new ctkDICOMStudyItemWidget(d->VisualDICOMBrowser.data());
   studyItemWidget->setStudyItem(studyItem);
   studyItemWidget->setPatientID(d->PatientID);
   studyItemWidget->setStudyInstanceUID(studyInstanceUID);
 
-  QString fullDescription = ctkDICOMPatientItemWidget::tr("Study");
-  if (!studyID.isEmpty())
+  QString studyTitle;
+  if (!formattedStudyDate.isEmpty())
   {
-    fullDescription += QString("Study ID %1").arg(studyID);
+    studyTitle += QString("%1").arg(formattedStudyDate);
   }
   if (!formattedStudyDate.isEmpty())
   {
-    fullDescription += QString("  -  %1").arg(formattedStudyDate);
+    studyTitle += QString("  -  %1").arg(formattedStudyTime);
   }
   if (!studyDescription.isEmpty())
   {
-    fullDescription += QString("  -  %1").arg(studyDescription);
+    studyTitle += QString("  -  %1").arg(studyDescription);
+  }
+  if (!studyID.isEmpty())
+  {
+    studyTitle += QString("  -  ID: %1").arg(studyID);
+  }
+  if (studyTitle.isEmpty())
+  {
+    studyTitle = ctkDICOMPatientItemWidget::tr("Study information not available");
   }
 
-  studyItemWidget->setDescription(fullDescription);
+  studyItemWidget->setTitle(studyTitle);
   studyItemWidget->setThumbnailSize(d->ThumbnailSize);
   studyItemWidget->setFilteringSeriesDescription(d->FilteringSeriesDescription);
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
@@ -827,6 +846,25 @@ ctkDICOMStudyItemWidget *ctkDICOMPatientItemWidget::studyItemWidgetByStudyInstan
     ctkDICOMStudyItemWidget* studyItemWidget =
       qobject_cast<ctkDICOMStudyItemWidget*>(d->StudyItemWidgetsList[studyIndex]);
     if (!studyItemWidget || studyItemWidget->studyInstanceUID() != StudyInstanceUID)
+    {
+      continue;
+    }
+
+    return studyItemWidget;
+  }
+
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMStudyItemWidget *ctkDICOMPatientItemWidget::studyItemWidgetBySeriesInstanceUID(const QString& seriesInstanceUID)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  for (int studyIndex = 0; studyIndex < d->StudyItemWidgetsList.size(); ++studyIndex)
+  {
+    ctkDICOMStudyItemWidget* studyItemWidget =
+      qobject_cast<ctkDICOMStudyItemWidget*>(d->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget || !studyItemWidget->seriesItemWidgetBySeriesInstanceUID(seriesInstanceUID))
     {
       continue;
     }
