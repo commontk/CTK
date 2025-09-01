@@ -73,9 +73,9 @@ ctkPluginStorageSQL::~ctkPluginStorageSQL()
 //----------------------------------------------------------------------------
 QSqlDatabase ctkPluginStorageSQL::getConnection(bool create) const
 {
-  if (m_connectionNames.hasLocalData() && QSqlDatabase::contains(m_connectionNames.localData()))
+  if (!m_connectionNames.isEmpty() && QSqlDatabase::contains(m_connectionNames))
   {
-    return QSqlDatabase::database(m_connectionNames.localData());
+    return QSqlDatabase::database(m_connectionNames);
   }
 
   if (!create)
@@ -84,22 +84,22 @@ QSqlDatabase ctkPluginStorageSQL::getConnection(bool create) const
       ctkPluginDatabaseException::DB_NOT_OPEN_ERROR);
   }
 
-  m_connectionNames.setLocalData(getConnectionName());
+  m_connectionNames = getConnectionName();
 
-  QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", m_connectionNames.localData());
+  QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", m_connectionNames);
   database.setDatabaseName(getDatabasePath());
 
   if (!database.isValid())
   {
     close();
-    throw ctkPluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionNames.localData()),
+    throw ctkPluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionNames),
       ctkPluginDatabaseException::DB_CONNECTION_INVALID);
   }
 
   if (!database.open())
   {
     close();
-    throw ctkPluginDatabaseException(QString("Could not open database connection: %1 (%2)").arg(m_connectionNames.localData()).arg(database.lastError().text()),
+    throw ctkPluginDatabaseException(QString("Could not open database connection: %1 (%2)").arg(m_connectionNames).arg(database.lastError().text()),
       ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 
@@ -786,7 +786,7 @@ void ctkPluginStorageSQL::close() const
     }
     else
     {
-      throw ctkPluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionNames.localData()));
+      throw ctkPluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionNames));
     }
   }
 }
