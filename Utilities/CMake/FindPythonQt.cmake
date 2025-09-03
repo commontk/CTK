@@ -4,9 +4,9 @@
 #
 
 # Python is required
-if(NOT PYTHONLIBS_FOUND)
-  find_package(PythonLibs)
-  if(NOT PYTHONLIBS_FOUND)
+if(NOT Python3_Development_FOUND)
+  find_package(Python3 COMPONENTS Development)
+  if(NOT Python3_Development_FOUND)
     message(FATAL_ERROR "error: Python is required to build PythonQt")
   endif()
 endif()
