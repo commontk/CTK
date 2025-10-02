@@ -423,9 +423,9 @@ void ctkAbstractPythonManagerTester::testPythonModule()
   }
   else
   {
-    returnedPyString = PyString_FromString("");
+    returnedPyString = PyUnicode_FromString("");
   }
-  QString returnedString = PyString_AsString(returnedPyString);
+  QString returnedString = PyUnicode_AsUTF8(returnedPyString);
   QCOMPARE(returnedString, expectedReturnedString);
 }
 
@@ -469,9 +469,9 @@ void ctkAbstractPythonManagerTester::testPythonObject()
   }
   else
   {
-    returnedPyObjectString = PyString_FromString("");
+    returnedPyObjectString = PyUnicode_FromString("");
   }
-  QString returnedString = PyString_AsString(returnedPyObjectString);
+  QString returnedString = PyUnicode_AsUTF8(returnedPyObjectString);
   QCOMPARE(returnedString, expectedReturnedString);
 }
 

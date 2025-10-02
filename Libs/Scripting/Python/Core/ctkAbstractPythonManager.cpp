@@ -370,7 +370,7 @@ QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
         PyErr_Clear();
         continue;
       }
-      QString key_str(PyString_AsString(key));
+      QString key_str(PyUnicode_AsUTF8(key));
       // Append "()" if the associated object is a function
       if (appendParenthesis && PyCallable_Check(value))
       {
@@ -635,7 +635,7 @@ PyObject* ctkAbstractPythonManager::pythonObject(const QString& variableNameAndF
         {
           continue;
         }
-        QString keyStr = PyString_AsString(key);
+        QString keyStr = PyUnicode_AsUTF8(key);
         if (keyStr.operator ==(compareFunction.toLatin1()))
         {
           finalPythonObject = value;

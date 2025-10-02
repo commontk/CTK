@@ -216,9 +216,9 @@ int ctkPythonConsoleCompleterPrivate::parameterCountBuiltInFunction(const QStrin
     if (PyObject_HasAttrString(pFunction, "__doc__"))
     {
       PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
-      if (PyString_Check(pDoc))
+      if (PyUnicode_Check(pDoc))
       {
-        QString docString = PyString_AsString(pDoc);
+        QString docString = PyUnicode_AsUTF8(pDoc);
         QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
         #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         QStringList arguments = argumentExtract.split(",", Qt::SkipEmptyParts);
@@ -247,7 +247,7 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedFunction(const QS
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
       if (ac)
       {
-        parameterCount = PyInt_AsLong(ac);
+        parameterCount = PyLong_AsLong(ac);
         Py_DECREF(ac);
       }
       Py_DECREF(fc);
@@ -269,7 +269,7 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedClassFunction(con
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
       if (ac)
       {
-        parameterCount = PyInt_AsLong(ac);
+        parameterCount = PyLong_AsLong(ac);
         Py_DECREF(ac);
       }
       Py_DECREF(fc);
@@ -288,9 +288,9 @@ int ctkPythonConsoleCompleterPrivate::parameterCountFromDocumentation(const QStr
     if (PyObject_HasAttrString(pFunction, "__call__"))
     {
       PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
-      if (PyString_Check(pDoc))
+      if (PyUnicode_Check(pDoc))
       {
-        QString docString = PyString_AsString(pDoc);
+        QString docString = PyUnicode_AsUTF8(pDoc);
         QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
         #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         QStringList arguments = argumentExtract.split(",", Qt::SkipEmptyParts);
@@ -677,28 +677,28 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
 QString ctkPythonConsole::ps1() const
 {
   PyObject * ps1 = PySys_GetObject(const_cast<char*>("ps1"));
-  const char * ps1_str = PyString_AsString(ps1);
+  const char * ps1_str = PyUnicode_AsUTF8(ps1);
   return QLatin1String(ps1_str);
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonConsole::setPs1(const QString& newPs1)
 {
-  PySys_SetObject(const_cast<char*>("ps1"), PyString_FromString(newPs1.toLatin1().data()));
+  PySys_SetObject(const_cast<char*>("ps1"), PyUnicode_FromString(newPs1.toLatin1().data()));
 }
 
 //----------------------------------------------------------------------------
 QString ctkPythonConsole::ps2() const
 {
   PyObject * ps2 = PySys_GetObject(const_cast<char*>("ps2"));
-  const char * ps2_str = PyString_AsString(ps2);
+  const char * ps2_str = PyUnicode_AsUTF8(ps2);
   return QLatin1String(ps2_str);
 }
 
 //----------------------------------------------------------------------------
 void ctkPythonConsole::setPs2(const QString& newPs2)
 {
-  PySys_SetObject(const_cast<char*>("ps2"), PyString_FromString(newPs2.toLatin1().data()));
+  PySys_SetObject(const_cast<char*>("ps2"), PyUnicode_FromString(newPs2.toLatin1().data()));
 }
 
 //----------------------------------------------------------------------------
