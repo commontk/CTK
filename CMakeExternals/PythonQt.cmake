@@ -82,7 +82,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(revision_tag 37b0d31e5d313f5682f774bd8d5d41f5018a2ce9) # patched-v3.6.1-2025-06-13-a2687828e
+    set(revision_tag c128afb1b72488e1c21b1cb0205b795b268b45d0) # patched-v3.6.1-2025-09-30-f4769f190
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
