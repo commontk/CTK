@@ -361,7 +361,7 @@ QString ctkPythonConsoleCompleterPrivate::searchUsableCharForCompletion(const QS
 //----------------------------------------------------------------------------
 bool ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan(const QString& s1, const QString& s2)
 {
-  if (!s1.isEmpty() || !s2.isEmpty())
+  if (!s1.isEmpty() && !s2.isEmpty())
   {
     // Move Python private attributes to the back (start with underscore)
     if (s1[0] == QChar('_') && s2[0] != QChar('_'))
