@@ -56,9 +56,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
-  # Set desired qt version for PythonQt
-  list(APPEND ep_PythonQt_args -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION})
-
+  # Enable PythonQt wrappers
   foreach(qtlib All ${qtlibs})
     string(TOUPPER ${qtlib} qtlib_uppercase)
     list(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase}})
@@ -88,12 +86,8 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   find_package(Python3 COMPONENTS Development REQUIRED)
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(revision_tag 606939f5e3883ad3ec2c4ed90d5c97190eb00571) # patched-v3.6.1-2025-09-30-f4769f190
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
 
+  set(revision_tag 606939f5e3883ad3ec2c4ed90d5c97190eb00571) # patched-v3.6.1-2025-09-30-f4769f190
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -109,12 +103,22 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
                       GIT_TAG ${revision_tag})
   endif()
 
+  set(PythonQt_SOURCE_DIR "${CMAKE_BINARY_DIR}/${proj}")
+  ExternalProject_Add(${proj}-source
+    SOURCE_DIR ${PythonQt_SOURCE_DIR}
+    ${location_args}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    )
+  ExternalProject_Message(${proj} "${proj} - Adding ${proj}-source")
+
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    SOURCE_DIR ${PythonQt_SOURCE_DIR}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
-    ${location_args}
+    DOWNLOAD_COMMAND ""
     BUILD_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
@@ -126,6 +130,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY}
       ${ep_PythonQt_args}
     DEPENDS
+      ${proj}-source
       ${${proj}_DEPENDENCIES}
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
