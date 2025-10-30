@@ -80,9 +80,16 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     endif()
   endif()
 
+  # Variable expected by FindPython3 CMake module
+  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  set(Python3_LIBRARY ${PYTHON_LIBRARY})
+  set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
+  set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
+  find_package(Python3 COMPONENTS Development REQUIRED)
+
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(revision_tag c128afb1b72488e1c21b1cb0205b795b268b45d0) # patched-v3.6.1-2025-09-30-f4769f190
+    set(revision_tag 606939f5e3883ad3ec2c4ed90d5c97190eb00571) # patched-v3.6.1-2025-09-30-f4769f190
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -112,9 +119,11 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
-      -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
-      -DPYTHON_INCLUDE_DIR2:PATH=${PYTHON_INCLUDE_DIR2}
-      -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+      # FindPython3
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
+      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
+      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY}
+      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY}
       ${ep_PythonQt_args}
     DEPENDS
       ${${proj}_DEPENDENCIES}
