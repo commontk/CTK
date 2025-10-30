@@ -3,11 +3,18 @@
 # Sets PYTHONQT_FOUND, PYTHONQT_INCLUDE_DIR, PYTHONQT_LIBRARY, PYTHONQT_LIBRARIES
 #
 
-# Python is required
-if(NOT PYTHONLIBS_FOUND)
-  find_package(PythonLibs)
-  if(NOT PYTHONLIBS_FOUND)
-    message(FATAL_ERROR "error: Python is required to build PythonQt")
+# Python3 is required
+if(NOT Python3_FOUND)
+  # Variable expected by FindPython3 CMake module
+  if(DEFINED PYTHON_INCLUDE_DIR AND DEFINED PYTHON_LIBRARY)
+    set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+    set(Python3_LIBRARY ${PYTHON_LIBRARY})
+    set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
+    set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
+  endif()
+  find_package(Python3 COMPONENTS Development)
+  if(NOT Python3_FOUND)
+    message(FATAL_ERROR "error: Python3 is required to build PythonQt")
   endif()
 endif()
 

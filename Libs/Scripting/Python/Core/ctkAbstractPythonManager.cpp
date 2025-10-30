@@ -26,10 +26,9 @@
 #include "ctkAbstractPythonManager.h"
 #include "ctkScriptingPythonCoreConfigure.h"
 
-// PythonQT includes
+// PythonQt includes
 #include <PythonQt.h>
-
-#include <PythonQt_QtBindings.h>
+#include <PythonQt_QtAll.h>
 
 // STD includes
 #include <csignal>
@@ -153,7 +152,7 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 SLOT(printStderr(QString)));
 
-  PythonQt_init_QtBindings();
+  PythonQt_QtAll::init();
 
   QStringList initCode;
 
