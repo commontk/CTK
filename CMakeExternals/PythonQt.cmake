@@ -48,10 +48,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     if(CTK_QT_VERSION VERSION_LESS "5.6.0")
       list(APPEND qtlibs webkit)
     endif()
+    set(_qt_version_string "${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}")
   elseif(CTK_QT_VERSION VERSION_EQUAL "6")
     list(APPEND ep_cache_args
       -DQt6_DIR:PATH=${Qt6_DIR}
       )
+    set(_qt_version_string "${Qt6_VERSION_MAJOR}.${Qt6_VERSION_MINOR}.${Qt6_VERSION_PATCH}")
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -87,7 +89,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
 
-  set(revision_tag 606939f5e3883ad3ec2c4ed90d5c97190eb00571) # patched-v3.6.1-2025-09-30-f4769f190
+  set(revision_tag 4d4800bea3559222c76433d5974c75a01dbec728) # patched-v3.6.1-2025-09-30-f4769f190
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -113,6 +115,31 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     )
   ExternalProject_Message(${proj} "${proj} - Adding ${proj}-source")
 
+  set(PythonQtGenerator_SOURCE_DIR ${PythonQt_SOURCE_DIR}/generator)
+  set(PythonQtGenerator_BINARY_DIR ${CMAKE_BINARY_DIR}/PythonQtGenerator-build)
+  ExternalProject_Add(PythonQtGenerator
+    SOURCE_DIR ${PythonQtGenerator_SOURCE_DIR}
+    BINARY_DIR ${PythonQtGenerator_BINARY_DIR}
+    PREFIX PythonQtGenerator${ep_suffix}
+    DOWNLOAD_COMMAND ""
+    CMAKE_CACHE_ARGS
+      ${ep_common_cache_args}
+      -DPythonQtGenerator_QT_VERSION:STRING=${CTK_QT_VERSION}
+    INSTALL_COMMAND ""
+    DEPENDS
+      ${proj}-source
+      ${${proj}_DEPENDENCIES}
+  )
+
+  get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+  set(PythonQtGenerator_EXECUTABLE "${PythonQtGenerator_BINARY_DIR}/$<$<BOOL:${_isMultiConfig}>:$<CONFIG>/>PythonQtGenerator${CMAKE_EXECUTABLE_SUFFIX}")
+
+  set(PythonQtGenerator_OUTPUT_DIR ${CMAKE_BINARY_DIR}/PythonQtGenerator-output-${_qt_version_string})
+
+  if(POLICY CMP0114)
+    cmake_policy(SET CMP0114 NEW) # CMake 3.19
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${PythonQt_SOURCE_DIR}
@@ -123,6 +150,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
+      -DPythonQt_GENERATED_PATH:PATH=${PythonQtGenerator_OUTPUT_DIR}/generated_cpp
       # FindPython3
       -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
       -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
@@ -131,9 +159,20 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       ${ep_PythonQt_args}
     DEPENDS
       ${proj}-source
+      PythonQtGenerator
       ${${proj}_DEPENDENCIES}
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
+
+  ExternalProject_Message(${proj} "${proj} - Adding GenerateWrapper step")
+  ExternalProject_Add_Step(${proj} GenerateWrapper
+    COMMAND ${PythonQtGenerator_EXECUTABLE} --output-directory=${PythonQtGenerator_OUTPUT_DIR}
+    COMMENT "Generating PythonQt wrapper for Qt ${_qt_version_string}"
+    DEPENDERS configure
+    WORKING_DIRECTORY ${PythonQtGenerator_BINARY_DIR}
+    )
+
+  ExternalProject_Add_StepTargets(${proj} GenerateWrapper)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
