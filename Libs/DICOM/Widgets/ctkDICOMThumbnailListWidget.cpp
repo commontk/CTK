@@ -37,7 +37,6 @@
 // ctkWidgets includes
 #include "ctkFlowLayout.h"
 #include "ctkThumbnailListWidget_p.h"
-#include "ui_ctkThumbnailListWidget.h"
 
 //ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"

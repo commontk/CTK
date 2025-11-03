@@ -99,13 +99,13 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
+set(TEST_UI_FORMS )
 if(CTK_USE_QTTESTING)
   include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
   ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
 endif()
 
 set(TEST_MOC_CPP)
-set(TEST_UI_CPP)
 set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   if(TEST_MOC_SOURCES)
@@ -115,15 +115,12 @@ if(CTK_QT_VERSION VERSION_EQUAL "5")
     ctkVTKPropertyWidgetTest.cpp
     USE_MOC_EXTENSION
     )
-  if(TEST_UI_FORMS)
-    QT5_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
-  endif()
   QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${Tests_RESOURCES_SRCS})
 if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
   set(VTK_CHARTS_LIB)
 elseif(${VTK_VERSION_MAJOR} GREATER 5)
@@ -132,6 +129,21 @@ else()
   set(VTK_CHARTS_LIB vtkCharts)
 endif()
 
+# Configure CMake Qt automatic code generation
+set(uic_search_paths)
+foreach(ui_src IN LISTS TEST_UI_FORMS)
+  if(NOT IS_ABSOLUTE ${ui_src})
+    set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
+  endif()
+  get_filename_component(ui_path ${ui_src} PATH)
+  list(APPEND uic_search_paths ${ui_path})
+endforeach()
+list(REMOVE_DUPLICATES uic_search_paths)
+
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOUIC ON
+  AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
+  )
 
 
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${VTK_CHARTS_LIB} ${CTK_BASE_LIBRARIES})

@@ -41,6 +41,7 @@
 #include <vtkPiecewiseFunction.h>
 #include <vtkPiecewiseFunctionItem.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersionMacros.h> // For VTK_VERSION_CHECK
 
 //----------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsView");

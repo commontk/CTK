@@ -197,6 +197,7 @@ set(Tests_MOC_SRCS
   ctkSettingsPanelTest2Helper.h
   )
 
+set(Tests_UI_FORMS )
 if(CTK_USE_QTTESTING)
   include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
   ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
@@ -230,21 +231,33 @@ set(Tests_MOC_CPPS
   )
 
 set(Tests_MOC_CPP)
-set(Tests_UI_CPP)
 set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   qt5_wrap_cpp(Tests_MOC_CPP ${Tests_MOC_SRCS})
   qt5_generate_mocs(${Tests_MOC_CPPS} USE_MOC_EXTENSION)
-  if(TEST_UI_FORMS)
-    qt5_wrap_ui(Tests_UI_CPP ${Tests_UI_FORMS})
-  endif()
   qt5_add_resources(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
+
+# Configure CMake Qt automatic code generation
+set(uic_search_paths)
+foreach(ui_src IN LISTS Tests_UI_FORMS)
+  if(NOT IS_ABSOLUTE ${ui_src})
+    set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
+  endif()
+  get_filename_component(ui_path ${ui_src} PATH)
+  list(APPEND uic_search_paths ${ui_path})
+endforeach()
+list(REMOVE_DUPLICATES uic_search_paths)
+
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOUIC ON
+  AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
+  )
 
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   list(APPEND KIT_target_libraries Qt5::Test)

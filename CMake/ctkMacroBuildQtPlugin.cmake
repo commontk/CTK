@@ -82,7 +82,6 @@ macro(ctkMacroBuildQtPlugin)
 
   # Make sure variable are cleared
   set(MY_MOC_CPP)
-  set(MY_UI_CPP)
   set(MY_QRC_SRCS)
 
   # Wrap
@@ -97,12 +96,6 @@ macro(ctkMacroBuildQtPlugin)
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     endif()
-
-    if(Qt5Widgets_FOUND)
-      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
-    elseif(MY_UI_FORMS)
-      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
-    endif()
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -115,14 +108,28 @@ macro(ctkMacroBuildQtPlugin)
   source_group("Generated" FILES
     ${MY_MOC_CPP}
     ${MY_QRC_SRCS}
-    ${MY_UI_CPP}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
-    ${MY_UI_CPP}
     ${MY_QRC_SRCS}
+    )
+
+  # Configure CMake Qt automatic code generation
+  set(uic_search_paths)
+  foreach(ui_src IN LISTS MY_UI_FORMS)
+    if(NOT IS_ABSOLUTE ${ui_src})
+      set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
+    endif()
+    get_filename_component(ui_path ${ui_src} PATH)
+    list(APPEND uic_search_paths ${ui_path})
+  endforeach()
+  list(REMOVE_DUPLICATES uic_search_paths)
+
+  set_target_properties(${lib_name} PROPERTIES
+    AUTOUIC ON
+    AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )
 
   # Extract library name associated with the plugin and use it as label
