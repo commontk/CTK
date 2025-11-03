@@ -33,21 +33,6 @@ set(PLUGIN_SRCS
   ctkVTKThresholdWidgetPlugin.h
   )
 
-# Headers that should run through moc
-set(PLUGIN_MOC_SRCS
-  ctkVTKWidgetsPlugins.h
-
-  ctkVTKDataSetArrayComboBoxPlugin.h
-  ctkVTKMagnifyViewPlugin.h
-  ctkVTKPropertyWidgetPlugin.h
-  ctkVTKRenderViewPlugin.h
-  ctkVTKScalarBarWidgetPlugin.h
-  ctkVTKSliceViewPlugin.h
-  ctkVTKSurfaceMaterialPropertyWidgetPlugin.h
-  ctkVTKTextPropertyWidgetPlugin.h
-  ctkVTKThresholdWidgetPlugin.h
-  )
-
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(PLUGIN_SRCS
       ctkVTKChartViewPlugin.cpp
@@ -59,12 +44,6 @@ if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
       ctkVTKVolumePropertyWidgetPlugin.cpp
       ctkVTKVolumePropertyWidgetPlugin.h
       ${PLUGIN_SRCS})
-  set(PLUGIN_MOC_SRCS
-      ctkVTKChartViewPlugin.h
-      ctkVTKScalarsToColorsViewPlugin.h
-      ctkVTKScalarsToColorsWidgetPlugin.h
-      ctkVTKVolumePropertyWidgetPlugin.h
-      ${PLUGIN_MOC_SRCS})
 endif()
 
 # Resources
@@ -81,7 +60,6 @@ ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
