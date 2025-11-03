@@ -4,17 +4,22 @@
 #
 
 #! \ingroup CMakeUtilities
-function(ctkFunctionGeneratePluginManifest QRC_SRCS)
+function(ctkFunctionGeneratePluginManifest MANIFEST_QRC_FILEPATH_VAR)
 
   CtkMacroParseArguments(MY
     "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION;CUSTOM_HEADERS"
-    ""
+    "SKIP_QT5_ADD_RESOURCES"
     ${ARGN}
     )
 
   # Sanity checks
   if(NOT DEFINED MY_SYMBOLIC_NAME)
     message(FATAL_ERROR "SYMBOLIC_NAME is mandatory")
+  endif()
+
+  # Defaults
+  if(NOT DEFINED MY_SKIP_QT5_ADD_RESOURCES)
+    set(MY_SKIP_QT5_ADD_RESOURCES FALSE)
   endif()
 
   set(_manifest_content "Plugin-SymbolicName: ${MY_SYMBOLIC_NAME}")
@@ -95,11 +100,16 @@ function(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   configure_file("${CTK_CMAKE_DIR}/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
   configure_file("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
-  set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
+  if(MY_SKIP_QT5_ADD_RESOURCES)
+    set(${MANIFEST_QRC_FILEPATH_VAR} ${_manifest_qrc_filepath} PARENT_SCOPE)
+  else()
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
+    else()
+      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+    endif()
+    set(QRC_SRCS_VAR "${MANIFEST_QRC_FILEPATH_VAR}")
+    set(${QRC_SRCS_VAR} ${${QRC_SRCS_VAR}} ${_qrc_src} PARENT_SCOPE)
+  endif()
 endfunction()

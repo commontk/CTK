@@ -103,7 +103,6 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
 
   # Make sure variable are cleared
   set(MY_MOC_CPP)
-  set(MY_QRC_SRCS)
 
   # Wrap
   if(MY_MOC_SRCS)
@@ -121,21 +120,12 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     QT5_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
   endif()
 
-  if(DEFINED MY_RESOURCES AND NOT MY_RESOURCES STREQUAL "")
-    if(CTK_QT_VERSION VERSION_EQUAL "5")
-      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
-    else()
-      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-    endif()
-  endif()
-
   source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
   source_group("Generated" FILES
-    ${MY_QRC_SRCS}
     ${MY_MOC_CPP}
     ${MOC_CPP_DECORATOR}
     )
@@ -143,11 +133,12 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_RESOURCES}
     )
 
   # Configure CMake Qt automatic code generation
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI"
     )

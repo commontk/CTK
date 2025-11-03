@@ -162,7 +162,7 @@ macro(ctkMacroBuildPlugin)
 
   # Make sure variable are cleared
   set(MY_MOC_CPP)
-  set(MY_QRC_SRCS)
+  set(MY_RESOURCES)
 
   # Wrap
   if(CTK_QT_VERSION VERSION_EQUAL "5")
@@ -177,16 +177,13 @@ macro(ctkMacroBuildPlugin)
         QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5 ${MY_MOC_OPTIONS} ${target})
       endforeach()
     endif()
-    if(DEFINED MY_RESOURCES)
-      QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-    endif()
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   # Add the generated manifest qrc file
-  set(manifest_qrc_src )
-  ctkFunctionGeneratePluginManifest(manifest_qrc_src
+  set(manifest_qrc_filepath )
+  ctkFunctionGeneratePluginManifest(manifest_qrc_filepath
     ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
     CATEGORY ${Plugin-Category}
     CONTACT_ADDRESS ${Plugin-ContactAddress}
@@ -201,13 +198,11 @@ macro(ctkMacroBuildPlugin)
     VENDOR ${Plugin-Vendor}
     VERSION ${Plugin-Version}
     CUSTOM_HEADERS ${Custom-Headers}
+    SKIP_QT5_ADD_RESOURCES
     )
-
-  if(manifest_headers_dep)
-    set_property(SOURCE ${manifest_qrc_src} APPEND
-                   PROPERTY OBJECT_DEPENDS ${manifest_headers_dep})
-  endif()
-  list(APPEND MY_QRC_SRCS ${manifest_qrc_src})
+  list(APPEND MY_RESOURCES
+    ${manifest_qrc_filepath}
+    )
 
   # Create translation files (.ts and .qm)
   set(_plugin_qm_files )
@@ -247,11 +242,17 @@ macro(ctkMacroBuildPlugin)
   # Add any other additional resource files
   if(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
     string(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
-    ctkMacroGeneratePluginResourcefile(MY_QRC_SRCS
+    set(plugin_qrc_filepath)
+    ctkMacroGeneratePluginResourcefile(plugin_qrc_filepath
       NAME ${_plugin_symbolicname}_cached.qrc
       PREFIX ${Plugin-SymbolicName}
       RESOURCES ${_plugin_cached_resources_in_source_tree}
-      BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree})
+      BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree}
+      SKIP_QT5_ADD_RESOURCES
+      )
+    list(APPEND MY_RESOURCES
+      ${plugin_qrc_filepath}
+      )
   endif()
 
   source_group("Resources" FILES
@@ -261,7 +262,6 @@ macro(ctkMacroBuildPlugin)
     )
 
   source_group("Generated" FILES
-    ${MY_QRC_SRCS}
     ${MY_MOC_CPP}
     ${_plugin_qm_files}
     )
@@ -269,7 +269,7 @@ macro(ctkMacroBuildPlugin)
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_RESOURCES}
     ${_plugin_qm_files}
     )
 
@@ -290,6 +290,7 @@ macro(ctkMacroBuildPlugin)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )

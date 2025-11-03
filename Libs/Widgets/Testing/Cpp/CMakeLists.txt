@@ -231,16 +231,14 @@ set(Tests_MOC_CPPS
   )
 
 set(Tests_MOC_CPP)
-set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   qt5_wrap_cpp(Tests_MOC_CPP ${Tests_MOC_SRCS})
   qt5_generate_mocs(${Tests_MOC_CPPS} USE_MOC_EXTENSION)
-  qt5_add_resources(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 # Configure CMake Qt automatic code generation
@@ -255,6 +253,7 @@ endforeach()
 list(REMOVE_DUPLICATES uic_search_paths)
 
 set_target_properties(${KIT}CppTests PROPERTIES
+  AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )

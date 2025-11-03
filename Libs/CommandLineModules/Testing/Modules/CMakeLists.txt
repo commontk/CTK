@@ -4,14 +4,17 @@
 # no extensive error checking yet.
 function(ctkFunctionCreateCmdLineModule name)
   set(_src_files ${ARGN})
-  list(APPEND _src_files ctkCmdLineModule${name}.cpp)
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    qt5_add_resources(_src_files ctkCmdLineModule${name}.qrc)
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
+  list(APPEND _src_files
+    ctkCmdLineModule${name}.cpp
+    ctkCmdLineModule${name}.qrc
+    )
 
   ctk_add_executable_utf8(ctkCmdLineModule${name} ${_src_files})
+
+  # Configure CMake Qt automatic code generation
+  set_target_properties(ctkCmdLineModule${name} PROPERTIES
+    AUTORCC ON
+    )
 
   target_link_libraries(ctkCmdLineModule${name} CTKCore Qt${CTK_QT_VERSION}::Widgets)
 
