@@ -12,12 +12,6 @@ set(PLUGIN_SRCS
   ctkMTLocaleTestSuite_p.h
 )
 
-set(PLUGIN_MOC_SRCS
-  ctkMetaTypeTestActivator_p.h
-  ctkMTAttrPasswordTestSuite_p.h
-  ctkMTLocaleTestSuite_p.h
-)
-
 set(PLUGIN_resources
 
 )
@@ -28,7 +22,6 @@ ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries} ${fwtestutil_lib}
   TEST_PLUGIN

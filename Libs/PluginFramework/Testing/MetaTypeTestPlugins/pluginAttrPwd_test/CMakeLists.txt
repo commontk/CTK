@@ -7,11 +7,6 @@ set(PLUGIN_SRCS
   ctkTestPluginMTAttrPwdActivator.cpp
 )
 
-# Files which should be processed by Qts moc
-set(PLUGIN_MOC_SRCS
-  ctkTestPluginMTAttrPwdActivator_p.h
-)
-
 # QRC Files which should be compiled into the plugin
 set(PLUGIN_resources
 )
@@ -31,7 +26,6 @@ ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS} ${PLUGIN_qm_files}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   CACHED_RESOURCEFILES ${PLUGIN_cached_resources}
   TRANSLATIONS ${PLUGIN_ts_files}

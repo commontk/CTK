@@ -8,11 +8,6 @@ set(PLUGIN_SRCS
   ctkTestPluginA2Service.h
 )
 
-set(PLUGIN_MOC_SRCS
-  ctkTestPluginA2_p.h
-  ctkTestPluginA2Activator_p.h
-)
-
 set(PLUGIN_resources
 
 )
@@ -23,7 +18,6 @@ ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
   TEST_PLUGIN
