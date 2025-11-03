@@ -48,7 +48,7 @@ set(PLUGIN_MOC_SRCS
   ctkVTKThresholdWidgetPlugin.h
   )
 
-if(CTK_USE_CHARTS)
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(PLUGIN_SRCS
       ctkVTKChartViewPlugin.cpp
       ctkVTKChartViewPlugin.h

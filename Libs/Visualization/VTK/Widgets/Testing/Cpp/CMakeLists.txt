@@ -38,7 +38,7 @@ set(TEST_SOURCES
   ctkVTKWidgetsUtilsTestImageConversion.cpp
   )
 
-if(CTK_USE_CHARTS)
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(TEST_SOURCES
       ctkVTKChartViewTest1.cpp
       ctkVTKVolumePropertyWidgetTest1.cpp
@@ -180,7 +180,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest2 )
 SIMPLE_TEST( ctkTransferFunctionViewTest3 )
 SIMPLE_TEST( ctkTransferFunctionViewTest4 )
 SIMPLE_TEST( ctkTransferFunctionViewTest5 )
-if(CTK_USE_CHARTS)
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
   SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
   SIMPLE_TEST( ctkVTKDiscretizableColorTransferWidgetTest1 )
