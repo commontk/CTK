@@ -9,7 +9,7 @@ set(TEST_SOURCES
   ctkVTKObjectTest1.cpp
   )
 
-if(CTK_USE_CHARTS)
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(TEST_SOURCES
     vtkScalarsToColorsPreviewChartTest1.cpp
     ${TEST_SOURCES})

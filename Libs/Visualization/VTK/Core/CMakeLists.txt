@@ -154,10 +154,6 @@ else()
 endif()
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
-  set(CTK_USE_CHARTS 1)
-endif()
-
-if(${CTK_USE_CHARTS})
   set(KIT_SRCS
     vtkDiscretizableColorTransferChart.cpp
     vtkDiscretizableColorTransferChart.h
@@ -181,7 +177,6 @@ if(${CTK_USE_CHARTS})
       vtkCharts
       ${VTK_LIBRARIES})
   endif()
-  add_definitions(-DCTK_USE_CHARTS)
 
   if(${VTK_VERSION} VERSION_LESS "8.90")
   set(VTK_LIBRARIES
@@ -240,6 +235,11 @@ ctkMacroBuildLib(
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   EXPORT_CUSTOM_CONTENT_FROM_VARIABLE "CTK_VTK_EXPORT_CUSTOM_CONTENT"
+  )
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    $<$<BOOL:CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS>:CTK_USE_CHARTS>
   )
 
 if(CTK_WRAP_PYTHONQT_LIGHT)

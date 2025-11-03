@@ -159,10 +159,6 @@ else()
 endif()
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
-  set(CTK_USE_CHARTS 1)
-endif()
-
-if(${CTK_USE_CHARTS})
   set(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h
@@ -197,7 +193,6 @@ if(${CTK_USE_CHARTS})
       vtkCharts
       ${VTK_LIBRARIES})
   endif()
-  add_definitions(-DCTK_USE_CHARTS)
 endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
