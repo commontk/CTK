@@ -33,20 +33,6 @@ set(PLUGIN_SRCS
   ctkTopicRegistry.h
   )
 
-set(PLUGIN_MOC_SRCS
-  ctkEventBusPlugin_p.h
-  ctkEventDispatcherLocal.h
-  ctkEventBusManager.h
-  ctkEventHandlerWrapper_p.h
-  ctkEventDispatcher.h
-  ctkNetworkConnectorQXMLRPC.h
-  ctkNetworkConnector.h
-  ctkEventDispatcherRemote.h
-  ctkNetworkConnectorZeroMQ.h
-  ctkNetworkConnectorQtSoap.h
-  ctkEventBusImpl_p.h
-  )
-
 set(PLUGIN_UI_FORMS
 
   )
@@ -61,7 +47,6 @@ ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
   UI_FORMS ${PLUGIN_UI_FORMS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   CACHED_RESOURCEFILES ${PLUGIN_CACHED_RESOURCEFILES}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}

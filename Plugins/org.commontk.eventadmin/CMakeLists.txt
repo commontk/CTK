@@ -84,26 +84,6 @@ set(PLUGIN_SRCS
   util/ctkEATimeoutException_p.h
 )
 
-set(PLUGIN_MOC_SRCS
-  adapter/ctkEAFrameworkEventAdapter_p.h
-  adapter/ctkEALogEventAdapter_p.h
-  adapter/ctkEAPluginEventAdapter_p.h
-  adapter/ctkEAServiceEventAdapter_p.h
-
-  dispatch/ctkEAInterruptibleThread_p.h
-  dispatch/ctkEASignalPublisher_p.h
-  dispatch/ctkEASyncMasterThread_p.h
-
-  handler/ctkEASlotHandler_p.h
-
-  tasks/ctkEASyncThread_p.h
-
-  ctkEAConfiguration_p.h
-  ctkEAMetaTypeProvider_p.h
-  ctkEventAdminActivator_p.h
-  ctkEventAdminService_p.h
-)
-
 set(PLUGIN_resources
 
 )
@@ -121,7 +101,6 @@ endif()
 ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   CACHED_RESOURCEFILES ${PLUGIN_CACHED_RESOURCEFILES}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}

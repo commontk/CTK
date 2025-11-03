@@ -9,11 +9,6 @@ set(PLUGIN_SRCS
   ctkPluginFrameworkPerfRegistryTestSuite.cpp
 )
 
-set(PLUGIN_MOC_SRCS
-  ctkPluginFrameworkTestPerfActivator_p.h
-  ctkPluginFrameworkPerfRegistryTestSuite_p.h
-)
-
 set(PLUGIN_UI_FORMS
 
 )
@@ -32,7 +27,6 @@ ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   UI_FORMS ${PLUGIN_UI_FORMS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}

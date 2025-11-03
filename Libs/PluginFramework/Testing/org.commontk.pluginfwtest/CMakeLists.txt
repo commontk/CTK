@@ -9,13 +9,6 @@ set(PLUGIN_SRCS
   ctkServiceTrackerTestSuite.cpp
 )
 
-set(PLUGIN_MOC_SRCS
-  ctkPluginFrameworkTestActivator_p.h
-  ctkPluginFrameworkTestSuite_p.h
-  ctkServiceListenerTestSuite_p.h
-  ctkServiceTrackerTestSuite_p.h
-)
-
 set(PLUGIN_UI_FORMS
 
 )
@@ -30,7 +23,6 @@ ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   UI_FORMS ${PLUGIN_UI_FORMS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries} ${fwtestutil_lib}
