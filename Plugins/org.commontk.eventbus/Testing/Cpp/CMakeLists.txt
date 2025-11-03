@@ -11,7 +11,6 @@ macro(ctkMacroInitProject test)
   file(GLOB templete_file_list1 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
   file(GLOB templete_file_list2 "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
   file(GLOB resource_file_list "${CMAKE_CURRENT_SOURCE_DIR}/*.qrc")
-  file(GLOB ui_file_list "${CMAKE_CURRENT_SOURCE_DIR}/*.ui")
 
   # Set your list of sources here.
   set(PROJECT_SRCS
@@ -19,7 +18,6 @@ macro(ctkMacroInitProject test)
         ${include_file_list}
         ${templete_file_list1}
         ${templete_file_list2}
-        ${ui_file_list}
         ${resource_file_list}
   )
 
@@ -48,7 +46,6 @@ macro(ctkMacroInitProject test)
     ## Moc the library's .h files
     if(CTK_QT_VERSION VERSION_EQUAL "5")
       QT5_WRAP_CPP(MY_MOC_CXX ${include_file_list})
-      QT5_WRAP_UI(MY_UI_CXX ${ui_file_list})
       #QT5_ADD_RESOURCES(MY_RESOURCE_CXX ${resource_file_list})
     else()
       message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
@@ -59,7 +56,6 @@ macro(ctkMacroInitProject test)
   set(PROJECT_SRCS
     ${PROJECT_SRCS}
     ${MY_MOC_CXX}
-    ${MY_UI_CXX}
     ${resource_file_list}
     )
 
@@ -75,6 +71,13 @@ ctkMacroInitproject(1)
 
 ctk_add_executable_utf8(${test_executable} ${PROJECT_SRCS})
 target_link_libraries(${test_executable} ${PROJECT_LIBS})
+
+# Configure CMake Qt automatic code generation
+set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}")
+set_target_properties(${test_executable} PROPERTIES
+  AUTOUIC ON
+  AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
+  )
 
 add_test(${PROJECT_NAME}Tests ${CPP_TEST_PATH}/${test_executable})
 

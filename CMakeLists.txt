@@ -975,6 +975,8 @@ endif()
 #
 ctkMacroSetupQt()
 
+set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
+
 #-----------------------------------------------------------------------------
 include(CMake/ctkBlockCheckDependencies.cmake)
 

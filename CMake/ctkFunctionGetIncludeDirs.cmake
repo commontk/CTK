@@ -53,6 +53,21 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
              )
       endif()
 
+      list(APPEND _include_dirs
+        # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
+        #
+        # By default CMake writes them to:
+        #   <AUTOGEN_BUILD_DIR>/include
+        #
+        # where AUTOGEN_BUILD_DIR defaults to:
+        #   <target-binary-dir>/<target-name>_autogen
+        #
+        # References:
+        # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
+        # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
+        ${${dep}_BINARY_DIR}/${dep}_autogen/include
+        )
+
       # For external projects, CTKConfig.cmake contains variables
       # listening the include dirs for CTK libraries and plugins
       if(${dep}_INCLUDE_DIRS)

@@ -63,8 +63,6 @@ macro(ctkMacroBuildLib)
   set(my_includes
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    # with CMake >2.9, use QT4_MAKE_OUTPUT_FILE instead ?
-    ${CMAKE_CURRENT_BINARY_DIR}/Resources/UI
     )
 
   # Add the include directories from the library dependencies
@@ -105,7 +103,6 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
 
   # Make sure variable are cleared
   set(MY_MOC_CPP)
-  set(MY_UI_CPP)
   set(MY_QRC_SRCS)
 
   # Wrap
@@ -122,15 +119,6 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   endif()
   if(MY_GENERATE_MOC_SRCS)
     QT5_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
-  endif()
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    if(Qt5Widgets_FOUND)
-      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
-    elseif(MY_UI_FORMS)
-      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   if(DEFINED MY_RESOURCES AND NOT MY_RESOURCES STREQUAL "")
@@ -149,15 +137,19 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   source_group("Generated" FILES
     ${MY_QRC_SRCS}
     ${MY_MOC_CPP}
-    ${MY_UI_CPP}
     ${MOC_CPP_DECORATOR}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
-    ${MY_UI_CPP}
     ${MY_QRC_SRCS}
+    )
+
+  # Configure CMake Qt automatic code generation
+  set_target_properties(${lib_name} PROPERTIES
+    AUTOUIC ON
+    AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI"
     )
 
   # Set labels associated with the target.
