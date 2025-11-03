@@ -35,6 +35,9 @@
 //----------------------------------------------------------------------------
 struct ctkCmdLineModuleFrontendPrivate
 {
+  Q_GADGET
+
+public:
   ctkCmdLineModuleFrontendPrivate(const ctkCmdLineModuleReference& moduleRef, ctkCmdLineModuleFrontend* q)
     : q(q)
     , ModuleReference(moduleRef)
@@ -207,4 +210,5 @@ void ctkCmdLineModuleFrontend::resultReady(const ctkCmdLineModuleResult &result)
   {}
 }
 
+#include "moc_ctkCmdLineModuleFrontend.cpp"
 #include "ctkCmdLineModuleFrontend.moc"

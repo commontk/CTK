@@ -101,43 +101,23 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  # Make sure variable are cleared
-  set(MY_MOC_CPP)
-
-  # Wrap
-  if(MY_MOC_SRCS)
-    # this is a workaround for Visual Studio. The relative include paths in the generated
-    # moc files can get very long and can't be resolved by the MSVC compiler.
-    if(CTK_QT_VERSION VERSION_EQUAL "5")
-      foreach(moc_src ${MY_MOC_SRCS})
-        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
-      endforeach()
-    else()
-      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-    endif()
-  endif()
-  if(MY_GENERATE_MOC_SRCS)
-    QT5_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS} USE_MOC_EXTENSION)
-  endif()
-
   source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
-  source_group("Generated" FILES
-    ${MY_MOC_CPP}
-    ${MOC_CPP_DECORATOR}
-    )
-
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
     ${MY_RESOURCES}
+    )
+
+  target_compile_definitions(${lib_name} PRIVATE
+    HAVE_QT${CTK_QT_VERSION}
     )
 
   # Configure CMake Qt automatic code generation
   set_target_properties(${lib_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI"

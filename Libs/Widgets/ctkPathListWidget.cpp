@@ -38,6 +38,7 @@
 class ctkPathListWidgetPrivate
 {
   Q_DECLARE_PUBLIC(ctkPathListWidget)
+  Q_GADGET
 
 protected:
   ctkPathListWidget* const q_ptr;
@@ -79,8 +80,6 @@ public:
 
 // --------------------------------------------------------------------------
 // ctkPathListWidgetPrivate methods
-
-#include "ctkPathListWidget.moc"
 
 // --------------------------------------------------------------------------
 ctkPathListWidgetPrivate::ctkPathListWidgetPrivate(ctkPathListWidget& object)
@@ -847,3 +846,6 @@ void ctkPathListWidget::setModel(QAbstractItemModel*)
 {
   Q_ASSERT(!"ctkPathListWidget::setModel() - Changing the model of the ctkPathListWidget is not allowed.");
 }
+
+#include "moc_ctkPathListWidget.cpp"
+#include "ctkPathListWidget.moc"

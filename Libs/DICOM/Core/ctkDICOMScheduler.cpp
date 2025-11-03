@@ -1150,3 +1150,6 @@ void ctkDICOMScheduler::onJobFailed(ctkAbstractJob* job)
 
   ctkJobScheduler::onJobFailed(job);
 }
+
+#include "moc_ctkDICOMScheduler_p.cpp"
+#include "moc_ctkDICOMScheduler.cpp"
