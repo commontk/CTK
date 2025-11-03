@@ -476,4 +476,4 @@ void ctkCmdLineModuleFutureTester::testError()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleFutureTest)
-#include "moc_ctkCmdLineModuleFutureTest.cpp"
+#include "ctkCmdLineModuleFutureTest.moc"

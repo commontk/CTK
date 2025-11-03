@@ -35,7 +35,7 @@ find_package(Qt${CTK_QT_VERSION} COMPONENTS Test REQUIRED)
 set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
 
 if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_generate_mocs(${Tests_MOC_CPPS})
+  qt5_generate_mocs(${Tests_MOC_CPPS} USE_MOC_EXTENSION)
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()

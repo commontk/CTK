@@ -32,6 +32,7 @@ if(CTK_QT_VERSION VERSION_EQUAL "5")
   QT5_GENERATE_MOCS(
     ctkCmdLineModuleFrontendQtGuiTest.cpp
     ctkCmdLineModuleQtXslTransformTest.cpp
+    USE_MOC_EXTENSION
     )
   if(TEST_UI_FORMS)
     QT5_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})

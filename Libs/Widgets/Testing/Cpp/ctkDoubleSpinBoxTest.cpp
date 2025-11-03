@@ -640,4 +640,4 @@ void ctkDoubleSpinBoxTester::testDecimalPointAlwaysVisible_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkDoubleSpinBoxTest)
-#include "moc_ctkDoubleSpinBoxTest.cpp"
+#include "ctkDoubleSpinBoxTest.moc"

@@ -324,4 +324,4 @@ void ctkRangeWidgetTester::testSetRangeSetValues_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkRangeWidgetTest)
-#include "moc_ctkRangeWidgetTest.cpp"
+#include "ctkRangeWidgetTest.moc"

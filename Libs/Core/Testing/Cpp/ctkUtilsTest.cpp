@@ -404,4 +404,4 @@ void ctkUtilsTester::testTakeFirst_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkUtilsTest)
-#include "moc_ctkUtilsTest.cpp"
+#include "ctkUtilsTest.moc"

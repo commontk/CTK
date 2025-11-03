@@ -227,4 +227,4 @@ void ctkCoordinatesWidgetValueProxyTester::testPrecision_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCoordinatesWidgetValueProxyTest)
-#include "moc_ctkCoordinatesWidgetValueProxyTest.cpp"
+#include "ctkCoordinatesWidgetValueProxyTest.moc"

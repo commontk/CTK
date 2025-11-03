@@ -312,4 +312,4 @@ void ctkDICOMBrowserTester::testOnImportDirectory_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkDICOMBrowserTest)
-#include "moc_ctkDICOMBrowserTest.cpp"
+#include "ctkDICOMBrowserTest.moc"
