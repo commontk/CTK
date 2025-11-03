@@ -70,36 +70,19 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
-  # Make sure variable are cleared
-  set(MY_MOC_CPP)
-
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    # Wrap
-    if(MY_MOC_SRCS)
-      # this is a workaround for Visual Studio. The relative include paths in the generated
-      # moc files can get very long and can't be resolved by the MSVC compiler.
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
-      endforeach()
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
-
   source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
-  source_group("Generated" FILES
-    ${MY_MOC_CPP}
-    )
-
   # Create executable
   ctk_add_executable_utf8(${proj_name}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
     ${MY_RESOURCES}
+    )
+
+  target_compile_definitions(${proj_name} PRIVATE
+    HAVE_QT${CTK_QT_VERSION}
     )
 
   # Configure CMake Qt automatic code generation
@@ -114,6 +97,7 @@ macro(ctkMacroBuildApp)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${proj_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
