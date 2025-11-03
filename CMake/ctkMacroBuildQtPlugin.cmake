@@ -80,33 +80,18 @@ macro(ctkMacroBuildQtPlugin)
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  # Make sure variable are cleared
-  set(MY_MOC_CPP)
-
-  # Wrap
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(target)
-    if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
-      set(target TARGET ${MY_LIBNAME})
-    endif()
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS -DHAVE_QT5 ${target})
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
-
   source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
-  source_group("Generated" FILES
-    ${MY_MOC_CPP}
-    )
-
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
     ${MY_RESOURCES}
+    )
+
+  target_compile_definitions(${lib_name} PRIVATE
+    HAVE_QT${CTK_QT_VERSION}
     )
 
   # Configure CMake Qt automatic code generation
@@ -121,6 +106,7 @@ macro(ctkMacroBuildQtPlugin)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
