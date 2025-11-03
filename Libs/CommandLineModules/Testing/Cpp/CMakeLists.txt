@@ -64,22 +64,13 @@ if(CTK_LIB_CommandLineModules/Frontend/QtGui)
   list(APPEND _additional_link_libraries CTKCommandLineModulesFrontendQtGui)
 endif()
 
-set(Tests_MOC_CPP)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-  if(_test_mocs)
-    QT5_GENERATE_MOCS(${_test_mocs} USE_MOC_EXTENSION)
-  endif()
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_RESOURCES})
 target_link_libraries(${KIT}CppTests ${_additional_link_libraries})
 add_dependencies(${KIT}CppTests ctkCmdLineTestModules)
 
 # Configure CMake Qt automatic code generation
 set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
   AUTORCC ON
   )
 

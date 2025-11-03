@@ -106,20 +106,7 @@ if(CTK_USE_QTTESTING)
   ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
 endif()
 
-set(TEST_MOC_CPP)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  if(TEST_MOC_SOURCES)
-    QT5_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
-  endif()
-  QT5_GENERATE_MOCS(
-    ctkVTKPropertyWidgetTest.cpp
-    USE_MOC_EXTENSION
-    )
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_RESOURCES})
 if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
   set(VTK_CHARTS_LIB)
 elseif(${VTK_VERSION_MAJOR} GREATER 5)
@@ -140,6 +127,7 @@ endforeach()
 list(REMOVE_DUPLICATES uic_search_paths)
 
 set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
   AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"

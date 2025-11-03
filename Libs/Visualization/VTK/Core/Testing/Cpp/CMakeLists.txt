@@ -40,13 +40,6 @@ set(KIT_HELPER_SRCS
   ctkVTKObjectTestHelper.cpp
   )
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
-  include_directories(${Qt5Widgets_INCLUDE_DIRS})
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
 #
 # Tests
 #
@@ -64,6 +57,16 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 
 ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${KIT_HELPER_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+
+find_package(Qt${CTK_QT_VERSION} COMPONENTS Widgets REQUIRED)
+target_link_libraries(${KIT}CppTests
+  Qt${CTK_QT_VERSION}::Widgets
+  )
+
+# Configure CMake Qt automatic code generation
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
+  )
 
 #
 # Add Tests

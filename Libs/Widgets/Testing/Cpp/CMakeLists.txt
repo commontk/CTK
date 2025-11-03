@@ -203,42 +203,7 @@ if(CTK_USE_QTTESTING)
   ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
-set(Tests_MOC_CPPS
-  ctkConsoleTest.cpp
-  ctkCoordinatesWidgetTest.cpp
-  ctkCoordinatesWidgetValueProxyTest.cpp
-  ctkDoubleRangeSliderTest.cpp
-  ctkDoubleRangeSliderValueProxyTest.cpp
-  ctkDoubleSliderTest.cpp
-  ctkDoubleSliderValueProxyTest.cpp
-  ctkDoubleSpinBoxTest.cpp
-  ctkDoubleSpinBoxValueProxyTest.cpp
-  ctkFlatProxyModelTest.cpp
-  ctkFontButtonTest.cpp
-  ctkLanguageComboBoxTest.cpp
-  ctkMatrixWidgetTest.cpp
-  ctkMessageBoxDontShowAgainTest.cpp
-  ctkPathListWidgetTest.cpp
-  ctkPathListWidgetWithButtonsTest.cpp
-  ctkPushButtonTest.cpp
-  ctkRangeSliderTest.cpp
-  ctkRangeWidgetTest.cpp
-  ctkRangeWidgetValueProxyTest.cpp
-  ctkSearchBoxTest.cpp
-  ctkSettingsPanelTest.cpp
-  ctkSliderWidgetTest.cpp
-  ctkSliderWidgetValueProxyTest.cpp
-  )
-
-set(Tests_MOC_CPP)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_wrap_cpp(Tests_MOC_CPP ${Tests_MOC_SRCS})
-  qt5_generate_mocs(${Tests_MOC_CPPS} USE_MOC_EXTENSION)
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_RESOURCES})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 # Configure CMake Qt automatic code generation
@@ -253,6 +218,7 @@ endforeach()
 list(REMOVE_DUPLICATES uic_search_paths)
 
 set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
   AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
