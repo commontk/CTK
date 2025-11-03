@@ -1,9 +1,18 @@
 
-# QT5_GENERATE_MOCS(inputfile1 [inputfile2 ...])
+# QT5_GENERATE_MOCS(inputfile1 [inputfile2 ...] [USE_MOC_EXTENSION])
 
 include(MacroAddFileDependencies)
 
 function(_ctk_generate_mocs)
+  set(options
+    USE_MOC_EXTENSION
+    )
+  set(oneValueArgs
+    )
+  set(multiValueArgs
+    )
+  cmake_parse_arguments(CTK_GENERATE_MOCS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     if(Qt5_VERSION VERSION_LESS "5.15.0")
       QT5_GET_MOC_FLAGS(_moc_flags)
@@ -14,21 +23,25 @@ function(_ctk_generate_mocs)
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
-  foreach(file ${ARGN})
+  foreach(file IN LISTS CTK_GENERATE_MOCS_UNPARSED_ARGUMENTS)
 
     get_filename_component(abs_file ${file} ABSOLUTE)
 
     get_filename_component(source_name ${file} NAME_WE)
-    get_filename_component(source_ext ${file} EXT)
-    if(${source_ext} MATCHES "\\.[hH]")
-      if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${source_name}.cpp)
-        set(source_ext .cpp)
-      elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${source_name}.cxx)
-        set(source_ext .cxx)
-      endif()
-    endif()
 
-    set(moc_file ${CMAKE_CURRENT_BINARY_DIR}/moc_${source_name}${source_ext})
+    if(CTK_GENERATE_MOCS_USE_MOC_EXTENSION)
+      set(moc_file "${CMAKE_CURRENT_BINARY_DIR}/${source_name}.moc")
+    else()
+      get_filename_component(source_ext ${file} EXT)
+      if(${source_ext} MATCHES "\\.[hH]")
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${source_name}.cpp)
+          set(source_ext .cpp)
+        elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${source_name}.cxx)
+          set(source_ext .cxx)
+        endif()
+      endif()
+      set(moc_file "${CMAKE_CURRENT_BINARY_DIR}/moc_${source_name}${source_ext}")
+    endif()
 
     if(CTK_QT_VERSION VERSION_EQUAL "5")
       if(Qt5_VERSION VERSION_LESS "5.6")
