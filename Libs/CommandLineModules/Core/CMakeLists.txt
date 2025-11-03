@@ -53,19 +53,6 @@ set(KIT_SRCS
   ctkCmdLineModuleXslTransform.cpp
 )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkCmdLineModuleDirectoryWatcher.h
-  ctkCmdLineModuleDirectoryWatcher_p.h
-  ctkCmdLineModuleFutureWatcher.h
-  ctkCmdLineModuleManager.h
-)
-
-set(KIT_GENERATE_MOC_SRCS
-  ctkCmdLineModuleFrontend.h
-  ctkCmdLineModuleXmlProgressWatcher.h
-)
-
 # UI files
 set(KIT_UI_FORMS
 )
@@ -89,8 +76,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
-  GENERATE_MOC_SRCS ${KIT_GENERATE_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

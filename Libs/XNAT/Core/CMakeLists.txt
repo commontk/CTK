@@ -35,15 +35,6 @@ set(KIT_SRCS
   ctkXnatTreeModel.cpp
 )
 
-# Files which should be processed by Qts moc
-set(KIT_MOC_SRCS
-  ctkXnatAPI_p.h
-  ctkXnatSession.h
-  ctkXnatListModel.h
-  ctkXnatTreeModel.h
-)
-
-
 # Resources
 set(KIT_resources
 )
@@ -60,7 +51,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

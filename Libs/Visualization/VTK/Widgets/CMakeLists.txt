@@ -114,35 +114,6 @@ set(KIT_SRCS
   ctkVTKWidgetsUtils.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkVTKAbstractMatrixWidget_p.h
-  ctkVTKAbstractView.h
-  ctkVTKAbstractView_p.h
-  ctkVTKColorTransferFunction.h
-  ctkVTKCompositeFunction.h
-  ctkVTKDataSetArrayComboBox.h
-  ctkVTKDataSetModel.h
-  ctkVTKHistogram.h
-  ctkVTKLookupTable.h
-  ctkVTKMagnifyView.h
-  ctkVTKMagnifyView_p.h
-  ctkVTKMatrixWidget.h
-  ctkVTKOpenGLNativeWidget.h
-  ctkVTKPiecewiseFunction.h
-  ctkVTKPropertyWidget.h
-  ctkVTKRenderView.h
-  ctkVTKRenderView_p.h
-  ctkVTKScalarBarWidget.h
-  ctkVTKScalarsToColorsComboBox.h
-  ctkVTKSliceView.h
-  ctkVTKSliceView_p.h
-  ctkVTKSurfaceMaterialPropertyWidget.h
-  ctkVTKTextPropertyWidget.h
-  ctkVTKThresholdWidget.h
-  ctkVTKThumbnailView.h
-  )
-
 # UI files
 set(KIT_UI_FORMS
   Resources/UI/ctkVTKDiscretizableColorTransferWidget.ui
@@ -301,7 +272,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

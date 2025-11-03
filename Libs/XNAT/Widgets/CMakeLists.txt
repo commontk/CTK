@@ -10,12 +10,6 @@ set(KIT_SRCS
   ctkXnatLoginDialog.cpp
 )
 
-# Files which should be processed by Qts moc
-set(KIT_MOC_SRCS
-  ctkXnatLoginDialog.h
-)
-
-
 # UI forms
 set(KIT_UI_FORMS
   ctkXnatLoginDialog.ui
@@ -37,7 +31,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

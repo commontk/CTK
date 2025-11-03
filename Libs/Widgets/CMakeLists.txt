@@ -217,115 +217,6 @@ set(KIT_SRCS
   ctkWorkflowWidgetStep.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkActionsWidget.h
-  ctkAxesWidget.h
-  ctkAddRemoveComboBox.h
-  ctkBasePopupWidget.h
-  ctkBasePopupWidget_p.h
-  ctkButtonGroup.h
-  ctkCheckableComboBox.h
-  ctkCheckableHeaderView.h
-  ctkCheckableModelHelper.h
-  ctkCheckablePushButton.h
-  ctkCheckBox.h
-  ctkCheckBoxPixmaps.h
-  ctkComboBox.h
-  ctkCompleter.h
-  ctkCollapsibleButton.h
-  ctkCollapsibleGroupBox.h
-  ctkColorDialog.h
-  ctkColorPickerButton.h
-  ctkConsole.h
-  ctkConsole_p.h
-  ctkCoordinatesWidget.h
-  ctkCoordinatesWidget_p.h
-  ctkCrosshairLabel.h
-  ctkDateRangeWidget.h
-  ctkDirectoryButton.h
-  ctkDoubleRangeSlider.h
-  ctkDoubleSlider.h
-  ctkDoubleSpinBox.h
-  ctkDoubleSpinBox_p.h
-  ctkDynamicSpacer.h
-  ctkErrorLogModel.h
-  ctkErrorLogWidget.h
-  ctkErrorLogStatusMessageHandler.h
-  ctkExpandButton.h
-  ctkExpandableWidget.h
-  ctkFileDialog.h
-  ctkFittedTextBrowser.h
-  ctkFlatProxyModel.h
-  ctkFlowLayout.h
-  ctkFontButton.h
-  ctkHistogram.h
-  ctkLanguageComboBox.h
-  ctkLayoutFactory.h
-  ctkLayoutManager.h
-  ctkLayoutViewFactory.h
-  ctkMaterialPropertyPreviewLabel.h
-  ctkMaterialPropertyWidget.h
-  ctkMatrixWidget.h
-  ctkMenuButton.h
-  ctkMenuComboBox.h
-  ctkMenuComboBox_p.h
-  ctkMessageBox.h
-  ctkModalityWidget.h
-  ctkPathListButtonsWidget.h
-  ctkPathListButtonsWidget_p.h
-  ctkPopupWidget.h
-  ctkPopupWidget_p.h
-  ctkProxyStyle.h
-  ctkPushButton.h
-  ctkQImageView.h
-  ctkRangeSlider.h
-  ctkRangeWidget.h
-  ctkScreenshotDialog.h
-  ctkScreenshotDialog_p.h
-  ctkSearchBox.h
-  ctkSettings.h
-  ctkSettingsDialog.h
-  ctkSettingsPanel.h
-  ctkSignalMapper.h
-  ctkSizeGrip.h
-  ctkSliderWidget.h
-  ctkTestApplication.h
-  ctkThumbnailLabel.h
-  ctkThumbnailListWidget.h
-  ctkToolTipTrapper.h
-  ctkTransferFunction.h
-  ctkTransferFunctionBarsItem.h
-  ctkTransferFunctionControlPointsItem.h
-  ctkTransferFunctionGradientItem.h
-  ctkTransferFunctionItem.h
-  ctkTransferFunctionRepresentation.h
-  ctkTransferFunctionScene.h
-  ctkTransferFunctionView.h
-  ctkTreeComboBox.h
-  ctkWorkflowAbstractPagedWidget.h
-  ctkWorkflowButtonBoxWidget.h
-  ctkWorkflowGroupBox.h
-  ctkWorkflowStackedWidget.h
-  ctkWorkflowTabWidget.h
-  ctkWorkflowWidget.h
-  ctkWorkflowWidgetStep.h
-  ctkWorkflowWidgetStep_p.h
-  )
-
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt5.h)
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
-# Headers that should run through moc without adding
-# the generated cpp file to the source list
-set(KIT_GENERATE_MOC_SRCS
-  ctkPathLineEdit.h
-  ctkPathListWidget.h
-  )
-
 # UI files
 set(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
@@ -410,35 +301,6 @@ if(CTK_USE_QTTESTING)
     ctkTreeComboBoxEventTranslator.cpp
     ctkTreeComboBoxEventTranslator.h
     )
-  list(APPEND KIT_MOC_SRCS
-    ctkAxesWidgetEventPlayer.h
-    ctkAxesWidgetEventTranslator.h
-    ctkCheckableComboBoxEventPlayer.h
-    ctkCheckableComboBoxEventTranslator.h
-    ctkCheckableHeaderViewEventPlayer.h
-    ctkCheckableHeaderViewEventTranslator.h
-    ctkCheckableModelHelper.h
-    ctkConsoleEventPlayer.h
-    ctkConsoleEventTranslator.h
-    ctkDoubleRangeSliderEventPlayer.h
-    ctkDoubleRangeSliderEventTranslator.h
-    ctkFileDialogEventPlayer.h
-    ctkFileDialogEventTranslator.h
-    ctkFontButtonEventPlayer.h
-    ctkFontButtonEventTranslator.h
-    ctkMatrixWidgetEventPlayer.h
-    ctkMatrixWidgetEventTranslator.h
-    ctkMenuComboBoxEventPlayer.h
-    ctkMenuComboBoxEventTranslator.h
-    ctkPathLineEditEventPlayer.h
-    ctkPathLineEditEventTranslator.h
-    ctkPopupWidgetEventPlayer.h
-    ctkPopupWidgetEventTranslator.h
-    ctkRangeSliderEventPlayer.h
-    ctkRangeSliderEventTranslator.h
-    ctkTreeComboBoxEventPlayer.h
-    ctkTreeComboBoxEventTranslator.h
-    )
   list(APPEND KIT_target_libraries QtTesting)
 endif()
 
@@ -446,8 +308,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
-  GENERATE_MOC_SRCS ${KIT_GENERATE_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
