@@ -28,7 +28,6 @@
 
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_PROJECT_NAME_MARKER = "plugin_project_name";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_SRCS_MARKER = "plugin_srcs";
-const QString ctkPluginGeneratorCMakeLists::PLUGIN_MOC_SRCS_MARKER = "plugin_moc_srcs";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_RESOURCES_MARKER = "plugin_resources";
 const QString ctkPluginGeneratorCMakeLists::PLUGIN_UI_FORMS_MARKER = "plugin_ui_forms";
 
@@ -48,18 +47,6 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
     << "SET(PLUGIN_SRCS\n";
 
   QStringList markerContent = this->getContent(PLUGIN_SRCS_MARKER);
-  markerContent.sort();
-  for (QStringListIterator it(markerContent); it.hasNext();)
-  {
-    stream << "  " << it.next() << "\n";
-  }
-
-  stream
-    << ")\n\n"
-    << "# Files which should be processed by Qts moc\n"
-    << "SET(PLUGIN_MOC_SRCS\n";
-
-  markerContent = this->getContent(PLUGIN_MOC_SRCS_MARKER);
   markerContent.sort();
   for (QStringListIterator it(markerContent); it.hasNext();)
   {
@@ -98,7 +85,6 @@ QString ctkPluginGeneratorCMakeLists::generateContent()
     << "  NAME ${PROJECT_NAME}\n"
     << "  EXPORT_DIRECTIVE ${PLUGIN_export_directive}\n"
     << "  SRCS ${PLUGIN_SRCS}\n"
-    << "  MOC_SRCS ${PLUGIN_MOC_SRCS}\n"
     << "  UI_FORMS ${PLUGIN_UI_FORMS}\n"
     << "  RESOURCES ${PLUGIN_resources}\n"
     << "  TARGET_LIBRARIES ${PLUGIN_target_libraries}\n"
@@ -113,7 +99,6 @@ QStringList ctkPluginGeneratorCMakeLists::getMarkers() const
 
   markers << PLUGIN_PROJECT_NAME_MARKER
       << PLUGIN_SRCS_MARKER
-      << PLUGIN_MOC_SRCS_MARKER
       << PLUGIN_RESOURCES_MARKER;
 
   return markers;

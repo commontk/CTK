@@ -33,7 +33,6 @@ public:
 
   static const QString PLUGIN_PROJECT_NAME_MARKER;
   static const QString PLUGIN_SRCS_MARKER;
-  static const QString PLUGIN_MOC_SRCS_MARKER;
   static const QString PLUGIN_RESOURCES_MARKER;
   static const QString PLUGIN_UI_FORMS_MARKER;
 
