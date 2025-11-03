@@ -80,7 +80,7 @@ public:
 // --------------------------------------------------------------------------
 // ctkPathListWidgetPrivate methods
 
-#include "moc_ctkPathListWidget.cpp"
+#include "ctkPathListWidget.moc"
 
 // --------------------------------------------------------------------------
 ctkPathListWidgetPrivate::ctkPathListWidgetPrivate(ctkPathListWidget& object)

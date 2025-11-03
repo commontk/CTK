@@ -304,4 +304,4 @@ void ctkPathListWidgetTester::testEditPaths()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkPathListWidgetTest)
-#include "moc_ctkPathListWidgetTest.cpp"
+#include "ctkPathListWidgetTest.moc"

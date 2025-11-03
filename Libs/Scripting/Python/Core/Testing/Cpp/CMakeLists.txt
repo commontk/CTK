@@ -19,6 +19,7 @@ set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   QT5_GENERATE_MOCS(
     ctkAbstractPythonManagerTest.cpp
+    USE_MOC_EXTENSION
     )
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")

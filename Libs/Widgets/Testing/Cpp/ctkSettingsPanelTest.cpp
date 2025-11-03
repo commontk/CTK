@@ -422,4 +422,4 @@ void ctkSettingsPanelTester::testResetRestoreReloadSettings_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkSettingsPanelTest)
-#include "moc_ctkSettingsPanelTest.cpp"
+#include "ctkSettingsPanelTest.moc"

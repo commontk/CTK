@@ -195,4 +195,4 @@ void ctkCmdLineModuleXmlProgressWatcherTester::testMalformedXml()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkCmdLineModuleXmlProgressWatcherTest)
-#include "moc_ctkCmdLineModuleXmlProgressWatcherTest.cpp"
+#include "ctkCmdLineModuleXmlProgressWatcherTest.moc"

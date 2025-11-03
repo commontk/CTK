@@ -426,4 +426,4 @@ void ctkDoubleRangeSliderValueProxyTester::testSetPositionCommonData()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkDoubleRangeSliderValueProxyTest)
-#include "moc_ctkDoubleRangeSliderValueProxyTest.cpp"
+#include "ctkDoubleRangeSliderValueProxyTest.moc"

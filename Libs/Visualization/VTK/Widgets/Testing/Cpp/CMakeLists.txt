@@ -113,6 +113,7 @@ if(CTK_QT_VERSION VERSION_EQUAL "5")
   endif()
   QT5_GENERATE_MOCS(
     ctkVTKPropertyWidgetTest.cpp
+    USE_MOC_EXTENSION
     )
   if(TEST_UI_FORMS)
     QT5_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})

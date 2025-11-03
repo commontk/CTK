@@ -101,4 +101,4 @@ void ctkLanguageComboBoxTester::testSetDefaultLanguage_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkLanguageComboBoxTest)
-#include "moc_ctkLanguageComboBoxTest.cpp"
+#include "ctkLanguageComboBoxTest.moc"
