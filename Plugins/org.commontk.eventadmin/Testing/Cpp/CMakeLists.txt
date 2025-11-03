@@ -2,12 +2,6 @@ set(SRCS
   ctkEventAdminImplTestMain.cpp
 )
 
-set(MOC_SRCS )
-
-set(MY_MOC_CXX )
-
-#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
-
 # Create a test for this EventAdmin implementation
 
 set(test_executable ${PROJECT_NAME}CppTests)

@@ -1,4 +1,4 @@
-macro(ctkMacroInitProject test)
+macro(ctkMacroInitProject)
 
   # Extract current directory name to use as project name
   #file(GLOB CUR_FILE "CMakeLists.txt")
@@ -24,37 +24,8 @@ macro(ctkMacroInitProject test)
   ## Add the project binary dir as include dir for the .moc files.
   include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-  set(MY_MOC_CXX )
-  if(${test})
-    ## Moc the tests:
-    foreach(FILE_NAME_ABS ${implementation_file_list})
-      ## extract the base file name.
-      get_filename_component(FILE_NAME ${FILE_NAME_ABS} NAME_WE)
-      ## Exclude the main.cpp file (it doesn't need to be 'mocced')
-      if(NOT ${FILE_NAME} STREQUAL "main")
-        ## Assign the moc custom filename
-        set(MOC_FILE "${FILE_NAME}.moc")
-        if(CTK_QT_VERSION VERSION_EQUAL "5")
-          QT5_GENERATE_MOC(${FILE_NAME_ABS} ${MOC_FILE})
-        else()
-          message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-        endif()
-        list(APPEND MY_MOC_CXX "${CMAKE_CURRENT_BINARY_DIR}/${MOC_FILE}")
-      endif()
-    endforeach()
-  else()
-    ## Moc the library's .h files
-    if(CTK_QT_VERSION VERSION_EQUAL "5")
-      QT5_WRAP_CPP(MY_MOC_CXX ${include_file_list})
-    else()
-      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-    endif()
-
-  endif()
-
   set(PROJECT_SRCS
     ${PROJECT_SRCS}
-    ${MY_MOC_CXX}
     ${resource_file_list}
     )
 
@@ -66,7 +37,7 @@ endmacro()
 
 set(test_executable ${PROJECT_NAME}CppTests)
 
-ctkMacroInitproject(1)
+ctkMacroInitproject()
 
 ctk_add_executable_utf8(${test_executable} ${PROJECT_SRCS})
 target_link_libraries(${test_executable} ${PROJECT_LIBS})
@@ -74,6 +45,7 @@ target_link_libraries(${test_executable} ${PROJECT_LIBS})
 # Configure CMake Qt automatic code generation
 set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(${test_executable} PROPERTIES
+  AUTOMOC ON
   AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"

@@ -27,16 +27,6 @@ include_directories(
  )
 
 #
-# Test helpers
-#
-
-#set(KIT_HELPER_SRCS
-#  ctkVTKObjectTestHelper.cpp
-#  )
-
-#QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
-
-#
 # Tests
 #
 

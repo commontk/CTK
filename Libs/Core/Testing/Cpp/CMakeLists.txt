@@ -87,26 +87,6 @@ set(Tests_Helpers_SRCS
   ctkSingletonTestHelper.h
   )
 
-set(Tests_Helpers_MOC_SRCS
-  ctkExampleWorkflowStepUsingSignalsAndSlots.h
-  )
-
-set(Tests_Helpers_MOC_CPPS
-  ctkBooleanMapperTest.cpp
-  ctkCoreSettingsTest.cpp
-  ctkFileLoggerTest.cpp
-  ctkLinearValueProxyTest.cpp
-  ctkUtilsTest.cpp
-  )
-
-set(Tests_Helpers_MOC_CPP)
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-  qt5_generate_mocs(${Tests_Helpers_MOC_CPPS} USE_MOC_EXTENSION)
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
 if(HAVE_BFD)
   ctk_add_executable_utf8(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
 endif()
@@ -125,6 +105,11 @@ find_package(Qt${CTK_QT_VERSION} COMPONENTS Test Widgets REQUIRED)
 target_link_libraries(${KIT}CppTests
   Qt${CTK_QT_VERSION}::Test
   Qt${CTK_QT_VERSION}::Widgets
+  )
+
+# Configure CMake Qt automatic code generation
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
   )
 
 if(UNIX AND NOT APPLE)
