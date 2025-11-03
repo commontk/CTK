@@ -56,31 +56,6 @@ set(KIT_SRCS
   ctkDICOMVisualBrowserWidget.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkDICOMAppWidget.h
-  ctkDICOMBrowser.h
-  ctkDICOMItemView.h
-  ctkDICOMDirectoryListWidget.h
-  ctkDICOMImage.h
-  ctkDICOMImportWidget.h
-  ctkDICOMJobListWidget.h
-  ctkDICOMMetadataDialog.h
-  ctkDICOMObjectListWidget.h
-  ctkDICOMObjectModel.h
-  ctkDICOMQueryRetrieveWidget.h
-  ctkDICOMQueryWidget.h
-  ctkDICOMPatientItemWidget.h
-  ctkDICOMSeriesItemWidget.h
-  ctkDICOMServerNodeWidget.h
-  ctkDICOMServerNodeWidget2.h
-  ctkDICOMStudyItemWidget.h
-  ctkDICOMTableManager.h
-  ctkDICOMTableView.h
-  ctkDICOMThumbnailListWidget.h
-  ctkDICOMVisualBrowserWidget.h
-  )
-
 # UI files - includes new widgets
 set(KIT_UI_FORMS
   Resources/UI/ctkDICOMAppWidget.ui
@@ -117,7 +92,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

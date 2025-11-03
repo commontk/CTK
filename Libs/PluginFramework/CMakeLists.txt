@@ -135,16 +135,6 @@ set(KIT_SRCS
   service/metatype/ctkObjectClassDefinition.h
   )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkBasicLocation_p.h
-  ctkDefaultApplicationLauncher_p.h
-  ctkPluginFrameworkDebugOptions_p.h
-  ctkPluginFrameworkListeners_p.h
-  ctkTrackedPluginListener_p.h
-  ctkTrackedServiceListener_p.h
-)
-
 # UI files
 set(KIT_UI_FORMS
 )
@@ -174,7 +164,6 @@ ctkMacroBuildLib(
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${CTK_SUPERBUILD_BINARY_DIR}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

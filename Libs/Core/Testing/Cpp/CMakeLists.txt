@@ -5,7 +5,6 @@ ctkMacroBuildLib(
   NAME "CTKDummyPlugin"
   EXPORT_DIRECTIVE "CTK_DUMMY_EXPORT"
   SRCS ctkDummyPlugin.h ctkDummyPlugin.cpp
-  MOC_SRCS "ctkDummyPlugin.h"
   TARGET_LIBRARIES ${CTK_BASE_LIBRARIES}
   LIBRARY_TYPE "SHARED"
   )

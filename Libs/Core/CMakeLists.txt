@@ -105,34 +105,6 @@ if(HAVE_BFD)
     )
 endif()
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkAbstractJob.h
-  ctkAbstractWorker.h
-  ctkBooleanMapper.h
-  ctkCallback.h
-  ctkCommandLineParser.h
-  ctkCoreSettings.h
-  ctkErrorLogAbstractMessageHandler.h
-  ctkErrorLogAbstractModel.h
-  ctkErrorLogFDMessageHandler_p.h
-  ctkErrorLogLevel.h
-  ctkErrorLogQtMessageHandler.h
-  ctkErrorLogTerminalOutput.h
-  ctkFileLogger.h
-  ctkJobScheduler.h
-  ctkJobScheduler_p.h
-  ctkLinearValueProxy.h
-  ctkLogger.h
-  ctkModelTester.h
-  ctkErrorLogQtMessageHandler.h
-  ctkValueProxy.h
-  ctkWorkflow.h
-  ctkWorkflow_p.h
-  ctkWorkflowStep_p.h
-  ctkWorkflowTransitions.h
-  )
-
 # Abstract class should not be wrapped !
 set_source_files_properties(
   ctkAbstractJob.h
@@ -162,7 +134,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

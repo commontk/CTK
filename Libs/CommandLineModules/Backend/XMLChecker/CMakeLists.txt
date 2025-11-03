@@ -18,10 +18,6 @@ set(KIT_SRCS
   ctkCmdLineModuleBackendXMLChecker.cpp
 )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-)
-
 # UI files
 set(KIT_UI_FORMS
 )
@@ -38,7 +34,6 @@ ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
