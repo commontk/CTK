@@ -82,20 +82,14 @@ macro(ctkMacroBuildQtPlugin)
 
   # Make sure variable are cleared
   set(MY_MOC_CPP)
-  set(MY_QRC_SRCS)
 
   # Wrap
-  set(MY_QRC_SRCS "")
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     set(target)
     if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
       set(target TARGET ${MY_LIBNAME})
     endif()
     qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS -DHAVE_QT5 ${target})
-
-    if(DEFINED MY_RESOURCES)
-      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
-    endif()
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -107,13 +101,12 @@ macro(ctkMacroBuildQtPlugin)
 
   source_group("Generated" FILES
     ${MY_MOC_CPP}
-    ${MY_QRC_SRCS}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
     ${MY_MOC_CPP}
-    ${MY_QRC_SRCS}
+    ${MY_RESOURCES}
     )
 
   # Configure CMake Qt automatic code generation
@@ -128,6 +121,7 @@ macro(ctkMacroBuildQtPlugin)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
     )

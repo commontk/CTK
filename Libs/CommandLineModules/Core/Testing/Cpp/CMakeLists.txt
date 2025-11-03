@@ -23,7 +23,6 @@ include_directories(
   )
 
 set(Tests_MOC_CPP)
-set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
   QT5_GENERATE_MOCS(
@@ -31,12 +30,17 @@ if(CTK_QT_VERSION VERSION_EQUAL "5")
     ctkCmdLineModuleXmlProgressWatcherTest.cpp
     USE_MOC_EXTENSION
     )
-  QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 else()
   message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_RESOURCES})
+
+# Configure CMake Qt automatic code generation
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTORCC ON
+  )
+
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 target_link_libraries(${KIT}CppTests Qt${CTK_QT_VERSION}::Test)

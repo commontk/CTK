@@ -46,7 +46,6 @@ macro(ctkMacroInitProject test)
     ## Moc the library's .h files
     if(CTK_QT_VERSION VERSION_EQUAL "5")
       QT5_WRAP_CPP(MY_MOC_CXX ${include_file_list})
-      #QT5_ADD_RESOURCES(MY_RESOURCE_CXX ${resource_file_list})
     else()
       message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
     endif()
@@ -75,6 +74,7 @@ target_link_libraries(${test_executable} ${PROJECT_LIBS})
 # Configure CMake Qt automatic code generation
 set(uic_search_paths "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(${test_executable} PROPERTIES
+  AUTORCC ON
   AUTOUIC ON
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )

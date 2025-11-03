@@ -4,13 +4,18 @@
 #
 
 #! \ingroup CMakeUtilities
-macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
+function(ctkMacroGeneratePluginResourceFile PLUGIN_RESOURCES_FILEPATH_VAR)
 
   CtkMacroParseArguments(MY
     "NAME;PREFIX;RESOURCES;BINARY_RESOURCES"
-    ""
+    "SKIP_QT5_ADD_RESOURCES"
     ${ARGN}
     )
+
+  # Defaults
+  if(NOT DEFINED MY_SKIP_QT5_ADD_RESOURCES)
+    set(MY_SKIP_QT5_ADD_RESOURCES FALSE)
+  endif()
 
   set(_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}")
 
@@ -38,10 +43,16 @@ macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 </RCC>
 ")
   configure_file("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    QT5_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
 
-endmacro()
+  if(MY_SKIP_QT5_ADD_RESOURCES)
+    set(${PLUGIN_RESOURCES_FILEPATH_VAR} "${_qrc_filepath}" PARENT_SCOPE)
+  else()
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      QT5_ADD_RESOURCES(_qrc_src ${_qrc_filepath})
+    else()
+      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+    endif()
+    set(QRC_SRCS_VAR "${PLUGIN_RESOURCES_FILEPATH_VAR}")
+    set(${QRC_SRCS_VAR} ${_qrc_src} PARENT_SCOPE)
+  endif()
+endfunction()
