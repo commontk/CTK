@@ -353,6 +353,8 @@ void ctkVTKChartView::setChartUserExtent(double* userExtent)
   axis->SetRange(userExtent[4], userExtent[5]);
   axis = chart->GetAxis(vtkAxis::RIGHT);
   axis->SetRange(userExtent[6], userExtent[7]);
+  // Repaint the scene
+  this->scene()->SetDirty(true);
 }
 
 // ----------------------------------------------------------------------------
@@ -405,6 +407,8 @@ void ctkVTKChartView::setAxesToChartBounds()
       chart->GetAxis(i)->SetRange(bounds[2*i], bounds[2*i+1]);
     }
   }
+  // Repaint the scene
+  this->scene()->SetDirty(true);
 }
 
 // ----------------------------------------------------------------------------
