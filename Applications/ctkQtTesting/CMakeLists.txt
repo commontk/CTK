@@ -10,11 +10,6 @@ set(KIT_SRCS
   ctkQtTestingMainWindow.h
 )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkQtTestingMainWindow.h
-)
-
 # UI files
 set(KIT_UI_FORMS
   ctkQtTestingMainWindow.ui
@@ -31,7 +26,6 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

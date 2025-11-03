@@ -9,11 +9,6 @@ set(KIT_SRCS
   ctkHostAppExampleWidget.cpp
 )
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkHostAppExampleWidget.h
-)
-
 # UI files
 set(KIT_UI_FORMS
   ctkExampleHostMainWindow.ui
@@ -34,7 +29,6 @@ list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Widgets)
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}

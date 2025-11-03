@@ -23,24 +23,6 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
     )
 endif()
 
-# Headers that should run through moc
-set(KIT_MOC_SRCS
-  ctkSimplePythonManager.h
-  ctkSimplePythonQtDecorators.h
-  ctkTestWrappedQProperty.h
-  ctkTestWrappedQInvokable.h
-  ctkTestWrappedSlot.h
-  )
-
-if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  list(APPEND KIT_MOC_SRCS
-    ctkTestWrappedQListOfVTKObject.h
-    ctkTestWrappedVTKObserver.h
-    ctkTestWrappedVTKQInvokable.h
-    ctkTestWrappedVTKSlot.h
-    )
-endif()
-
 # UI files
 set(KIT_UI_FORMS
   )
@@ -112,7 +94,6 @@ configure_file(
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
   SRCS ${KIT_SRCS}
-  MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
