@@ -193,7 +193,6 @@ void ctkPluginGeneratorMainExtension::updateCodeModel(const QHash<QString, QVari
 
   // add project files to CMakeLists.txt
   cmakelistsTemplate->addContent(ctkPluginGeneratorCMakeLists::PLUGIN_SRCS_MARKER, activatorCppTemplate->getFilename());
-  cmakelistsTemplate->addContent(ctkPluginGeneratorCMakeLists::PLUGIN_MOC_SRCS_MARKER, activatorHeaderTemplate->getFilename());
 }
 
 void ctkPluginGeneratorMainExtension::updateParameters()
