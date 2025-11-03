@@ -161,25 +161,7 @@ macro(ctkMacroBuildPlugin)
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
   # Make sure variable are cleared
-  set(MY_MOC_CPP)
   set(MY_RESOURCES)
-
-  # Wrap
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(target)
-    if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
-      set(target TARGET ${lib_name})
-    endif()
-    if(MY_MOC_SRCS)
-      # this is a workaround for Visual Studio. The relative include paths in the generated
-      # moc files can get very long and can't be resolved by the MSVC compiler.
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5 ${MY_MOC_OPTIONS} ${target})
-      endforeach()
-    endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
 
   # Add the generated manifest qrc file
   set(manifest_qrc_filepath )
@@ -262,15 +244,17 @@ macro(ctkMacroBuildPlugin)
     )
 
   source_group("Generated" FILES
-    ${MY_MOC_CPP}
     ${_plugin_qm_files}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
-    ${MY_MOC_CPP}
     ${MY_RESOURCES}
     ${_plugin_qm_files}
+    )
+
+  target_compile_definitions(${lib_name} PRIVATE
+    HAVE_QT${CTK_QT_VERSION}
     )
 
   target_include_directories(${lib_name}
@@ -290,6 +274,7 @@ macro(ctkMacroBuildPlugin)
   list(REMOVE_DUPLICATES uic_search_paths)
 
   set_target_properties(${lib_name} PROPERTIES
+    AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
     AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
