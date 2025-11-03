@@ -100,55 +100,6 @@ set(PLUGIN_SRCS
   ctkWorkflowWidgetStepPlugin.h
   )
 
-# Headers that should run through moc
-set(PLUGIN_MOC_SRCS
-  ctkWidgetsPlugins.h
-
-  ctkActionsWidgetPlugin.h
-  ctkAxesWidgetPlugin.h
-  ctkCheckableComboBoxPlugin.h
-  ctkCheckablePushButtonPlugin.h
-  ctkCheckBoxPlugin.h
-  ctkCollapsibleButtonPlugin.h
-  ctkCollapsibleGroupBoxPlugin.h
-  ctkColorPickerButtonPlugin.h
-  ctkComboBoxPlugin.h
-  ctkCoordinatesWidgetPlugin.h
-  ctkCrosshairLabelPlugin.h
-  ctkDirectoryButtonPlugin.h
-  ctkDoubleRangeSliderPlugin.h
-  ctkDoubleSliderPlugin.h
-  ctkDoubleSpinBoxPlugin.h
-  ctkDynamicSpacerPlugin.h
-  ctkExpandButtonPlugin.h
-  ctkExpandableWidgetPlugin.h
-  #ctkExtensionFactory.h
-  ctkFittedTextBrowserPlugin.h
-  ctkFontButtonPlugin.h
-  ctkLanguageComboBoxPlugin.h
-  ctkMaterialPropertyWidgetPlugin.h
-  ctkMaterialPropertyPreviewLabelPlugin.h
-  ctkMatrixWidgetPlugin.h
-  ctkMenuButtonPlugin.h
-  ctkModalityWidgetPlugin.h
-  ctkPathLineEditPlugin.h
-  ctkPathListButtonsWidgetPlugin.h
-  ctkPathListWidgetPlugin.h
-  ctkPopupWidgetPlugin.h
-  ctkPushButtonPlugin.h
-  ctkRangeSliderPlugin.h
-  ctkRangeWidgetPlugin.h
-  ctkThumbnailLabelPlugin.h
-  ctkTransferFunctionViewPlugin.h
-  ctkTreeComboBoxPlugin.h
-  ctkSearchBoxPlugin.h
-  ctkSettingsPanelPlugin.h
-  ctkSettingsDialogPlugin.h
-  ctkSliderWidgetPlugin.h
-  ctkWorkflowButtonBoxWidgetPlugin.h
-  ctkWorkflowWidgetStepPlugin.h
-  )
-
 # Resources
 set(PLUGIN_resources
   Resources/ctkWidgetsPlugins.qrc
@@ -163,7 +114,6 @@ ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
   SRCS ${PLUGIN_SRCS}
-  MOC_SRCS ${PLUGIN_MOC_SRCS}
   RESOURCES ${PLUGIN_resources}
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
