@@ -42,6 +42,7 @@ static QString FILTER_END = "filter-end";
 //----------------------------------------------------------------------------
 class ctkCmdLineModuleXmlProgressWatcherPrivate
 {
+  Q_GADGET
 public:
 
   ctkCmdLineModuleXmlProgressWatcherPrivate(QIODevice* input, ctkCmdLineModuleXmlProgressWatcher* qq)
@@ -282,4 +283,5 @@ ctkCmdLineModuleXmlProgressWatcher::~ctkCmdLineModuleXmlProgressWatcher()
 {
 }
 
+#include "moc_ctkCmdLineModuleXmlProgressWatcher.cpp"
 #include "ctkCmdLineModuleXmlProgressWatcher.moc"

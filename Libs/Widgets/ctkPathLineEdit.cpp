@@ -250,6 +250,7 @@ void ctkFileCompleter::addPathToIndex(const QString& path)
 class ctkPathLineEditPrivate
 {
   Q_DECLARE_PUBLIC(ctkPathLineEdit);
+  Q_GADGET
 
 protected:
   ctkPathLineEdit* const q_ptr;
@@ -947,4 +948,5 @@ QSize ctkPathLineEdit::sizeHint()const
   return d->recomputeSizeHint(d->SizeHint);
 }
 
+#include "moc_ctkPathLineEdit.cpp"
 #include "ctkPathLineEdit.moc"
