@@ -239,7 +239,7 @@ ctkMacroBuildLib(
 
 target_compile_definitions(${PROJECT_NAME}
   PUBLIC
-    $<$<BOOL:CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS>:CTK_USE_CHARTS>
+    $<$<BOOL:${CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS}>:CTK_USE_CHARTS>
   )
 
 if(CTK_WRAP_PYTHONQT_LIGHT)
