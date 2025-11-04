@@ -22,7 +22,7 @@
 macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    cmake_minimum_required(VERSION 3.16.3)
+    cmake_minimum_required(VERSION 3.20.6)
     find_package(Qt5 COMPONENTS Core)
 
     set(CTK_QT5_COMPONENTS Core)
