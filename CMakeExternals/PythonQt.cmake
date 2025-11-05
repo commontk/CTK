@@ -183,17 +183,78 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   # Launcher script that:
   #  - Extends PATH with the Qt bin dir
   #  - Runs the generator
+  # By default, standard output and standard error will be captured and written into
+  # two files and displayed only if exit code is not zero:
+  #   <CMAKE_BINARY_DIR>/<proj>_<stepname>_step_output.txt
+  #   <CMAKE_BINARY_DIR>/<proj>_<stepname>_step_error.txt
+  #
+  # Logging to files helps prevent CTest or IDE like Visual Studio for improperly
+  # identifying process output as errors or warnings.
+  #
+  # For debugging purpose, logging to files of standard error and output
+  # can be disabled setting the environment variable 'EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS'
+  # to 1.
+  #
+  # If the command executes successfully, the following message will be printed:
+  #   <proj>: '<stepname>' step successfully completed.
+  #
+  # In case of error, path to the two log files and their content will be displayed.
+  #
+  # Adapted from Slicer/CMake/ExternalProjectForNonCMakeProject.cmake
   file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/PythonQtGenerator-launcher.cmake"
      CONTENT [==[
 set(ENV{@PATHVAR_CONFIG@} "@_qtCore_library_dir@@_pathsep@$ENV{@PATHVAR_CONFIG@}")
 
+set(proj "@proj@")
+set(stepname "GenerateWrapper")
+
+# Check if output and error should be captured into files
+set(capture_outputs 1)
+if("$ENV{EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS}")
+  set(capture_outputs 0)
+  set(_reason " (EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS env. variable set to '$ENV{EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS}')")
+  message(STATUS "${proj}: '${stepname}' Disabling capture of outputs${_reason}")
+endif()
+
+# Execute command
+set(_args)
+if(capture_outputs)
+  set(_args
+    OUTPUT_VARIABLE output
+    ERROR_VARIABLE error
+    )
+endif()
 execute_process(
   COMMAND
     ${PythonQtGenerator_EXECUTABLE}
     --output-directory=@PythonQtGenerator_OUTPUT_DIR@
   WORKING_DIRECTORY "@PythonQtGenerator_BINARY_DIR@"
+  RESULT_VARIABLE result
+  ${_args}
   )
 
+# If it applies, write output to files
+if(capture_outputs)
+  set(output_file "@CMAKE_BINARY_DIR@/${proj}_${stepname}_step_output.txt")
+  file(WRITE ${output_file} ${output})
+
+  set(error_file "@CMAKE_BINARY_DIR@/${proj}_${stepname}_step_error.txt")
+  file(WRITE ${error_file} ${error})
+endif()
+
+if(NOT ${result} EQUAL 0)
+  if(capture_outputs)
+    message(STATUS "${proj}: Errors detected - See below.\n${output}\n${error}")
+    message(FATAL_ERROR "${proj}: ${stepname} step failed with exit code '${result}'.
+Outputs also captured in ${output_file} and ${error_file}.
+Setting env. variable EP_EXECUTE_DISABLE_CAPTURE_OUTPUTS to 1 allows to disable file capture.
+")
+  else()
+    message(FATAL_ERROR "${proj}: ${stepname} step failed with exit code '${result}'.")
+  endif()
+endif()
+
+message(STATUS "${proj}: '${stepname}' step successfully completed.")
 ]==]
      @ONLY
      )
