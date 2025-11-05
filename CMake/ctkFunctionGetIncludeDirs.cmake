@@ -26,6 +26,8 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
     message(FATAL_ERROR "No targets given")
   endif()
 
+  get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
   set(_include_dirs ${${var_include_dirs}} ${CTK_CONFIG_H_INCLUDE_DIR})
   foreach(_target ${ARGN})
 
@@ -54,10 +56,15 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
       endif()
 
       list(APPEND _include_dirs
-        # Ensure generated AUTOUIC headers (ui_*.h) are discoverable.
+        # Ensure AUTOUIC-generated headers (ui_*.h) are on the include path.
         #
         # By default CMake writes them to:
-        #   <AUTOGEN_BUILD_DIR>/include
+        #
+        #   - Single-config generators (Ninja/Makefiles):
+        #       <AUTOGEN_BUILD_DIR>/include
+        #
+        #   - Multi-config generators (VS, Xcode, Ninja Multi-Config):
+        #       <AUTOGEN_BUILD_DIR>/include_<CONFIG>
         #
         # where AUTOGEN_BUILD_DIR defaults to:
         #   <target-binary-dir>/<target-name>_autogen
@@ -65,7 +72,7 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
         # References:
         # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
         # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
-        ${${dep}_BINARY_DIR}/${dep}_autogen/include
+        ${${dep}_BINARY_DIR}/${dep}_autogen/include$<$<BOOL:${_isMultiConfig}>:_$<CONFIG>>
         )
 
       # For external projects, CTKConfig.cmake contains variables
