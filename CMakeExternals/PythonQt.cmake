@@ -164,10 +164,47 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
 
+  # Qt runtime (DLL) directory to put on PATH while running the generator.
+  get_property(_qt_core_filepath TARGET "Qt${CTK_QT_VERSION}::Core" PROPERTY LOCATION_RELEASE)
+  get_filename_component(_qtCore_library_dir ${_qt_core_filepath} PATH)
+
+  # Determine the correct PATH variable and path separator based on the operating system.
+  if(WIN32)
+    set(PATHVAR_CONFIG "PATH")
+    set(_pathsep ";")
+  elseif(APPLE)
+    set(PATHVAR_CONFIG "DYLD_LIBRARY_PATH")
+    set(_pathsep ":")
+  else()
+    set(PATHVAR_CONFIG "LD_LIBRARY_PATH")
+    set(_pathsep ":")
+  endif()
+
+  # Launcher script that:
+  #  - Extends PATH with the Qt bin dir
+  #  - Runs the generator
+  file(CONFIGURE OUTPUT "${CMAKE_BINARY_DIR}/PythonQtGenerator-launcher.cmake"
+     CONTENT [==[
+set(ENV{@PATHVAR_CONFIG@} "@_qtCore_library_dir@@_pathsep@$ENV{@PATHVAR_CONFIG@}")
+
+execute_process(
+  COMMAND
+    ${PythonQtGenerator_EXECUTABLE}
+    --output-directory=@PythonQtGenerator_OUTPUT_DIR@
+  WORKING_DIRECTORY "@PythonQtGenerator_BINARY_DIR@"
+  )
+
+]==]
+     @ONLY
+     )
+
   ExternalProject_Message(${proj} "${proj} - Adding GenerateWrapper step")
   ExternalProject_Add_Step(${proj} GenerateWrapper
-    COMMAND ${PythonQtGenerator_EXECUTABLE} --output-directory=${PythonQtGenerator_OUTPUT_DIR}
+    COMMAND ${CMAKE_COMMAND}
+      -DPythonQtGenerator_EXECUTABLE:PATH=${PythonQtGenerator_EXECUTABLE}
+      -P ${CMAKE_BINARY_DIR}/PythonQtGenerator-launcher.cmake
     COMMENT "Generating PythonQt wrapper for Qt ${_qt_version_string}"
+    USES_TERMINAL 1
     DEPENDERS configure
     WORKING_DIRECTORY ${PythonQtGenerator_BINARY_DIR}
     )
