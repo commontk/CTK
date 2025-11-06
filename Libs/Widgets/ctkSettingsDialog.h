@@ -23,15 +23,15 @@
 
 // Qt includes
 #include <QDialog>
+#include <QSettings>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
+#include "ctkSettingsPanel.h"
 
 class QAbstractButton;
-class QSettings;
 class QTreeWidgetItem;
 class ctkSettingsDialogPrivate;
-class ctkSettingsPanel;
 
 /// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog

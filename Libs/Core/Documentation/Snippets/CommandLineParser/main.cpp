@@ -2,6 +2,7 @@
 #include <ctkCommandLineParser.h>
 
 #include <QCoreApplication>
+#include <QIODevice>
 #include <QTextStream>
 
 #include <cstdlib>

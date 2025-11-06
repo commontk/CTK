@@ -27,7 +27,6 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleOptionButton>
-#include <QStyleOptionFrameV3>
 
 // CTK includes
 #include "ctkCollapsibleButton.h"

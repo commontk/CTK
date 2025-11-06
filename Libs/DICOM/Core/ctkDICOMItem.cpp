@@ -26,6 +26,8 @@
 #include <dcmtk/dcmdata/dcostrmb.h>
 #include <dcmtk/dcmdata/dcistrmb.h>
 
+#include <QTextDecoder>
+
 #include <stdexcept>
 
 
