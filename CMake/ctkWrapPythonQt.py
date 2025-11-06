@@ -183,6 +183,44 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 #ifndef __${namespace}_${target}_h
 #define __${namespace}_${target}_h
 
+#include <PythonQtPythonInclude.h>
+
+//-----------------------------------------------------------------------------
+// AUTOGEN/mocs_compilation.cpp cross-TU collisions:
+//
+// With CMake AUTOMOC enabled, Qt generates a single Translation Unit (TU)
+//   <target>_autogen/mocs_compilation*.cpp
+// that #includes all moc_*.cpp files together. For CTKDICOMWidgets this
+// aggregates moc sources that indirectly pull in both Python.h (via PythonQt)
+// and DCMTK's osconfig.h.
+//
+// Across platforms, pyconfig.h (from Python.h) and dcmtk/config/osconfig.h
+// define overlapping feature macros (HAVE_IO_H, HAVE_TEMPNAM, HAVE_GETPID,
+// HAVE_STRERROR, ...). When each moc lived in its own TU this went largely
+// unnoticed; merged into one TU, the redefinitions trigger a burst of
+// warnings everywhere.
+//
+// On Windows specifically, pyconfig.h may also typedef common types such as
+// pid_t, which collides with DCMTK’s typedef and can cause MSVC C2632
+// ("int followed by int is illegal") when both land in the same TU. On
+// Unix-like systems pid_t is already provided by <sys/types.h>, so the type
+// conflict does not escalate to an error there.
+//
+// Mitigation: include Python headers first, then proactively drop a small
+// set of Python-defined HAVE_* macros so DCMTK can (re)define them without
+// conflict—recreating the pre-AUTOMOC isolation of TUs. If additional
+// collisions surface in the future, extend the list below.
+#undef HAVE_STAT
+#undef HAVE_FTIME
+#undef HAVE_GETPID
+#undef HAVE_IO_H
+#undef HAVE_STRERROR
+#undef HAVE_SYS_UTIME_H
+#undef HAVE_TEMPNAM
+#undef HAVE_TMPNAM
+#undef HAVE_LONG_LONG
+#undef HAVE_INT64_T
+
 #include <QObject>
 ${includes}
 ${pythonqtWrappers}
