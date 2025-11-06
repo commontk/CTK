@@ -40,7 +40,7 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   if(CTK_VTK_VERSION_MAJOR VERSION_EQUAL "8")
     set(revision_tag v8.0.1)
   elseif(CTK_VTK_VERSION_MAJOR VERSION_EQUAL "9")
-    set(revision_tag v9.2.2)
+    set(revision_tag v9.5.2)
   endif()
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
@@ -76,7 +76,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
     ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
     list(APPEND additional_vtk_cmakevars
-      -DVTK_PYTHON_VERSION:STRING=3
       # FindPythonInterp, FindPythonLibs
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
