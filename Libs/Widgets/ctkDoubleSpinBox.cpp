@@ -405,13 +405,18 @@ double ctkDoubleSpinBoxPrivate
   // could be because of group separators:
   if (!ok && state == QValidator::Acceptable)
   {
-    if (q->locale().groupSeparator().isPrint())
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QChar groupSeparator = q->locale().groupSeparator().at(0);
+#else
+    QChar groupSeparator = q->locale().groupSeparator();
+#endif
+    if (groupSeparator.isPrint())
     {
       int start = (dec == -1 ? text.size() : dec)- 1;
       int lastGroupSeparator = start;
       for (int digit = start; digit >= 0; --digit)
       {
-        if (text.at(digit) == q->locale().groupSeparator())
+        if (text.at(digit) == groupSeparator)
         {
           if (digit != lastGroupSeparator - 3)
           {
