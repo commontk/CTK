@@ -30,6 +30,8 @@
 #include <QLinkedList>
 #endif
 #include <QModelIndex>
+#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 
 // STD includes
@@ -147,6 +149,7 @@ CTK_CORE_EXPORT QString extensionToRegExp(const QString& extension);
 /// into a regular expression string
 /// "*.jpg", "*.txt" -> "(.*\\.jpg?$|.*\\.txt?$)"
 CTK_CORE_EXPORT QRegExp nameFiltersToRegExp(const QStringList& nameFilters);
+CTK_CORE_EXPORT QRegularExpression nameFiltersToRegularExpression(const QStringList& nameFilters);
 
 ///
 /// \ingroup Core

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QHash>
+#include <QRegExp>
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>

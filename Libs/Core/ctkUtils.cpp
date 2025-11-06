@@ -21,7 +21,6 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
-#include <QRegExp>
 #include <QString>
 #include <QStringList>
 
@@ -152,14 +151,17 @@ QString ctk::extensionToRegExp(const QString& extension)
 }
 
 //-----------------------------------------------------------------------------
-QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
+namespace
+{
+// Convert name filters to a regular expression pattern string for use with QRegularExpression.
+QString nameFiltersToRegExpPattern(const QStringList& nameFilters)
 {
   QString pattern;
   foreach(const QString& nameFilter, nameFilters)
   {
-    foreach(const QString& extension, nameFilterToExtensions(nameFilter))
+    foreach(const QString& extension, ctk::nameFilterToExtensions(nameFilter))
     {
-      QString regExpExtension = extensionToRegExp(extension);
+      QString regExpExtension = ctk::extensionToRegExp(extension);
       if (!regExpExtension.isEmpty())
       {
         if (pattern.isEmpty())
@@ -182,7 +184,21 @@ QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
   {
     pattern += ")";
   }
-  return QRegExp(pattern);
+  return pattern;
+}
+
+} // namespace
+
+//-----------------------------------------------------------------------------
+QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
+{
+    return QRegExp(nameFiltersToRegExpPattern(nameFilters));
+}
+
+//-----------------------------------------------------------------------------
+QRegularExpression ctk::nameFiltersToRegularExpression(const QStringList& nameFilters)
+{
+  return QRegularExpression(nameFiltersToRegExpPattern(nameFilters));
 }
 
 //-----------------------------------------------------------------------------

@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QListView>
+#include <QRegularExpression>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
 #include <QTimer>
@@ -48,7 +49,10 @@ int ctkSearchBoxTest2(int argc, char* argv[])
 
   search3.setText("phone");
 
-  QRegExp regExp(search3.text(),Qt::CaseInsensitive, QRegExp::Wildcard);
+  QRegularExpression regExp(
+      QRegularExpression::wildcardToRegularExpression(search3.text()),
+      QRegularExpression::CaseInsensitiveOption
+      );
 
   //QStringList testFilter = stringList.filter(search3.text());
   QStringList testFilter = stringList.filter(regExp);
