@@ -91,7 +91,7 @@ include(${CTK_PLUGIN_USE_FILE})
 
 # Qt configuration
 set(CTK_QT_VERSION "@CTK_QT_VERSION@")
-set(CTK_QT5_COMPONENTS @CTK_QT5_COMPONENTS@)
+set(CTK_QT_COMPONENTS @CTK_QT_COMPONENTS@)
 
 # Update CMake module path so that calling "find_package(DCMTK)" works as expected
 # after calling "find_package(CTK)"
