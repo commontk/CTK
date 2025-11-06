@@ -223,7 +223,7 @@ QSize ctkSizeGrip::sizeHint() const
       break;
   };
   QStyleOption opt(0);
-  opt.init(this);
+  opt.initFrom(this);
   return (this->style()->sizeFromContents(contents, &opt, minSize, this).
           expandedTo(QApplication::globalStrut()));
 }
@@ -262,7 +262,7 @@ void ctkSizeGrip::paintEvent(QPaintEvent *event)
     default:
     {
       QStyleOptionSizeGrip opt;
-      opt.init(this);
+      opt.initFrom(this);
       opt.corner = this->isLeftToRight() ? Qt::BottomRightCorner : Qt::BottomLeftCorner;
       style()->drawControl(QStyle::CE_SizeGrip, &opt, &painter, this);
       break;
