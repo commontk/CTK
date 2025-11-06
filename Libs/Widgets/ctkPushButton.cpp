@@ -150,8 +150,10 @@ QSize ctkPushButtonPrivate::buttonSizeHint(bool computeMinimum)const
   }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
-  QSize buttonSize = (q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q).
-                      expandedTo(QApplication::globalStrut()));
+  QSize buttonSize = q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+  buttonSize = buttonSize.expandedTo(QApplication::globalStrut());
+#endif
   return buttonSize;
 }
 
