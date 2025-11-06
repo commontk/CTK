@@ -111,9 +111,13 @@ public:
   /// Reimplemented for internal reasons
   virtual void hidePopup();
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  using QEnterEvent = QEvent;
+#endif
+
 protected:
   virtual void leaveEvent(QEvent* event);
-  virtual void enterEvent(QEvent* event);
+  virtual void enterEvent(QEnterEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
   /// Widget the popup is attached to. It opens right under \a baseWidget

@@ -415,7 +415,7 @@ void ctkPopupWidget::leaveEvent(QEvent* event)
 }
 
 // --------------------------------------------------------------------------
-void ctkPopupWidget::enterEvent(QEvent* event)
+void ctkPopupWidget::enterEvent(QEnterEvent* event)
 {
   Q_D(ctkPopupWidget);
   QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
