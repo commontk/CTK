@@ -472,7 +472,11 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
     sh.rwidth() = frame + textWidth + browseWidth;
     sh.rheight() = height;
   }
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   return sh.expandedTo(QApplication::globalStrut());
+#else
+  return sh;
+#endif
 }
 
 //-----------------------------------------------------------------------------

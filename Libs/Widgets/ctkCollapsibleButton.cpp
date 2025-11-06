@@ -446,8 +446,10 @@ QSize ctkCollapsibleButton::buttonSizeHint()const
   }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
-  QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
-                      expandedTo(QApplication::globalStrut()));
+  QSize buttonSize = style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  buttonSize = buttonSize.expandedTo(QApplication::globalStrut());
+#endif
   return buttonSize;
 }
 
