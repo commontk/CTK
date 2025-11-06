@@ -20,9 +20,14 @@
 
 // Qt includes
 #include <QApplication>
+#if (QT_VERSION < QT_VERSION_CHECK(5,14,0))
 #include <QDesktopWidget>
+#endif
 #include <QDialog>
 #include <QMainWindow>
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+#include <QScreen>
+#endif
 #include <QTimer>
 
 // CTK includes
@@ -50,8 +55,13 @@ int ctkSettingsTest1(int argc, char * argv [] )
   QMainWindow mainWindow(0);
   mainWindow.show();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  QRect desktopRect = mainWindow.screen()->availableGeometry();
+#else
   QDesktopWidget desktop;
   QRect desktopRect = desktop.availableGeometry(&mainWindow);
+#endif
+
   const QPoint origin = desktopRect.topLeft();
 
   mainWindow.move(origin);

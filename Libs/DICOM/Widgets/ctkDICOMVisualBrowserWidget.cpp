@@ -25,7 +25,6 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDate>
-#include <QDesktopWidget>
 #include <QFormLayout>
 #include <QMap>
 #include <QMenu>

@@ -21,8 +21,13 @@
 // Qt includes
 #include <QApplication>
 #include <QCloseEvent>
+#if (QT_VERSION < QT_VERSION_CHECK(5,14,0))
 #include <QDesktopWidget>
+#endif
 #include <QHideEvent>
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+#include <QScreen>
+#endif
 #include <QShowEvent>
 #include <QStringList>
 #include <QVBoxLayout>
@@ -77,7 +82,12 @@ void ctkDICOMMetadataDialog::showEvent(QShowEvent* event)
     this->restoreGeometry(this->savedGeometry);
     if (this->isMaximized())
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+      QScreen* screen = this->screen() ? this->screen() : QGuiApplication::primaryScreen();
+      this->setGeometry(screen->availableGeometry());
+#else
       this->setGeometry(QApplication::desktop()->availableGeometry(this));
+#endif
     }
   }
 }
