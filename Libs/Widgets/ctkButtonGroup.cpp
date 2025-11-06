@@ -42,8 +42,8 @@ ctkButtonGroup::ctkButtonGroup(QObject* _parent)
   // we need to connect to button{Clicked,Pressed}(int) instead of
   // button{Clicked,Pressed}(QAbstractButton*) in order to be first to catch the
   // signals
-  connect(this, SIGNAL(buttonClicked(int)), this, SLOT(onButtonClicked(int)));
-  connect(this, SIGNAL(buttonPressed(int)), this, SLOT(onButtonPressed(int)));
+  connect(this, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onButtonClicked(QAbstractButton*)));
+  connect(this, SIGNAL(buttonPressed(QAbstractButton*)), this, SLOT(onButtonPressed(QAbstractButton*)));
 }
 
 //------------------------------------------------------------------------------
@@ -71,11 +71,9 @@ ctkButtonGroup::~ctkButtonGroup()
 }
 
 //------------------------------------------------------------------------------
-void ctkButtonGroup::onButtonClicked(int buttonId)
+void ctkButtonGroup::onButtonClicked(QAbstractButton* clickedButton)
 {
   Q_D(ctkButtonGroup);
-  QAbstractButton* clickedButton = this->button(buttonId);
-  Q_ASSERT(clickedButton);
   if (!this->exclusive() || !d->IsLastButtonPressedChecked)
   {
     return;
@@ -88,7 +86,9 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
   clickedButton->setChecked(false);
   this->addButton(clickedButton, oldId);
   d->IsLastButtonPressedChecked = false;
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+  // NA
+#elif (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
   emit idToggled(oldId, false);
 #elif (QT_VERSION >= QT_VERSION_CHECK(5,2,0))
   emit buttonToggled(oldId, false);
@@ -99,10 +99,8 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
 }
 
 //------------------------------------------------------------------------------
-void ctkButtonGroup::onButtonPressed(int buttonId)
+void ctkButtonGroup::onButtonPressed(QAbstractButton* pressedButton)
 {
   Q_D(ctkButtonGroup);
-  QAbstractButton* pressedButton = this->button(buttonId);
-  Q_ASSERT(pressedButton);
   d->IsLastButtonPressedChecked = pressedButton->isChecked();
 }

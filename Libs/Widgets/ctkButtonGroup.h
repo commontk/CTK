@@ -58,8 +58,8 @@ public Q_SLOTS:
   void setChecked(QAbstractButton* button, bool checked = true);
 
 protected Q_SLOTS:
-  void onButtonClicked(int button);
-  void onButtonPressed(int button);
+  void onButtonClicked(QAbstractButton* button);
+  void onButtonPressed(QAbstractButton* button);
 
 protected:
   QScopedPointer<ctkButtonGroupPrivate> d_ptr;

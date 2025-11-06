@@ -140,9 +140,15 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   }
   qRegisterMetaType<QAbstractButton*>("QAbstractButton*");
   QSignalSpy spy(&buttonGroup, SIGNAL(buttonClicked(QAbstractButton*)));
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   QSignalSpy spyInt(&buttonGroup, SIGNAL(buttonClicked(int)));
+#endif
   button1->click();
-  if (spy.count() != 1 || spyInt.count() != 1)
+  if (spy.count() != 1
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+      || spyInt.count() != 1
+#endif
+      )
   {
     std::cerr << "ctkButtonGroup::click7 failed"
               << button1->isChecked() << ", "
@@ -150,7 +156,11 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
   button4->click();
-  if (spy.count() != 2 || spyInt.count() != 2)
+  if (spy.count() != 2
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+      || spyInt.count() != 2
+#endif
+      )
   {
     std::cerr << "ctkButtonGroup::click8 failed"
               << button4->isChecked() << ", "
@@ -158,7 +168,11 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
   button4->click();
-  if (spy.count() != 3 || spyInt.count() != 3)
+  if (spy.count() != 3
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+      || spyInt.count() != 3
+#endif
+      )
   {
     std::cerr << "ctkButtonGroup::click9 failed"
               << button4->isChecked() << ", "
