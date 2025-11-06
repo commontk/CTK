@@ -21,7 +21,6 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QLayout>
 #include <QMouseEvent>
 #include <QMenu>

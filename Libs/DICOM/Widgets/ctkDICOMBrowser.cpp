@@ -26,7 +26,6 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QDialogButtonBox>
 #include <QFile>
 #include <QFileInfo>
