@@ -102,7 +102,7 @@ void ctkExpandButton::setOrientation(Qt::Orientation newOrientation)
 {
   Q_D(ctkExpandButton);
   QStyleOption opt;
-  opt.init(this);
+  opt.initFrom(this);
   if(newOrientation == Qt::Horizontal)
   {
     d->defaultPixmap = this->style()->standardPixmap(

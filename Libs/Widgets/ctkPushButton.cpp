@@ -160,7 +160,7 @@ QStyleOptionButton ctkPushButtonPrivate::drawIcon(QPainter* p)
 {
   Q_Q(ctkPushButton);
   QStyleOptionButton iconOpt;
-  iconOpt.init(q);
+  iconOpt.initFrom(q);
   iconOpt.rect = this->iconRect();
   if (q->icon().isNull())
   {

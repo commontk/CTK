@@ -555,7 +555,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator
   QStyleOption indicatorOpt;
-  indicatorOpt.init(this);
+  indicatorOpt.initFrom(this);
   if (d->IndicatorAlignment & Qt::AlignLeft)
   {
     indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2,
@@ -645,7 +645,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
 
   // Draw Frame around contents
   QStyleOptionFrame fopt;
-  fopt.init(this);
+  fopt.initFrom(this);
   // HACK: on some styles, the frame doesn't exactly touch the button.
   // this is because the button has some kind of extra border.
   {

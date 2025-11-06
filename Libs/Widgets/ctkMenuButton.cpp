@@ -159,7 +159,7 @@ void ctkMenuButton::paintEvent(QPaintEvent * _event)
                    QPoint(downArrowRect.left(), downArrowRect.bottom() - borderSize));
   // Draw arrow
   QStyleOption indicatorOpt;
-  indicatorOpt.init(this);
+  indicatorOpt.initFrom(this);
   indicatorOpt.rect = downArrowRect.adjusted(borderSize, borderSize, -borderSize, -borderSize);
   painter.drawPrimitive(QStyle::PE_IndicatorArrowDown, indicatorOpt);
 
