@@ -68,16 +68,16 @@ QStringList ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::ge
 
 //------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::registerEmptyFieldNames(
-  QMap<QString, QString> emptyFieldsDisplaySeries,
-  QMap<QString, QString> emptyFieldsDisplayStudies,
-  QMap<QString, QString> emptyFieldsDisplayPatients )
+  QMultiMap<QString, QString> emptyFieldsDisplaySeries,
+  QMultiMap<QString, QString> emptyFieldsDisplayStudies,
+  QMultiMap<QString, QString> emptyFieldsDisplayPatients )
 {
   Q_UNUSED(emptyFieldsDisplayStudies);
   Q_UNUSED(emptyFieldsDisplayPatients);
 
-  emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtPlan);
-  emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtStruct);
-  emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtImage);
+  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtPlan);
+  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtStruct);
+  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtImage);
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::mergeDisp
   const QMap<QString, QString> &initialFieldsSeries, const QMap<QString, QString> &initialFieldsStudy, const QMap<QString, QString> &initialFieldsPatient,
   const QMap<QString, QString> &newFieldsSeries, const QMap<QString, QString> &newFieldsStudy, const QMap<QString, QString> &newFieldsPatient,
   QMap<QString, QString> &mergedFieldsSeries, QMap<QString, QString> &mergedFieldsStudy, QMap<QString, QString> &mergedFieldsPatient,
-  const QMap<QString, QString> &emptyFieldsSeries, const QMap<QString, QString> &emptyFieldsStudy, const QMap<QString, QString> &emptyFieldsPatient
+  const QMultiMap<QString, QString> &emptyFieldsSeries, const QMultiMap<QString, QString> &emptyFieldsStudy, const QMultiMap<QString, QString> &emptyFieldsPatient
   )
 {
   Q_UNUSED(initialFieldsStudy);
