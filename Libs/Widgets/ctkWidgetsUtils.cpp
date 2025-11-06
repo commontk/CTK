@@ -21,7 +21,11 @@
 // Qt includes
 #include <QBuffer>
 #include <QImage>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #include <QGLWidget>
+#else
+#include <QOpenGLWidget>
+#endif
 #include <QPainter>
 #include <QWidget>
 
@@ -55,7 +59,11 @@ QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
   QImage widgetImage = widgetPixmap.toImage();
   QPainter painter;
   painter.begin(&widgetImage);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   foreach(QGLWidget* glWidget, widget->findChildren<QGLWidget*>())
+#else
+  foreach(QOpenGLWidget* glWidget, widget->findChildren<QOpenGLWidget*>())
+#endif
   {
     if (!glWidget->isVisible())
     {
@@ -66,7 +74,11 @@ QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
     {
       continue;
     }
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QImage subImage = glWidget->grabFrameBuffer();
+#else
+    QImage subImage = glWidget->grabFramebuffer();
+#endif
     painter.drawImage(subWidgetRect, subImage);
   }
   painter.end();
