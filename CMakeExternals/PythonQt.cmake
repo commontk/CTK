@@ -50,13 +50,15 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     endif()
     set(_qt_version_string "${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}")
   elseif(CTK_QT_VERSION VERSION_EQUAL "6")
-    list(APPEND ep_cache_args
+    list(APPEND ep_PythonQt_args
       -DQt6_DIR:PATH=${Qt6_DIR}
       )
     set(_qt_version_string "${Qt6_VERSION_MAJOR}.${Qt6_VERSION_MINOR}.${Qt6_VERSION_PATCH}")
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
+
+  set(ep_PythonQtGenerator_args ${ep_PythonQt_args})
 
   # Enable PythonQt wrappers
   foreach(qtlib All ${qtlibs})
@@ -125,6 +127,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DPythonQtGenerator_QT_VERSION:STRING=${CTK_QT_VERSION}
+      ${ep_PythonQtGenerator_args}
     INSTALL_COMMAND ""
     DEPENDS
       ${proj}-source
