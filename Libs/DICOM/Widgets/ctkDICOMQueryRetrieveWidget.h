@@ -32,8 +32,8 @@
 #include <ctkDICOMDatabase.h>
 
 // ctkDICOMWidgets includes
+#include <ctkDICOMTableManager.h>
 #include "ctkDICOMWidgetsExport.h"
-class ctkDICOMTableManager;
 class ctkDICOMQueryRetrieveWidgetPrivate;
 
 /// \ingroup DICOM_Widgets

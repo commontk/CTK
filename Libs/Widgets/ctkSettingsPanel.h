@@ -23,12 +23,12 @@
 
 // Qt includes
 #include <QMetaType>
+#include <QSettings>
 #include <QWidget>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
 
-class QSettings;
 class ctkSettingsPanelPrivate;
 
 /// \ingroup Widgets

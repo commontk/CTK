@@ -54,7 +54,6 @@
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMThumbnailGenerator.h"
 #include "ctkThumbnailLabel.h"
-#include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMQueryWidget.h"
 

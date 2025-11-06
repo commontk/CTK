@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QDialog>
-class QStringList;
+#include <QStringList>
 
 // CTK includes
 #include "ctkDICOMWidgetsExport.h"
