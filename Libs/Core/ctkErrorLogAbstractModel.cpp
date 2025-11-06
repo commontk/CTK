@@ -27,6 +27,7 @@
 #include <QMetaType>
 #include <QMutexLocker>
 #include <QPointer>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QThread>
 
@@ -376,9 +377,9 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
   Q_D(ctkErrorLogAbstractModel);
 
   QStringList patterns;
-  if (!this->filterRegExp().pattern().isEmpty())
+  if (!this->filterRegularExpression().pattern().isEmpty())
   {
-    patterns << this->filterRegExp().pattern().split("|");
+    patterns << this->filterRegularExpression().pattern().split("|");
   }
   patterns.removeAll(d->ErrorLogLevel(ctkErrorLogLevel::None));
 
@@ -414,7 +415,7 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
   }
 
   bool filterChanged = true;
-  QStringList currentPatterns = this->filterRegExp().pattern().split("|");
+  QStringList currentPatterns = this->filterRegularExpression().pattern().split("|");
   if (currentPatterns.count() == patterns.count())
   {
     foreach(const QString& p, patterns)
@@ -424,7 +425,7 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
     filterChanged = currentPatterns.count() > 0;
   }
 
-  this->setFilterRegExp(patterns.join("|"));
+  this->setFilterRegularExpression(patterns.join("|"));
 
   if (filterChanged)
   {
@@ -440,7 +441,7 @@ ctkErrorLogLevel::LogLevels ctkErrorLogAbstractModel::logLevelFilter()const
   Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
 
   ctkErrorLogLevel::LogLevels filter = ctkErrorLogLevel::Unknown;
-  foreach(const QString& filterAsString, this->filterRegExp().pattern().split("|"))
+  foreach(const QString& filterAsString, this->filterRegularExpression().pattern().split("|"))
   {
     filter |= static_cast<ctkErrorLogLevel::LogLevels>(logLevelEnum.keyToValue(filterAsString.toLatin1()));
   }

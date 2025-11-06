@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QRegularExpression>
 #include <QSortFilterProxyModel>
 #include <QStringList>
 
@@ -87,9 +88,9 @@ QStringList ctkCompleterPrivate::splitPath(const QString& s)
     case ctkCompleter::FilterWordStartsWith:
     {
       this->updateSortFilterProxyModel();
-      QRegExp regexp = QRegExp(QRegExp::escape(s));
-      regexp.setCaseSensitivity(q->caseSensitivity());
-      this->SortFilterProxyModel->setFilterRegExp(regexp);
+      QRegularExpression regexp(QRegularExpression::escape(s));
+      regexp.setPatternOptions(regexp.patternOptions().setFlag(QRegularExpression::CaseInsensitiveOption, q->caseSensitivity() == Qt::CaseInsensitive));
+      this->SortFilterProxyModel->setFilterRegularExpression(regexp);
       paths = QStringList();
       break;
     }

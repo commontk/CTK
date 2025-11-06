@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QPointer>
+#include <QRegExp>
 #include <QStyle>
 
 // CTK includes
