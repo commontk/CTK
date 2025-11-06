@@ -21,6 +21,7 @@
 cmake_minimum_required(VERSION 3.20.6)
 
 foreach(p
+  CMP0177 # CMake 3.31
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
