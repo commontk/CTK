@@ -43,7 +43,12 @@ ctkEAInterruptibleThread* ctkEAThreadFactoryUser::DefaultThreadFactory::newThrea
 
 
 ctkEAThreadFactoryUser::ctkEAThreadFactoryUser()
-  : mutex(QMutex::Recursive), threadFactory(new DefaultThreadFactory())
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  : mutex(),
+#else
+  : mutex(QMutex::Recursive),
+#endif
+    threadFactory(new DefaultThreadFactory())
 {
 
 }
