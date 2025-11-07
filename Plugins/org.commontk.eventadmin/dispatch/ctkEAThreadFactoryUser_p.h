@@ -23,7 +23,12 @@
 #ifndef CTKEATHREADFACTORYUSER_P_H
 #define CTKEATHREADFACTORYUSER_P_H
 
+#include <QtGlobal>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QRecursiveMutex>
+#else
 #include <QMutex>
+#endif
 
 #include "ctkEAThreadFactory_p.h"
 #include "ctkEAInterruptibleThread_p.h"
@@ -38,7 +43,11 @@ class ctkEAThreadFactoryUser
 
 protected:
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  mutable QRecursiveMutex mutex;
+#else
   mutable QMutex mutex;
+#endif
 
   ctkEAThreadFactory* threadFactory;
 

@@ -50,7 +50,11 @@ public:
   DICOMIndexingQueue()
     : IsIndexing(false)
     , StopRequested(false)
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    , Mutex()
+#else
     , Mutex(QMutex::Recursive)
+#endif
   {
   }
 
@@ -198,7 +202,11 @@ protected:
   bool IsIndexing;
   bool StopRequested;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  mutable QRecursiveMutex Mutex;
+#else
   mutable QMutex Mutex;
+#endif
 };
 
 
