@@ -22,6 +22,7 @@
 #define __ctkSettingsPanel_h
 
 // Qt includes
+#include <QSettings>
 #include <QMetaType>
 #include <QSettings>
 #include <QWidget>

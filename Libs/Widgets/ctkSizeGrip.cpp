@@ -28,6 +28,7 @@
 #include <QStyle>
 #include <QStyleOption>
 #include <QPainter>
+#include <QPoint>
 
 // CTK includes
 #include "ctkSizeGrip.h"

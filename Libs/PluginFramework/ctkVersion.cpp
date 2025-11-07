@@ -23,7 +23,7 @@
 
 #include "ctkException.h"
 
-#include <QStringListIterator>
+#include <QStringList>
 #include <QDebug>
 
 

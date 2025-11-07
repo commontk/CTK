@@ -27,7 +27,7 @@
 #include "ctkLDAPExpr_p.h"
 #include "ctkServiceReference_p.h"
 
-#include <QStringListIterator>
+#include <QStringList>
 #include <QDebug>
 
 const int ctkPluginFrameworkListeners::OBJECTCLASS_IX = 0;
