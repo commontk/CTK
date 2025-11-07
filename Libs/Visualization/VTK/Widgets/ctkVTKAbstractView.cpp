@@ -80,7 +80,7 @@ void ctkVTKAbstractViewPrivate::init()
                    q, SLOT(forceRender()));
 #endif
   q->setLayout(new QVBoxLayout);
-  q->layout()->setMargin(0);
+  q->layout()->setContentsMargins(QMargins());
   q->layout()->setSpacing(0);
   q->layout()->addWidget(this->VTKWidget);
 
