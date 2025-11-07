@@ -333,7 +333,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
     // patient found
     dbPatientID = checkPatientExistsQuery.value(checkPatientExistsQuery.record().indexOf("UID")).toInt();
     logger.debug("Found patient in the database as UID: " + QString::number(dbPatientID));
-    logger.debug("New patient ID cache item: " + compositeID + "->" + dbPatientID);
+    logger.debug("New patient ID cache item: " + compositeID + "->" + QString::number(dbPatientID));
   }
   else
   {
