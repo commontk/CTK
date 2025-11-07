@@ -23,7 +23,7 @@ macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     cmake_minimum_required(VERSION 3.20.6)
-    find_package(Qt5 COMPONENTS Core)
+    find_package(Qt${CTK_QT_VERSION} COMPONENTS Core)
 
     set(CTK_QT_COMPONENTS Core)
 
@@ -95,7 +95,7 @@ macro(ctkMacroSetupQt)
       OR CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTWEBKIT
       OR CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTWEBKITWIDGETS
       )
-      if(TARGET Qt${CTK_QT_VERSION}::WebKitWidgets)
+      if(TARGET "Qt${CTK_QT_VERSION}::WebKitWidgets")
         list(APPEND CTK_QT_COMPONENTS WebKitWidgets)
       else()
         list(APPEND CTK_QT_COMPONENTS WebEngineWidgets)

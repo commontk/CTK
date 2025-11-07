@@ -225,9 +225,9 @@ set_target_properties(${KIT}CppTests PROPERTIES
   )
 
 if(CTK_QT_VERSION VERSION_EQUAL "5")
-  list(APPEND KIT_target_libraries Qt5::Test)
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Test)
   if(CTK_USE_QTTESTING)
-    list(APPEND KIT_target_libraries Qt5::Xml Qt5::XmlPatterns)
+    list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Xml Qt${CTK_QT_VERSION}::XmlPatterns)
   endif()
   target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 else()

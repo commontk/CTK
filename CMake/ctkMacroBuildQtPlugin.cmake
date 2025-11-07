@@ -172,8 +172,8 @@ macro(ctkMacroBuildQtPlugin)
 endmacro()
 
 macro(ctkMacroBuildQtDesignerPlugin)
+  find_package(Qt${CTK_QT_VERSION} COMPONENTS Designer REQUIRED)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    find_package(Qt5 COMPONENTS Designer REQUIRED)
     add_definitions(${Qt5Designer_DEFINITIONS})
     include_directories(${Qt5Designer_INCLUDE_DIRS})
   else()
@@ -182,17 +182,13 @@ macro(ctkMacroBuildQtDesignerPlugin)
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    cmake_parse_arguments(MY
-      "" # no options
-      "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
-      "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
-      ${ARGN}
-      )
-    target_link_libraries(${MY_NAME} Qt5::Designer)
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
+  cmake_parse_arguments(MY
+    "" # no options
+    "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
+    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
+    ${ARGN}
+    )
+  target_link_libraries(${MY_NAME} Qt${CTK_QT_VERSION}::Designer)
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)
