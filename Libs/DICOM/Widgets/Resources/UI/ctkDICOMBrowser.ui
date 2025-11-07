@@ -406,5 +406,6 @@
   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
   <slot>onThumbnailWidthSliderValueChanged(int)</slot>
   <slot>onRemoveAction()</slot>
+  <slot>onRepairAction()</slot>
  </slots>
 </ui>

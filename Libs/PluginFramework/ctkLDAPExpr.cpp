@@ -39,7 +39,7 @@ const int ctkLDAPExpr::APPROX  = 32;
 const int ctkLDAPExpr::COMPLEX = ctkLDAPExpr::AND | ctkLDAPExpr::OR | ctkLDAPExpr::NOT;
 const int ctkLDAPExpr::SIMPLE  = ctkLDAPExpr::EQ | ctkLDAPExpr::LE | ctkLDAPExpr::GE | ctkLDAPExpr::APPROX;
 
-const QChar ctkLDAPExpr::WILDCARD = 65535;
+const QChar ctkLDAPExpr::WILDCARD = QChar( 65535 );
 const QString ctkLDAPExpr::WILDCARD_QString = QString( WILDCARD );
 const QString ctkLDAPExpr::NULLQ     = "Null query";
 const QString ctkLDAPExpr::GARBAGE   = "Trailing garbage";

@@ -53,7 +53,7 @@ ctkServiceReference::ctkServiceReference(ctkServiceRegistrationPrivate* reg)
 //----------------------------------------------------------------------------
 ctkServiceReference::operator bool() const
 {
-  return getPlugin();
+  return !getPlugin().isNull();
 }
 
 //----------------------------------------------------------------------------
