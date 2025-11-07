@@ -174,10 +174,16 @@ endmacro()
 macro(ctkMacroBuildQtDesignerPlugin)
   find_package(Qt${CTK_QT_VERSION} COMPONENTS Designer REQUIRED)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
+    # Variables like Qt*_DEFINITIONS may include generator expressions (genex) in newer Qt versions,
+    # which cannot be directly passed to "add_definitions()". For example, the list may include elements
+    # like "$<TARGET_PROPERTY:QT_PLUGIN_CLASS_NAME>:QDESIGNER_EXPORT_WIDGETS>". Stripping these using
+    # "string(GENEX_STRIP ...)" would result in an incomplete set of definitions.
+    # Therefore, we maintain the use of add_definitions()/include_directories() for Qt5 and encourage
+    # developers to rely on target usage requirements for newer versions.
     add_definitions(${Qt5Designer_DEFINITIONS})
     include_directories(${Qt5Designer_INCLUDE_DIRS})
   else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+    # For newer Qt versions, use target usage requirements to handle definitions and include directories.
   endif()
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
