@@ -194,7 +194,7 @@ macro(ctkMacroBuildPlugin)
     set_source_files_properties(${MY_TRANSLATIONS}
                                 PROPERTIES OUTPUT_LOCATION ${_translations_dir})
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-      qt5_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+      qt_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
