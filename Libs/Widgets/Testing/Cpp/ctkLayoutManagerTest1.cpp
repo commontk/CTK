@@ -124,25 +124,26 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   layoutManager.registerViewFactory(pButtonInstanciator);
 
   QDomDocument simpleLayoutDoc("simplelayout");
-  bool res = simpleLayoutDoc.setContent(simpleLayout);
+
+  bool res = bool(simpleLayoutDoc.setContent(simpleLayout));
   Q_ASSERT(res);
   QDomDocument vboxLayoutDoc("vboxlayout");
-  res = vboxLayoutDoc.setContent(vboxLayout);
+  res = bool(vboxLayoutDoc.setContent(vboxLayout));
   Q_ASSERT(res);
   QDomDocument gridLayoutDoc("gridlayout");
-  res = gridLayoutDoc.setContent(gridLayout);
+  res = bool(gridLayoutDoc.setContent(gridLayout));
   Q_ASSERT(res);
   QDomDocument tabLayoutDoc("tablayout");
-  res = tabLayoutDoc.setContent(tabLayout);
+  res = bool(tabLayoutDoc.setContent(tabLayout));
   Q_ASSERT(res);
   QDomDocument tabMultipleLayoutDoc("tabMultiplelayout");
-  res = tabMultipleLayoutDoc.setContent(tabMultipleLayout);
+  res = bool(tabMultipleLayoutDoc.setContent(tabMultipleLayout));
   Q_ASSERT(res);
   QDomDocument nestedLayoutDoc("nestedlayout");
-  res = nestedLayoutDoc.setContent(nestedLayout);
+  res = bool(nestedLayoutDoc.setContent(nestedLayout));
   Q_ASSERT(res);
   QDomDocument multiViewportLayoutDoc("multiViewportLayout");
-  res = multiViewportLayoutDoc.setContent(multiViewportLayout);
+  res = bool(multiViewportLayoutDoc.setContent(multiViewportLayout));
   Q_ASSERT(res);
   Q_UNUSED(res);
 

@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
+#include <QRegExp>
 #include <QTemporaryFile>
 
 // CTK includes
