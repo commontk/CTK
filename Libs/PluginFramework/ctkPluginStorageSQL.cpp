@@ -518,7 +518,7 @@ void ctkPluginStorageSQL::replacePluginArchive(QSharedPointer<ctkPluginArchive> 
   pos = find(id);
   if (pos >= m_archives.size() || m_archives[pos] != oldPA)
   {
-    throw ctkRuntimeException(QString("replacePluginArchive: Old plugin archive not found, pos=").append(pos));
+    throw ctkRuntimeException(QString("replacePluginArchive: Old plugin archive not found, pos=%1").arg(pos));
   }
 
   QSqlDatabase database = getConnection();

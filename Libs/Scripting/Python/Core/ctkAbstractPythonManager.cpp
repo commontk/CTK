@@ -634,8 +634,8 @@ PyObject* ctkAbstractPythonManager::pythonObject(const QString& variableNameAndF
         {
           continue;
         }
-        QString keyStr = PyUnicode_AsUTF8(key);
-        if (keyStr.operator ==(compareFunction.toLatin1()))
+        QString keyStr = QString::fromUtf8(PyUnicode_AsUTF8(key));
+        if (keyStr == compareFunction)
         {
           finalPythonObject = value;
           break;

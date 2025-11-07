@@ -39,7 +39,7 @@ ctkRequirePlugin::ctkRequirePlugin(ctkPluginPrivate* requestor,
                    + ctkPluginConstants::RESOLUTION_DIRECTIVE + ":=" + this->resolution
                    + "' in manifest header '"
                    + ctkPluginConstants::REQUIRE_PLUGIN + ": " + this->name
-                   + "' of plugin with id " + requestor->id
+                   + "' of plugin with id " + QString::number(requestor->id)
                    + " (" + requestor->symbolicName + ")"
                    + ". The value must be either '"
                    + ctkPluginConstants::RESOLUTION_MANDATORY + "' or '"
