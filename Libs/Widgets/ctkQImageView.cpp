@@ -727,13 +727,18 @@ void ctkQImageView::mousePressEvent( QMouseEvent * event )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QPoint position = event->position().toPoint();
+#else
+    QPoint position = event->pos();
+#endif
     switch( event->button() )
     {
       case Qt::LeftButton:
       {
         d->MouseLeftDragging = true;
-        d->MouseLastX = event->x();
-        d->MouseLastY = event->y();
+        d->MouseLastX = position.x();
+        d->MouseLastY = position.y();
         d->MouseLastIntensityWindow = this->intensityWindow();
         d->MouseLastIntensityLevel = this->intensityLevel();
         break;
@@ -741,17 +746,17 @@ void ctkQImageView::mousePressEvent( QMouseEvent * event )
       case Qt::MiddleButton:
       {
         d->MouseMiddleDragging = true;
-        d->MouseLastX = event->x();
-        d->MouseLastY = event->y();
+        d->MouseLastX = position.x();
+        d->MouseLastY = position.y();
         d->MouseLastZoom = this->zoom();
         break;
       }
       case Qt::RightButton:
       {
         d->MouseRightDragging = true;
-        double relativeX = static_cast<double>( event->x() )
+        double relativeX = static_cast<double>( position.x() )
           / this->width();
-        double relativeY = static_cast<double>( event->y() )
+        double relativeY = static_cast<double>( position.y() )
           / this->height();
         if( d->FlipXAxis )
         {
@@ -790,10 +795,15 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    auto position = event->position().toPoint();
+#else
+    auto position = event->pos();
+#endif
     if( d->MouseLeftDragging )
     {
-      double distX = event->x() - d->MouseLastX;
-      double distY = event->y() - d->MouseLastY;
+      double distX = position.x() - d->MouseLastX;
+      double distY = position.y() - d->MouseLastY;
       double deltaWin = ( distX / this->height() );
       if( deltaWin < 0 )
       {
@@ -815,7 +825,7 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
     }
     else if( d->MouseMiddleDragging )
     {
-      double distY = d->MouseLastY - event->y();
+      double distY = d->MouseLastY - position.y();
       double deltaZ = 2 * (distY / this->height());
       if( deltaZ < 0 )
       {
@@ -827,9 +837,9 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
     }
     else if( d->MouseRightDragging )
     {
-      double relativeX = static_cast<double>( event->x() )
+      double relativeX = static_cast<double>( position.x() )
         / this->width();
-      double relativeY = static_cast<double>( event->y() )
+      double relativeY = static_cast<double>( position.y() )
         / this->height();
       if( d->FlipXAxis )
       {
@@ -845,9 +855,9 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
     }
     else
     {
-      double relativeX = static_cast<double>( event->x() )
+      double relativeX = static_cast<double>( position.x() )
         / this->width();
-      double relativeY = static_cast<double>( event->y() )
+      double relativeY = static_cast<double>( position.y() )
         / this->height();
       if( d->FlipXAxis )
       {

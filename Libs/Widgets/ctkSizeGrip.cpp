@@ -305,7 +305,11 @@ void ctkSizeGrip::mousePressEvent(QMouseEvent * e)
   }
 
   Q_D(ctkSizeGrip);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  d->StartPos = e->globalPosition().toPoint();
+#else
   d->StartPos = e->globalPos();
+#endif
   d->Pressed = true;
   d->WidgetGeom = d->WidgetToResize->geometry();
   d->WidgetMinSize = d->WidgetToResize->minimumSize();
@@ -328,7 +332,11 @@ void ctkSizeGrip::mouseMoveEvent(QMouseEvent * e)
     return;
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  QPoint newPos(e->globalPosition().toPoint());
+#else
   QPoint newPos(e->globalPos());
+#endif
   QSize offset(newPos.x() - d->StartPos.x(), newPos.y() - d->StartPos.y());
 
   QSize widgetSizeHint = d->WidgetGeom.size();

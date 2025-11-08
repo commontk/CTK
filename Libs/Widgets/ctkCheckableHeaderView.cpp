@@ -296,7 +296,11 @@ void ctkCheckableHeaderView::mousePressEvent(QMouseEvent *e)
   }
   d->Pressed = -1;
   //check if the check box is pressed
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  int pos = this->orientation() == Qt::Horizontal ? e->position().toPoint().x() : e->position().toPoint().y();
+#else
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
+#endif
   int section = this->logicalIndexAt(pos);
   if (d->CheckableModelHelper->isHeaderCheckable(section) &&
       this->isPointInCheckBox(section, e->pos()))
@@ -321,7 +325,11 @@ void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
     return;
   }
   //check if the check box is pressed
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  int pos = this->orientation() == Qt::Horizontal ? e->position().toPoint().x() : e->position().toPoint().y();
+#else
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
+#endif
   int section = this->logicalIndexAt(pos);
   if (section == d->Pressed &&
       this->isPointInCheckBox(section, e->pos()))
