@@ -105,7 +105,6 @@ set(KIT_SRCS
   ctkHistogram.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
-  ctkIconEnginePlugin_qt5.h
   ctkLanguageComboBox.cpp
   ctkLanguageComboBox.h
   ctkLayoutFactory.cpp
