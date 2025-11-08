@@ -56,8 +56,13 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
 
   // Command line parser
   ctkCommandLineParser parser;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  parser.addArgument("", "-I", QMetaType::Bool);
+  parser.addArgument("", "-D", QMetaType::QString);
+#else
   parser.addArgument("", "-I", QVariant::Bool);
   parser.addArgument("", "-D", QVariant::String);
+#endif
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
   if (!ok)

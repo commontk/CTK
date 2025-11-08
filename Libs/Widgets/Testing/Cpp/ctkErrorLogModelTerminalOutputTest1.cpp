@@ -45,7 +45,11 @@ bool checkTerminalOutput(const QStringList& expectedMessages)
 {
   ctkCommandLineParser parser;
   parser.setArgumentPrefix("--", "-");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser.addArgument("test-launcher", "", QMetaType::QString, "Path to test launcher");
+#else
   parser.addArgument("test-launcher", "", QVariant::String, "Path to test launcher");
+#endif
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
   if(!ok)

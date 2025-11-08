@@ -40,7 +40,11 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
 
   // Command line parser
   ctkCommandLineParser parser;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  parser.addArgument("", "-I", QMetaType::Bool);
+#else
   parser.addArgument("", "-I", QVariant::Bool);
+#endif
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments());
   bool interactive = parsedArgs["-I"].toBool();
 

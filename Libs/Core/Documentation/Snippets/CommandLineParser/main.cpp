@@ -21,9 +21,15 @@ int main(int argc, char** argv)
   parser.enableSettings("disable-settings");
 
   // Add command line argument names
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser.addArgument("disable-settings", "", QMetaType::Bool, "Do not use QSettings");
+  parser.addArgument("help", "h", QMetaType::Bool, "Show this help text");
+  parser.addArgument("search-paths", "s", QMetaType::QStringList, "A list of paths to search");
+#else
   parser.addArgument("disable-settings", "", QVariant::Bool, "Do not use QSettings");
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
   parser.addArgument("search-paths", "s", QVariant::StringList, "A list of paths to search");
+#endif
 
   // Parse the command line arguments
   bool ok = false;
