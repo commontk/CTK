@@ -41,7 +41,11 @@
  */
 struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  typedef QMetaType::Type Type;
+#else
   typedef QVariant::Type Type;
+#endif
 
   static const int PASSWORD;
 
@@ -121,9 +125,14 @@ struct CTK_PLUGINFW_EXPORT ctkAttributeDefinition
    * Return the type for this attribute.
    *
    * <p>
-   * The following types from QVariant::Type are supported:
+   * With Qt 5, the following types from QVariant::Type are supported:
    * QVariant::String, QVariant::LongLong, QVariant::Int, QVariant::Char,
    * QVariant::Double, QVariant::Bool, QVariant::UserType.
+   *
+   * <p>
+   * With Qt 6, the following types from QMetaType::Type are supported:
+   * QMetaType::QString, QMetaType::LongLong, QMetaType::Int, QMetaType::Char,
+   * QMetaType::Double, QMetaType::Bool, QMetaType::User.
    *
    * <p>
    * QVariant::UserType maps to ctkAttributeDefinition::Password only.
