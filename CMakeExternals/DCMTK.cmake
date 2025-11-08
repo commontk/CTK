@@ -28,7 +28,7 @@ if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
 endif()
 
 if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(revision_tag "11972eaa4ecdbf3aab0f46eff78f33d7e2b16bfe") # patched-DCMTK-3.6.6_20210115
+  set(revision_tag "f390821c469c0897c1b5437164c8826e080a2581") # patched-DCMTK-3.6.8_20241024
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -53,21 +53,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(ep_cxx_standard_args)
-  # XXX: On MSVC disable building DCMTK with C++11. DCMTK checks C++11.
-  # compiler compatibility by inspecting __cplusplus, but MSVC doesn't set __cplusplus.
-  # See https://blogs.msdn.microsoft.com/vcblog/2016/06/07/standards-version-switches-in-the-compiler/.
-  # Microsoft: "We won’t update __cplusplus until the compiler fully conforms to
-  # the standard. Until then, you can check the value of _MSVC_LANG."
-  if(CMAKE_CXX_STANDARD AND UNIX)
-    list(APPEND ep_cxx_standard_args
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
-      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
-      -DDCMTK_ENABLE_CXX11:BOOL=ON
-      )
-  endif()
-
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -80,7 +65,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
-      ${ep_cxx_standard_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
@@ -91,9 +75,9 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see github issue #178
       -DDCMTK_WITH_SNDFILE:BOOL=OFF # see DCMQI github issue #395
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
-      -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
+      -DDCMTK_DEFAULT_DICT:STRING=builtin
       -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
-      -DDCMTK_WITH_ICU:BOOL=OFF
+
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     DEPENDS
       ${${proj}_DEPENDENCIES}
