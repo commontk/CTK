@@ -270,7 +270,11 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     // try to create an object based on the custom schema type first
     if (!customSchemaType.isEmpty())
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      typeId = QMetaType::fromName(qPrintable(customSchemaType)).id();
+#else
       typeId = QMetaType::type(qPrintable(customSchemaType));
+#endif
     }
 
     // Fall back. Create the default class according to the default schema type
@@ -280,7 +284,11 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       {
         qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class %2.").arg(customSchemaType).arg(schemaType);
       }
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      typeId = QMetaType::fromName(qPrintable(schemaType)).id();
+#else
       typeId = QMetaType::type(qPrintable(schemaType));
+#endif
     }
 
     if (!typeId)

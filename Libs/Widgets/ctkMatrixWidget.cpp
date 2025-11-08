@@ -77,9 +77,17 @@ public:
   {
     ctkMatrixWidget* matrix = qobject_cast<ctkMatrixWidget*>(this->parent());
     Q_ASSERT(matrix);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    switch(value.typeId())
+#else
     switch(value.type())
+#endif
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::Double:
+#else
       case QVariant::Double:
+#endif
         return locale.toString(value.toDouble(), 'f', matrix->decimals());
       default:
         return this->QStyledItemDelegate::displayText(value, locale);
@@ -158,7 +166,11 @@ void ctkMatrixWidgetPrivate::init()
 
   // Register custom editors
   QItemEditorFactory *editorFactory = new QItemEditorFactory;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  editorFactory->registerEditor(QMetaType::Double, new QStandardItemEditorCreator<ctkMatrixDoubleSpinBox>);
+#else
   editorFactory->registerEditor(QVariant::Double, new QStandardItemEditorCreator<ctkMatrixDoubleSpinBox>);
+#endif
 
   QStyledItemDelegate* defaultItemDelegate =
     qobject_cast<QStyledItemDelegate*>(this->Table->itemDelegate());

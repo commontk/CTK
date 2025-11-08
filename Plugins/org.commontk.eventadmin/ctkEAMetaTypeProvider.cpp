@@ -180,7 +180,12 @@ ctkObjectClassDefinitionPtr ctkEAMetaTypeProvider::getObjectClassDefinition(cons
                        new AttributeDefinitionImpl(ctkEAConfiguration::PROP_CACHE_SIZE, "Cache Size",
                                                    "The size of various internal caches. The default value is 30. Increase in case "
                                                    "of a large number (more then 100) of services. A value less then 10 triggers the "
-                                                   "default value.", QVariant::Int, QStringList(QString::number(m_cacheSize)))));
+                                                   "default value.",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                                   QMetaType::Int, QStringList(QString::number(m_cacheSize)))));
+#else
+                                                   QVariant::Int, QStringList(QString::number(m_cacheSize)))));
+#endif
 
     adList.push_back(ctkAttributeDefinitionPtr(
                        new AttributeDefinitionImpl(ctkEAConfiguration::PROP_THREAD_POOL_SIZE, "Thread Pool Size",
@@ -188,14 +193,22 @@ ctkObjectClassDefinitionPtr ctkEAMetaTypeProvider::getObjectClassDefinition(cons
                                                    "of synchronous events where the event handler services in turn send new synchronous events in "
                                                    "the event dispatching thread or a lot of timeouts are to be expected. A value of "
                                                    "less then 2 triggers the default value. A value of 2 effectively disables thread pooling.",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                                   QMetaType::Int, QStringList(QString::number(m_threadPoolSize)))));
+#else
                                                    QVariant::Int, QStringList(QString::number(m_threadPoolSize)))));
+#endif
 
     adList.push_back(ctkAttributeDefinitionPtr(
                        new AttributeDefinitionImpl(ctkEAConfiguration::PROP_TIMEOUT, "Timeout",
                                                    "The black-listing timeout in milliseconds. The default value is 5000. Increase or decrease "
                                                    "at own discretion. A value of less then 100 turns timeouts off. Any other value is the time "
                                                    "in milliseconds granted to each event handler before it gets blacklisted",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                                   QMetaType::Int, QStringList(QString::number(m_timeout)))));
+#else
                                                    QVariant::Int, QStringList(QString::number(m_timeout)))));
+#endif
 
     adList.push_back(ctkAttributeDefinitionPtr(
                        new AttributeDefinitionImpl(ctkEAConfiguration::PROP_REQUIRE_TOPIC, "Require Topic",
@@ -204,7 +217,11 @@ ctkObjectClassDefinitionPtr ctkEAMetaTypeProvider::getObjectClassDefinition(cons
                                                    "must register with a list of topics they are interested in. Disabling this setting "
                                                    "will enable that handlers without a topic are receiving all events "
                                                    "(i.e., they are treated the same as with a topic=*).",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                                   QMetaType::Bool, m_requireTopic ? QStringList("true") : QStringList("false"))));
+#else
                                                    QVariant::Bool, m_requireTopic ? QStringList("true") : QStringList("false"))));
+#endif
 
     adList.push_back(ctkAttributeDefinitionPtr(
                        new AttributeDefinitionImpl(ctkEAConfiguration::PROP_IGNORE_TIMEOUT, "Ignore Timeouts",
@@ -215,7 +232,11 @@ ctkObjectClassDefinitionPtr ctkEAMetaTypeProvider::getObjectClassDefinition(cons
                                                    "handler. However, the application should work without this configuration property. It is a "
                                                    "pure optimization! The value is a list of strings (separated by comma) which is assumed to define "
                                                    "exact class names.",
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                                   QMetaType::QString, m_ignoreTimeout, 0,
+#else
                                                    QVariant::String, m_ignoreTimeout, 0,
+#endif
                                                    QStringList(QString::number(std::numeric_limits<int>::max())))));
 
     ocd = ctkObjectClassDefinitionPtr(new ObjectClassDefinitionImpl(adList));

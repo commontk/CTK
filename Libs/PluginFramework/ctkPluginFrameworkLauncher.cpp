@@ -158,7 +158,11 @@ public:
   {
     for (ctkProperties::iterator iter = result.begin(); iter != result.end(); ++iter)
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      if (iter.value().typeId() == QMetaType::QString)
+#else
       if (iter.value().type() == QVariant::String)
+#endif
       {
         iter.value() = substituteVars(iter.value().toString());
       }
@@ -302,7 +306,11 @@ public:
     }
 
     QStringList installEntries;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    if (pluginsProp.typeId() == QMetaType::QStringList)
+#else
     if (pluginsProp.type() == QVariant::StringList)
+#endif
     {
       installEntries = pluginsProp.toStringList();
     }
