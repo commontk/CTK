@@ -875,7 +875,7 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
 }
 
 // -------------------------------------------------------------------------
-void ctkQImageView::enterEvent( QEvent * )
+void ctkQImageView::enterEvent( QEnterEvent * )
 {
   Q_D( ctkQImageView );
   QApplication::setOverrideCursor( QCursor(Qt::CrossCursor) );
