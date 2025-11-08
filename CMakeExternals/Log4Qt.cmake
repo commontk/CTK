@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED Log4Qt_DIR)
 
-  set(revision_tag e2a65d5d0c626a33f9384f2a9227efee3035dbf9)
+  set(revision_tag 7406782e7d3babe95486b84ee97fc39c927a8c0f)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
