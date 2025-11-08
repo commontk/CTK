@@ -62,7 +62,11 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments2 << "--test-string";
   arguments2 << "ctkrocks";
   ctkCommandLineParser parser2;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser2.addArgument("--test-bool", "", QMetaType::Bool, "This is a test bool", false);
+#else
   parser2.addArgument("--test-bool", "", QVariant::Bool, "This is a test bool", false);
+#endif
   ok = false;
   QHash<QString, QVariant> parsedArgs = parser2.parseArguments(arguments2, &ok);
   if (!ok)
@@ -96,12 +100,21 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments3 << "--test-stringlist"<< "item1" << "item2" << "item3";
   arguments3 << "--test-integer"<< "-3"; // test if argument is recognized after multi-value argument
   ctkCommandLineParser parser3;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser3.addArgument("--test-string", "", QMetaType::QString, "This is a test string");
+  parser3.addArgument("--test-string2", "", QMetaType::QString, "This is a test string2", "CTKGood");
+  parser3.addArgument("--test-integer", "", QMetaType::Int, "This is a test integer");
+//  parser3.addArgument("--test-double", "", QMetaType::Double, "This is a test double");
+  parser3.addArgument("--test-stringlist", "", QMetaType::QStringList,
+                                "This is a test stringlist");
+#else
   parser3.addArgument("--test-string", "", QVariant::String, "This is a test string");
   parser3.addArgument("--test-string2", "", QVariant::String, "This is a test string2", "CTKGood");
   parser3.addArgument("--test-integer", "", QVariant::Int, "This is a test integer");
 //  parser3.addArgument("--test-double", "", QVariant::Double, "This is a test double");
   parser3.addArgument("--test-stringlist", "", QVariant::StringList,
                                 "This is a test stringlist");
+#endif
   ok = false;
   parsedArgs = parser3.parseArguments(arguments3, &ok);
   if (!ok)
@@ -153,10 +166,17 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test4 - check if helpText() works as expected
   ctkCommandLineParser parser4;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser4.addArgument("--help-string", "", QMetaType::QString, "This is an help string");
+  parser4.addArgument("--help-string-med", "", QMetaType::QString, "");
+  parser4.addArgument("--help-string-long", "-hs2", QMetaType::QString, "This is an help string too !");
+  parser4.addArgument("", "-hs3", QMetaType::QString, "This is an help string too for sure !?");
+#else
   parser4.addArgument("--help-string", "", QVariant::String, "This is an help string");
   parser4.addArgument("--help-string-med", "", QVariant::String, "");
   parser4.addArgument("--help-string-long", "-hs2", QVariant::String, "This is an help string too !");
   parser4.addArgument("", "-hs3", QVariant::String, "This is an help string too for sure !?");
+#endif
 
   QString expectedHelpString;
   QTextStream streamExpectedHelpString(&expectedHelpString);
@@ -195,28 +215,44 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser5.addArgument("--list", "", QMetaType::QStringList, "Test5 list");
+#else
   parser5.addArgument("--list", "", QVariant::StringList, "Test5 list");
+#endif
   if (!parser5.setExactMatchRegularExpression("--list","item[0-9]",
                                               "Element of the form item[0-9] are expected."))
   {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(StringListArg)";
     return EXIT_FAILURE;
   }
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser5.addArgument("--string", "", QMetaType::QString, "Test5 string");
+#else
   parser5.addArgument("--string", "", QVariant::String, "Test5 string");
+#endif
   if (!parser5.setExactMatchRegularExpression("--string","ctkStop|ctkStart",
                                               "ctkStop or ctkStart is expected."))
   {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(StringArg)";
     return EXIT_FAILURE;
   }
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser5.addArgument("--bool", "", QMetaType::Bool, "Test5 bool");
+#else
   parser5.addArgument("--bool", "", QVariant::Bool, "Test5 bool");
+#endif
   if (parser5.setExactMatchRegularExpression("--bool",".*", "invalid"))
   {
     qCritical() << "Test5 - Problem with setExactMatchRegularExpression(BooleanArg) - "
                    "The function should return false if a boolean argument is passed";
     return EXIT_FAILURE;
   }
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser5.addArgument("--int", "", QMetaType::Int, "Test5 int");
+#else
   parser5.addArgument("--int", "", QVariant::Int, "Test5 int");
+#endif
   if (!parser5.setExactMatchRegularExpression("--int","[1-3]",
                                               "Value 1, 2 or 3 is expected."))
   {
@@ -316,8 +352,13 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test6 - Check if the parser handle the case when value of parameter is omitted
   ctkCommandLineParser parser6;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser6.addArgument("--string", "", QMetaType::QString, "This is a string");
+  parser6.addArgument("--bool", "", QMetaType::Bool, "This is a bool");
+#else
   parser6.addArgument("--string", "", QVariant::String, "This is a string");
   parser6.addArgument("--bool", "", QVariant::Bool, "This is a bool");
+#endif
 
   QStringList arguments6;
   arguments6 << "ctkCommandLineParserTest1"
@@ -339,8 +380,13 @@ int ctkCommandLineParserTest1(int, char*[])
   // Test7 - Check if addBooleanArgument and ignore_rest=true works as expected
   ctkCommandLineParser parser7;
   bool test7Bool = false;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser7.addArgument("--bool", "", QMetaType::Bool, "This is a boolean",
+                      false /*defaultValue*/, true /* ignoreRest*/);
+#else
   parser7.addArgument("--bool", "", QVariant::Bool, "This is a boolean",
                              false /*defaultValue*/, true /* ignoreRest*/);
+#endif
   QStringList arguments7;
   arguments7 << "ctkCommandLineParserTest1";
   arguments7 << "--bool";
@@ -371,8 +417,13 @@ int ctkCommandLineParserTest1(int, char*[])
   // Test7b - Same as Test7 using
   ctkCommandLineParser parser7b;
   parser7b.setArgumentPrefix("--", "-");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser7b.addArgument("--bool", "-", QMetaType::Bool, "This is a boolean",
+                       false /*defaultValue*/, true /* ignoreRest*/);
+#else
   parser7b.addArgument("--bool", "-", QVariant::Bool, "This is a boolean",
                       false /*defaultValue*/, true /* ignoreRest*/);
+#endif
   QStringList arguments7b;
   arguments7b << "ctkCommandLineParserTest1";
   arguments7b << "--";
@@ -403,8 +454,13 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test8 - Check if addStringArgument and ignore_rest=true works as expected
   ctkCommandLineParser parser8;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser8.addArgument("--string", "", QMetaType::QString, "This is a string",
+                      QString() /*defaultValue*/, true /* ignoreRest*/);
+#else
   parser8.addArgument("--string", "", QVariant::String, "This is a string",
                             QString() /*defaultValue*/, true /* ignoreRest*/);
+#endif
 
   QStringList arguments8;
   arguments8 << "ctkCommandLineParserTest1";
@@ -436,8 +492,13 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test9 - Check if addArgument for int and ignore_rest=true works as expected
   ctkCommandLineParser parser9;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser9.addArgument("--integer", "", QMetaType::Int, "This is an integer",
+                      0 /*defaultValue*/, true /* ignoreRest*/);
+#else
   parser9.addArgument("--integer", "", QVariant::Int, "This is an integer",
                              0 /*defaultValue*/, true /* ignoreRest*/);
+#endif
 
   QStringList arguments9;
   arguments9 << "ctkCommandLineParserTest1";
@@ -469,7 +530,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test10 - Check if argumentParsed works as expected
   ctkCommandLineParser parser10;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser10.addArgument("--bool", "", QMetaType::Bool, "This is a boolean");
+#else
   parser10.addArgument("--bool", "", QVariant::Bool, "This is a boolean");
+#endif
 
   // Since parseArguments hasn't been called, argumentParsed should return False
   if(parser10.argumentParsed("--bool"))
@@ -506,8 +571,13 @@ int ctkCommandLineParserTest1(int, char*[])
   // Test11 - Check if setArgumentPrefix works as expected
   ctkCommandLineParser parser11;
   parser11.setArgumentPrefix("--", "/");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser11.addArgument("test-string", "", QMetaType::QString);
+  parser11.addArgument("", "i", QMetaType::Int);
+#else
   parser11.addArgument("test-string", "", QVariant::String);
   parser11.addArgument("", "i", QVariant::Int);
+#endif
 
   QStringList arguments11;
   arguments11 << "ctkCommandLineParserTest1";
@@ -551,7 +621,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test12 - Check if the returned hash map contains the correct entries
   ctkCommandLineParser parser12;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser12.addArgument("--test-list", "-l", QMetaType::QStringList);
+#else
   parser12.addArgument("--test-list", "-l", QVariant::StringList);
+#endif
 
   QStringList arguments12;
   arguments12 << "ctkCommandLineParserTest1";
@@ -573,7 +647,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Test13 - Check that supplying a default value works
   ctkCommandLineParser parser13;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser13.addArgument("", "-d", QMetaType::Int, "Argument with default value", 3);
+#else
   parser13.addArgument("", "-d", QVariant::Int, "Argument with default value", 3);
+#endif
   parsedArgs = parser13.parseArguments(QStringList(), &ok);
   if (!parsedArgs.contains("-d"))
   {
@@ -612,8 +690,13 @@ int ctkCommandLineParserTest1(int, char*[])
   // Test14 - Check that QSettings are used
   ctkCommandLineParser parser14(&settings);
   parser14.setArgumentPrefix("--", "-");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser14.addArgument("long-settings-argument", "", QMetaType::Int);
+  parser14.addArgument("", "s", QMetaType::QString, "A short argument", "my-short");
+#else
   parser14.addArgument("long-settings-argument", "", QVariant::Int);
   parser14.addArgument("", "s", QVariant::String, "A short argument", "my-short");
+#endif
 
   QStringList arguments14;
   arguments14 << "ctkCommandLineParserTest1";
@@ -631,7 +714,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   // Now use QSettings
   parser14.enableSettings("disable-settings");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser14.addArgument("disable-settings", "", QMetaType::Bool);
+#else
   parser14.addArgument("disable-settings", "", QVariant::Bool);
+#endif
   parsedArgs = parser14.parseArguments(arguments14);
 
   if (!parser14.settingsEnabled())
@@ -714,7 +801,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   ctkCommandLineParser parser15(&settings);
   parser15.enableSettings();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser15.addArgument("--list-argument", "", QMetaType::QStringList);
+#else
   parser15.addArgument("--list-argument", "", QVariant::StringList);
+#endif
 
   QStringList arguments15;
   arguments15 << "ctkCommandLineParserTest1";
@@ -784,7 +875,11 @@ int ctkCommandLineParserTest1(int, char*[])
 
   ctkCommandLineParser parser16(&settings);
   parser16.enableSettings();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  parser16.addArgument("--test-bool", "", QMetaType::Bool);
+#else
   parser16.addArgument("--test-bool", "", QVariant::Bool);
+#endif
   parser16.setStrictModeEnabled(true);
 
   QStringList arguments16;

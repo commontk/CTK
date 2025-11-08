@@ -23,7 +23,11 @@
 
 // Qt includes
 #include <QHash>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+#include <QRegularExpression>
+#else
 #include <QRegExp>
+#endif
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>
@@ -42,13 +46,24 @@ public:
   CommandLineParserArgumentDescription(
     const QString& longArg, const QString& longArgPrefix,
     const QString& shortArg, const QString& shortArgPrefix,
-    QVariant::Type type, const QString& argHelp,
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QMetaType::Type type,
+#else
+    QVariant::Type type,
+#endif
+    const QString& argHelp,
     const QVariant& defaultValue, bool ignoreRest,
     bool deprecated)
       : LongArg(longArg), LongArgPrefix(longArgPrefix),
       ShortArg(shortArg), ShortArgPrefix(shortArgPrefix),
       ArgHelp(argHelp), IgnoreRest(ignoreRest), NumberOfParametersToProcess(0),
-      Deprecated(deprecated), DefaultValue(defaultValue), Value(type), ValueType(type)
+      Deprecated(deprecated), DefaultValue(defaultValue),
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      Value(QMetaType(type)),
+#else
+      Value(type),
+#endif
+      ValueType(type)
   {
     if (defaultValue.isValid())
     {
@@ -57,32 +72,52 @@ public:
 
     switch (type)
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::QString:
+#else
       case QVariant::String:
+#endif
       {
         NumberOfParametersToProcess = 1;
         RegularExpression = ".*";
       }
         break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::Bool:
+#else
       case QVariant::Bool:
+#endif
       {
         NumberOfParametersToProcess = 0;
         RegularExpression = "";
       }
         break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::QStringList:
+#else
       case QVariant::StringList:
+#endif
       {
         NumberOfParametersToProcess = -1;
         RegularExpression = ".*";
       }
         break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::Int:
+#else
       case QVariant::Int:
+#endif
       {
         NumberOfParametersToProcess = 1;
         RegularExpression = "-?[0-9]+";
         ExactMatchFailedMessage = "A negative or positive integer is expected.";
       }
         break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      case QMetaType::Double:
+#else
       case QVariant::Double:
+#endif
       {
         NumberOfParametersToProcess = 1;
         RegularExpression = "-?[0-9]*\\.?[0-9]+";
@@ -114,7 +149,11 @@ public:
 
   QVariant       DefaultValue;
   QVariant       Value;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  QMetaType::Type ValueType;
+#else
   QVariant::Type ValueType;
+#endif
 };
 
 // --------------------------------------------------------------------------
@@ -123,26 +162,47 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
   if (!RegularExpression.isEmpty())
   {
     // Validate value
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    QRegularExpression regexp(QRegularExpression::anchoredPattern(this->RegularExpression));
+    if (!regexp.match(value).hasMatch())
+#else
     QRegExp regexp(this->RegularExpression);
     if (!regexp.exactMatch(value))
+#endif
     {
       return false;
     }
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  switch (Value.typeId())
+#else
   switch (Value.type())
+#endif
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    case QMetaType::QString:
+#else
     case QVariant::String:
+#endif
     {
       Value.setValue(value);
     }
       break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    case QMetaType::Bool:
+#else
     case QVariant::Bool:
+#endif
     {
       Value.setValue(!QString::compare(value, "true", Qt::CaseInsensitive));
     }
       break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    case QMetaType::QStringList:
+#else
     case QVariant::StringList:
+#endif
     {
       if (Value.isNull())
       {
@@ -158,12 +218,20 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
       }
     }
       break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    case QMetaType::Int:
+#else
     case QVariant::Int:
+#endif
     {
       Value.setValue(value.toInt());
     }
       break;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    case QMetaType::Double:
+#else
     case QVariant::Double:
+#endif
     {
       Value.setValue(value.toDouble());
     }
@@ -331,7 +399,11 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
   foreach (CommandLineParserArgumentDescription* desc,
            this->Internal->ArgumentDescriptionList)
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    desc->Value = QVariant(QMetaType(desc->ValueType));
+#else
     desc->Value = QVariant(desc->ValueType);
+#endif
     if (desc->DefaultValue.isValid())
     {
       desc->Value = desc->DefaultValue;
@@ -572,8 +644,13 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         // Merge with QSettings
         QVariant settingsVal = settings->value(key);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        if (desc->ValueType == QMetaType::QStringList &&
+          settingsVal.canConvert(QMetaType(QMetaType::QStringList)))
+#else
         if (desc->ValueType == QVariant::StringList &&
             settingsVal.canConvert(QVariant::StringList))
+#endif
         {
           QStringList stringList = desc->Value.toStringList();
           stringList.append(settingsVal.toStringList());
@@ -650,7 +727,12 @@ const QStringList& ctkCommandLineParser::unparsedArguments() const
 
 // --------------------------------------------------------------------------
 void ctkCommandLineParser::addArgument(const QString& longarg, const QString& shortarg,
-                                       QVariant::Type type, const QString& argHelp,
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                                       QMetaType::Type type,
+#else
+                                       QVariant::Type type,
+#endif
+                                       const QString& argHelp,
                                        const QVariant& defaultValue, bool ignoreRest,
                                        bool deprecated)
 {
@@ -658,9 +740,15 @@ void ctkCommandLineParser::addArgument(const QString& longarg, const QString& sh
              "both long and short argument names are empty");
   if (longarg.isEmpty() && shortarg.isEmpty()) { return; }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  Q_ASSERT_X(!defaultValue.isValid() || defaultValue.typeId() == type, "addArgument",
+             "defaultValue type does not match");
+  if (defaultValue.isValid() && defaultValue.typeId() != type)
+#else
   Q_ASSERT_X(!defaultValue.isValid() || defaultValue.type() == type, "addArgument",
              "defaultValue type does not match");
   if (defaultValue.isValid() && defaultValue.type() != type)
+#endif
     throw std::logic_error("The QVariant type of defaultValue does not match the specified type");
 
   /* Make sure it's not already added */
@@ -704,7 +792,11 @@ void ctkCommandLineParser::addArgument(const QString& longarg, const QString& sh
 void ctkCommandLineParser::addDeprecatedArgument(
     const QString& longarg, const QString& shortarg, const QString& argHelp)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  addArgument(longarg, shortarg, QMetaType::QStringList, argHelp, QVariant(), false, true);
+#else
   addArgument(longarg, shortarg, QVariant::StringList, argHelp, QVariant(), false, true);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -718,7 +810,11 @@ bool ctkCommandLineParser::setExactMatchRegularExpression(
     return false;
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  if (argDesc->Value.typeId() == QMetaType::Bool)
+#else
   if (argDesc->Value.type() == QVariant::Bool)
+#endif
   {
     return false;
   }

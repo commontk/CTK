@@ -176,7 +176,7 @@ public:
    * Adds a command line argument. An argument can have a long name
    * (like --long-argument-name), a short name (like -l), or both. The type
    * of the argument can be specified by using the <code>type</code> parameter.
-   * The following types are supported:
+   * With Qt 5, whe following types are supported:
    *
    * <table>
    * <tr><td><b>Type</b></td><td><b># of parameters</b></td><td><b>Default regular expr</b></td>
@@ -187,12 +187,23 @@ public:
    * <tr><td>QVariant::Int</td><td>1</td><td>-?[0-9]+</td><td>--test-int -5</td></tr>
    * </table>
    *
+   * With Qt 6, the following types are supported:
+   *
+   * <table>
+   * <tr><td><b>Type</b></td><td><b># of parameters</b></td><td><b>Default regular expr</b></td>
+   *        <td><b>Example</b></td></tr>
+   * <tr><td>QMetaType::QString</td><td>1</td><td>.*</td><td>--test-string StringParameter</td></tr>
+   * <tr><td>QMetaType::Bool</td><td>0</td><td>does not apply</td><td>--enable-something</td></tr>
+   * <tr><td>QMetaType::QStringList</td><td>-1</td><td>.*</td><td>--test-list string1 string2</td></tr>
+   * <tr><td>QMetaType::Int</td><td>1</td><td>-?[0-9]+</td><td>--test-int -5</td></tr>
+   * </table>
+   *
    * The regular expressions are used to validate the parameters of command line
    * arguments. You can restrict the valid set of parameters by calling
    * <code>setExactMatchRegularExpression()</code> for your argument.
    *
    * Optionally, a help string and a default value can be provided for the argument. If
-   * the QVariant type of the default value does not match <code>type</code>, an
+   * the QMetaType (or QVariant) type of the default value does not match <code>type</code>, an
    * exception is thrown. Arguments with default values are always returned by
    * <code>parseArguments()</code>.
    *
@@ -213,11 +224,15 @@ public:
    *
    * @see setExactMatchRegularExpression()
    * @see addDeprecatedArgument()
-   * @throws std::logic_error If the QVariant type of <code>defaultValue</code>
+   * @throws std::logic_error If the QMetaType (or QVariant) type of <code>defaultValue</code>
    *         does not match <code>type</code>, a <code>std::logic_error</code> is thrown.
    */
   void addArgument(const QString& longarg, const QString& shortarg,
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+                   QMetaType::Type type, const QString& argHelp = QString(),
+#else
                    QVariant::Type type, const QString& argHelp = QString(),
+#endif
                    const QVariant& defaultValue = QVariant(),
                    bool ignoreRest = false, bool deprecated = false);
 
@@ -285,7 +300,13 @@ public:
    * \code
    * ctkCommandLineParser parser;
    * parser.setArgumentPrefix("--", "-");
+   *
+   * #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
    * parser.addArgument("long-argument", "l", QVariant::String);
+   * #else
+   * parser.addArgument("long-argument", "l", QMetaType::QString);
+   * #endif
+   *
    * QStringList args;
    * args << "program name" << "--long-argument Hi";
    * parser.parseArguments(args);
