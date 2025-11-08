@@ -75,7 +75,7 @@ void _LogListener::logged(ctkLogEntryPtr entry)
                         message);
     }
 
-    properties.insert(ctkEventConstants::EXCEPTION, exc);
+    // properties.insert(ctkEventConstants::EXCEPTION, exc);
   }
 
   ctkServiceReference service = entry->getServiceReference();
