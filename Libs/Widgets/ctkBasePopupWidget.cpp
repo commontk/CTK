@@ -787,7 +787,14 @@ void ctkBasePopupWidget::hidePopup()
       d->PopupPixmapWidget->show();
       if (this->isActiveWindow())
       {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+        if (!d->BaseWidget.isNull())
+        {
+          d->BaseWidget->activateWindow();
+        }
+#else
         qApp->setActiveWindow(!d->BaseWidget.isNull() ? d->BaseWidget->window() : 0);
+#endif
       }
       this->hide();
       break;

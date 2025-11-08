@@ -208,7 +208,7 @@ void ctkTestApplication::mouseDown(QWidget* w, QPoint pos, Qt::MouseButton btn,
                         Qt::KeyboardModifiers mod, int ms)
 {
   delay(ms);
-  QMouseEvent e(QEvent::MouseButtonPress, pos, btn, btn, mod);
+  QMouseEvent e(QEvent::MouseButtonPress, pos, QCursor::pos(), btn, btn, mod);
   if(!simulateEvent(w, &e))
   {
     qWarning("mouseDown not handled\n");
@@ -220,7 +220,7 @@ void ctkTestApplication::mouseUp(QWidget* w, QPoint pos, Qt::MouseButton btn,
                       Qt::KeyboardModifiers mod, int ms)
 {
   delay(ms);
-  QMouseEvent e(QEvent::MouseButtonRelease, pos, btn, btn, mod);
+  QMouseEvent e(QEvent::MouseButtonRelease, pos, QCursor::pos(), btn, btn, mod);
   if(!simulateEvent(w, &e))
   {
     qWarning("mouseUp not handled\n");
@@ -232,7 +232,7 @@ void ctkTestApplication::mouseMove(QWidget* w, QPoint pos, Qt::MouseButton btn,
                         Qt::KeyboardModifiers mod, int ms)
 {
   delay(ms);
-  QMouseEvent e(QEvent::MouseMove, pos, btn, btn, mod);
+  QMouseEvent e(QEvent::MouseMove, pos, QCursor::pos(), btn, btn, mod);
   if(!simulateEvent(w, &e))
   {
     qWarning("mouseMove not handled\n");
@@ -253,7 +253,7 @@ void ctkTestApplication::mouseDClick(QWidget* w, QPoint pos, Qt::MouseButton btn
                          Qt::KeyboardModifiers mod, int ms)
 {
   delay(ms);
-  QMouseEvent e(QEvent::MouseButtonDblClick, pos, btn, btn, mod);
+  QMouseEvent e(QEvent::MouseButtonDblClick, pos, QCursor::pos(), btn, btn, mod);
   if(!simulateEvent(w, &e))
   {
     qWarning("mouseMove not handled\n");
