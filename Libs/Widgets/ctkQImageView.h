@@ -77,6 +77,10 @@ public:
 
   double zoom( void );
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  using QEnterEvent = QEvent;
+#endif
+
 public Q_SLOTS:
 
   void addImage( const QImage & image );
@@ -95,7 +99,7 @@ public Q_SLOTS:
   virtual void mousePressEvent( QMouseEvent * event );
   virtual void mouseReleaseEvent( QMouseEvent * event );
   virtual void mouseMoveEvent( QMouseEvent * event );
-  virtual void enterEvent( QEvent * event );
+  virtual void enterEvent( QEnterEvent * event );
   virtual void leaveEvent( QEvent * event );
 
   void setCenter( double x, double y );
