@@ -133,7 +133,11 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
   }
   else if (event->type() == QEvent::RequestSoftwareInputPanel)
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+    widget->window()->activateWindow();
+#else
     qApp->setActiveWindow(widget->window());
+#endif
   }
   return false;
 }

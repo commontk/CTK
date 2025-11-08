@@ -1047,7 +1047,11 @@ void ctkQImageView::update( bool zoomChanged,
           QFont textFont( fontFamily, fontPointSize );
           painter.setFont( textFont );
           QColor textColor;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 6, 0))
+          textColor = QColor::fromString( "lime" );
+#else
           textColor.setNamedColor( "lime" );
+#endif
           textColor.setAlpha( 128 );
           painter.setPen( textColor );
 
@@ -1146,7 +1150,11 @@ void ctkQImageView::update( bool zoomChanged,
         }
 
         QColor lineColor;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 6, 0))
+        lineColor = QColor::fromString( "red" );
+#else
         lineColor.setNamedColor( "red" );
+#endif
         lineColor.setAlpha( 128 );
         painter.setPen( lineColor );
         double x = ( this->xPosition() - d->TmpXMin )

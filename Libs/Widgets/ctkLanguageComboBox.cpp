@@ -195,7 +195,11 @@ bool ctkLanguageComboBoxPrivate::languageItem(const QString& localeCode,
       // There are multiple countries for the locale's language therefore include the country name.
       text = QString("%1 (%2)")
         .arg(QLocale::languageToString(locale.language()))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 6, 0))
+        .arg(QLocale::territoryToString(locale.territory()));
+#else
         .arg(QLocale::countryToString(locale.country()));
+#endif
     }
     else
     {
