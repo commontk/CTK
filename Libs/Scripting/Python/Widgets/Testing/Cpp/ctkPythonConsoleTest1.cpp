@@ -44,7 +44,11 @@ int ctkPythonConsoleTest1(int argc, char * argv [] )
   pythonConsole.initialize(&pythonManager);
 
   QList<QKeySequence> otherShortcuts;
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  otherShortcuts << QKeySequence(Qt::CTRL | Qt::Key_Space);
+#else
   otherShortcuts << QKeySequence(Qt::CTRL + Qt::Key_Space);
+#endif
   otherShortcuts << Qt::Key_F1;
   pythonConsole.setCompleterShortcuts(otherShortcuts);
   pythonConsole.addCompleterShortcut(Qt::Key_Tab);
