@@ -441,7 +441,14 @@ void ctkBasePopupWidgetPrivate::hideAll()
 #ifndef Q_OS_MAC // See Slicer issue #3850
   if (q->isActiveWindow() && !this->BaseWidget.isNull())
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+    if (!this->BaseWidget.isNull())
+    {
+      this->BaseWidget->activateWindow();
+    }
+#else
     qApp->setActiveWindow(this->BaseWidget->window());
+#endif
   }
 #endif
 
