@@ -224,7 +224,7 @@ set_target_properties(${KIT}CppTests PROPERTIES
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
+if(CTK_QT_VERSION MATCHES "^(5|6)$")
   list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Test)
   if(CTK_USE_QTTESTING)
     list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Xml Qt${CTK_QT_VERSION}::XmlPatterns)

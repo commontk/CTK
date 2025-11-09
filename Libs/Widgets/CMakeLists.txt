@@ -247,6 +247,11 @@ list(APPEND KIT_target_libraries
   Qt${CTK_QT_VERSION}::Xml
   Qt${CTK_QT_VERSION}::OpenGL
   )
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries
+    Qt${CTK_QT_VERSION}::OpenGLWidgets
+    )
+endif()
 
 # A player and a translator must be added for custom Qt widgets
 if(CTK_USE_QTTESTING)

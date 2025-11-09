@@ -103,7 +103,7 @@ macro(ctkMacroSetupPlugins )
 
   # Set the variable QT_INSTALLED_LIBRARY_DIR that contains all
   # Qt shared libraries
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
+  if(CTK_QT_VERSION MATCHES "^(5|6)$")
     if(WIN32)
       get_target_property(_qt_moc_executable Qt${CTK_QT_VERSION}::moc LOCATION)
       get_filename_component(QT_INSTALLED_LIBRARY_DIR ${_qt_moc_executable} PATH)

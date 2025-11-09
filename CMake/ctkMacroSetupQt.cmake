@@ -21,11 +21,18 @@
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
 
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
+  if(CTK_QT_VERSION MATCHES "^(5|6)$")
     cmake_minimum_required(VERSION 3.20.6)
     find_package(Qt${CTK_QT_VERSION} COMPONENTS Core)
 
     set(CTK_QT_COMPONENTS Core)
+
+    if(CTK_QT_VERSION VERSION_GREATER "5")
+      list(APPEND CTK_QT_COMPONENTS
+        Core5Compat # For QRegExp used in "ctkCommandLineParser.cpp"
+        StateMachine # For QAbstractTransition used in "ctkWorkflowTransitions.h"
+        )
+    endif()
 
     # See https://github.com/commontk/CTK/wiki/Maintenance#updates-of-required-qt-components
 
@@ -46,7 +53,9 @@ macro(ctkMacroSetupQt)
       OR CTK_LIB_CommandLineModules/Core
       OR CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTXMLPATTERNS
       )
-      list(APPEND CTK_QT_COMPONENTS XmlPatterns)
+      if(CTK_QT_VERSION VERSION_EQUAL "5")
+        list(APPEND CTK_QT_COMPONENTS XmlPatterns)
+      endif()
     endif()
 
     if(CTK_APP_ctkCommandLineModuleExplorer
@@ -82,6 +91,10 @@ macro(ctkMacroSetupQt)
 
     if(CTK_LIB_Widgets)
       list(APPEND CTK_QT_COMPONENTS OpenGL)
+
+      if(CTK_QT_VERSION VERSION_GREATER "5")
+        list(APPEND CTK_QT_COMPONENTS OpenGLWidgets)
+      endif()
     endif()
 
     if(CTK_APP_ctkCommandLineModuleExplorer
@@ -108,6 +121,10 @@ macro(ctkMacroSetupQt)
 
     if(CTK_BUILD_QTDESIGNER_PLUGINS)
       list(APPEND CTK_QT_COMPONENTS Designer)
+
+      if(CTK_QT_VERSION VERSION_GREATER "5")
+        list(APPEND CTK_QT_COMPONENTS DesignerComponentsPrivate)
+      endif()
     endif()
 
     if(CTK_LIB_XNAT/Core
@@ -118,18 +135,28 @@ macro(ctkMacroSetupQt)
       list(APPEND CTK_QT_COMPONENTS Network)
     endif()
 
-    find_package(Qt5 COMPONENTS ${CTK_QT_COMPONENTS} REQUIRED)
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      find_package(Qt5 COMPONENTS ${CTK_QT_COMPONENTS} REQUIRED)
+      mark_as_superbuild(Qt5_DIR) # Qt 5
 
-    mark_as_superbuild(Qt5_DIR) # Qt 5
+      set(_major ${Qt5_VERSION_MAJOR})
+      set(_minor ${Qt5_VERSION_MINOR})
+      set(_patch ${Qt5_VERSION_PATCH})
+
+    elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+      find_package(Qt6 COMPONENTS ${CTK_QT_COMPONENTS} REQUIRED)
+      mark_as_superbuild(Qt6_DIR) # Qt 6
+
+      set(_major ${Qt6_VERSION_MAJOR})
+      set(_minor ${Qt6_VERSION_MINOR})
+      set(_patch ${Qt6_VERSION_PATCH})
+    endif()
 
     # XXX Backward compatible way
     if(DEFINED CMAKE_PREFIX_PATH)
       mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 5
     endif()
 
-    set(_major ${Qt5_VERSION_MAJOR})
-    set(_minor ${Qt5_VERSION_MINOR})
-    set(_patch ${Qt5_VERSION_PATCH})
 
     ctk_list_to_string(", " "${CTK_QT_COMPONENTS}" comma_separated_module_list)
     message(STATUS "Configuring CTK with Qt ${_major}.${_minor}.${_patch} (using modules: ${comma_separated_module_list})")

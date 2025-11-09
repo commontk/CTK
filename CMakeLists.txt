@@ -105,10 +105,18 @@ mark_as_advanced(CTK_SUPERBUILD)
 #-----------------------------------------------------------------------------
 # Qt version
 #
-set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
+if(DEFINED Qt6_DIR)
+  set(_default_qt_major_version "6")
+else()
+  set(_default_qt_major_version "5")
+endif()
+set(CTK_QT_VERSION "${_default_qt_major_version}" CACHE STRING "Expected major Qt version")
 mark_as_advanced(CTK_QT_VERSION)
-set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5)
+set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5 6)
 mark_as_superbuild(CTK_QT_VERSION)
+if(NOT "${CTK_QT_VERSION}" MATCHES "^(5|6)$")
+  message(FATAL_ERROR "error: CTK_QT_VERSION must be 5 or 6.")
+endif()
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -319,8 +327,17 @@ endif()
 #-----------------------------------------------------------------------------
 # QtTesting
 #
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
 mark_as_advanced(CTK_USE_QTTESTING)
+else()
+  # Forcing to OFF as "QtTesting" depends on XmlPatterns Qt component not available with Qt 6
+  if(DEFINED CTK_USE_QTTESTING AND CTK_USE_QTTESTING)
+    unset(CTK_USE_QTTESTING CACHE)
+    set(CTK_USE_QTTESTING OFF)
+    message(WARNING "Forcing option [CTK_USE_QTTESTING] to OFF as QtTesting depends on XmlPatterns Qt component not available with Qt ${CTK_QT_VERSION}")
+  endif()
+endif()
 mark_as_superbuild(CTK_USE_QTTESTING)
 
 #-----------------------------------------------------------------------------
@@ -503,6 +520,7 @@ ctk_lib_option(Visualization/VTK/Core
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
 
@@ -520,6 +538,16 @@ ctk_lib_option(CommandLineModules/Backend/LocalProcess
 
 ctk_lib_option(CommandLineModules/Backend/FunctionPointer
                "Build the Command Line Module back-end for function pointers" OFF)
+
+else()
+  # "CommandLineModules/Core" depends on XmlPatterns Qt component not available with Qt 6
+  set(CTK_LIB_CommandLineModules OFF)
+  set(CTK_LIB_CommandLineModules/Frontend/QtWebKit OFF)
+  set(CTK_LIB_CommandLineModules/Frontend/QtGui OFF)
+  set(CTK_LIB_CommandLineModules/Backend/XMLChecker OFF)
+  set(CTK_LIB_CommandLineModules/Backend/LocalProcess OFF)
+  set(CTK_LIB_CommandLineModules/Backend/FunctionPointer OFF)
+endif()
 
 ctk_lib_option(XNAT/Core
                "Build the XNAT Core library" OFF)
@@ -574,6 +602,7 @@ ctk_app_option(ctkDICOMQueryRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_app_option(ctkDICOMHost
                "Build the DICOM application host example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
@@ -585,6 +614,12 @@ ctk_app_option(ctkExampleHost
 ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
+else()
+  # "org.commontk.dah.core" depends on QtSOAP not available with Qt 6
+  set(CTK_APP_ctkDICOMHost OFF)
+  set(CTK_APP_ctkExampleHostedApp OFF)
+  set(CTK_APP_ctkExampleHost OFF)
+endif()
 
 if(FALSE)
 # Since EventBusDemo depends on qxmlrpc that is lacking Qt5 support, it is excluded.
@@ -593,9 +628,15 @@ ctk_app_option(ctkEventBusDemo
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
 endif()
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_app_option(ctkCommandLineModuleExplorer
                "Build the Command Line Module Explorer" OFF
                CTK_BUILD_EXAMPLES)
+else()
+  # Forcing to OFF as XmlPatterns Qt component is not available with Qt 6
+  unset(CTK_APP_ctkCommandLineModuleExplorer CACHE)
+  set(CTK_APP_ctkCommandLineModuleExplorer OFF)
+endif()
 
 # We use the CTKWidgets library together with the Qt Designer plug-in
 # in ctkCommandLineModuleExplorer, so enabling the options here.
@@ -672,6 +713,7 @@ ctk_plugin_option(org.commontk.plugingenerator.ui
                   CTK_APP_ctkPluginGenerator)
 
 # Plug-ins related to DICOM WG23 (Application Hosting)
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
 ctk_plugin_option(org.commontk.dah.hostedapp "Build the org.commontk.dah.hostedapp plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
@@ -681,14 +723,27 @@ ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin.
 ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
                   CTK_APP_ctkExampleHostedApp)
+else()
+  # "org.commontk.dah.core" depends on QtSOAP not available with Qt 6
+  set(CTK_PLUGIN_org.commontk.dah.core OFF)
+endif()
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_plugin_option(org.commontk.dah.cmdlinemoduleapp
                   "Build the org.commontk.dah.cmdlinemoduleapp plugin." OFF
                   CTK_APP_ctkCommandLineModuleApp)
+else()
+  # "CommandLineModules/Core" depends on XmlPatterns Qt component not available with Qt 6
+  set(CTK_PLUGIN_org.commontk.dah.cmdlinemoduleapp OFF)
+endif()
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
 ctk_plugin_option(org.commontk.dah.examplehost
                   "Build the org.commontk.dah.examplehost plugin." OFF
                   CTK_APP_ctkExampleHost)
+else()
+  # "org.commontk.dah.core" depends on QtSOAP not available with Qt 6
+endif()
 
 # Plug-ins related to the EventBus demo application
 if(FALSE)
