@@ -16,17 +16,13 @@ include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
 find_package(Qt${CTK_QT_VERSION} COMPONENTS Test REQUIRED)
 set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
-  QT5_GENERATE_MOCS(
-    ctkAbstractPythonManagerTest.cpp
-    USE_MOC_EXTENSION
-    )
-else()
-  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-endif()
-
 ctk_add_executable_utf8(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} ${CTK_QT_TEST_LIBRARY})
+
+# Configure CMake Qt automatic code generation
+set_target_properties(${KIT}CppTests PROPERTIES
+  AUTOMOC ON
+  )
 
 #
 # Add Tests
