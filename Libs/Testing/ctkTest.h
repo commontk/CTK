@@ -95,7 +95,7 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
     static const char *mouseActionNames[] =
         { "MousePress", "MouseRelease", "MouseClick", "MouseDClick", "MouseMove" };
     QString warning = QString::fromLatin1("Mouse event \"%1\" not accepted by receiving widget");
-    QTest::qWarn(qPrintable(warning.arg(mouseActionNames[static_cast<int>(action)])));
+    qWarning() << qPrintable(warning.arg(mouseActionNames[static_cast<int>(action)]));
   }
 }
 
