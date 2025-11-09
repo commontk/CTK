@@ -278,7 +278,6 @@ void ctkAbstractPythonManagerTester::testPythonAttributes()
   QFETCH(QStringList, expectedAttributeList);
 
   QString test_path = __FILE__; // return the local path of this source file
-  test_path.lastIndexOf("/");
   test_path.replace(test_path.lastIndexOf("/"),
                          test_path.size() - test_path.lastIndexOf("/"),
                          "/PythonAttributes-test.py");
@@ -345,7 +344,6 @@ void ctkAbstractPythonManagerTester::testPythonAttributeValues()
   QFETCH(QVariant, expectedValue);
 
   QString test_path = __FILE__; // return the local path of this source file
-  test_path.lastIndexOf("/");
   test_path.replace(test_path.lastIndexOf("/"),
                          test_path.size() - test_path.lastIndexOf("/"),
                          "/PythonAttributes-test.py");
