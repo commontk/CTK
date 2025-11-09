@@ -224,10 +224,15 @@ set_target_properties(${KIT}CppTests PROPERTIES
   AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
   )
 
-if(CTK_QT_VERSION VERSION_EQUAL "5")
+if(CTK_QT_VERSION MATCHES "^(5|6)$")
   list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Test)
   if(CTK_USE_QTTESTING)
-    list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Xml Qt${CTK_QT_VERSION}::XmlPatterns)
+    list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Xml)
+    # XmlPatterns is not available in Qt 6. CTK_USE_QTTESTING is forced OFF for Qt 6
+    # in the main CMakeLists.txt, but we add a version check here for robustness.
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::XmlPatterns)
+    endif()
   endif()
   target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 else()
