@@ -456,7 +456,11 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     // choices matches one of the preference list, it will be selected.
     QModelIndex preferredIndex = this->completionModel()->index(0, 0);
     int dotCount = completion.count('.');
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    if (dotCount == 0 || completion.at(completion.size() - 1) == '.')
+#else
     if (dotCount == 0 || completion.at(completion.count() - 1) == '.')
+#endif
     {
       foreach(const QString& pref, this->AutocompletePreferenceList)
       {
