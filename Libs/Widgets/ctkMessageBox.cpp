@@ -189,6 +189,7 @@ ctkMessageBox::ctkMessageBox(Icon icon, const QString& title,
                              const QString& text, StandardButtons buttons,
                              QWidget* parent, Qt::WindowFlags f)
   : QMessageBox(icon, title, text, buttons, parent, f)
+  , d_ptr(new ctkMessageBoxPrivate(*this))
 {
   Q_D(ctkMessageBox);
   d->init();
