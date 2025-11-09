@@ -498,7 +498,7 @@ void ctkServiceListener::serviceChanged(const ctkServiceEvent& evt)
     try
     {
       qulonglong sid = sr.getProperty(ctkPluginConstants::SERVICE_ID).toLongLong();
-      QString sidFilter = QString("(") + ctkPluginConstants::SERVICE_ID + "=" + sid + ")";
+      QString sidFilter = QString("(") + ctkPluginConstants::SERVICE_ID + "=" + QString::number(sid) + ")";
       QList<ctkServiceReference> srs = pc->getServiceReferences("", sidFilter);
       if (srs.isEmpty())
       {
