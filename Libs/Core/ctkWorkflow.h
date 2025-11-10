@@ -32,6 +32,10 @@ class ctkWorkflowStep;
 class ctkWorkflowPrivate;
 class QAbstractState;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+Q_MOC_INCLUDE("ctkWorkflowStep.h") // Ensure moc sees ctkWorkflowStep for meta-type generation (needed for stricter Qt 6.4+)
+#endif
+
 /// \ingroup Core
 /// \brief ctkWorkflow is the basis for a workflow engine, i.e. a state
 /// machine with enhancements to support ctkWorkflowStep.
