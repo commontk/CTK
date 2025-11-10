@@ -91,7 +91,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
 
-  set(revision_tag 805e3c099b42c6198ffa4e43915245584e35dc62) # patched-v3.6.1-2025-09-30-f4769f190
+  set(revision_tag 0f8486a7ad0e95bfbf1be57600e42d6e2ed136ea) # patched-v3.6.1-2025-09-30-f4769f190
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
