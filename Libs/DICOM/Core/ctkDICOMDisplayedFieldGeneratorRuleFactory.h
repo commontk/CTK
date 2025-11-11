@@ -31,6 +31,10 @@ class ctkDICOMDatabase;
 class ctkDICOMDisplayedFieldGeneratorAbstractRule;
 class ctkDICOMDisplayedFieldGeneratorRuleFactoryCleanup;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+Q_MOC_INCLUDE("ctkDICOMDisplayedFieldGeneratorAbstractRule.h") // Ensure moc sees ctkDICOMDisplayedFieldGeneratorAbstractRule for meta-type generation (needed for stricter Qt 6.4+)
+#endif
+
 /// \ingroup SlicerRt_QtModules_Segmentations
 /// \class ctkDICOMDisplayedFieldGeneratorRuleFactory
 /// \brief Singleton class managing displayed field generator rules

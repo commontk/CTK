@@ -37,6 +37,10 @@ class ctkDICOMAbstractThumbnailGenerator;
 class ctkDICOMDisplayedFieldGenerator;
 class ctkDICOMJobResponseSet;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+Q_MOC_INCLUDE("ctkDICOMJobResponseSet.h") // Ensure moc sees ctkDICOMJobResponseSet for meta-type generation (needed for stricter Qt 6.4+)
+#endif
+
 /// \ingroup DICOM_Core
 ///
 /// Class handling a database of DICOM objects. So far, an underlying
