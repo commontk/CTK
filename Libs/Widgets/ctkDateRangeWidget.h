@@ -41,7 +41,7 @@ class CTK_WIDGETS_EXPORT ctkDateRangeWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY startDateTimeChanged)
   Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY endDateTimeChanged)
-  Q_PROPERTY(bool displayTime READ displayTime WRITE setDisplayTime)
+  Q_PROPERTY(bool displayTime READ displayTime WRITE setDisplayTime NOTIFY displayTimeChanged);
 
 public:
   /// Superclass typedef
@@ -106,6 +106,8 @@ Q_SIGNALS:
   void startDateTimeChanged(const QDateTime& value);
   /// Fired when the end date is changed
   void endDateTimeChanged(const QDateTime& value);
+
+  void displayTimeChanged(bool);
 
 protected Q_SLOTS:
   void onDateTimeChanged();

@@ -42,10 +42,16 @@ class ctkFittedTextBrowserPrivate;
 class CTK_WIDGETS_EXPORT ctkFittedTextBrowser : public QTextBrowser
 {
   Q_OBJECT
-  Q_PROPERTY(bool disableMouseScroll READ disableMouseScroll WRITE setDisableMouseScroll)
-  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
-  Q_PROPERTY(QString showDetailsText READ showDetailsText WRITE setShowDetailsText)
-  Q_PROPERTY(QString hideDetailsText READ hideDetailsText WRITE setHideDetailsText)
+  Q_PROPERTY(bool disableMouseScroll READ disableMouseScroll WRITE setDisableMouseScroll NOTIFY disableMouseScrollChanged)
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY collapsedChanged)
+  Q_PROPERTY(QString showDetailsText READ showDetailsText WRITE setShowDetailsText NOTIFY showDetailsTextChanged)
+  Q_PROPERTY(QString hideDetailsText READ hideDetailsText WRITE setHideDetailsText NOTIFY hideDetailsTextChanged)
+
+Q_SIGNALS:
+  void disableMouseScrollChanged(bool);
+  void collapsedChanged(bool);
+  void showDetailsTextChanged(const QString&);
+  void hideDetailsTextChanged(const QString&);
 
 public:
   ctkFittedTextBrowser(QWidget* parent = 0);

@@ -109,6 +109,7 @@ void ctkTransferFunctionItem::setRect(const QRectF& newRect)
     return;
   }
   d->Rect = newRect;
+  emit this->rectChanged(d->Rect);
   this->update();
 }
 

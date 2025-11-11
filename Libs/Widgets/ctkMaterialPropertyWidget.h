@@ -41,13 +41,13 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
   Q_OBJECT
 
   /// This property holds the color of the material.
-  Q_PROPERTY(QColor color  READ color WRITE setColor);
+  Q_PROPERTY(QColor color  READ color WRITE setColor NOTIFY colorChanged);
   /// Opacity component of the material property.
-  Q_PROPERTY(double opacity READ opacity WRITE setOpacity);
+  Q_PROPERTY(double opacity READ opacity WRITE setOpacity NOTIFY opacityChanged);
 
   /// Choose between Flat (no shading), Phong, Gouraud, and physically based rendering (PBR)
   /// interpolation modes. Set to Gouraud by default.
-  Q_PROPERTY(InterpolationMode interpolationMode READ interpolationMode WRITE setInterpolationMode);
+  Q_PROPERTY(InterpolationMode interpolationMode READ interpolationMode WRITE setInterpolationMode NOTIFY interpolationModeChanged);
 
   /// This property holds the ambient lighting coefficient,
   /// it is a nondirectional property.
@@ -55,40 +55,40 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
   /// full ambient light
   /// Hint: A range of [0.1,0.5] is more realistic.
   /// Only displayed in non-PBR interpolation mode.
-  Q_PROPERTY(double ambient READ ambient WRITE setAmbient);
+  Q_PROPERTY(double ambient READ ambient WRITE setAmbient NOTIFY ambientChanged);
   /// This property holds the diffuse lighting coefficient.
   /// Its range is [0,1], where 0 means no diffuse light, and 1 means
   /// full diffuse light.
   /// Used for all (both PBR and non-PBR) interpolation modes.
-  Q_PROPERTY(double diffuse READ diffuse WRITE setDiffuse);
+  Q_PROPERTY(double diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseChanged);
   /// This property holds the specular lighting coefficient.
   /// Its range is [0,1], where 0 means no specular light, and 1 means
   /// full specular light
   /// Only displayed in non-PBR interpolation mode.
-  Q_PROPERTY(double specular READ specular WRITE setSpecular);
+  Q_PROPERTY(double specular READ specular WRITE setSpecular NOTIFY specularChanged);
   /// This property holds the power of specular lighting coefficient.
   /// Its range is [1,50].
   /// Only displayed in non-PBR interpolation mode.
-  Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower);
+  Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower NOTIFY specularPowerChanged);
 
   /// The metalness of the material; values range from 0.0 (non-metal) to 1.0 (metal).
   /// Only displayed in PBR interpolation mode.
-  Q_PROPERTY(double metallic READ metallic WRITE setMetallic);
+  Q_PROPERTY(double metallic READ metallic WRITE setMetallic NOTIFY metallicChanged);
   /// The roughness of the material; values range from 0.0 (smooth) to 1.0 (rough).
   /// Only displayed in PBR interpolation mode.
-  Q_PROPERTY(double roughness READ roughness WRITE setRoughness);
+  Q_PROPERTY(double roughness READ roughness WRITE setRoughness NOTIFY roughnessChanged);
 
   /// This property controls weither backface culling should be enabled or not
-  Q_PROPERTY(bool backfaceCulling READ backfaceCulling WRITE setBackfaceCulling);
+  Q_PROPERTY(bool backfaceCulling READ backfaceCulling WRITE setBackfaceCulling NOTIFY backfaceCullingChanged);
   /// Control weither the color is shown to the user. Visible by default
-  Q_PROPERTY(bool colorVisible READ isColorVisible WRITE setColorVisible);
+  Q_PROPERTY(bool colorVisible READ isColorVisible WRITE setColorVisible NOTIFY colorVisibleChanged);
   /// Control weither the opacity is shown to the user. Visible by default
-  Q_PROPERTY(bool opacityVisible READ isOpacityVisible WRITE setOpacityVisible);
+  Q_PROPERTY(bool opacityVisible READ isOpacityVisible WRITE setOpacityVisible NOTIFY opacityVisibleChanged);
   /// Control weither the backface culling is shown to the user. Visible by default
-  Q_PROPERTY(bool backfaceCullingVisible READ isBackfaceCullingVisible WRITE setBackfaceCullingVisible);
+  Q_PROPERTY(bool backfaceCullingVisible READ isBackfaceCullingVisible WRITE setBackfaceCullingVisible NOTIFY backfaceCullingVisibleChanged);
 
   /// Control weither the interpolation mode selector is shown to the user. Hidden by default.
-  Q_PROPERTY(bool interpolationModeVisible READ isInterpolationModeVisible WRITE setInterpolationModeVisible);
+  Q_PROPERTY(bool interpolationModeVisible READ isInterpolationModeVisible WRITE setInterpolationModeVisible NOTIFY interpolationModeVisibleChanged);
 
 public:
   /// Superclass typedef
@@ -162,7 +162,7 @@ public Q_SLOTS:
   void setBackfaceCulling(bool enable);
 
 Q_SIGNALS:
-  void colorChanged(QColor newColor);
+  void colorChanged(const QColor & newColor);
   void opacityChanged(double newOpacity);
 
   void interpolationModeChanged(int interpolationMode);
@@ -176,6 +176,10 @@ Q_SIGNALS:
   void roughnessChanged(double newRoughness);
 
   void backfaceCullingChanged(bool newBackfaceCulling);
+  void colorVisibleChanged(bool newColorVisible);
+  void opacityVisibleChanged(bool newOpacityVisible);
+  void backfaceCullingVisibleChanged(bool newBackfaceCullingVisible);
+  void interpolationModeVisibleChanged(bool newInterpolationModeVisible);
 
 protected Q_SLOTS:
   virtual void onColorChanged(const QColor& newColor);

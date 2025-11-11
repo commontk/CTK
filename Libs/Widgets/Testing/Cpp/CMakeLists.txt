@@ -191,19 +191,11 @@ set(Tests_SRCS
   ctkSettingsPanelTest2Helper.h
   )
 
-set(Tests_MOC_SRCS
-  ctkExampleDerivedWorkflowWidgetStep.h
-  ctkExampleWorkflowWidgetStepUsingSignalsAndSlots.h
-  ctkSettingsPanelTest2Helper.h
-  )
-
-set(Tests_UI_FORMS )
 if(CTK_USE_QTTESTING)
   include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
-  ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 # Configure CMake Qt automatic code generation

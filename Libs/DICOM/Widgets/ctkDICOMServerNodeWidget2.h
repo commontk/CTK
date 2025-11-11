@@ -47,8 +47,8 @@ class ctkDICOMServerNodeWidget2Private;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget2 : public QWidget
 {
   Q_OBJECT;
-  Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
-  Q_PROPERTY(int storagePort READ storagePort WRITE setStoragePort);
+  Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle NOTIFY storageAETitleChanged);
+  Q_PROPERTY(int storagePort READ storagePort WRITE setStoragePort NOTIFY storagePortChanged);
 
 public:
   typedef QWidget Superclass;
@@ -128,6 +128,9 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// Emitted when server settings are changed
   void serversSettingsChanged();
+
+  void storageAETitleChanged(const QString &);
+  void storagePortChanged(int);
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;

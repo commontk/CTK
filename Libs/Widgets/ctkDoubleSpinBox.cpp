@@ -66,6 +66,7 @@ void ctkQDoubleSpinBox::initStyleOptionSpinBox(QStyleOptionSpinBox* option)
 void ctkQDoubleSpinBox::setInvertedControls(bool invertedControls)
 {
   this->InvertedControls = invertedControls;
+  emit this->invertedControlsChanged(invertedControls);
 }
 
 //----------------------------------------------------------------------------
@@ -670,6 +671,7 @@ void ctkDoubleSpinBox::setAlignment(Qt::Alignment flag)
   }
 
   d->SpinBox->setAlignment(flag);
+  emit this->alignmentChanged(flag);
 }
 
 //-----------------------------------------------------------------------------
@@ -682,6 +684,7 @@ void ctkDoubleSpinBox::setFrame(bool frame)
   }
 
   d->SpinBox->setFrame(frame);
+  emit this->frameChanged(frame);
 }
 
 //-----------------------------------------------------------------------------
@@ -697,6 +700,7 @@ void ctkDoubleSpinBox::setReadOnly(bool readOnly)
   Q_D(const ctkDoubleSpinBox);
   d->SpinBox->setReadOnly(readOnly);
   d->SpinBox->setButtonSymbols(readOnly ? QAbstractSpinBox::NoButtons : QAbstractSpinBox::UpDownArrows);
+  emit this->readOnlyChanged(readOnly);
 }
 
 //-----------------------------------------------------------------------------
@@ -722,6 +726,7 @@ void ctkDoubleSpinBox::setPrefix(const QString &prefix)
     return;
   }
   d->SpinBox->setPrefix(prefix);
+  emit this->prefixChanged(prefix);
 }
 
 //-----------------------------------------------------------------------------
@@ -740,6 +745,7 @@ void ctkDoubleSpinBox::setSuffix(const QString &suffix)
     return;
   }
   d->SpinBox->setSuffix(suffix);
+  emit this->suffixChanged(suffix);
 }
 
 //-----------------------------------------------------------------------------
@@ -761,6 +767,7 @@ void ctkDoubleSpinBox::setSingleStep(double newStep)
   }
 
   d->SpinBox->setSingleStep(newStep);
+  emit this->singleStepChanged(newStep);
 }
 
 //-----------------------------------------------------------------------------
@@ -774,6 +781,7 @@ double ctkDoubleSpinBox::minimum() const
 void ctkDoubleSpinBox::setMinimum(double newMin)
 {
   this->setRange(newMin, qMax(newMin, this->maximum()));
+  emit this->minimumChanged(newMin);
 }
 
 //-----------------------------------------------------------------------------
@@ -787,6 +795,7 @@ double ctkDoubleSpinBox::maximum() const
 void ctkDoubleSpinBox::setMaximum(double newMax)
 {
   this->setRange(qMin(newMax, this->minimum()), newMax);
+  emit this->maximumChanged(newMax);
 }
 
 //-----------------------------------------------------------------------------
@@ -837,6 +846,7 @@ void ctkDoubleSpinBox::setDecimals(int dec)
   }
 
   d->DefaultDecimals = dec;
+  emit this->decimalsChanged(dec);
   // The number of decimals may or may not depend on the value. Recompute the
   // new number of decimals.
   double currentValue = this->value();
@@ -881,6 +891,7 @@ void ctkDoubleSpinBox::setValue(double value)
   {
     this->setValueAlways(value);
   }
+  emit this->valueChanged(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -951,6 +962,7 @@ void ctkDoubleSpinBox::setSetMode(ctkDoubleSpinBox::SetMode newMode)
 {
   Q_D(ctkDoubleSpinBox);
   d->Mode = newMode;
+  emit this->setModeChanged(newMode);
 }
 
 //-----------------------------------------------------------------------------
@@ -971,6 +983,7 @@ void ctkDoubleSpinBox::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions optio
 
   d->DOption = option;
   this->setValueAlways(this->value());
+  emit this->decimalsOptionChanged(option);
 }
 
 //----------------------------------------------------------------------------
@@ -979,6 +992,7 @@ void ctkDoubleSpinBox::setInvertedControls(bool invertedControls)
   Q_D(ctkDoubleSpinBox);
   d->InvertedControls = invertedControls;
   d->SpinBox->setInvertedControls(d->InvertedControls);
+  emit this->invertedControlsChanged(invertedControls);
 }
 
 //----------------------------------------------------------------------------
@@ -999,6 +1013,7 @@ void ctkDoubleSpinBox
     return;
   }
   d->SizeHintPolicy = newSizeHintPolicy;
+  emit this->sizeHintPolicyChanged(newSizeHintPolicy);
   d->CachedSizeHint = QSize();
   d->CachedMinimumSizeHint = QSize();
   this->updateGeometry();

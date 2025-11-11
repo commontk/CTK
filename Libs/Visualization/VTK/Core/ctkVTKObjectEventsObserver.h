@@ -57,7 +57,10 @@ Q_OBJECT
   /// False by default.
   /// \sa strictTypeCheck(), setStrictTypeCheck(),
   /// addConnection()
-  Q_PROPERTY(bool strictTypeCheck READ strictTypeCheck WRITE setStrictTypeCheck)
+  Q_PROPERTY(bool strictTypeCheck READ strictTypeCheck WRITE setStrictTypeCheck NOTIFY strictTypeCheckChanged);
+
+Q_SIGNALS:
+  void strictTypeCheckChanged(bool);
 public:
   typedef QObject Superclass;
   explicit ctkVTKObjectEventsObserver(QObject* parent = 0);

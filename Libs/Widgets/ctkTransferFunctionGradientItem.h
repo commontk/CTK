@@ -37,7 +37,10 @@ class ctkTransferFunctionGradientItemPrivate;
 class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunctionItem
 {
   Q_OBJECT
-  Q_PROPERTY(bool mask READ mask WRITE setMask)
+  Q_PROPERTY(bool mask READ mask WRITE setMask NOTIFY maskChanged);
+
+Q_SIGNALS:
+  void maskChanged(bool);
 
 public:
   ctkTransferFunctionGradientItem(QGraphicsItem* parent = 0);

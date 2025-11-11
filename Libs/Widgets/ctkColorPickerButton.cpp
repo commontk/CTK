@@ -186,6 +186,7 @@ void ctkColorPickerButton::setDisplayColorName(bool displayColorName)
 {
   Q_D(ctkColorPickerButton);
   d->DisplayColorName = displayColorName;
+  emit displayColorNameChanged(d->DisplayColorName);
   d->CachedSizeHint = QSize();
   this->update();
   this->updateGeometry();
@@ -203,6 +204,7 @@ void ctkColorPickerButton::setDialogOptions(const ColorDialogOptions& options)
 {
   Q_D(ctkColorPickerButton);
   d->DialogOptions = options;
+  emit dialogOptionsChanged(d->DialogOptions);
 }
 
 //-----------------------------------------------------------------------------

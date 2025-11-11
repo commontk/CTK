@@ -24,6 +24,21 @@ macro(ctkMacroInitProject)
   ## Add the project binary dir as include dir for the .moc files.
   include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
+  set(MY_MOC_CXX )
+  if(${test})
+    ## Moc the tests:
+    foreach(FILE_NAME_ABS ${implementation_file_list})
+      ## extract the base file name.
+      get_filename_component(FILE_NAME ${FILE_NAME_ABS} NAME_WE)
+      ## Exclude the main.cpp file (it doesn't need to be 'mocced')
+      if(NOT ${FILE_NAME} STREQUAL "main")
+        ## Assign the moc custom filename
+        set(MOC_FILE "${FILE_NAME}.moc")
+        list(APPEND MY_MOC_CXX "${CMAKE_CURRENT_BINARY_DIR}/${MOC_FILE}")
+      endif()
+    endforeach()
+  endif()
+
   set(PROJECT_SRCS
     ${PROJECT_SRCS}
     ${resource_file_list}

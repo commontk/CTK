@@ -760,32 +760,32 @@ ctkDICOMSeriesItemWidget::~ctkDICOMSeriesItemWidget()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QStringList&, setAllowedServers, AllowedServers);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QStringList&, setAllowedServers, AllowedServers, allowedServersChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QStringList, allowedServers, AllowedServers);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesItem, SeriesItem);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setSeriesItem, SeriesItem, seriesItemChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesItem, SeriesItem);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setPatientID, PatientID);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setPatientID, PatientID, patientIDChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, patientID, PatientID);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setStudyInstanceUID, StudyInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setStudyInstanceUID, StudyInstanceUID, studyInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, studyInstanceUID, StudyInstanceUID);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesInstanceUID, SeriesInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setSeriesInstanceUID, SeriesInstanceUID, seriesInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesInstanceUID, SeriesInstanceUID);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesNumber, SeriesNumber);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setSeriesNumber, SeriesNumber, seriesNumberChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesNumber, SeriesNumber);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setModality, Modality);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, const QString&, setModality, Modality, modalityChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, modality, Modality);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setStopJobs, StopJobs);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, bool, setStopJobs, StopJobs, stopJobsChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, stopJobs, StopJobs);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setRaiseJobsPriority, RaiseJobsPriority);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, bool, setRaiseJobsPriority, RaiseJobsPriority, raiseJobsPriorityChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, raiseJobsPriority, RaiseJobsPriority);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isCloud, IsCloud);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isLoaded, IsLoaded);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isVisible, IsVisible);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setRetrieveFailed, RetrieveFailed);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, bool, setRetrieveFailed, RetrieveFailed,retrieveFailedChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, retrieveFailed, RetrieveFailed);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, referenceSeriesInserterJobUID, ReferenceSeriesInserterJobUID);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, referenceInstanceInserterJobUID, ReferenceInstanceInserterJobUID);
-CTK_SET_CPP(ctkDICOMSeriesItemWidget, int, setThumbnailSizePixel, ThumbnailSizePixel);
+CTK_SET_CPP_EMIT(ctkDICOMSeriesItemWidget, int, setThumbnailSizePixel, ThumbnailSizePixel,thumbnailSizePixelChanged);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, int, thumbnailSizePixel, ThumbnailSizePixel);
 CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, stoppedJobUID, StoppedJobUID);
 
@@ -795,6 +795,7 @@ void ctkDICOMSeriesItemWidget::setSeriesDescription(const QString& seriesDescrip
   Q_D(ctkDICOMSeriesItemWidget);
   d->SeriesThumbnail->setText(seriesDescription);
   d->SeriesThumbnail->textPushButton()->setToolTip(seriesDescription);
+  emit seriesDescriptionChanged(seriesDescription);
 }
 
 //------------------------------------------------------------------------------

@@ -59,19 +59,19 @@ Q_MOC_INCLUDE("ctkDICOMJobResponseSet.h") // Ensure moc sees ctkDICOMJobResponse
 class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool isOpen READ isOpen)
-  Q_PROPERTY(bool isInMemory READ isInMemory)
-  Q_PROPERTY(QString lastError READ lastError)
-  Q_PROPERTY(QString databaseFilename READ databaseFilename)
-  Q_PROPERTY(QString databaseDirectory READ databaseDirectory)
-  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
-  Q_PROPERTY(QStringList tagsToExcludeFromStorage READ tagsToExcludeFromStorage WRITE setTagsToExcludeFromStorage)
-  Q_PROPERTY(QStringList patientFieldNames READ patientFieldNames)
-  Q_PROPERTY(QStringList studyFieldNames READ studyFieldNames)
-  Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames)
-  Q_PROPERTY(QStringList loadedSeries READ loadedSeries WRITE setLoadedSeries)
-  Q_PROPERTY(QStringList visibleSeries READ visibleSeries WRITE setVisibleSeries)
-  Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath)
+  Q_PROPERTY(bool isOpen READ isOpen CONSTANT)
+  Q_PROPERTY(bool isInMemory READ isInMemory CONSTANT)
+  Q_PROPERTY(QString lastError READ lastError CONSTANT)
+  Q_PROPERTY(QString databaseFilename READ databaseFilename CONSTANT)
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory CONSTANT)
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache NOTIFY tagsToPrecacheChanged)
+  Q_PROPERTY(QStringList tagsToExcludeFromStorage READ tagsToExcludeFromStorage WRITE setTagsToExcludeFromStorage NOTIFY tagsToExcludeFromStorageChanged)
+  Q_PROPERTY(QStringList patientFieldNames READ patientFieldNames CONSTANT)
+  Q_PROPERTY(QStringList studyFieldNames READ studyFieldNames CONSTANT)
+  Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames CONSTANT)
+  Q_PROPERTY(QStringList loadedSeries READ loadedSeries WRITE setLoadedSeries NOTIFY loadedSeriesChanged )
+  Q_PROPERTY(QStringList visibleSeries READ visibleSeries WRITE setVisibleSeries NOTIFY visibleSeriesChanged )
+  Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath NOTIFY useShortStoragePathChanged)
 
 public:
   struct IndexingResult
@@ -520,6 +520,11 @@ Q_SIGNALS:
   void displayedFieldsUpdateProgress(int);
   /// Indicate displayed fields update finished
   void displayedFieldsUpdated();
+
+  void useShortStoragePathChanged(bool value);
+  void visibleSeriesChanged(QStringList seriesList);
+  void loadedSeriesChanged(QStringList seriesList);
+  void displayedFieldsTableAvailableChanged(bool value);
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;

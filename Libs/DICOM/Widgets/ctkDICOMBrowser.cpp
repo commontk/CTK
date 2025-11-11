@@ -66,6 +66,65 @@
 
 #include "ui_ctkDICOMBrowser.h"
 
+class ctkDICOMMetadataDialog : public QDialog {
+  Q_OBJECT
+public:
+  ctkDICOMMetadataDialog(QWidget *parent = 0)
+    : QDialog(parent)
+  {
+    this->setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::Window);
+    this->setModal(true);
+    this->setSizeGripEnabled(true);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setMargin(0);
+    this->tagListWidget = new ctkDICOMObjectListWidget();
+    layout->addWidget(this->tagListWidget);
+  }
+
+  virtual ~ctkDICOMMetadataDialog()
+  {
+  }
+
+  void setFileList(const QStringList& fileList)
+  {
+    this->tagListWidget->setFileList(fileList);
+  }
+
+  void closeEvent(QCloseEvent *evt)
+  {
+    // just hide the window when close button is clicked
+    evt->ignore();
+    this->hide();
+  }
+
+  void showEvent(QShowEvent *event)
+  {
+    QDialog::showEvent(event);
+    // QDialog would reset window position and size when shown.
+    // Restore its previous size instead (user may look at metadata
+    // of different series one after the other and would be inconvenient to
+    // set the desired size manually each time).
+    if (!savedGeometry.isEmpty())
+    {
+      this->restoreGeometry(savedGeometry);
+      if (this->isMaximized())
+      {
+        this->setGeometry(QApplication::desktop()->availableGeometry(this));
+      }
+    }
+  }
+
+  void hideEvent(QHideEvent *event)
+  {
+    this->savedGeometry = this->saveGeometry();
+    QDialog::hideEvent(event);
+  }
+
+protected:
+  ctkDICOMObjectListWidget* tagListWidget;
+  QByteArray savedGeometry;
+};
+
 //----------------------------------------------------------------------------
 class ctkDICOMBrowserPrivate: public Ui_ctkDICOMBrowser
 {
@@ -149,7 +208,7 @@ public:
 
 CTK_GET_CPP(ctkDICOMBrowser, bool, isSendActionVisible, SendActionVisible);
 CTK_GET_CPP(ctkDICOMBrowser, QString, databaseDirectoryBase, DatabaseDirectoryBase);
-CTK_SET_CPP(ctkDICOMBrowser, const QString&, setDatabaseDirectoryBase, DatabaseDirectoryBase);
+CTK_SET_CPP_EMIT(ctkDICOMBrowser, const QString&, setDatabaseDirectoryBase, DatabaseDirectoryBase, setDatabaseDirectoryBase);
 
 //----------------------------------------------------------------------------
 // ctkDICOMBrowserPrivate methods
@@ -388,6 +447,7 @@ void ctkDICOMBrowser::setDisplayImportSummary(bool onOff)
   Q_D(ctkDICOMBrowser);
 
   d->DisplayImportSummary = onOff;
+  emit displayImportSummaryChanged(onOff);
 }
 
 //----------------------------------------------------------------------------
@@ -404,6 +464,7 @@ void ctkDICOMBrowser::setConfirmRemove(bool onOff)
   Q_D(ctkDICOMBrowser);
 
   d->ConfirmRemove = onOff;
+  emit confirmRemoveChanged(onOff);
 }
 
 //----------------------------------------------------------------------------
@@ -688,6 +749,7 @@ void ctkDICOMBrowser::setDatabaseDirectorySettingsKey(const QString& key)
   QSettings settings;
   QString databaseDirectory = ctk::absolutePathFromInternal(settings.value(d->DatabaseDirectorySettingsKey, "").toString(), d->DatabaseDirectoryBase);
   this->setDatabaseDirectory(databaseDirectory);
+  emit databaseDirectorySettingsKeyChanged(key);
 }
 
 //------------------------------------------------------------------------------
@@ -695,6 +757,7 @@ void ctkDICOMBrowser::setTagsToPrecache( const QStringList tags)
 {
   Q_D(ctkDICOMBrowser);
   d->DICOMDatabase->setTagsToPrecache(tags);
+  emit tagsToPrecacheChanged(tags);
 }
 
 //------------------------------------------------------------------------------
@@ -1006,6 +1069,7 @@ void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMod
   }
   QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
   comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(mode)));
+  emit importDirectoryModeChanged(mode);
 }
 
 //----------------------------------------------------------------------------
@@ -1491,6 +1555,7 @@ void ctkDICOMBrowser::setToolbarVisible(bool state)
 {
   Q_D(ctkDICOMBrowser);
   d->ToolBar->setVisible(state);
+  emit toolbarVisibleChanged(state);
 }
 
 //----------------------------------------------------------------------------
@@ -1506,6 +1571,7 @@ void ctkDICOMBrowser::setSendActionVisible(bool visible)
   Q_D(ctkDICOMBrowser);
   d->SendActionVisible = visible;
   d->ActionSend->setVisible(visible);
+  emit sendActionVisibleChanged(visible);
 }
 
 //----------------------------------------------------------------------------
@@ -1513,6 +1579,7 @@ void ctkDICOMBrowser::setDatabaseDirectorySelectorVisible(bool state)
 {
   Q_D(ctkDICOMBrowser);
   d->DirectoryButton->setVisible(state);
+  emit databaseDirectorySelectorVisibleChanged(state);
 }
 
 //----------------------------------------------------------------------------
@@ -1810,3 +1877,5 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     qWarning() << Q_FUNC_INFO << " failed: invalid level";
   }
 }
+
+#include "ctkDICOMBrowser.moc"

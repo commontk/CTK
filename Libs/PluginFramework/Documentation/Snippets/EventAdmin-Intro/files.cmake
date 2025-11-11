@@ -6,12 +6,3 @@ set(snippet_src_files
 set(_moc_files
   ctkSnippetReportManager.h
 )
-
-foreach(_moc_file ${_moc_files})
-  if(CTK_QT_VERSION MATCHES "^(5|6)$")
-    qt_wrap_cpp(snippet_src_files EventAdmin-Intro/${_moc_file}
-      OPTIONS -f${CMAKE_CURRENT_SOURCE_DIR}/EventAdmin-Intro/${_moc_file})
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
-endforeach()

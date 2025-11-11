@@ -155,6 +155,7 @@ void ctkCompleter::setModelFiltering(ModelFiltering filter)
   }
   QAbstractItemModel* source = this->sourceModel();
   d->Filtering = filter;
+  emit this->modelFilteringChanged(d->Filtering);
   this->setSourceModel(source);
   Q_ASSERT(this->sourceModel());
   // Update the filtering

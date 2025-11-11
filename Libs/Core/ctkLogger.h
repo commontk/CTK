@@ -35,7 +35,9 @@ class ctkLoggerPrivate;
 class CTK_CORE_EXPORT ctkLogger : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(ctkErrorLogLevel::LogLevel level READ logLevel WRITE setLogLevel);
+  Q_PROPERTY(ctkErrorLogLevel::LogLevel level READ logLevel WRITE setLogLevel NOTIFY logLevelChanged);
+Q_SIGNALS:
+  void logLevelChanged(const ctkErrorLogLevel::LogLevel & newlevel);
 public:
   typedef QObject Superclass;
 

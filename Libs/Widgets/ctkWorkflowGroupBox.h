@@ -41,24 +41,34 @@ class ctkWorkflowGroupBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkWorkflowGroupBox : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString preText READ preText WRITE setPreText)
-  Q_PROPERTY(QString postText READ postText WRITE setPostText)
+  Q_PROPERTY(QString preText READ preText WRITE setPreText NOTIFY preTextChanged);
+  Q_PROPERTY(QString postText READ postText WRITE setPostText NOTIFY postTextChanged);
   /// This property controls the text, icon and tooltip of the title button.
   /// "{current:name}" by default.
   /// \sa titleFormat(), setTitleFormat(), ctkWorkflow::formatButton()
-  Q_PROPERTY(QString titleFormat READ titleFormat WRITE setTitleFormat)
+  Q_PROPERTY(QString titleFormat READ titleFormat WRITE setTitleFormat NOTIFY titleFormatChanged);
   /// This property controls the text of the subtitle view.
   /// "{current:description}" by default.
   /// \sa subTitleFormat(), setSubTitleFormat(), ctkWorkflow::formatButton(),
   /// titleFormat, errorTextFormat
-  Q_PROPERTY(QString subTitleFormat READ subTitleFormat WRITE setSubTitleFormat)
+  Q_PROPERTY(QString subTitleFormat READ subTitleFormat WRITE setSubTitleFormat NOTIFY subTitleFormatChanged);
   /// This property controls the textof the error view.
   /// "{current:statusText}" by default.
   /// \sa errorTextFormat(), setErrorTextFormat(), ctkWorkflow::formatButton(),
   /// titleFormat, subTitleFormat
-  Q_PROPERTY(QString errorTextFormat READ errorTextFormat WRITE setErrorTextFormat)
-  Q_PROPERTY(bool hideWidgetsOfNonCurrentSteps READ hideWidgetsOfNonCurrentSteps WRITE setHideWidgetsOfNonCurrentSteps)
-  Q_PROPERTY(bool errorTextEnabled READ errorTextEnabled WRITE setErrorTextEnabled)
+  Q_PROPERTY(QString errorTextFormat READ errorTextFormat WRITE setErrorTextFormat NOTIFY errorTextFormatChanged);
+  Q_PROPERTY(bool hideWidgetsOfNonCurrentSteps READ hideWidgetsOfNonCurrentSteps WRITE setHideWidgetsOfNonCurrentSteps NOTIFY hideWidgetsOfNonCurrentStepsChanged);
+  Q_PROPERTY(bool errorTextEnabled READ errorTextEnabled WRITE setErrorTextEnabled NOTIFY errorTextEnabledChanged);
+
+
+Q_SIGNALS:
+  void preTextChanged(const QString &);
+  void postTextChanged(const QString &);
+  void titleFormatChanged(const QString &);
+  void subTitleFormatChanged(const QString &);
+  void errorTextFormatChanged(const QString &);
+  void hideWidgetsOfNonCurrentStepsChanged(bool);
+  void errorTextEnabledChanged(bool);
 
 public:
 

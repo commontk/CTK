@@ -114,9 +114,17 @@ set(CTK_QT_VERSION "${_default_qt_major_version}" CACHE STRING "Expected major Q
 mark_as_advanced(CTK_QT_VERSION)
 set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5 6)
 mark_as_superbuild(CTK_QT_VERSION)
-if(NOT "${CTK_QT_VERSION}" MATCHES "^(5|6)$")
-  message(FATAL_ERROR "CTK_QT_VERSION must be 5 or 6.")
-endif()
+# Enable AUTOMOC, AUTOUIC, CMAKE_AUTORCC to work with CMake Qt5 and Qt6
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+        "${PROJECT_SOURCE_DIR}/Libs/Widgets/Resources/UI"
+        "${PROJECT_SOURCE_DIR}/Libs/DICOM/Widgets/Resources/UI"
+        "${PROJECT_SOURCE_DIR}/Libs/QtTesting/Resources/UI"
+        "${PROJECT_SOURCE_DIR}/Libs/Visualization/VTK/Widgets/Resources/UI"
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -875,6 +883,8 @@ set(CTK_LIB_QtTesting ${CTK_USE_QTTESTING})
 if(CTK_USE_QTTESTING)
   list(APPEND CTK_LIBS QtTesting)
   list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting^^CTK_LIB_QtTesting")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/Libs/QtTesting)
 endif()
 
 #message(STATUS target_directories:${target_directories})

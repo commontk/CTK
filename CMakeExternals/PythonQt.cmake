@@ -45,10 +45,6 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
         )
     endif()
     list(APPEND qtlibs qml quick)
-    if(CTK_QT_VERSION VERSION_LESS "5.6.0")
-      list(APPEND qtlibs webkit)
-    endif()
-    set(_qt_version_string "${Qt5_VERSION_MAJOR}.${Qt5_VERSION_MINOR}.${Qt5_VERSION_PATCH}")
   elseif(CTK_QT_VERSION VERSION_EQUAL "6")
     list(APPEND ep_PythonQt_args
       -DQt6_DIR:PATH=${Qt6_DIR}

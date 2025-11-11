@@ -310,7 +310,7 @@ void ctkCoordinatesWidget::setDimension(int dim)
   delete [] d->Coordinates;
   d->Coordinates = newPos;
   d->Dimension = dim;
-
+  emit this->dimensionChanged(dim);
   this->updateGeometry();
 
   this->updateCoordinates();
@@ -332,6 +332,7 @@ void ctkCoordinatesWidget::setMinimum(double min)
     this->spinBox(i)->setMinimum(min);
   }
   d->Minimum = min;
+  emit this->minimumChanged(min);
 }
 
 //------------------------------------------------------------------------------
@@ -350,6 +351,7 @@ void ctkCoordinatesWidget::setMaximum(double max)
     this->spinBox(i)->setMaximum(max);
   }
   d->Maximum = max;
+  emit this->maximumChanged(max);
 }
 
 //------------------------------------------------------------------------------
@@ -376,6 +378,7 @@ void ctkCoordinatesWidget::setNormalized(bool normalized)
 {
   Q_D(ctkCoordinatesWidget);
   d->Normalized = normalized;
+  emit this->normalizedChanged(normalized);
   if (d->Normalized)
   {
     double* normalizedCoordinates = new double[d->Dimension];
@@ -402,6 +405,7 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
 {
   Q_D(ctkCoordinatesWidget);
   d->Decimals = newDecimals;
+  emit this->decimalsChanged(newDecimals);
   for (int i = 0; i < d->Dimension; ++i)
   {
     this->spinBox(i)->setDecimals(newDecimals);
@@ -432,6 +436,7 @@ void ctkCoordinatesWidget
     this->spinBox(i)->setDecimalsOption(newDecimalsOption);
   }
   d->DecimalsOption = newDecimalsOption;
+  emit this->decimalsOptionChanged(newDecimalsOption);
 }
 
 //------------------------------------------------------------------------------
@@ -443,6 +448,7 @@ void ctkCoordinatesWidget::setSingleStep(double step)
     this->spinBox(i)->setSingleStep(step);
   }
   d->SingleStep = step;
+  emit this->singleStepChanged(step);
 }
 
 //------------------------------------------------------------------------------
@@ -467,6 +473,7 @@ void ctkCoordinatesWidget::setCoordinatesAsString(QString _pos)
     newPos[i] = posList[i].toDouble();
   }
   this->setCoordinates(newPos);
+  emit this->coordinatesChanged(_pos);
   delete [] newPos;
 }
 
@@ -720,6 +727,7 @@ void ctkCoordinatesWidget::setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy ne
     this->spinBox(i)->setSizeHintPolicy(newSizeHintPolicy);
   }
   d->SizeHintPolicy = newSizeHintPolicy;
+  emit this->sizeHintPolicyChanged(newSizeHintPolicy);
 }
 
 //----------------------------------------------------------------------------
@@ -795,6 +803,7 @@ void ctkCoordinatesWidget::setReadOnly(bool readOnly)
   }
 
   d->ReadOnly = readOnly;
+  emit this->readOnlyChanged(d->ReadOnly);
   for (int i = 0; i < d->Dimension; ++i)
   {
     this->spinBox(i)->setReadOnly(d->ReadOnly);
@@ -818,6 +827,7 @@ void ctkCoordinatesWidget::setFrame(bool frame)
   }
 
   d->Frame = frame;
+  emit this->frameChanged(d->Frame);
   for (int i = 0; i < d->Dimension; ++i)
   {
     this->spinBox(i)->setFrame(d->Frame);

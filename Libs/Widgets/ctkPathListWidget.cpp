@@ -31,52 +31,6 @@
 // QtGUI includes
 #include "ctkPathListWidget.h"
 
-// --------------------------------------------------------------------------
-// ctkPathListWidgetPrivate
-
-//-----------------------------------------------------------------------------
-class ctkPathListWidgetPrivate
-{
-  Q_DECLARE_PUBLIC(ctkPathListWidget)
-  Q_GADGET
-
-protected:
-  ctkPathListWidget* const q_ptr;
-
-public:
-
-  enum PathType {
-    Unknown,
-    File,
-    Directory
-  };
-
-  ctkPathListWidgetPrivate(ctkPathListWidget& object);
-
-  void _q_emitPathClicked(const QModelIndex &index);
-  void _q_emitPathDoubleClicked(const QModelIndex &index);
-  void _q_emitPathActivated(const QModelIndex &index);
-  void _q_emitCurrentPathChanged(const QModelIndex &current, const QModelIndex &previous);
-
-  bool addPath(const QString& path);
-  bool removePath(const QString& path);
-
-  void fileOptionsChanged();
-  void directoryOptionsChanged();
-
-  PathType pathType(const QString& absolutePath) const;
-
-  bool isValidPath(const QString& absoluteFilePath, PathType pathType) const;
-  bool isValidFile(const QString& absoluteFilePath) const;
-  bool isValidDir(const QString& absoluteDirPath) const;
-
-  QStandardItemModel PathListModel;
-  ctkPathListWidget::Mode Mode;
-  ctkPathListWidget::PathOptions FileOptions;
-  ctkPathListWidget::PathOptions DirectoryOptions;
-  QIcon FileIcon;
-  QIcon DirectoryIcon;
-};
 
 // --------------------------------------------------------------------------
 // ctkPathListWidgetPrivate methods
@@ -406,6 +360,7 @@ void ctkPathListWidget::setFileIcon(const QIcon& icon)
 {
   Q_D(ctkPathListWidget);
   d->FileIcon = icon;
+  d->fileOptionsChanged();
 }
 
 // --------------------------------------------------------------------------
@@ -427,6 +382,7 @@ void ctkPathListWidget::setDirectoryIcon(const QIcon& icon)
 {
   Q_D(ctkPathListWidget);
   d->DirectoryIcon = icon;
+  emit this->directoryIconChanged(icon);
 }
 
 // --------------------------------------------------------------------------
@@ -452,6 +408,7 @@ void ctkPathListWidget::setFileOptions(PathOptions fileOptions)
     d->FileOptions = fileOptions;
     d->fileOptionsChanged();
   }
+  emit this->fileOptionsChanged(fileOptions);
 }
 
 // --------------------------------------------------------------------------
@@ -470,6 +427,7 @@ void ctkPathListWidget::setDirectoryOptions(PathOptions directoryOptions)
     d->DirectoryOptions = directoryOptions;
     d->directoryOptionsChanged();
   }
+  emit this->directoryOptionsChanged(directoryOptions);
 }
 
 // --------------------------------------------------------------------------
@@ -705,6 +663,7 @@ void ctkPathListWidget::setMode(ctkPathListWidget::Mode mode)
 {
   Q_D(ctkPathListWidget);
   d->Mode = mode;
+  emit this->modeChanged(mode);
 }
 
 // --------------------------------------------------------------------------

@@ -26,13 +26,10 @@
 
 // Qt includes
 #include <QListView>
+#include <QStandardItem>
 
 // QtGUI includes
 #include "ctkWidgetsExport.h"
-
-class ctkPathListWidgetPrivate;
-
-class QStandardItem;
 
 /// \ingroup Widgets
 ///
@@ -44,6 +41,7 @@ class QStandardItem;
 /// by setting file and directory options.
 /// \sa ctkPathLineEdit, ctkDirectoryButton
 ///
+class ctkPathListWidgetPrivate; // Forward declaration within this file
 class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
 {
   Q_OBJECT
@@ -52,19 +50,19 @@ class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
   Q_PROPERTY(QStringList paths READ paths WRITE setPaths NOTIFY pathsChanged)
 
   /// The mode for this ctkPathListWidget.
-  Q_PROPERTY(Mode mode READ mode WRITE setMode)
+  Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged);
 
   /// Constraints on the file type.
-  Q_PROPERTY(PathOptions fileOptions READ fileOptions WRITE setFileOptions)
+  Q_PROPERTY(PathOptions fileOptions READ fileOptions WRITE setFileOptions NOTIFY fileOptionsChanged);
 
   /// Constraints on the directory type.
-  Q_PROPERTY(PathOptions directoryOptions READ directoryOptions WRITE setDirectoryOptions)
+  Q_PROPERTY(PathOptions directoryOptions READ directoryOptions WRITE setDirectoryOptions NOTIFY directoryOptionsChanged);
 
   /// The icon to be shown for a file entry.
-  Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon RESET unsetFileIcon)
+  Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon RESET unsetFileIcon NOTIFY fileIconChanged )
 
   /// The icon to be shown for a directory entry.
-  Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon)
+  Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon NOTIFY directoryIconChanged)
 
   Q_FLAGS(PathOption PathOptions)
 
@@ -301,6 +299,12 @@ Q_SIGNALS:
   /// \param previousAbsolutePath The path entry that previously had the focus.
   void currentPathChanged(const QString& currentAbsolutePath, const QString& previousAbsolutePath);
 
+  void modeChanged(const Mode &);
+  void fileOptionsChanged(const PathOptions &);
+  void directoryOptionsChanged(const PathOptions &);
+  void fileIconChanged(const QIcon &);
+  void directoryIconChanged(const QIcon &);
+
 protected:
   QScopedPointer<ctkPathListWidgetPrivate> d_ptr;
 
@@ -315,6 +319,53 @@ private:
   Q_PRIVATE_SLOT(d_func(), void _q_emitPathDoubleClicked(const QModelIndex& index))
   Q_PRIVATE_SLOT(d_func(), void _q_emitPathActivated(const QModelIndex& index))
   Q_PRIVATE_SLOT(d_func(), void _q_emitCurrentPathChanged(const QModelIndex &previous, const QModelIndex &current))
+};
+
+
+// --------------------------------------------------------------------------
+// ctkPathListWidgetPrivate
+
+//-----------------------------------------------------------------------------
+class ctkPathListWidgetPrivate
+{
+  Q_DECLARE_PUBLIC(ctkPathListWidget)
+
+protected:
+  ctkPathListWidget* const q_ptr;
+
+public:
+
+  enum PathType {
+    Unknown,
+    File,
+    Directory
+  };
+
+  ctkPathListWidgetPrivate(ctkPathListWidget& object);
+
+  void _q_emitPathClicked(const QModelIndex &index);
+  void _q_emitPathDoubleClicked(const QModelIndex &index);
+  void _q_emitPathActivated(const QModelIndex &index);
+  void _q_emitCurrentPathChanged(const QModelIndex &current, const QModelIndex &previous);
+
+  bool addPath(const QString& path);
+  bool removePath(const QString& path);
+
+  void fileOptionsChanged();
+  void directoryOptionsChanged();
+
+  PathType pathType(const QString& absolutePath) const;
+
+  bool isValidPath(const QString& absoluteFilePath, PathType pathType) const;
+  bool isValidFile(const QString& absoluteFilePath) const;
+  bool isValidDir(const QString& absoluteDirPath) const;
+
+  QStandardItemModel PathListModel;
+  ctkPathListWidget::Mode Mode;
+  ctkPathListWidget::PathOptions FileOptions;
+  ctkPathListWidget::PathOptions DirectoryOptions;
+  QIcon FileIcon;
+  QIcon DirectoryIcon;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathListWidget::PathOptions)

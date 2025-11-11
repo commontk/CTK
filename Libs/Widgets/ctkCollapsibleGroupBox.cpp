@@ -35,6 +35,7 @@
 //-----------------------------------------------------------------------------
 class ctkCollapsibleGroupBoxStyle:public ctkProxyStyle
 {
+  Q_OBJECT
 public:
   typedef ctkProxyStyle Superclass;
   ctkCollapsibleGroupBoxStyle(QStyle* style = 0, QObject* parent =0)
@@ -197,6 +198,7 @@ void ctkCollapsibleGroupBox::setCollapsedHeight(int heightInPixels)
 {
   Q_D(ctkCollapsibleGroupBox);
   d->CollapsedHeight = heightInPixels;
+  emit collapsedHeightChanged(heightInPixels);
 }
 
 //-----------------------------------------------------------------------------
@@ -330,3 +332,5 @@ bool ctkCollapsibleGroupBox::eventFilter(QObject* child, QEvent* e)
   }
   return this->QGroupBox::eventFilter(child, e);
 }
+
+#include "ctkCollapsibleGroupBox.moc"

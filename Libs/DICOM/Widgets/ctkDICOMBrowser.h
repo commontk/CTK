@@ -58,20 +58,20 @@ class QModelIndex;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
-  Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
-  Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
-  Q_PROPERTY(int patientsAddedDuringImport READ patientsAddedDuringImport)
-  Q_PROPERTY(int studiesAddedDuringImport READ studiesAddedDuringImport)
-  Q_PROPERTY(int seriesAddedDuringImport READ seriesAddedDuringImport)
-  Q_PROPERTY(int instancesAddedDuringImport READ instancesAddedDuringImport)
-  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
-  Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
-  Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
-  Q_PROPERTY(bool confirmRemove READ confirmRemove WRITE setConfirmRemove)
-  Q_PROPERTY(bool toolbarVisible READ isToolbarVisible WRITE setToolbarVisible)
-  Q_PROPERTY(bool databaseDirectorySelectorVisible READ isDatabaseDirectorySelectorVisible WRITE setDatabaseDirectorySelectorVisible)
-  Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory NOTIFY databaseDirectoryChanged)
+  Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey NOTIFY databaseDirectorySettingsKeyChanged)
+  Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase NOTIFY databaseDirectoryBaseChanged)
+  Q_PROPERTY(int patientsAddedDuringImport READ patientsAddedDuringImport CONSTANT)
+  Q_PROPERTY(int studiesAddedDuringImport READ studiesAddedDuringImport CONSTANT)
+  Q_PROPERTY(int seriesAddedDuringImport READ seriesAddedDuringImport CONSTANT)
+  Q_PROPERTY(int instancesAddedDuringImport READ instancesAddedDuringImport CONSTANT)
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache NOTIFY tagsToPrecacheChanged)
+  Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary NOTIFY displayImportSummaryChanged)
+  Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode NOTIFY importDirectoryModeChanged)
+  Q_PROPERTY(bool confirmRemove READ confirmRemove WRITE setConfirmRemove NOTIFY confirmRemoveChanged)
+  Q_PROPERTY(bool toolbarVisible READ isToolbarVisible WRITE setToolbarVisible NOTIFY toolbarVisibleChanged)
+  Q_PROPERTY(bool databaseDirectorySelectorVisible READ isDatabaseDirectorySelectorVisible WRITE setDatabaseDirectorySelectorVisible NOTIFY databaseDirectorySelectorVisibleChanged)
+  Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible NOTIFY sendActionVisibleChanged)
 
 public:
   typedef ctkDICOMBrowser Self;
@@ -256,6 +256,15 @@ Q_SIGNALS:
   /// Emitted when user requested network send. String list contains list of files to be exported.
   void sendRequested(const QStringList&);
 
+  void databaseDirectorySettingsKeyChanged(const QString &);
+  void databaseDirectoryBaseChanged(const QString &);
+  void tagsToPrecacheChanged(const QStringList&);
+  void displayImportSummaryChanged(bool);
+  void importDirectoryModeChanged(const ctkDICOMBrowser::ImportDirectoryMode &);
+  void confirmRemoveChanged(bool);
+  void toolbarVisibleChanged(bool);
+  void databaseDirectorySelectorVisibleChanged(bool);
+  void sendActionVisibleChanged(bool);
 protected:
     QScopedPointer<ctkDICOMBrowserPrivate> d_ptr;
 

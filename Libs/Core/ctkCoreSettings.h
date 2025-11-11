@@ -56,11 +56,14 @@ class CTK_CORE_EXPORT ctkCoreSettings : public QSettings
 
   /// Subfolders within this directory will be stored as relative folders.
   /// Empty by default, which means no substitution is performed.
-  Q_PROPERTY(QString applicationHomeDirectory READ applicationHomeDirectory WRITE setApplicationHomeDirectory)
+  Q_PROPERTY(QString applicationHomeDirectory READ applicationHomeDirectory WRITE setApplicationHomeDirectory NOTIFY applicationHomeDirectoryChanged);
 
   /// applicationHomeDirectory absolute path is replaced by this string in settings file.
-  Q_PROPERTY(QString applicationHomePlaceholder READ applicationHomePlaceholder WRITE setApplicationHomePlaceholder)
+  Q_PROPERTY(QString applicationHomePlaceholder READ applicationHomePlaceholder WRITE setApplicationHomePlaceholder NOTIFY applicationHomePlaceholderChanged);
 
+Q_SIGNALS:
+  void applicationHomeDirectoryChanged(const QString &);
+  void applicationHomePlaceholderChanged(const QString &);
 public:
   /// \see QSettings::QSettings(const QString& ,const QString& , QObject* )
   ctkCoreSettings(

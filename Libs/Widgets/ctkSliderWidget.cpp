@@ -215,6 +215,7 @@ void ctkSliderWidget::setMinimum(double min)
   bool wasBlockSetSliderValue = d->BlockSetSliderValue;
   d->BlockSetSliderValue = true;
   d->SpinBox->setMinimum(min);
+  emit minimumChanged(d->SpinBox->minimum());
   d->BlockSetSliderValue = wasBlockSetSliderValue;
 
   // SpinBox can truncate min (depending on decimals).
@@ -233,6 +234,7 @@ void ctkSliderWidget::setMaximum(double max)
   bool wasBlockSetSliderValue = d->BlockSetSliderValue;
   d->BlockSetSliderValue = true;
   d->SpinBox->setMaximum(max);
+  emit maximumChanged(d->SpinBox->maximum());
   d->BlockSetSliderValue = wasBlockSetSliderValue;
 
   // SpinBox can truncate max (depending on decimals).
@@ -302,6 +304,7 @@ void ctkSliderWidget::setValue(double _value)
   bool isChanging = d->Changing;
   d->Changing = false;
   d->SpinBox->setValue(_value);
+  emit valueChanged(d->Slider->value());
   // Why do we need to set the value to the slider ?
   //d->Slider->setValue(d->SpinBox->value());
   //double spinBoxValue = d->SpinBox->value();
@@ -420,6 +423,7 @@ void ctkSliderWidget::setSingleStep(double newStep)
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
   Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
   Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  emit singleStepChanged(d->SpinBox->singleStep());
 }
 
 // --------------------------------------------------------------------------
@@ -434,6 +438,7 @@ void ctkSliderWidget::setPageStep(double step)
 {
   Q_D(ctkSliderWidget);
   d->Slider->setPageStep(step);
+  emit pageStepChanged(d->Slider->pageStep());
 }
 
 // --------------------------------------------------------------------------
@@ -478,6 +483,7 @@ void ctkSliderWidget::setPrefix(const QString& newPrefix)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setPrefix(newPrefix);
+  emit prefixChanged(d->SpinBox->prefix());
   d->updateSpinBoxWidth();
 }
 
@@ -493,6 +499,7 @@ void ctkSliderWidget::setSuffix(const QString& newSuffix)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setSuffix(newSuffix);
+  emit suffixChanged(d->SpinBox->suffix());
   d->updateSpinBoxWidth();
 }
 
@@ -508,6 +515,7 @@ void ctkSliderWidget::setTickInterval(double ti)
 {
   Q_D(ctkSliderWidget);
   d->Slider->setTickInterval(ti);
+  emit tickIntervalChanged(d->Slider->tickInterval());
 }
 
 // --------------------------------------------------------------------------
@@ -522,6 +530,7 @@ void ctkSliderWidget::setTickPosition(QSlider::TickPosition newTickPosition)
 {
   Q_D(ctkSliderWidget);
   d->Slider->setTickPosition(newTickPosition);
+  emit tickPositionChanged(d->Slider->tickPosition());
 }
 
 // -------------------------------------------------------------------------
@@ -535,6 +544,7 @@ void ctkSliderWidget::setSpinBoxAlignment(Qt::Alignment alignment)
 {
   Q_D(ctkSliderWidget);
   return d->SpinBox->setAlignment(alignment);
+  emit spinBoxAlignmentChanged(alignment);
 }
 
 // -------------------------------------------------------------------------
@@ -549,6 +559,7 @@ void ctkSliderWidget::setTracking(bool enable)
 {
   Q_D(ctkSliderWidget);
   d->Tracking = enable;
+  emit trackingChanged(enable);
 }
 
 // -------------------------------------------------------------------------
@@ -570,6 +581,7 @@ void ctkSliderWidget::setInvertedAppearance(bool invertedAppearance)
 {
   Q_D(ctkSliderWidget);
   d->Slider->setInvertedAppearance(invertedAppearance);
+  emit invertedAppearanceChanged(invertedAppearance);
 }
 
 // --------------------------------------------------------------------------
@@ -585,6 +597,7 @@ void ctkSliderWidget::setInvertedControls(bool invertedControls)
   Q_D(ctkSliderWidget);
   d->Slider->setInvertedControls(invertedControls);
   d->SpinBox->setInvertedControls(invertedControls);
+  emit invertedControlsChanged(invertedControls);
 }
 
 // -------------------------------------------------------------------------
@@ -601,6 +614,7 @@ void ctkSliderWidget
 {
   Q_D(ctkSliderWidget);
   d->SynchronizeMode = flag;
+  emit synchronizeSiblingsChanged(flag);
   d->updateSpinBoxWidth();
   d->updateSpinBoxDecimals();
 }
@@ -617,6 +631,7 @@ void ctkSliderWidget::setSpinBoxVisible(bool visible)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setVisible(visible);
+  emit spinBoxVisibleChanged(visible);
 }
 
 // --------------------------------------------------------------------------
@@ -655,6 +670,7 @@ void ctkSliderWidget::setPopupSlider(bool popup)
     d->SliderPopup->deleteLater();
     d->SliderPopup = 0;
   }
+  emit popupSliderChanged(popup);
 }
 
 // --------------------------------------------------------------------------

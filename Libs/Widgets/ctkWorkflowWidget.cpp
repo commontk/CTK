@@ -112,7 +112,7 @@ ctkWorkflow* ctkWorkflowWidget::workflow()const
 // --------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflowGroupBox*, workflowGroupBox, WorkflowGroupBox);
 CTK_GET_CPP(ctkWorkflowWidget, bool, showButtonBoxWidget, ShowButtonBoxWidget);
-CTK_SET_CPP(ctkWorkflowWidget, bool, setShowButtonBoxWidget, ShowButtonBoxWidget);
+CTK_SET_CPP_EMIT(ctkWorkflowWidget, bool, setShowButtonBoxWidget, ShowButtonBoxWidget, setShowButtonBoxWidget);
 CTK_GET_CPP(ctkWorkflowWidget, ctkWorkflowButtonBoxWidget*, buttonBoxWidget, ButtonBoxWidget);
 
 // --------------------------------------------------------------------------

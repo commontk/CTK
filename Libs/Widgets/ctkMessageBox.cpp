@@ -173,7 +173,7 @@ void ctkMessageBoxPrivate::writeSettings(int button)
 // ctkMessageBox methods
 
 CTK_GET_CPP(ctkMessageBox, QList<QMessageBox::ButtonRole>, dontShowAgainButtonRoles, DontShowAgainButtonRoles;);
-CTK_SET_CPP(ctkMessageBox, const QList<QMessageBox::ButtonRole>&, setDontShowAgainButtonRoles, DontShowAgainButtonRoles);
+CTK_SET_CPP_EMIT(ctkMessageBox, const QList<QMessageBox::ButtonRole>&, setDontShowAgainButtonRoles, DontShowAgainButtonRoles, dontShowAgainButtonRolesChanged);
 
 //-----------------------------------------------------------------------------
 ctkMessageBox::ctkMessageBox(QWidget* newParent)
@@ -222,6 +222,7 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
 
     d->DontShowAgainCheckBox->setText(dontShowAgainText);
   }
+  emit dontShowAgainVisibleChanged(visible);
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
   QGridLayout *grid = static_cast<QGridLayout *>(this->layout());
   grid->addWidget(d->DontShowAgainCheckBox, 1, 1, 1, 1);
@@ -246,6 +247,7 @@ void ctkMessageBox::setDontShowAgainSettingsKey(const QString& key)
     return;
   }
   d->DontShowAgainSettingsKey = key;
+  emit dontShowAgainSettingsKeyChanged(key);
   d->readSettings();
   this->setDontShowAgainVisible(!key.isEmpty());
 }
@@ -274,6 +276,7 @@ void ctkMessageBox::setDontShowAgain(bool dontShow)
   // If you want to save the preference into settings even if the user
   // escape/cancel/reject the dialog, then you must set the QSettings value
   // manually
+  emit dontShowAgainChanged(dontShow);
 }
 
 //-----------------------------------------------------------------------------

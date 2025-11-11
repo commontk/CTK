@@ -24,7 +24,7 @@ namespace ctkEventBus {
 class org_commontk_eventbus_EXPORT ctkNetworkConnector : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString protocol READ protocol);
+    Q_PROPERTY(QString protocol READ protocol CONSTANT);
 
 public:
     /// object constructor.

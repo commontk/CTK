@@ -41,21 +41,22 @@ class ctkAbstractWorker;
 class CTK_CORE_EXPORT ctkAbstractJob : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
-  Q_PROPERTY(QString className READ className);
-  Q_PROPERTY(JobStatus status READ status WRITE setStatus);
-  Q_PROPERTY(bool persistent READ isPersistent WRITE setIsPersistent);
-  Q_PROPERTY(bool retryCounter READ retryCounter WRITE setRetryCounter);
-  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
-  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
-  Q_PROPERTY(bool maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType);
-  Q_PROPERTY(QThread::Priority priority READ priority WRITE setPriority);
-  Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
-  Q_PROPERTY(QDateTime startDateTime READ startDateTime);
-  Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
-  Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID);
-  Q_PROPERTY(QString log READ log);
-  Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID NOTIFY jobUIDChanged);
+  Q_PROPERTY(QString className READ className CONSTANT);
+  Q_PROPERTY(JobStatus status READ status WRITE setStatus NOTIFY statusChanged);
+  Q_PROPERTY(bool persistent READ isPersistent WRITE setIsPersistent NOTIFY isPersistentChanged);
+  Q_PROPERTY(bool retryCounter READ retryCounter WRITE setRetryCounter NOTIFY retryCounterChanged);
+  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry NOTIFY maximumNumberOfRetryChanged);
+
+  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay NOTIFY retryDelayChanged);
+  Q_PROPERTY(bool maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType NOTIFY maximumConcurrentJobsPerTypeChanged);
+  Q_PROPERTY(QThread::Priority priority READ priority WRITE setPriority NOTIFY priorityChanged);
+  Q_PROPERTY(QDateTime creationDateTime READ creationDateTime CONSTANT);
+  Q_PROPERTY(QDateTime startDateTime READ startDateTime CONSTANT);
+  Q_PROPERTY(QDateTime completionDateTime READ completionDateTime CONSTANT);
+  Q_PROPERTY(QString runningThreadID READ runningThreadID WRITE setRunningThreadID NOTIFY runningThreadIDChanged);
+  Q_PROPERTY(QString log READ log CONSTANT);
+  Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse NOTIFY destroyAfterUseChanged);
 
 public:
   explicit ctkAbstractJob();
@@ -90,7 +91,7 @@ public:
     Failed,
     Finished,
   };
-  Q_ENUM(JobStatus)
+  Q_ENUM(JobStatus);
   JobStatus status() const;
   virtual void setStatus(JobStatus status);
   ///@}
@@ -194,6 +195,16 @@ Q_SIGNALS:
   void attemptFailed();
   void failed();
   void finished();
+  void jobUIDChanged();
+  void statusChanged(const ctkAbstractJob::JobStatus & status);
+  void isPersistentChanged(bool persistent);
+  void retryCounterChanged(bool retryCounter);
+  void maximumConcurrentJobsPerTypeChanged(bool maximumConcurrentJobsPerType);
+  void maximumNumberOfRetryChanged(int maximumNumberOfRetry);
+  void retryDelayChanged(int retryDelay);
+  void priorityChanged(const QThread::Priority & priority);
+  void runningThreadIDChanged(const QString & runningThreadID);
+  void destroyAfterUseChanged(bool destroyAfterUse);
 
 protected:
   QString JobUID;

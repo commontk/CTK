@@ -291,6 +291,7 @@ void ctkRangeWidget::setMinimum(double min)
     d->MinimumSpinBox->setMinimum(min);
   }
   d->MaximumSpinBox->setMinimum(min);
+  emit minimumChanged(min);
   d->MinimumSpinBox->blockSignals(blocked);
   d->MaximumSpinBox->blockSignals(blocked);
   // SpinBox can truncate min (depending on decimals).
@@ -320,6 +321,7 @@ void ctkRangeWidget::setMaximum(double max)
     d->MaximumSpinBox->setMaximum(max);
   }
   d->MinimumSpinBox->setMaximum(max);
+  emit maximumChanged(max);
   d->MinimumSpinBox->blockSignals(blocked);
   d->MaximumSpinBox->blockSignals(blocked);
   // SpinBox can truncate max (depending on decimals).
@@ -482,6 +484,7 @@ void ctkRangeWidget::setMinimumValue(double _value)
   bool isChanging = d->Changing;
   d->Changing = false;
   d->MinimumSpinBox->setValue(_value);
+  emit this->minimumValueChanged(_value);
   Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
   // restore the prop
   d->Changing = isChanging;
@@ -496,6 +499,7 @@ void ctkRangeWidget::setMaximumValue(double _value)
   bool isChanging = d->Changing;
   d->Changing = false;
   d->MaximumSpinBox->setValue(_value);
+  emit this->maximumValueChanged(_value);
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
   // restore the prop
   d->Changing = isChanging;
@@ -731,6 +735,7 @@ void ctkRangeWidget::setSingleStep(double step)
   Q_ASSERT(d->equal(d->Slider->singleStep(), d->MaximumSpinBox->singleStep()));
   Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+  emit this->singleStepChanged(step);
 }
 
 // --------------------------------------------------------------------------
@@ -755,6 +760,7 @@ void ctkRangeWidget::setDecimals(int newDecimals)
   {
     d->Slider->setRange(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
   }
+  emit this->decimalsChanged(newDecimals);
 }
 
 // --------------------------------------------------------------------------
@@ -771,6 +777,7 @@ void ctkRangeWidget::setPrefix(const QString& newPrefix)
   Q_D(ctkRangeWidget);
   d->MinimumSpinBox->setPrefix(newPrefix);
   d->MaximumSpinBox->setPrefix(newPrefix);
+  emit this->prefixChanged(newPrefix);
 }
 
 // --------------------------------------------------------------------------
@@ -787,6 +794,7 @@ void ctkRangeWidget::setSuffix(const QString& newSuffix)
   Q_D(ctkRangeWidget);
   d->MinimumSpinBox->setSuffix(newSuffix);
   d->MaximumSpinBox->setSuffix(newSuffix);
+  emit this->suffixChanged(newSuffix);
 }
 
 // --------------------------------------------------------------------------
@@ -801,6 +809,7 @@ void ctkRangeWidget::setTickInterval(double ti)
 {
   Q_D(ctkRangeWidget);
   d->Slider->setTickInterval(ti);
+  emit this->tickIntervalChanged(ti);
 }
 
 // -------------------------------------------------------------------------
@@ -818,6 +827,7 @@ void ctkRangeWidget::setSpinBoxAlignment(Qt::Alignment alignment)
     return;
   }
   d->SpinBoxAlignment = alignment;
+  emit this->spinBoxAlignmentChanged(alignment);
   d->relayout();
 }
 
@@ -834,6 +844,7 @@ void ctkRangeWidget::setSpinBoxTextAlignment(Qt::Alignment alignment)
   Q_D(ctkRangeWidget);
   d->MinimumSpinBox->setAlignment(alignment);
   d->MaximumSpinBox->setAlignment(alignment);
+  emit this->spinBoxTextAlignmentChanged(alignment);
 }
 
 // -------------------------------------------------------------------------
@@ -849,6 +860,7 @@ void ctkRangeWidget::setTracking(bool enable)
 {
   Q_D(ctkRangeWidget);
   d->Tracking = enable;
+  emit this->trackingChanged(enable);
 }
 
 // -------------------------------------------------------------------------
@@ -871,6 +883,7 @@ void ctkRangeWidget::setAutoSpinBoxWidth(bool autoWidth)
   Q_D(ctkRangeWidget);
   d->AutoSpinBoxWidth = autoWidth;
   d->updateSpinBoxWidth();
+  emit this->autoSpinBoxWidthChanged(autoWidth);
 }
 
 // --------------------------------------------------------------------------
@@ -885,6 +898,7 @@ void ctkRangeWidget::setSymmetricMoves(bool symmetry)
 {
   Q_D(ctkRangeWidget);
   d->Slider->setSymmetricMoves(symmetry);
+  emit this->symmetricMovesChanged(symmetry);
 }
 
 // --------------------------------------------------------------------------

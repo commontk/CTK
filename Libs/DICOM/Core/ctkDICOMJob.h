@@ -40,12 +40,12 @@
 class CTK_DICOM_CORE_EXPORT ctkDICOMJob : public ctkAbstractJob
 {
   Q_OBJECT
-  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
-  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID);
-  Q_PROPERTY(QString sopInstanceUID READ sopInstanceUID WRITE setSOPInstanceUID);
-  Q_PROPERTY(DICOMLevels dicomLevel READ dicomLevel WRITE setDICOMLevel);
-  Q_PROPERTY(QString referenceInserterJobUID READ referenceInserterJobUID WRITE setReferenceInserterJobUID);
+  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID NOTIFY patientIDChanged);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID NOTIFY studyInstanceUIDChanged);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID NOTIFY seriesInstanceUIDChanged);
+  Q_PROPERTY(QString sopInstanceUID READ sopInstanceUID WRITE setSOPInstanceUID NOTIFY sopInstanceUIDChanged);
+  Q_PROPERTY(DICOMLevels dicomLevel READ dicomLevel WRITE setDICOMLevel NOTIFY dicomLevelChanged);
+  Q_PROPERTY(QString referenceInserterJobUID READ referenceInserterJobUID WRITE setReferenceInserterJobUID NOTIFY referenceInserterJobUIDChanged);
 
 public:
   typedef ctkAbstractJob Superclass;
@@ -60,7 +60,7 @@ public:
     Series,
     Instances
   };
-  Q_ENUM(DICOMLevels)
+  Q_ENUM(DICOMLevels);
 
   ///@{
   /// DICOM Level
@@ -122,7 +122,14 @@ public:
   Q_INVOKABLE virtual void releaseResources() override;
 
 Q_SIGNALS:
-  void progressJobDetail(QVariant);
+  void progressJobDetail(const QVariant &);
+
+  void patientIDChanged(const QString& patientID);
+  void studyInstanceUIDChanged(const QString& studyInstanceUID);
+  void seriesInstanceUIDChanged(const QString& seriesInstanceUID);
+  void sopInstanceUIDChanged(const QString& sopInstanceUID);
+  void dicomLevelChanged(const DICOMLevels & dicomLevel);
+  void referenceInserterJobUIDChanged(const QString& referenceInserterJobUID);
 
 protected:
   QString PatientID;

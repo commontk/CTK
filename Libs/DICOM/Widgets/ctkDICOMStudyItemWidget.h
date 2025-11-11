@@ -48,22 +48,27 @@ class ctkDICOMStudyItemWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
 {
   Q_OBJECT;
-  Q_PROPERTY(QString studyItem READ studyItem WRITE setStudyItem);
-  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
-  Q_PROPERTY(QString title READ title WRITE setTitle);
-  Q_PROPERTY(QString description READ description WRITE setDescription);
-  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed);
-  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
-  Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
-  Q_PROPERTY(int selection READ selection WRITE setSelection);
-  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
-  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
-  Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount);
-  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
-  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus);
-  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID);
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged);
+  Q_PROPERTY(OperationStatus operationStatus READ operationStatus WRITE setOperationStatus NOTIFY operationStatusChanged);
+  Q_PROPERTY(QString studyItem READ studyItem WRITE setStudyItem NOTIFY studyItemChanged);
+  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID NOTIFY patientIDChanged);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID NOTIFY studyInstanceUIDChanged);
+  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription NOTIFY filteringSeriesDescriptionChanged);
+  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities NOTIFY filteringModalitiesChanged);
+
+  Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged);
+  Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged);
+  Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY collapsedChanged);
+  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow CONSTANT);
+  Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged);
+  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel CONSTANT);
+  Q_PROPERTY(int selection READ selection WRITE setSelection NOTIFY selectionChanged);
+
+
+  Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount CONSTANT);
+
+
+  Q_PROPERTY(QString stoppedJobUID READ stoppedJobUID CONSTANT);
 
 public:
   typedef QWidget Superclass;
@@ -232,6 +237,18 @@ Q_SIGNALS:
   /// Emitted when the GUI finished to update after a series query.
   void updateGUIFinished();
 
+  void studyItemChanged(const QString &);
+  void patientIDChanged(const QString &);
+  void studyInstanceUIDChanged(const QString &);
+  void titleChanged(const QString &);
+  void descriptionChanged(const QString &);
+  void collapsedChanged(bool);
+  void thumbnailSizeChanged(const ThumbnailSizeOption &);
+  void selectionChanged(int);
+  void filteringSeriesDescriptionChanged(const QString &);
+  void filteringModalitiesChanged(const QStringList &);
+  void allowedServersChanged(const QStringList &);
+  void operationStatusChanged(const OperationStatus &);
 protected:
   QScopedPointer<ctkDICOMStudyItemWidgetPrivate> d_ptr;
 

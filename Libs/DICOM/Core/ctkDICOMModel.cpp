@@ -929,6 +929,7 @@ void ctkDICOMModel::setEndLevel(ctkDICOMModel::IndexType level)
 {
   Q_D(ctkDICOMModel);
   d->EndLevel = level;
+  emit endLevelChanged(level);
 }
 
 //------------------------------------------------------------------------------

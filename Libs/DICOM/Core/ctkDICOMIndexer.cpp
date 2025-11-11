@@ -338,11 +338,11 @@ void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::Index
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMIndexer, bool, isBackgroundImportEnabled, BackgroundImportEnabled);
-CTK_SET_CPP(ctkDICOMIndexer, bool, setBackgroundImportEnabled, BackgroundImportEnabled);
+CTK_SET_CPP_EMIT(ctkDICOMIndexer, bool, setBackgroundImportEnabled, BackgroundImportEnabled, backgroundImportEnabledChanged);
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMIndexer, bool, followSymlinks, FollowSymlinks);
-CTK_SET_CPP(ctkDICOMIndexer, bool, setFollowSymlinks, FollowSymlinks);
+CTK_SET_CPP_EMIT(ctkDICOMIndexer, bool, setFollowSymlinks, FollowSymlinks, followSymlinksChanged);
 
 //------------------------------------------------------------------------------
 // ctkDICOMIndexer methods

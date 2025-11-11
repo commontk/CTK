@@ -579,16 +579,16 @@ ctkDICOMPatientItemWidget::~ctkDICOMPatientItemWidget()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const QStringList&, setAllowedServers, AllowedServers);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const QStringList&, setAllowedServers, AllowedServers,allowedServersChanged );
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QStringList, allowedServers, AllowedServers);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const OperationStatus&, setOperationStatus, Status);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const OperationStatus&, setOperationStatus, Status,operationStatusChanged );
 CTK_GET_CPP(ctkDICOMPatientItemWidget, ctkDICOMPatientItemWidget::OperationStatus, operationStatus, Status);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientItem, PatientItem);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientID, PatientID);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const QString&, setPatientID, PatientID, patientItemChanged);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientID, PatientID);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientName, PatientName);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const QString&, setPatientName, PatientName, patientNameChanged);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientName, PatientName);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientBirthDate, PatientBirthDate);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const QString&, setPatientBirthDate, PatientBirthDate, );
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientBirthDate, PatientBirthDate);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setPatientSex, PatientSex);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, patientSex, PatientSex);
@@ -600,9 +600,9 @@ CTK_SET_CPP(ctkDICOMPatientItemWidget, const QString&, setFilteringSeriesDescrip
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
 CTK_SET_CPP(ctkDICOMPatientItemWidget, const QStringList&, setFilteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QStringList, filteringModalities, FilteringModalities);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient, numberOfOpenedStudiesPerPatientChanged);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, int, numberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
-CTK_SET_CPP(ctkDICOMPatientItemWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize);
+CTK_SET_CPP_EMIT(ctkDICOMPatientItemWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize, thumbnailSizeChanged);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
 CTK_GET_CPP(ctkDICOMPatientItemWidget, QString, stoppedJobUID, StoppedJobUID);
 

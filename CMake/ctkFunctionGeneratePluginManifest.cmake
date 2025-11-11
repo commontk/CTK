@@ -100,6 +100,7 @@ function(ctkFunctionGeneratePluginManifest MANIFEST_QRC_FILEPATH_VAR)
 
   configure_file("${CTK_CMAKE_DIR}/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
   configure_file("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
+  set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
   if(MY_SKIP_QT5_ADD_RESOURCES)
     set(${MANIFEST_QRC_FILEPATH_VAR} ${_manifest_qrc_filepath} PARENT_SCOPE)

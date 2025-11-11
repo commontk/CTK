@@ -126,6 +126,7 @@ void ctkMaterialPropertyPreviewLabel::setAmbient(double newAmbient)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Ambient = newAmbient;
+  emit ambientChanged(d->Ambient);
   this->update();
 }
 
@@ -141,6 +142,7 @@ void ctkMaterialPropertyPreviewLabel::setDiffuse(double newDiffuse)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Diffuse = newDiffuse;
+  emit diffuseChanged(d->Diffuse);
   this->update();
 }
 
@@ -156,6 +158,7 @@ void ctkMaterialPropertyPreviewLabel::setSpecular(double newSpecular)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Specular = newSpecular;
+  emit specularChanged(d->Specular);
   this->update();
 }
 
@@ -171,6 +174,7 @@ void ctkMaterialPropertyPreviewLabel::setSpecularPower(double newSpecularPower)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->SpecularPower = newSpecularPower;
+  emit specularPowerChanged(d->SpecularPower);
   this->update();
 }
 
@@ -186,6 +190,7 @@ void ctkMaterialPropertyPreviewLabel::setMetallic(double newMetallic)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Metallic = newMetallic;
+  emit metallicChanged(d->Metallic);
   this->update();
 }
 
@@ -201,6 +206,7 @@ void ctkMaterialPropertyPreviewLabel::setRoughness(double newRoughness)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Roughness = newRoughness;
+  emit roughnessChanged(d->Roughness);
   this->update();
 }
 
@@ -216,6 +222,7 @@ void ctkMaterialPropertyPreviewLabel::setColor(const QColor& newColor)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Color = newColor;
+  emit colorChanged(d->Color);
   this->update();
 }
 
@@ -231,6 +238,7 @@ void ctkMaterialPropertyPreviewLabel::setInterpolationPBR(bool pbr)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->InterpolationPBR = pbr;
+  emit interpolationPBRChanged(d->InterpolationPBR);
   this->update();
 }
 
@@ -246,6 +254,7 @@ void ctkMaterialPropertyPreviewLabel::setOpacity(double newOpacity)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->Opacity = newOpacity;
+  emit opacityChanged(d->Opacity);
   this->update();
 }
 
@@ -261,6 +270,7 @@ void ctkMaterialPropertyPreviewLabel::setGridOpacity(double newGridOpacity)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
   d->GridOpacity = newGridOpacity;
+  emit gridOpacityChanged(d->GridOpacity);
   this->update();
 }
 

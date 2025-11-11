@@ -40,7 +40,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMModel
   Q_OBJECT
   typedef QAbstractItemModel Superclass;
   /// startLevel contains the hierarchy depth the model contains
-  Q_PROPERTY(IndexType endLevel READ endLevel WRITE setEndLevel);
+  Q_PROPERTY(IndexType endLevel READ endLevel WRITE setEndLevel NOTIFY endLevelChanged);
+
 public:
 
   enum {
@@ -83,6 +84,10 @@ public:
   virtual bool setHeaderData ( int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole );
   // Sorting resets the model because fetched/unfetched items could disappear/appear respectively.
   virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+
+Q_SIGNALS:
+  void endLevelChanged(const IndexType &);
+
 public Q_SLOTS:
   virtual void reset();
 protected:

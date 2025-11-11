@@ -144,6 +144,7 @@ void ctkModelTester::setThrowOnError(bool throwException)
 {
   Q_D(ctkModelTester);
   d->ThrowOnError = throwException;
+  emit throwOnErrorChanged(d->ThrowOnError);
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +159,7 @@ void ctkModelTester::setNestedInserts( bool nestedInsertsValue )
 {
   Q_D(ctkModelTester);
   d->NestedInserts = nestedInsertsValue;
+  emit nestedInsertsChanged(d->NestedInserts);
 }
 
 //-----------------------------------------------------------------------------
@@ -173,6 +175,7 @@ void ctkModelTester::setTestDataEnabled( bool enable )
 {
   Q_D(ctkModelTester);
   d->TestDataEnabled = enable;
+  emit testDataEnabledChanged(d->TestDataEnabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -187,6 +190,7 @@ void ctkModelTester::setVerbose(bool verboseValue)
 {
   Q_D(ctkModelTester);
   d->Verbose = verboseValue;
+  emit verboseChanged(d->Verbose);
 }
 
 //-----------------------------------------------------------------------------

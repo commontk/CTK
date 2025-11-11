@@ -36,6 +36,7 @@ static ctkLogger logger("org.commontk.dicom.DICOMServer");
 //------------------------------------------------------------------------------
 class ctkDICOMServerPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDICOMServer);
 
 protected:
@@ -120,6 +121,7 @@ void ctkDICOMServer::setConnectionName(const QString& connectionName)
   Q_D(ctkDICOMServer);
   d->ConnectionName = connectionName;
   emit serverModified(d->ConnectionName);
+  emit connectionNameChanged(d->ConnectionName);
 }
 
 //------------------------------------------------------------------------------
@@ -128,6 +130,7 @@ void ctkDICOMServer::setQueryRetrieveEnabled(const bool& queryRetrieveEnabled)
   Q_D(ctkDICOMServer);
   d->QueryRetrieveEnabled = queryRetrieveEnabled;
   emit serverModified(d->ConnectionName);
+  emit queryRetrieveEnabledChanged(d->QueryRetrieveEnabled);
 }
 
 //------------------------------------------------------------------------------
@@ -136,6 +139,7 @@ void ctkDICOMServer::setStorageEnabled(const bool& storageEnabled)
   Q_D(ctkDICOMServer);
   d->StorageEnabled = storageEnabled;
   emit serverModified(d->ConnectionName);
+  emit storageEnabledChanged(d->StorageEnabled);
 }
 
 //------------------------------------------------------------------------------
@@ -144,6 +148,7 @@ void ctkDICOMServer::setTrustedEnabled(const bool& trustedEnabled)
   Q_D(ctkDICOMServer);
   d->TrustedEnabled = trustedEnabled;
   emit serverModified(d->ConnectionName);
+  emit setTrustedEnabled(trustedEnabled);
 }
 
 //------------------------------------------------------------------------------
@@ -151,6 +156,7 @@ void ctkDICOMServer::setCallingAETitle(const QString& callingAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CallingAETitle = callingAETitle;
+  emit this->calledAETitleChanged(calledAETitle());
   emit serverModified(d->ConnectionName);
 }
 
@@ -159,6 +165,7 @@ void ctkDICOMServer::setCalledAETitle(const QString& calledAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CalledAETitle = calledAETitle;
+  emit this->calledAETitleChanged(calledAETitle);
   emit serverModified(d->ConnectionName);
 }
 
@@ -167,6 +174,7 @@ void ctkDICOMServer::setHost(const QString& host)
 {
   Q_D(ctkDICOMServer);
   d->Host = host;
+  emit this->hostChanged(host);
   emit serverModified(d->ConnectionName);
 }
 
@@ -175,6 +183,7 @@ void ctkDICOMServer::setPort(const int& port)
 {
   Q_D(ctkDICOMServer);
   d->Port = port;
+  emit this->portChanged(port);
   emit serverModified(d->ConnectionName);
 }
 
@@ -183,6 +192,7 @@ void ctkDICOMServer::setRetrieveProtocol(RetrieveProtocol protocol)
 {
   Q_D(ctkDICOMServer);
   d->RetrieveProtocol = protocol;
+  emit this->retrieveProtocolChanged(protocol);
   emit serverModified(d->ConnectionName);
 }
 
@@ -234,6 +244,7 @@ void ctkDICOMServer::setMoveDestinationAETitle(const QString& moveDestinationAET
 {
   Q_D(ctkDICOMServer);
   d->MoveDestinationAETitle = moveDestinationAETitle;
+  emit this->moveDestinationAETitleChanged(moveDestinationAETitle);
   emit serverModified(d->ConnectionName);
 }
 
@@ -242,6 +253,7 @@ void ctkDICOMServer::setKeepAssociationOpen(const bool& keepAssociationOpen)
 {
   Q_D(ctkDICOMServer);
   d->KeepAssociationOpen = keepAssociationOpen;
+  emit this->keepAssociationOpenChanged(keepAssociationOpen);
   emit serverModified(d->ConnectionName);
 }
 
@@ -250,6 +262,7 @@ void ctkDICOMServer::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionTimeout = timeout;
+  emit connectionTimeoutChanged(timeout);
   emit serverModified(d->ConnectionName);
 }
 
@@ -291,3 +304,5 @@ ctkDICOMServer *ctkDICOMServer::clone() const
 
   return newServer;
 }
+
+#include "ctkDICOMServer.moc"

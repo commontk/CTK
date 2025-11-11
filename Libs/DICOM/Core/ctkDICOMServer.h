@@ -35,18 +35,18 @@ class ctkDICOMServerPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMServer : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
-  Q_PROPERTY(bool queryRetrieveEnabled READ queryRetrieveEnabled WRITE setQueryRetrieveEnabled);
-  Q_PROPERTY(bool storageEnabled READ storageEnabled WRITE setStorageEnabled);
-  Q_PROPERTY(bool trustedEnabled READ trustedEnabled WRITE setTrustedEnabled);
-  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
-  Q_PROPERTY(QString host READ host WRITE setHost);
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(RetrieveProtocol retrieveProtocol READ retrieveProtocol WRITE setRetrieveProtocol);
-  Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
-  Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName NOTIFY connectionNameChanged);
+  Q_PROPERTY(bool queryRetrieveEnabled READ queryRetrieveEnabled WRITE setQueryRetrieveEnabled NOTIFY queryRetrieveEnabledChanged);
+  Q_PROPERTY(bool storageEnabled READ storageEnabled WRITE setStorageEnabled NOTIFY storageEnabledChanged);
+  Q_PROPERTY(bool trustedEnabled READ trustedEnabled WRITE setTrustedEnabled NOTIFY trustedEnabledChanged);
+  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle NOTIFY callingAETitleChanged);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle NOTIFY calledAETitleChanged);
+  Q_PROPERTY(QString host READ host WRITE setHost NOTIFY hostChanged);
+  Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged);
+  Q_PROPERTY(RetrieveProtocol retrieveProtocol READ retrieveProtocol WRITE setRetrieveProtocol NOTIFY retrieveProtocolChanged);
+  Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle NOTIFY moveDestinationAETitleChanged);
+  Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen NOTIFY keepAssociationOpenChanged);
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout NOTIFY connectionTimeoutChanged);
 
 public:
   explicit ctkDICOMServer(QObject* parent = 0);
@@ -155,6 +155,19 @@ public:
 Q_SIGNALS:
   /// Emitted when a server is modified
   void serverModified(const QString&);
+
+  void connectionNameChanged(const QString&);
+  void queryRetrieveEnabledChanged(bool);
+  void storageEnabledChanged(bool);
+  void trustedEnabledChanged(bool);
+  void callingAETitleChanged(const QString&);
+  void calledAETitleChanged(const QString&);
+  void hostChanged(const QString&);
+  void portChanged(int);
+  void retrieveProtocolChanged(int);
+  void moveDestinationAETitleChanged(const QString&);
+  void keepAssociationOpenChanged(bool);
+  void connectionTimeoutChanged(int);
 
 protected:
   QScopedPointer<ctkDICOMServerPrivate> d_ptr;

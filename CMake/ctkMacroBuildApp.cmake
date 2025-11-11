@@ -70,7 +70,15 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
+  # Make sure variable are cleared
+
+  if( CTK_QT_VERSION EQUAL "5" )
+    add_definitions(-DHAVE_QT5)
+  elseif(CTK_QT_VERSION EQUAL "6")
+    add_definitions(-DHAVE_QT6)
+  endif()
   source_group("Resources" FILES
+    ${MY_MOC_SRCS}
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
@@ -78,29 +86,9 @@ macro(ctkMacroBuildApp)
   # Create executable
   ctk_add_executable_utf8(${proj_name}
     ${MY_SRCS}
+    ${MY_MOC_SRCS}
     ${MY_RESOURCES}
-    )
-
-  target_compile_definitions(${proj_name} PRIVATE
-    HAVE_QT${CTK_QT_VERSION}
-    )
-
-  # Configure CMake Qt automatic code generation
-  set(uic_search_paths)
-  foreach(ui_src IN LISTS MY_UI_FORMS)
-    if(NOT IS_ABSOLUTE ${ui_src})
-      set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
-    endif()
-    get_filename_component(ui_path ${ui_src} PATH)
-    list(APPEND uic_search_paths ${ui_path})
-  endforeach()
-  list(REMOVE_DUPLICATES uic_search_paths)
-
-  set_target_properties(${proj_name} PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
-    AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
+    ${MY_UI_FORMS}
     )
 
   # Set labels associated with the target.

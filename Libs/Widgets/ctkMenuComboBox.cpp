@@ -402,6 +402,7 @@ void ctkMenuComboBox::setDefaultText(const QString& newDefaultText)
 {
   Q_D(ctkMenuComboBox);
   d->DefaultText = newDefaultText;
+  emit defaultTextChanged(d->DefaultText);
   if (d->IsDefaultTextCurrent)
   {
     d->setCurrentText(d->DefaultText);
@@ -420,6 +421,7 @@ void ctkMenuComboBox::setDefaultIcon(const QIcon& newIcon)
 {
   Q_D(ctkMenuComboBox);
   d->DefaultIcon = newIcon;
+  emit defaultIconChanged(d->DefaultIcon);
   if (d->IsDefaultIconCurrent)
   {
     d->setCurrentIcon(d->DefaultIcon);
@@ -438,7 +440,9 @@ void ctkMenuComboBox::setEditableBehavior(ctkMenuComboBox::EditableBehavior edit
 {
   Q_D(ctkMenuComboBox);
   d->EditBehavior = edit;
-      this->disconnect(d->MenuComboBox, SIGNAL(popupShown()),
+  emit editBehaviorChanged(d->EditBehavior);
+
+  this->disconnect(d->MenuComboBox, SIGNAL(popupShown()),
                     d, SLOT(setComboBoxEditable()));
   switch (edit)
   {
@@ -482,6 +486,7 @@ void ctkMenuComboBox::setSearchIconVisible(bool state)
 {
   Q_D(ctkMenuComboBox);
   d->SearchButton->setVisible(state);
+  emit searchIconVisibleChanged(state);
 }
 
 // -------------------------------------------------------------------------
@@ -496,6 +501,7 @@ void ctkMenuComboBox::setToolButtonStyle(Qt::ToolButtonStyle style)
 {
   Q_D(ctkMenuComboBox);
   d->SearchButton->setToolButtonStyle(style);
+  emit toolButtonStyleChanged(style);
 }
 
 // -------------------------------------------------------------------------

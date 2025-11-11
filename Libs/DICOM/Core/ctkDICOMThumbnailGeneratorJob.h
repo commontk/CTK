@@ -41,11 +41,15 @@ class ctkDICOMThumbnailGeneratorJobPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGeneratorJob : public ctkDICOMJob
 {
   Q_OBJECT
-  Q_PROPERTY(QString databaseFilename READ databaseFilename WRITE setDatabaseFilename);
-  Q_PROPERTY(QString dicomFilePath READ dicomFilePath WRITE setDicomFilePath);
-  Q_PROPERTY(QString modality READ modality WRITE setModality);
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
-
+  Q_PROPERTY(QString databaseFilename READ databaseFilename WRITE setDatabaseFilename NOTIFY databaseFilenameChanged);
+  Q_PROPERTY(QString dicomFilePath READ dicomFilePath WRITE setDicomFilePath NOTIFY dicomFilePathChanged);
+  Q_PROPERTY(QString modality READ modality WRITE setModality NOTIFY modalityChanged);
+  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged);
+Q_SIGNALS:
+  void databaseFilenameChanged(const QString &);
+  void dicomFilePathChanged(const QString &);
+  void modalityChanged(const QString &);
+  void backgroundColorChanged(const QColor &);
 public:
   typedef ctkDICOMJob Superclass;
   explicit ctkDICOMThumbnailGeneratorJob();

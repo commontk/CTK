@@ -9,6 +9,10 @@ set(SRCS
   ctkTestSuiteInterface.h
 )
 
+set(MOC_SRCS )
+
+set(MY_MOC_CXX )
+
 set(lib_name ${fwtestutil_lib})
 
 add_library(${lib_name} SHARED ${SRCS})

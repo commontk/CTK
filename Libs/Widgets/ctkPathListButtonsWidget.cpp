@@ -139,46 +139,12 @@ void ctkPathListButtonsWidgetPrivate::on_PathListWidget_selectionChanged(const Q
   this->RemoveButton->setEnabled(hasSelection);
 }
 
-//-----------------------------------------------------------------------------
-QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
-{
-  Q_Q(ctkPathListButtonsWidget);
-
-  if (!this->PathListWidget) return QStringList();
-
-  QString caption;
-  if (multiple)
-  {
-    caption = tr("Select one or more files");
-  }
-  else
-  {
-    caption = tr("Select a file");
-  }
-
-  QFileDialog fileDialog(q, caption);
-  fileDialog.setOption(QFileDialog::ReadOnly, true);
-
-  if (multiple)
-  {
-    fileDialog.setFileMode(QFileDialog::ExistingFiles);
-  }
-  else
-  {
-    fileDialog.setFileMode(QFileDialog::ExistingFile);
-  }
-
-  QString currentPath = this->PathListWidget->currentPath(true);
-  currentPath = currentPath.left(currentPath.lastIndexOf('/') + 1);
-  if (!currentPath.isEmpty())
-  {
-    fileDialog.setDirectory(currentPath);
-  }
-
+namespace {
   // We use a proxy model as a workaround for the broken QFileDialog::setFilter() method.
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class FileFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     FileFilterProxyModel(ctkPathListWidget::PathOptions fileOptions)
       : FileOptions(fileOptions)
@@ -221,6 +187,44 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   private:
     ctkPathListWidget::PathOptions FileOptions;
   };
+}
+
+//-----------------------------------------------------------------------------
+QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
+{
+  Q_Q(ctkPathListButtonsWidget);
+
+  if (!this->PathListWidget) return QStringList();
+
+  QString caption;
+  if (multiple)
+  {
+    caption = tr("Select one or more files");
+  }
+  else
+  {
+    caption = tr("Select a file");
+  }
+
+  QFileDialog fileDialog(q, caption);
+  fileDialog.setReadOnly(true);
+
+  if (multiple)
+  {
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+  }
+  else
+  {
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+  }
+
+  QString currentPath = this->PathListWidget->currentPath(true);
+  currentPath = currentPath.left(currentPath.lastIndexOf('/') + 1);
+  if (!currentPath.isEmpty())
+  {
+    fileDialog.setDirectory(currentPath);
+  }
+
 
   fileDialog.setProxyModel(new FileFilterProxyModel(this->PathListWidget->fileOptions()));
 
@@ -230,30 +234,12 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   }
   return QStringList();
 }
-
-//-----------------------------------------------------------------------------
-QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
-{
-  Q_Q(ctkPathListButtonsWidget);
-
-  if (!this->PathListWidget) return QStringList();
-
-  QString caption = tr("Select a directory");
-  QFileDialog fileDialog(q, caption);
-
-  fileDialog.setFileMode(QFileDialog::Directory);
-  fileDialog.setOption(QFileDialog::ShowDirsOnly);
-
-  QString currentPath = this->PathListWidget->currentPath(true);
-  if (!currentPath.isEmpty())
-  {
-    fileDialog.setDirectory(currentPath);
-  }
-
+namespace {
   // We use a proxy model as a workaround for the broken QFileDialog::setFilter() method.
   // See for example https://bugreports.qt-project.org/browse/QTBUG-10244
   class DirFilterProxyModel : public QSortFilterProxyModel
   {
+    Q_OBJECT
   public:
     DirFilterProxyModel(ctkPathListWidget::PathOptions dirOptions)
       : DirOptions(dirOptions)
@@ -274,17 +260,36 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
       }
       // Do not check for the Writable flag, since it makes navigation from
       // non-writable folders to writable sub-folders hard.
-//      if (DirOptions.testFlag(ctkPathListWidget::Writable) &&
-//          !fileInfo.isWritable())
-//      {
-//        return false;
-//      }
+      //      if (DirOptions.testFlag(ctkPathListWidget::Writable) &&
+      //          !fileInfo.isWritable())
+      //      {
+      //        return false;
+      //      }
       return true;
     }
 
   private:
     ctkPathListWidget::PathOptions DirOptions;
   };
+}
+//-----------------------------------------------------------------------------
+QStringList ctkPathListButtonsWidgetPrivate::openAddDirDialog()
+{
+  Q_Q(ctkPathListButtonsWidget);
+
+  if (!this->PathListWidget) return QStringList();
+
+  QString caption = tr("Select a directory");
+  QFileDialog fileDialog(q, caption);
+
+  fileDialog.setFileMode(QFileDialog::Directory);
+  fileDialog.setOption(QFileDialog::ShowDirsOnly);
+
+  QString currentPath = this->PathListWidget->currentPath(true);
+  if (!currentPath.isEmpty())
+  {
+    fileDialog.setDirectory(currentPath);
+  }
 
   fileDialog.setProxyModel(new DirFilterProxyModel(this->PathListWidget->directoryOptions()));
 
@@ -378,6 +383,7 @@ void ctkPathListButtonsWidget::setAddFilesButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setVisible(visible);
+  emit this->showAddFilesButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -392,6 +398,7 @@ void ctkPathListButtonsWidget::setAddDirectoryButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setVisible(visible);
+  emit this->showAddDirectoryButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -406,6 +413,7 @@ void ctkPathListButtonsWidget::setRemoveButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setVisible(visible);
+  emit this->showRemoveButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -420,6 +428,7 @@ void ctkPathListButtonsWidget::setEditButtonVisible(bool visible)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setVisible(visible);
+  emit this->showEditButtonChanged(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -455,6 +464,7 @@ void ctkPathListButtonsWidget::setTextAddFilesButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setText(text);
+  emit this->showAddFilesButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -462,6 +472,7 @@ void ctkPathListButtonsWidget::setTextAddDirectoryButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setText(text);
+  emit this->showAddDirectoryButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -469,6 +480,7 @@ void ctkPathListButtonsWidget::setTextRemoveButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setText(text);
+  emit this->showRemoveButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -476,6 +488,7 @@ void ctkPathListButtonsWidget::setTextEditButton(const QString& text)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setText(text);
+  emit this->showEditButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -511,6 +524,7 @@ void ctkPathListButtonsWidget::setToolTipAddFilesButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setToolTip(toolTip);
+  emit this->showAddFilesButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -518,6 +532,7 @@ void ctkPathListButtonsWidget::setToolTipAddDirectoryButton(const QString& toolT
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setToolTip(toolTip);
+  emit this->showAddDirectoryButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -525,6 +540,7 @@ void ctkPathListButtonsWidget::setToolTipRemoveButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setToolTip(toolTip);
+  emit this->showRemoveButtonChanged(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -532,6 +548,7 @@ void ctkPathListButtonsWidget::setToolTipEditButton(const QString& toolTip)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setToolTip(toolTip);
+  emit this->toolTipEditButtonChanged(toolTip);
 }
 
 //-----------------------------------------------------------------------------
@@ -567,6 +584,7 @@ void ctkPathListButtonsWidget::setIconAddFilesButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddFilesButton->setIcon(icon);
+  emit this->iconAddFilesButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -574,6 +592,7 @@ void ctkPathListButtonsWidget::setIconAddDirectoryButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->AddDirectoryButton->setIcon(icon);
+  emit this->iconAddDirectoryButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -581,6 +600,7 @@ void ctkPathListButtonsWidget::setIconRemoveButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->RemoveButton->setIcon(icon);
+  emit this->iconRemoveButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -588,6 +608,7 @@ void ctkPathListButtonsWidget::setIconEditButton(const QIcon& icon)
 {
   Q_D(ctkPathListButtonsWidget);
   d->EditButton->setIcon(icon);
+  emit this->iconEditButtonChanged(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -633,6 +654,7 @@ void ctkPathListButtonsWidget::setButtonsAutoRaise(bool autoRaise)
   d->AddDirectoryButton->setAutoRaise(autoRaise);
   d->RemoveButton->setAutoRaise(autoRaise);
   d->EditButton->setAutoRaise(autoRaise);
+  emit this->buttonsAutoRaiseChanged(autoRaise);
 }
 
 //-----------------------------------------------------------------------------
@@ -645,6 +667,7 @@ int ctkPathListButtonsWidget::buttonSpacing() const
 void ctkPathListButtonsWidget::setButtonSpacing(int spacing)
 {
   this->layout()->setSpacing(spacing);
+  emit this->buttonSpacingChanged(spacing);
 }
 
 //-----------------------------------------------------------------------------
@@ -672,6 +695,7 @@ void ctkPathListButtonsWidget::setOrientation(Qt::Orientation orientation)
   {
     newLayout = new QHBoxLayout;
   }
+  emit this->orientationChanged(orientation);
   newLayout->setContentsMargins(0,0,0,0);
   newLayout->setSpacing(oldLayout->spacing());
 
@@ -683,6 +707,7 @@ void ctkPathListButtonsWidget::setOrientation(Qt::Orientation orientation)
       newLayout->addWidget(item->widget());
     }
   }
+
   delete oldLayout;
   this->setLayout(newLayout);
 }
@@ -714,3 +739,4 @@ QToolButton *ctkPathListButtonsWidget::buttonRemove() const
   Q_D(const ctkPathListButtonsWidget);
   return d->RemoveButton;
 }
+#include "ctkPathListButtonsWidget.moc"

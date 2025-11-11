@@ -232,19 +232,19 @@ ctkDICOMQuery::~ctkDICOMQuery()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMQuery, const QString&, setConnectionName, ConnectionName);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const QString&, setConnectionName, ConnectionName,connectionNameChanged);
 CTK_GET_CPP(ctkDICOMQuery, QString, connectionName, ConnectionName)
-CTK_SET_CPP(ctkDICOMQuery, const QString&, setCallingAETitle, CallingAETitle);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const QString&, setCallingAETitle, CallingAETitle, callingAETitleChanged);
 CTK_GET_CPP(ctkDICOMQuery, QString, callingAETitle, CallingAETitle)
-CTK_SET_CPP(ctkDICOMQuery, const QString&, setCalledAETitle, CalledAETitle);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const QString&, setCalledAETitle, CalledAETitle, calledAETitleChanged);
 CTK_GET_CPP(ctkDICOMQuery, QString, calledAETitle, CalledAETitle)
-CTK_SET_CPP(ctkDICOMQuery, const QString&, setHost, Host);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const QString&, setHost, Host, hostChanged);
 CTK_GET_CPP(ctkDICOMQuery, QString, host, Host)
-CTK_SET_CPP(ctkDICOMQuery, const int&, setPort, Port);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const int&, setPort, Port, portChanged);
 CTK_GET_CPP(ctkDICOMQuery, int, port, Port)
-CTK_SET_CPP(ctkDICOMQuery, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const int&, setMaximumPatientsQuery, MaximumPatientsQuery,maximumPatientsQueryChanged );
 CTK_GET_CPP(ctkDICOMQuery, int, maximumPatientsQuery, MaximumPatientsQuery);
-CTK_SET_CPP(ctkDICOMQuery, const QString&, setJobUID, JobUID);
+CTK_SET_CPP_EMIT(ctkDICOMQuery, const QString&, setJobUID, JobUID, jobUIDChanged);
 CTK_GET_CPP(ctkDICOMQuery, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
@@ -253,6 +253,7 @@ void ctkDICOMQuery::setConnectionTimeout(const int& timeout)
   Q_D(ctkDICOMQuery);
   d->SCU->setACSETimeout(timeout);
   d->SCU->setConnectionTimeout(timeout);
+  emit connectionTimeoutChanged(timeout);
 }
 
 //-----------------------------------------------------------------------------

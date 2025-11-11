@@ -98,6 +98,7 @@ void ctkTransferFunctionBarsItem::setBarWidth(qreal newBarWidthRatio)
     return;
   }
   d->BarWidthRatio = newBarWidthRatio;
+  emit barWidthChanged(newBarWidthRatio);
   this->update();
 }
 
@@ -113,6 +114,7 @@ void ctkTransferFunctionBarsItem::setBarColor(const QColor& color)
 {
   Q_D(ctkTransferFunctionBarsItem);
   d->BarColor = color;
+  emit barColorChanged(color);
 }
 
 //-----------------------------------------------------------------------------
@@ -134,6 +136,7 @@ void ctkTransferFunctionBarsItem::setLogMode(const LogMode logMode)
 {
   Q_D(ctkTransferFunctionBarsItem);
   d->LogMode = logMode;
+  emit logModeChanged(logMode);
 }
 
 //-----------------------------------------------------------------------------

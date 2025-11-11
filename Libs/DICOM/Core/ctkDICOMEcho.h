@@ -38,14 +38,22 @@ class ctkDICOMEchoPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMEcho : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
-  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
-  Q_PROPERTY(QString host READ host WRITE setHost);
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
-  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName NOTIFY connectionNameChanged);
+  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle NOTIFY callingAETitleChanged);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle NOTIFY calledAETitleChanged);
+  Q_PROPERTY(QString host READ host WRITE setHost NOTIFY hostChanged);
+  Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged);
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout NOTIFY connectionTimeoutChanged);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID NOTIFY jobUIDChanged);
 
+Q_SIGNALS:
+  void connectionNameChanged(const QString &);
+  void callingAETitleChanged(const QString &);
+  void calledAETitleChanged(const QString &);
+  void hostChanged(const QString &);
+  void portChanged(int);
+  void connectionTimeoutChanged(int);
+  void jobUIDChanged(const QString &);
 public:
   explicit ctkDICOMEcho(QObject* parent = 0);
   virtual ~ctkDICOMEcho();

@@ -66,6 +66,7 @@ QString ctkAbstractJob::jobUID() const
 void ctkAbstractJob::setJobUID(const QString &jobUID)
 {
   this->JobUID = jobUID;
+  emit this->jobUIDChanged();
 }
 
 //----------------------------------------------------------------------------
@@ -108,6 +109,7 @@ void ctkAbstractJob::setStatus(JobStatus status)
   {
     emit this->finished();
   }
+  emit this->statusChanged(status);
 }
 
 //----------------------------------------------------------------------------
@@ -120,6 +122,7 @@ bool ctkAbstractJob::isPersistent() const
 void ctkAbstractJob::setIsPersistent(bool persistent)
 {
   this->Persistent = persistent;
+  emit isPersistentChanged(persistent);
 }
 
 //----------------------------------------------------------------------------
@@ -132,6 +135,7 @@ int ctkAbstractJob::retryCounter() const
 void ctkAbstractJob::setRetryCounter(int retryCounter)
 {
   this->RetryCounter = retryCounter;
+  emit this->retryCounterChanged(retryCounter);
 }
 
 //----------------------------------------------------------------------------
@@ -144,6 +148,7 @@ int ctkAbstractJob::maximumConcurrentJobsPerType() const
 void ctkAbstractJob::setMaximumConcurrentJobsPerType(int maximumConcurrentJobsPerType)
 {
   this->MaximumConcurrentJobsPerType = maximumConcurrentJobsPerType;
+  emit this->maximumConcurrentJobsPerTypeChanged(maximumConcurrentJobsPerType);
 }
 
 //----------------------------------------------------------------------------
@@ -156,6 +161,7 @@ int ctkAbstractJob::maximumNumberOfRetry() const
 void ctkAbstractJob::setMaximumNumberOfRetry(int maximumNumberOfRetry)
 {
   this->MaximumNumberOfRetry = maximumNumberOfRetry;
+  emit this->maximumNumberOfRetryChanged(maximumNumberOfRetry);
 }
 
 //----------------------------------------------------------------------------
@@ -168,6 +174,7 @@ int ctkAbstractJob::retryDelay() const
 void ctkAbstractJob::setRetryDelay(int retryDelay)
 {
   this->RetryDelay = retryDelay;
+  emit this->retryDelayChanged(retryDelay);
 }
 
 //----------------------------------------------------------------------------
@@ -180,6 +187,7 @@ QThread::Priority ctkAbstractJob::priority() const
 void ctkAbstractJob::setPriority(const QThread::Priority &priority)
 {
   this->Priority = priority;
+  emit this->priorityChanged(priority);
 }
 
 //----------------------------------------------------------------------------
@@ -210,6 +218,7 @@ QString ctkAbstractJob::runningThreadID() const
 void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
 {
   this->RunningThreadID = runningThreadID;
+  emit this->runningThreadIDChanged(runningThreadID);
 }
 
 //----------------------------------------------------------------------------
@@ -234,6 +243,7 @@ bool ctkAbstractJob::destroyAfterUse() const
 void ctkAbstractJob::setDestroyAfterUse(bool destroyAfterUse)
 {
   this->DestroyAfterUse = destroyAfterUse;
+  emit this->destroyAfterUseChanged(destroyAfterUse);
 }
 
 //----------------------------------------------------------------------------

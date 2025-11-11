@@ -40,17 +40,19 @@ class ctkDICOMJobResponse;
 class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
-  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
-  Q_PROPERTY(QString host READ host WRITE setHost);
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
-  Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
-  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID);
-  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName NOTIFY connectionNameChanged);
+  Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen NOTIFY keepAssociationOpenChanged);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID NOTIFY jobUIDChanged);
+
+  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle NOTIFY callingAETitleChanged);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle NOTIFY calledAETitleChanged);
+  Q_PROPERTY(QString host READ host WRITE setHost NOTIFY hostChanged);
+  Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged);
+  Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle NOTIFY moveDestinationAETitleChanged);
+
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout NOTIFY connectionTimeoutChanged);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID CONSTANT);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID CONSTANT);
 
 public:
   explicit ctkDICOMRetrieve(QObject* parent = 0);
@@ -186,6 +188,16 @@ public Q_SLOTS:
   Q_INVOKABLE void releaseAssociation();
 
 Q_SIGNALS:
+  void connectionNameChanged(const QString &);
+  void callingAETitleChanged(const QString &);
+  void calledAETitleChanged(const QString &);
+  void hostChanged(const QString &);
+  void portChanged(int);
+  void moveDestinationAETitleChanged(const QString &);
+  void keepAssociationOpenChanged(bool);
+  void connectionTimeoutChanged(int);
+  void jobUIDChanged(const QString &);
+
   /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.
   /// In case of an error, you are assured that the progress value 100 is fired
   void progress(int progress);
@@ -203,7 +215,7 @@ Q_SIGNALS:
   /// true for success or false for error
   void done(const bool& error);
   /// Signal is emitted inside the retrieve() function when a frame has been fetched
-  void progressJobDetail(QVariant data);
+  void progressJobDetail(const QVariant & data);
 
 protected:
   QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;

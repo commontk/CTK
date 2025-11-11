@@ -114,6 +114,7 @@ void ctkLogger::setLogLevel(const ctkErrorLogLevel::LogLevel& level)
 {
   Q_D(ctkLogger);
   d->LogLevel = level;
+  emit logLevelChanged(level);
 }
 
 //-----------------------------------------------------------------------------

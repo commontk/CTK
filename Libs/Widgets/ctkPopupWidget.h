@@ -52,27 +52,34 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
   /// Qt::FramelessWindowHint) and removing the baseWidget.
   /// True by default
   /// \sa isActive(), setActive()
-  Q_PROPERTY( bool active READ isActive WRITE setActive)
+  Q_PROPERTY( bool active READ isActive WRITE setActive NOTIFY activeChanged)
 
   /// Control whether the popup automatically opens when the mouse
   /// enter the widget. True by default
   /// \sa autoShow(), setAutoShow()
-  Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
+  Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow NOTIFY autoShowChanged)
 
   /// Time in ms to wait before opening the popup if autoShow is set.
   /// 20ms by default
   /// \sa showDelay(), setShowDelay()
-  Q_PROPERTY( int showDelay READ showDelay WRITE setShowDelay)
+  Q_PROPERTY( int showDelay READ showDelay WRITE setShowDelay NOTIFY showDelayChanged)
 
   /// Control whether the popup automatically closes when the mouse
   /// leaves the widget. True by default.
   /// \sa autoHide(), setAutoHide()
-  Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
+  Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide NOTIFY autoHideChanged)
 
   /// Time in ms to wait before closing the popup if autoHide is set.
   /// 200ms by default
   /// \sa hideDelay(), setHideDelay()
-  Q_PROPERTY( int hideDelay READ hideDelay WRITE setHideDelay)
+  Q_PROPERTY( int hideDelay READ hideDelay WRITE setHideDelay NOTIFY hideDelayChanged)
+
+Q_SIGNALS:
+  void activeChanged(bool);
+  void autoShowChanged(bool);
+  void showDelayChanged(int);
+  void autoHideChanged(bool);
+  void hideDelayChanged(int);
 
 public:
   typedef ctkBasePopupWidget Superclass;

@@ -39,16 +39,16 @@ class ctkDICOMJobResponseSetPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMJobResponseSet : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString filePath READ filePath WRITE setFilePath);
-  Q_PROPERTY(bool copyFile READ copyFile WRITE setCopyFile);
-  Q_PROPERTY(bool overwriteExistingDataset READ overwriteExistingDataset WRITE setOverwriteExistingDataset);
-  Q_PROPERTY(JobType jobType READ jobType WRITE setJobType);
-  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
-  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
-  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
-  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID);
-  Q_PROPERTY(QString sopInstanceUID READ sopInstanceUID WRITE setSOPInstanceUID);
-  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
+  Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
+  Q_PROPERTY(bool copyFile READ copyFile WRITE setCopyFile NOTIFY copyFileChanged);
+  Q_PROPERTY(bool overwriteExistingDataset READ overwriteExistingDataset WRITE setOverwriteExistingDataset NOTIFY overwriteExistingDatasetChanged);
+  Q_PROPERTY(JobType jobType READ jobType WRITE setJobType NOTIFY jobTypeChanged);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID NOTIFY jobUIDChanged);
+  Q_PROPERTY(QString patientID READ patientID WRITE setPatientID  NOTIFY patientIDChanged);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID NOTIFY studyInstanceUIDChanged);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID NOTIFY seriesInstanceUIDChanged);
+  Q_PROPERTY(QString sopInstanceUID READ sopInstanceUID WRITE setSOPInstanceUID NOTIFY sopInstanceUIDChanged);
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName NOTIFY connectionNameChanged);
 
 public:
   explicit ctkDICOMJobResponseSet(QObject* parent = 0);
@@ -151,6 +151,19 @@ public:
   /// The value is set using the ctkDICOMJobDetail metatype and is used to pass
   /// information between threads using Qt signals.
   Q_INVOKABLE QVariant toVariant();
+
+Q_SIGNALS:
+  void filePathChanged(const QString& filePath);
+  void copyFileChanged(bool copyFile);
+  void overwriteExistingDatasetChanged(bool overwriteExistingDataset);
+  void jobTypeChanged(const ctkDICOMJobResponseSet::JobType & jobType);
+  void jobUIDChanged(const QString& jobUID);
+  void patientIDChanged(const QString& patientID);
+  void studyInstanceUIDChanged(const QString& studyInstanceUID);
+  void seriesInstanceUIDChanged(const QString& seriesInstanceUID);
+  void sopInstanceUIDChanged(const QString& sopInstanceUID);
+  void connectionNameChanged(const QString& connectionName);
+
 
 protected:
   QScopedPointer<ctkDICOMJobResponseSetPrivate> d_ptr;

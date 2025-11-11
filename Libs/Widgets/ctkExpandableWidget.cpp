@@ -140,6 +140,7 @@ void ctkExpandableWidget::setOrientations(Qt::Orientations orientations)
 {
   Q_D(ctkExpandableWidget);
   d->SizeGrip->setOrientations(orientations);
+  emit this->orientationsChanged(orientations);
   d->positionSizeGrip();
   this->updateGeometry();
 }
@@ -156,6 +157,7 @@ void ctkExpandableWidget::setSizeGripInside(bool inside)
 {
   Q_D(ctkExpandableWidget);
   d->SizeGripInside = inside;
+  emit this->sizeGripInsideChanged(inside);
   d->positionSizeGrip();
   this->updateGeometry();
 }
@@ -172,6 +174,7 @@ void ctkExpandableWidget::setSizeGripMargins(QSize margins)
 {
   Q_D(ctkExpandableWidget);
   d->SizeGripMargins = margins;
+  emit this->sizeGripMarginsChanged(margins);
   d->positionSizeGrip();
   this->updateGeometry();
 }

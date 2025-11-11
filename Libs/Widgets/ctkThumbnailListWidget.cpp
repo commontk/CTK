@@ -228,6 +228,7 @@ void ctkThumbnailListWidget::setCurrentThumbnail(int index)
   }
 
   d->CurrentThumbnail = index;
+  emit currentThumbnailChanged(index);
 }
 
 //----------------------------------------------------------------------------
@@ -259,6 +260,7 @@ void ctkThumbnailListWidget::setFlow(Qt::Orientation flow)
   ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
     d->ScrollAreaContentWidget->layout());
   flowLayout->setOrientation(flow);
+  emit flowChanged(flow);
 }
 
 //----------------------------------------------------------------------------
@@ -283,6 +285,7 @@ void ctkThumbnailListWidget::setThumbnailSize(QSize size)
     }
   }
   d->ThumbnailSize = size;
+  emit thumbnailSizeChanged(size);
 }
 
 //----------------------------------------------------------------------------

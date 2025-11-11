@@ -106,7 +106,7 @@ if(CTK_USE_QTTESTING)
   ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
 endif()
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
 if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
   set(VTK_CHARTS_LIB)
 elseif(${VTK_VERSION_MAJOR} GREATER 5)

@@ -211,6 +211,7 @@ public:
 //------------------------------------------------------------------------------
 class ctkDICOMRetrievePrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC( ctkDICOMRetrieve );
 
 protected:
@@ -803,16 +804,16 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMRetrieve, const QString&, setConnectionName, ConnectionName);
+CTK_SET_CPP_EMIT(ctkDICOMRetrieve, const QString&, setConnectionName, ConnectionName,connectionNameChanged);
 CTK_GET_CPP(ctkDICOMRetrieve, QString, connectionName, ConnectionName)
 CTK_GET_CPP(ctkDICOMRetrieve, QString, moveDestinationAETitle, MoveDestinationAETitle)
-CTK_SET_CPP(ctkDICOMRetrieve, const QString&, setJobUID, JobUID);
+CTK_SET_CPP_EMIT(ctkDICOMRetrieve, const QString&, setJobUID, JobUID, jobUIDChanged);
 CTK_GET_CPP(ctkDICOMRetrieve, QString, jobUID, JobUID)
 CTK_GET_CPP(ctkDICOMRetrieve, QString, patientID, PatientID)
 CTK_GET_CPP(ctkDICOMRetrieve, QString, studyInstanceUID, StudyInstanceUID)
 CTK_GET_CPP(ctkDICOMRetrieve, QString, seriesInstanceUID, SeriesInstanceUID)
 CTK_GET_CPP(ctkDICOMRetrieve, QString, sopInstanceUID, SOPInstanceUID)
-CTK_SET_CPP(ctkDICOMRetrieve, const bool, setKeepAssociationOpen, KeepAssociationOpen);
+CTK_SET_CPP_EMIT(ctkDICOMRetrieve, const bool, setKeepAssociationOpen, KeepAssociationOpen, keepAssociationOpenChanged);
 CTK_GET_CPP(ctkDICOMRetrieve, bool, keepAssociationOpen, KeepAssociationOpen)
 
 //------------------------------------------------------------------------------
@@ -824,6 +825,7 @@ void ctkDICOMRetrieve::setCallingAETitle(const QString& callingAETitle)
     d->SCU->setAETitle(callingAETitle.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
+  emit callingAETitleChanged(callingAETitle);
 }
 
 //------------------------------------------------------------------------------
@@ -842,6 +844,7 @@ void ctkDICOMRetrieve::setCalledAETitle( const QString& calledAETitle )
     d->SCU->setPeerAETitle(calledAETitle.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
+  emit calledAETitleChanged(calledAETitle);
 }
 
 //------------------------------------------------------------------------------
@@ -860,6 +863,7 @@ void ctkDICOMRetrieve::setHost( const QString& host )
     d->SCU->setPeerHostName(host.toStdString().c_str());
     d->ConnectionParamsChanged = true;
   }
+  emit hostChanged(host);
 }
 
 //------------------------------------------------------------------------------
@@ -878,6 +882,7 @@ void ctkDICOMRetrieve::setPort( int port )
     d->SCU->setPeerPort(port);
     d->ConnectionParamsChanged = true;
   }
+  emit portChanged(port);
 }
 
 //------------------------------------------------------------------------------
@@ -896,6 +901,7 @@ void ctkDICOMRetrieve::setMoveDestinationAETitle( const QString& moveDestination
     d->MoveDestinationAETitle = moveDestinationAETitle;
     d->ConnectionParamsChanged = true;
   }
+  emit moveDestinationAETitleChanged(moveDestinationAETitle);
 }
 
 //------------------------------------------------------------------------------
@@ -987,6 +993,7 @@ void ctkDICOMRetrieve::setConnectionTimeout(int timeout)
   Q_D(ctkDICOMRetrieve);
   d->SCU->setACSETimeout(timeout);
   d->SCU->setConnectionTimeout(timeout);
+  emit connectionTimeoutChanged(timeout);
 }
 
 //-----------------------------------------------------------------------------
@@ -1130,3 +1137,5 @@ void ctkDICOMRetrieve::releaseAssociation()
   Q_D(ctkDICOMRetrieve);
   d->releaseAssociation();
 }
+
+#include "ctkDICOMRetrieve.moc"

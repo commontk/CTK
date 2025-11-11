@@ -28,25 +28,32 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QVariant>
+// Qt includes
+#include <QReadWriteLock>
+#include <QSharedPointer>
+#include <QTimer>
 class QThreadPool;
 
 // CTK includes
 #include "ctkCoreExport.h"
 class ctkAbstractJob;
 class ctkJobSchedulerPrivate;
+class ctkAbstractWorker;
 
 //------------------------------------------------------------------------------
 /// \ingroup Core
+class ctkJobSchedulerPrivate; //Forward declaration needed within this file
 class CTK_CORE_EXPORT ctkJobScheduler : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(int numberOfJobs READ numberOfJobs);
-  Q_PROPERTY(int numberOfPersistentJobs READ numberOfPersistentJobs);
-  Q_PROPERTY(int numberOfRunningJobs READ numberOfRunningJobs);
-  Q_PROPERTY(int freezeJobsScheduling READ freezeJobsScheduling WRITE setFreezeJobsScheduling);
-  Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
-  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
-  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
+  Q_PROPERTY(int numberOfJobs READ numberOfJobs CONSTANT);
+  Q_PROPERTY(int numberOfPersistentJobs READ numberOfPersistentJobs CONSTANT);
+  Q_PROPERTY(int numberOfRunningJobs READ numberOfRunningJobs CONSTANT);
+  Q_PROPERTY(int freezeJobsScheduling READ freezeJobsScheduling WRITE setFreezeJobsScheduling NOTIFY freezeJobsSchedulingChanged);
+  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry NOTIFY maximumNumberOfRetryChanged);
+
+  Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount NOTIFY maximumThreadCountChanged);
+  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay NOTIFY retryDelayChanged);
 
 public:
   typedef QObject Superclass;
@@ -110,14 +117,18 @@ public:
   QSharedPointer<QThreadPool> threadPoolShared() const;
 
 Q_SIGNALS:
-  void jobInitialized(QVariant);
-  void jobQueued(QVariant);
-  void jobStarted(QList<QVariant>);
-  void jobUserStopped(QList<QVariant>);
-  void jobFinished(QList<QVariant>);
-  void jobAttemptFailed(QList<QVariant>);
-  void jobFailed(QList<QVariant>);
-  void progressJobDetail(QList<QVariant>);
+  void jobInitialized(const QVariant &);
+  void jobQueued(const QVariant &);
+  void jobStarted(const QList<QVariant> &);
+  void jobUserStopped(const QList<QVariant> &);
+  void jobFinished(const QList<QVariant> &);
+  void jobAttemptFailed(const QList<QVariant> &);
+  void jobFailed(const QList<QVariant> &);
+  void progressJobDetail(const QList<QVariant> &);
+  void freezeJobsSchedulingChanged(bool);
+  void maximumThreadCountChanged(int);
+  void maximumNumberOfRetryChanged(int);
+  void retryDelayChanged(int);
 
 public Q_SLOTS:
   virtual void onJobStarted(ctkAbstractJob*);
@@ -135,6 +146,55 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkJobScheduler);
   Q_DISABLE_COPY(ctkJobScheduler)
+};
+
+
+//------------------------------------------------------------------------------
+class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject
+{
+  Q_OBJECT
+  Q_DECLARE_PUBLIC(ctkJobScheduler)
+
+protected:
+  ctkJobScheduler* const q_ptr;
+
+public:
+  ctkJobSchedulerPrivate(ctkJobScheduler& object);
+  virtual ~ctkJobSchedulerPrivate();
+
+  /// Convenient setup methods
+  virtual void init();
+
+  virtual bool insertJob(QSharedPointer<ctkAbstractJob> job);
+  virtual bool cleanJob(const QString& jobUID);
+  virtual void cleanJobs(const QStringList& jobUIDs);
+  virtual bool removeJob(const QString& jobUID);
+  virtual void removeJobs(const QStringList& jobUIDs);
+  virtual int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
+  virtual QString generateUniqueJobUID();
+  virtual void queueJobsInThreadPool();
+  virtual void clearBactchedJobsLists();
+
+  QReadWriteLock QueueLock;
+
+  int RetryDelay{100};
+  int MaximumNumberOfRetry{3};
+  bool FreezeJobsScheduling{false};
+
+  QSharedPointer<QThreadPool> ThreadPool;
+  QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
+  QMap<QString, QMap<QString, QMetaObject::Connection>> JobsConnections;
+  QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
+  QMap<QString, int> RunningJobsByJobClass;
+  QList<QVariant> BatchedJobsStarted;
+  QList<QVariant> BatchedJobsUserStopped;
+  QList<QVariant> BatchedJobsFinished;
+  QList<QVariant> BatchedJobsAttemptFailed;
+  QList<QVariant> BatchedJobsFailed;
+  QList<QVariant> BatchedJobsProgress;
+  QSharedPointer<QTimer> ThrottleTimer;
+  int ThrottleTimeInterval{300};
+  int MaximumBatchedSignalsForTimeInterval{20};
 };
 
 #endif // ctkJobScheduler_h

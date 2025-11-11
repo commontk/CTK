@@ -42,7 +42,7 @@ class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
   /// then left to right if there is no more vertical space.
   /// Qt::Horizontal by default
   /// \sa preferredExpandingDirections
-  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 
   /// Indicates how the size hint of the layout should behave. The preferred
   /// expanding direction can be different than the \a orientation of the
@@ -52,25 +52,32 @@ class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
   /// number of rows and columns).
   /// Qt::Horizontal | Qt::Vertical by default.
   /// \sa orientation
-  Q_PROPERTY(Qt::Orientations preferredExpandingDirections READ preferredExpandingDirections WRITE setPreferredExpandingDirections)
+  Q_PROPERTY(Qt::Orientations preferredExpandingDirections READ preferredExpandingDirections WRITE setPreferredExpandingDirections NOTIFY preferredExpandingDirectionsChanged)
 
   /// Force the items to be horizontally aligned based on the largest item
   /// to display.
   /// True by default.
   /// \sa orientation
-  Q_PROPERTY(bool alignItems READ alignItems WRITE setAlignItems)
+  Q_PROPERTY(bool alignItems READ alignItems WRITE setAlignItems NOTIFY alignItemsChanged)
 
   /// Horizontal space between items, if the spacing is <0, a default spacing
   /// set on the parent/style is used.
   /// -1 by default.
   /// \sa verticalSpacing
-  Q_PROPERTY(int horizontalSpacing READ horizontalSpacing WRITE setHorizontalSpacing)
+  Q_PROPERTY(int horizontalSpacing READ horizontalSpacing WRITE setHorizontalSpacing NOTIFY horizontalSpacingChanged)
 
   /// Vertical space between items, if the spacing is <0, a default spacing
   /// set on the parent/style is used.
   /// -1 by default.
   /// \sa horizontalSpacing
-  Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
+  Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing NOTIFY verticalSpacingChanged)
+
+Q_SIGNALS:
+  void orientationChanged(const Qt::Orientation &);
+  void preferredExpandingDirectionsChanged(const Qt::Orientations &);
+  void alignItemsChanged(bool);
+  void horizontalSpacingChanged(int);
+  void verticalSpacingChanged(int);
 
 public:
   typedef QLayout Superclass;

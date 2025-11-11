@@ -91,12 +91,12 @@ class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
   Q_OBJECT
   /// Spacing between the widgets in all the layouts.
   /// \sa spacing(), setSpacing()
-  Q_PROPERTY(int spacing READ spacing WRITE setSpacing)
+  Q_PROPERTY(int spacing READ spacing WRITE setSpacing NOTIFY spacingChanged);
   /// Viewport names that this widget has encountered so far.
   /// If a viewport appears or disappears from the layout
   /// then the onViewportUsageChanged() method is called.
   /// \sa viewport(), setViewport(), onViewportUsageChanged()
-  Q_PROPERTY(QStringList viewportNames READ viewportNames)
+  Q_PROPERTY(QStringList viewportNames READ viewportNames CONSTANT)
 
 public:
   /// Constructor
@@ -136,6 +136,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void layoutChanged();
+
+  void spacingChanged(int);
 
 protected:
   QScopedPointer<ctkLayoutManagerPrivate> d_ptr;

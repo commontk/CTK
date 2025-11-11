@@ -40,8 +40,11 @@ class ctkLinearValueProxyPrivate;
 class CTK_CORE_EXPORT ctkLinearValueProxy : public ctkValueProxy
 {
   Q_OBJECT
-  Q_PROPERTY(double coefficient READ coefficient WRITE setCoefficient)
-  Q_PROPERTY(double offset READ offset WRITE setOffset)
+  Q_PROPERTY(double coefficient READ coefficient WRITE setCoefficient NOTIFY coefficientChanged)
+  Q_PROPERTY(double offset READ offset WRITE setOffset NOTIFY offsetChanged)
+Q_SIGNALS:
+  void coefficientChanged(double);
+  void offsetChanged(double);
 
 public:
   typedef ctkValueProxy Superclass;

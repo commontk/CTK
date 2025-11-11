@@ -283,5 +283,4 @@ ctkCmdLineModuleXmlProgressWatcher::~ctkCmdLineModuleXmlProgressWatcher()
 {
 }
 
-#include "moc_ctkCmdLineModuleXmlProgressWatcher.cpp"
 #include "ctkCmdLineModuleXmlProgressWatcher.moc"
