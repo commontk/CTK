@@ -62,10 +62,10 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # TODO: this find package seems not to work when called form a superbuild, but the call is needed
   # in general to find the python interpreter.  In CTK, the toplevel CMakeLists.txt does the find
   # package so this is a no-op.  Other uses of this file may need to have this call so it is still enabled.
-  if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp)
-    if(NOT PYTHONINTERP_FOUND)
-      message(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+  if(NOT Python3_Interpreter_FOUND)
+    find_package(Python3 COMPONENTS Interpreter)
+    if(NOT Python3_Interpreter_FOUND)
+      message(FATAL_ERROR "Python3_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
     endif()
   endif()
 
@@ -157,7 +157,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     DEPENDS
       ${SOURCES_TO_WRAP}
       ${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
-    COMMAND ${PYTHON_EXECUTABLE} ${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
+    COMMAND ${Python3_EXECUTABLE} ${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
       --target=${TARGET}
       --namespace=${WRAPPING_NAMESPACE}
       --output-dir=${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir} ${extra_args}
@@ -188,6 +188,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   if(NOT PYTHONQT_FOUND)
     message(FATAL_ERROR "error: PythonQt package is required to build ${TARGET}PythonQt")
   endif()
-  include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHONQT_INCLUDE_DIR})
+  include_directories(${Python3_INCLUDE_DIRS} ${PYTHONQT_INCLUDE_DIR})
 
 endmacro()
