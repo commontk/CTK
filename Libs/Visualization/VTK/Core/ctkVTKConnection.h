@@ -126,10 +126,10 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkVTKConnection);
   Q_DISABLE_COPY(ctkVTKConnection);
-  friend QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
+  friend CTK_VISUALIZATION_VTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 };
 
 /// \ingroup Visualization_VTK_Core
-QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
+CTK_VISUALIZATION_VTK_CORE_EXPORT QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection);
 
 #endif
