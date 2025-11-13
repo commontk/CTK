@@ -131,16 +131,18 @@ ctkDICOMObjectListWidgetPrivate::~ctkDICOMObjectListWidgetPrivate()
 void ctkDICOMObjectListWidgetPrivate::setFilterExpressionInModel(qRecursiveTreeProxyFilter* filterModel, const QString& expr)
 {
   const QString regexpPrefix("regexp:");
+  QString regexPattern;
   if (expr.startsWith(regexpPrefix))
   {
     filterModel->setFilterCaseSensitivity(Qt::CaseSensitive);
-    filterModel->setFilterRegularExpression(expr.right(expr.length() - regexpPrefix.length()));
+    regexPattern = expr.mid(regexpPrefix.length());
   }
   else
   {
     filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    filterModel->setFilterWildcard(expr);
+    regexPattern = QRegularExpression::escape(expr);
   }
+  filterModel->setFilterRegularExpression(QRegularExpression(regexPattern));
 }
 
 //----------------------------------------------------------------------------
