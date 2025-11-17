@@ -87,8 +87,13 @@ void ctkModalityWidgetPrivate::init()
   this->setupUi(q);
 
   this->AnyCheckBox->setTristate(true);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->AnyCheckBox, &QCheckBox::checkStateChanged,
+      q, &ctkModalityWidget::onAnyChanged);
+#else
   QObject::connect(this->AnyCheckBox, SIGNAL(stateChanged(int)),
                    q, SLOT(onAnyChanged(int)));
+#endif
 
   foreach(QCheckBox* modalityBox, q->findChildren<QCheckBox*>())
   {
