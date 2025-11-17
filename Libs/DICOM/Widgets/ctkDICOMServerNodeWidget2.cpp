@@ -354,8 +354,13 @@ void ctkDICOMServerNodeWidget2Private::init()
 
   q->readSettings();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->StorageEnabledCheckBox, &QCheckBox::checkStateChanged,
+                   q, &ctkDICOMServerNodeWidget2::onSettingsModified);
+#else
   QObject::connect(this->StorageEnabledCheckBox, SIGNAL(stateChanged(int)),
                    q, SLOT(onSettingsModified()));
+#endif
   QObject::connect(this->StorageAETitle, SIGNAL(textChanged(QString)),
                    q, SLOT(onSettingsModified()));
   QObject::connect(this->StoragePort, SIGNAL(textChanged(QString)),
