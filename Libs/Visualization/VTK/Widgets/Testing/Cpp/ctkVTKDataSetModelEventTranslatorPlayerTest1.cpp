@@ -92,7 +92,11 @@ int ctkVTKDataSetModelEventTranslatorPlayerTest1(int argc, char * argv [] )
   comboBox.setModel(&dataSetModel);
   comboBox.show();
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QSignalSpy spy1(&comboBox, &QComboBox::currentTextChanged);
+#else
   QSignalSpy spy1(&comboBox, SIGNAL(currentIndexChanged(QString)));
+#endif
   Spy1 = &spy1;
 
   etpWidget.addTestCase(&comboBox,
