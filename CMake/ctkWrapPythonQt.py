@@ -201,14 +201,14 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 // warnings everywhere.
 //
 // On Windows specifically, pyconfig.h may also typedef common types such as
-// pid_t, which collides with DCMTK’s typedef and can cause MSVC C2632
+// pid_t, which collides with DCMTK's typedef and can cause MSVC C2632
 // ("int followed by int is illegal") when both land in the same TU. On
 // Unix-like systems pid_t is already provided by <sys/types.h>, so the type
 // conflict does not escalate to an error there.
 //
 // Mitigation: include Python headers first, then proactively drop a small
 // set of Python-defined HAVE_* macros so DCMTK can (re)define them without
-// conflict—recreating the pre-AUTOMOC isolation of TUs. If additional
+// conflict-recreating the pre-AUTOMOC isolation of TUs. If additional
 // collisions surface in the future, extend the list below.
 #undef HAVE_STAT
 #undef HAVE_FTIME
