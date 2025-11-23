@@ -49,8 +49,7 @@ public:
   explicit ctkDICOMThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMThumbnailGenerator();
 
-  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& thumbnailPath,
-                                 QColor backgroundColor = Qt::darkGray);
+  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& thumbnailPath);
 
   Q_INVOKABLE bool generateThumbnail(DicomImage *dcmImage, QImage& image);
   Q_INVOKABLE bool generateThumbnail(const QString& dcmImagePath, QImage& image);
@@ -58,9 +57,9 @@ public:
 
   /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
   /// It can be used as a placeholder for invalid images or duringan image is loaded.
-  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor backgroundColor = Qt::darkGray);
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor backgroundColor = Qt::white);
   Q_INVOKABLE virtual void generateDocumentThumbnail(const QString &thumbnailPath,
-                                                     QColor backgroundColor = Qt::darkGray);
+                                                     QColor backgroundColor = Qt::white);
 
   /// Set thumbnail width
   void setWidth(int width);
