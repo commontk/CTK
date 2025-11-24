@@ -325,10 +325,14 @@ void ctkSettingsPanel::registerProperty(const QString& key,
   // Create a signal mapper per property to be able to support
   // multiple signals from the same sender.
   QSignalMapper* signalMapper = new QSignalMapper(this);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  connect(signalMapper, &QSignalMapper::mappedString, this, &ctkSettingsPanel::updateSetting);
+#else
   QObject::connect(signalMapper, SIGNAL(mapped(QString)),
                    this, SLOT(updateSetting(QString)));
+#endif
   signalMapper->setMapping(object, key);
-  this->connect(object, signal, signalMapper, SLOT(map()));
+  connect(object, signal, signalMapper, SLOT(map()));
 
   if (d->SaveToSettingsWhenRegister)
   {
