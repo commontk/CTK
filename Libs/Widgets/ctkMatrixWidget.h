@@ -39,20 +39,20 @@ class QTableWidgetItem;
 class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int columnCount READ columnCount WRITE setColumnCount)
-  Q_PROPERTY(int rowCount READ rowCount WRITE setRowCount)
-  Q_PROPERTY(bool editable READ isEditable WRITE setEditable)
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
+  Q_PROPERTY(int columnCount READ columnCount WRITE setColumnCount NOTIFY columnCountChanged)
+  Q_PROPERTY(int rowCount READ rowCount WRITE setRowCount NOTIFY rowCountChanged)
+  Q_PROPERTY(bool editable READ isEditable WRITE setEditable NOTIFY editableChanged)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
   /// This property controls how many decimals are used to display and edit the
   /// matrix values.
   /// \sa decimals(), setDecimals(), decimalsChanged(), decimalsOption
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   /// This property provides more controls over the decimals.
   /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
-  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
-  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
-  Q_PROPERTY(QVector<double> values READ values WRITE setValues)
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption NOTIFY decimalsOptionChanged)
+  Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep NOTIFY singleStepChanged)
+  Q_PROPERTY(QVector<double> values READ values WRITE setValues NOTIFY valuesChanged)
 
 public:
   /// Superclass typedef
@@ -166,6 +166,15 @@ Q_SIGNALS:
   /// This can be useful when synchronizing decimals between widgets.
   /// \sa decimals
   void decimalsChanged(int);
+
+  void columnCountChanged(int);
+  void rowCountChanged(int);
+  void editableChanged(bool);
+  void minimumChanged(double);
+  void maximumChanged(double);
+  void decimalsOptionChanged(const ctkDoubleSpinBox::DecimalsOptions &);
+  void singleStepChanged(double);
+  void valuesChanged(const QVector<double>&);
 
 protected:
   virtual void resizeEvent(QResizeEvent* event);

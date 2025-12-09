@@ -70,8 +70,12 @@ class ctkToolTipTrapperPrivate;
 class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY( bool toolTipsTrapped READ toolTipsTrapped WRITE setToolTipsTrapped)
-  Q_PROPERTY( bool toolTipsWordWrapped READ toolTipsWordWrapped WRITE setToolTipsWordWrapped)
+  Q_PROPERTY(bool toolTipsTrapped READ toolTipsTrapped WRITE setToolTipsTrapped NOTIFY toolTipsTrappedChanged);
+  Q_PROPERTY(bool toolTipsWordWrapped READ toolTipsWordWrapped WRITE setToolTipsWordWrapped NOTIFY toolTipsWordWrappedChanged);
+
+Q_SIGNALS:
+  void toolTipsTrappedChanged(bool);
+  void toolTipsWordWrappedChanged(bool);
 public:
   typedef QObject Superclass;
   /// Constructs a ToolTip trapper which is a child of objectParent

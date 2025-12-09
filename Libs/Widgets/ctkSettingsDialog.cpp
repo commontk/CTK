@@ -260,6 +260,7 @@ void ctkSettingsDialog::setCurrentPanel(ctkSettingsPanel* panel)
   Q_D(ctkSettingsDialog);
   // eventually calls onCurrentItemChanged() where all the work is done
   d->SettingsTreeWidget->setCurrentItem(d->item(panel));
+  emit currentPanelChanged(panel);
 }
 
 // --------------------------------------------------------------------------
@@ -462,6 +463,7 @@ void ctkSettingsDialog::setResetButton(bool show)
 {
   Q_D(ctkSettingsDialog);
   d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setVisible(show);
+  emit resetButtonChanged(show);
 }
 
 // --------------------------------------------------------------------------

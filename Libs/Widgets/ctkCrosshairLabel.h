@@ -44,16 +44,15 @@ class CTK_WIDGETS_EXPORT ctkCrosshairLabel : public QLabel
 {
   Q_OBJECT
   Q_FLAGS(CrosshairType CrosshairTypes)
-  Q_PROPERTY(bool showCrosshair READ showCrosshair WRITE setShowCrosshair)
+  Q_PROPERTY(bool showCrosshair READ showCrosshair WRITE setShowCrosshair NOTIFY showCrosshairChanged);
   // QT designer does not yet support QPen properties, so we provide the
   // temporary properties crosshairColor and lineWidth.
-  Q_PROPERTY(QPen crosshairPen READ crosshairPen WRITE setCrosshairPen
-             DESIGNABLE false)
-  Q_PROPERTY(QColor crosshairColor READ crosshairColor WRITE setCrosshairColor)
-  Q_PROPERTY(int lineWidth READ lineWidth WRITE setLineWidth)
-  Q_PROPERTY(CrosshairTypes crosshairType READ crosshairType WRITE setCrosshairType)
-  Q_PROPERTY(QColor marginColor READ marginColor WRITE setMarginColor)
-  Q_PROPERTY(int bullsEyeWidth READ bullsEyeWidth WRITE setBullsEyeWidth)
+  Q_PROPERTY(QPen crosshairPen READ crosshairPen WRITE setCrosshairPen DESIGNABLE false NOTIFY crosshairPenChanged)
+  Q_PROPERTY(QColor crosshairColor READ crosshairColor WRITE setCrosshairColor NOTIFY crosshairColorChanged);
+  Q_PROPERTY(int lineWidth READ lineWidth WRITE setLineWidth NOTIFY lineWidthChanged);
+  Q_PROPERTY(CrosshairTypes crosshairType READ crosshairType WRITE setCrosshairType NOTIFY crosshairTypeChanged);
+  Q_PROPERTY(QColor marginColor READ marginColor WRITE setMarginColor NOTIFY marginColorChanged);
+  Q_PROPERTY(int bullsEyeWidth READ bullsEyeWidth WRITE setBullsEyeWidth NOTIFY bullsEyeWidthChanged);
 
 public:
   /// Constructors
@@ -116,6 +115,16 @@ public:
   virtual QSize sizeHint()const;
   virtual bool hasHeightForWidth()const;
   virtual int heightForWidth(int width)const;
+
+Q_SIGNALS:
+  void showCrosshairChanged(bool);
+  void crosshairPenChanged(const QPen&);
+  void crosshairColorChanged(const QColor &);
+  void lineWidthChanged(int);
+  void crosshairTypeChanged(const CrosshairTypes &);
+  void marginColorChanged(const QColor &);
+  void bullsEyeWidthChanged(int);
+
 
 protected:
   QScopedPointer<ctkCrosshairLabelPrivate> d_ptr;

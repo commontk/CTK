@@ -39,15 +39,15 @@ class ctkDICOMJobResponseSet;
 class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
-  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
-  Q_PROPERTY(QString host READ host WRITE setHost);
-  Q_PROPERTY(int port READ port WRITE setPort);
-  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
-  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
-  Q_PROPERTY(QList<QPair<QString,QString>> studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried);
-  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName NOTIFY connectionNameChanged);
+  Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle NOTIFY callingAETitleChanged);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle NOTIFY calledAETitleChanged);
+  Q_PROPERTY(QString host READ host WRITE setHost NOTIFY hostChanged);
+  Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged);
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout NOTIFY connectionTimeoutChanged);
+  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery NOTIFY maximumPatientsQueryChanged);
+  Q_PROPERTY(QList<QPair<QString,QString>> studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried CONSTANT);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID NOTIFY jobUIDChanged);
 
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);
@@ -184,6 +184,15 @@ Q_SIGNALS:
   /// true for success or false for error
   void done(const bool& error);
 
+Q_SIGNALS:
+  void connectionNameChanged(const QString &);
+  void callingAETitleChanged(const QString &);
+  void calledAETitleChanged(const QString &);
+  void hostChanged(const QString &);
+  void portChanged(int);
+  void connectionTimeoutChanged(int);
+  void maximumPatientsQueryChanged(int);
+  void jobUIDChanged(const QString &);
 public Q_SLOTS:
   /// Cancel the current operation
   Q_INVOKABLE void cancel();

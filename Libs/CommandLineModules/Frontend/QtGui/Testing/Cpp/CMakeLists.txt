@@ -12,9 +12,6 @@ remove(TestsToRun ${KIT}CppTests.cpp)
 set(Tests_SRCS ${Tests_SRCS}
 )
 
-set(Tests_MOC_SRCS ${Tests_MOC_SRCS}
-)
-
 set(Tests_RESOURCES
   ctkCmdLineModuleFrontendQtGuiTestResources.qrc
 )
@@ -24,7 +21,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_RESOURCES})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 # Configure CMake Qt automatic code generation

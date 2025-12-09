@@ -50,7 +50,7 @@ class ctkFileDialogPrivate;
 class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 {
   Q_OBJECT
-  Q_PROPERTY(QAbstractItemView::SelectionMode SelectionMode READ selectionMode WRITE setSelectionMode)
+  Q_PROPERTY(QAbstractItemView::SelectionMode SelectionMode READ selectionMode WRITE setSelectionMode NOTIFY SelectionModeChanged);
 
 public:
   // Superclass typedef
@@ -104,6 +104,8 @@ Q_SIGNALS:
   /// is pressed, fileSelectionChanged(QStringList) is emitted when the
   /// selection is changed, not just when the dialog is accepted.
   void fileSelectionChanged(const QStringList& selected);
+
+  void SelectionModeChanged(const QAbstractItemView::SelectionMode &);
 
 protected Q_SLOTS:
   void onSelectionChanged();

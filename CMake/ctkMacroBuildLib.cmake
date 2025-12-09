@@ -101,26 +101,30 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
+  # Make sure variable are cleared
+
+  # Wrap
+  if(MY_GENERATE_MOC_SRCS)
+    set(CMAKE_AUTOMOC ON)
+  endif()
+
   source_group("Resources" FILES
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
+  source_group("Generated" FILES
+    ${MY_RESOURCES}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
+    ${MOC_CPP_DECORATOR}
+    )
+
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
     ${MY_RESOURCES}
-    )
-
-  target_compile_definitions(${lib_name} PRIVATE
-    HAVE_QT${CTK_QT_VERSION}
-    )
-
-  # Configure CMake Qt automatic code generation
-  set_target_properties(${lib_name} PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
-    AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/UI"
     )
 
   # Set labels associated with the target.

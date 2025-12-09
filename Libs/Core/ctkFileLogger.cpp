@@ -93,6 +93,7 @@ void ctkFileLogger::setEnabled(bool value)
 {
   Q_D(ctkFileLogger);
   d->Enabled = value;
+  emit this->enabledChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -107,6 +108,7 @@ void ctkFileLogger::setFilePath(const QString& filePath)
 {
   Q_D(ctkFileLogger);
   d->FilePath = filePath;
+  emit this->filePathChanged(filePath);
 }
 
 // --------------------------------------------------------------------------

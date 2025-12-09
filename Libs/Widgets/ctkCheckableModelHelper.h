@@ -68,9 +68,14 @@ class ctkCheckableModelHelperPrivate;
 class CTK_WIDGETS_EXPORT ctkCheckableModelHelper : public QObject
 {
   Q_OBJECT;
-  Q_PROPERTY(bool forceCheckability READ forceCheckability WRITE setForceCheckability);
-  Q_PROPERTY(int propagateDepth READ propagateDepth WRITE setPropagateDepth);
-  Q_PROPERTY(Qt::CheckState defaultCheckState READ defaultCheckState WRITE setDefaultCheckState);
+  Q_PROPERTY(bool forceCheckability READ forceCheckability WRITE setForceCheckability NOTIFY forceCheckabilityChanged);
+  Q_PROPERTY(int propagateDepth READ propagateDepth WRITE setPropagateDepth NOTIFY propagateDepthChanged);
+  Q_PROPERTY(Qt::CheckState defaultCheckState READ defaultCheckState WRITE setDefaultCheckState NOTIFY defaultCheckStateChanged);
+
+Q_SIGNALS:
+  void forceCheckabilityChanged(bool);
+  void propagateDepthChanged(int);
+  void defaultCheckStateChanged(const Qt::CheckState &);
 
 public:
   ctkCheckableModelHelper(Qt::Orientation orientation, QObject *parent=0);

@@ -80,37 +80,29 @@ macro(ctkMacroBuildQtPlugin)
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
+  if( CTK_QT_VERSION EQUAL "5" )
+    add_definitions(-DHAVE_QT5)
+  elseif(CTK_QT_VERSION EQUAL "6")
+    add_definitions(-DHAVE_QT6)
+  endif()
+
   source_group("Resources" FILES
+    ${MY_RESOURCES}
+    ${MY_UI_FORMS}
+    )
+
+  source_group("Generated" FILES
+    ${MY_MOC_SRCS}
     ${MY_RESOURCES}
     ${MY_UI_FORMS}
     )
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
+    ${MY_MOC_SRCS}
+    ${MY_UI_FORMS}
     ${MY_RESOURCES}
-    )
-
-  target_compile_definitions(${lib_name} PRIVATE
-    HAVE_QT${CTK_QT_VERSION}
-    )
-
-  # Configure CMake Qt automatic code generation
-  set(uic_search_paths)
-  foreach(ui_src IN LISTS MY_UI_FORMS)
-    if(NOT IS_ABSOLUTE ${ui_src})
-      set(ui_src "${CMAKE_CURRENT_SOURCE_DIR}/${ui_src}")
-    endif()
-    get_filename_component(ui_path ${ui_src} PATH)
-    list(APPEND uic_search_paths ${ui_path})
-  endforeach()
-  list(REMOVE_DUPLICATES uic_search_paths)
-
-  set_target_properties(${lib_name} PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
-    AUTOUIC_SEARCH_PATHS "${uic_search_paths}"
-    )
+  )
 
   # Extract library name associated with the plugin and use it as label
   string(REGEX REPLACE "(.*)Plugin[s]?" "\\1" label ${lib_name})
@@ -189,14 +181,15 @@ macro(ctkMacroBuildQtDesignerPlugin)
   endif()
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
-    ${ARGN})
-  cmake_parse_arguments(MY
-    "" # no options
-    "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
-    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
     ${ARGN}
-    )
-  target_link_libraries(${MY_NAME} Qt${CTK_QT_VERSION}::Designer)
+  )
+  cmake_parse_arguments(MY
+      "" # no options
+      "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
+      "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
+      ${ARGN}
+  )
+  target_link_libraries(${MY_NAME} Qt5::Designer)
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)

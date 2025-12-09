@@ -87,6 +87,20 @@ set(Tests_Helpers_SRCS
   ctkSingletonTestHelper.h
   )
 
+set(Tests_Helpers_MOC_SRCS
+  ctkExampleWorkflowStepUsingSignalsAndSlots.h
+  )
+
+set(Tests_Helpers_MOC_CPPS
+  ctkBooleanMapperTest.cpp
+  ctkCoreSettingsTest.cpp
+  ctkFileLoggerTest.cpp
+  ctkLinearValueProxyTest.cpp
+  ctkUtilsTest.cpp
+  )
+
+set(Tests_Helpers_MOC_CPP)
+
 if(HAVE_BFD)
   ctk_add_executable_utf8(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
 endif()

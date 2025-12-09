@@ -48,13 +48,13 @@ ctkDICOMThumbnailGeneratorJobPrivate::~ctkDICOMThumbnailGeneratorJobPrivate()
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, databaseFilename, DatabaseFilename);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setDatabaseFilename, DatabaseFilename);
+CTK_SET_CPP_EMIT(ctkDICOMThumbnailGeneratorJob, QString, setDatabaseFilename, DatabaseFilename, databaseFilenameChanged);
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, dicomFilePath, DicomFilePath);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setDicomFilePath, DicomFilePath);
+CTK_SET_CPP_EMIT(ctkDICOMThumbnailGeneratorJob, QString, setDicomFilePath, DicomFilePath, dicomFilePathChanged);
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, modality, Modality);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setModality, Modality);
+CTK_SET_CPP_EMIT(ctkDICOMThumbnailGeneratorJob, QString, setModality, Modality,modalityChanged );
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QColor, backgroundColor, BackgroundColor);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QColor, setBackgroundColor, BackgroundColor);
+CTK_SET_CPP_EMIT(ctkDICOMThumbnailGeneratorJob, QColor, setBackgroundColor, BackgroundColor, backgroundColorChanged);
 
 //------------------------------------------------------------------------------
 // ctkDICOMThumbnailGeneratorJob methods

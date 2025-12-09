@@ -40,10 +40,14 @@ class DicomImage;
 class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT
-  Q_PROPERTY(int width READ width WRITE setWidth)
-  Q_PROPERTY(int height READ height WRITE setHeight)
-  Q_PROPERTY(bool smoothResize READ smoothResize WRITE setSmoothResize)
+  Q_PROPERTY(int width READ width WRITE setWidth NOTIFY widthChanged);
+  Q_PROPERTY(int height READ height WRITE setHeight NOTIFY heightChanged);
+  Q_PROPERTY(bool smoothResize READ smoothResize WRITE setSmoothResize NOTIFY smoothResizeChanged);
 
+Q_SIGNALS:
+  void widthChanged(int);
+  void heightChanged(int);
+  void smoothResizeChanged(bool);
 public:
   ///  \brief Construct a ctkDICOMThumbnailGenerator object
   explicit ctkDICOMThumbnailGenerator(QObject* parent = 0);

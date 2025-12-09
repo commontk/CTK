@@ -67,28 +67,28 @@ class ctkConsoleCompleter;
 class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QColor promptColor READ promptColor WRITE setPromptColor)
-  Q_PROPERTY(QColor outputTextColor READ outputTextColor WRITE setOutputTextColor)
-  Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor)
-  Q_PROPERTY(QColor stdinTextColor READ stdinTextColor WRITE setStdinTextColor)
-  Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor)
-  Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor)
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
-  Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
-  Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
-  Q_PROPERTY(int cursorPosition READ cursorPosition)
-  Q_PROPERTY(int cursorColumn READ cursorColumn)
-  Q_PROPERTY(int cursorLine READ cursorLine)
+  Q_PROPERTY(QColor promptColor READ promptColor WRITE setPromptColor NOTIFY promptColorChanged);
+  Q_PROPERTY(QColor outputTextColor READ outputTextColor WRITE setOutputTextColor NOTIFY outputTextColorChanged);
+  Q_PROPERTY(QColor errorTextColor READ errorTextColor WRITE setErrorTextColor NOTIFY errorTextColorChanged);
+  Q_PROPERTY(QColor stdinTextColor READ stdinTextColor WRITE setStdinTextColor NOTIFY stdinTextColorChanged);
+  Q_PROPERTY(QColor commandTextColor READ commandTextColor WRITE setCommandTextColor NOTIFY commandTextColorChanged);
+  Q_PROPERTY(QColor welcomeTextColor READ welcomeTextColor WRITE setWelcomeTextColor NOTIFY welcomeTextColorChanged);
+  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged);
+  Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1 NOTIFY ps1Changed);
+  Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2 NOTIFY ps2Changed);
+  Q_PROPERTY(int cursorPosition READ cursorPosition CONSTANT)
+  Q_PROPERTY(int cursorColumn READ cursorColumn CONSTANT)
+  Q_PROPERTY(int cursorLine READ cursorLine CONSTANT)
   Q_FLAGS(EditorHint EditorHints)
-  Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
+  Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints NOTIFY editorHintsChanged);
   Q_ENUM(Qt::ScrollBarPolicy)
-  Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy)
-  Q_PROPERTY(QList<QKeySequence> completerShortcuts READ completerShortcuts WRITE setCompleterShortcuts)
+  Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy NOTIFY scrollBarPolicyChanged);
+  Q_PROPERTY(QList<QKeySequence> completerShortcuts READ completerShortcuts WRITE setCompleterShortcuts NOTIFY completerShortcutsChanged);
   Q_FLAGS(RunFileOption RunFileOptions)
-  Q_PROPERTY(RunFileOptions runFileOptions READ runFileOptions WRITE setRunFileOptions)
-  Q_PROPERTY(int maxVisibleCompleterItems READ maxVisibleCompleterItems WRITE setMaxVisibleCompleterItems)
-  Q_PROPERTY(QString commandBuffer READ commandBuffer WRITE setCommandBuffer)
-  Q_PROPERTY(QStringList commandHistory READ commandHistory WRITE setCommandHistory)
+  Q_PROPERTY(RunFileOptions runFileOptions READ runFileOptions WRITE setRunFileOptions NOTIFY runFileOptionsChanged);
+  Q_PROPERTY(QString commandBuffer READ commandBuffer WRITE setCommandBuffer NOTIFY commandBufferChanged);
+  Q_PROPERTY(QStringList commandHistory READ commandHistory WRITE setCommandHistory NOTIFY commandHistoryChanged);
+  Q_PROPERTY(int maxVisibleCompleterItems READ maxVisibleCompleterItems WRITE setMaxVisibleCompleterItems NOTIFY maxVisibleCompleterItemsChanged);
 
 public:
 
@@ -247,6 +247,23 @@ Q_SIGNALS:
   /// \sa cursorPosition()
   void cursorPositionChanged();
 
+  void promptColorChanged(const QColor &);
+  void outputTextColorChanged(const QColor &);
+  void errorTextColorChanged(const QColor &);
+  void stdinTextColorChanged(const QColor &);
+  void commandTextColorChanged(const QColor &);
+  void welcomeTextColorChanged(const QColor &);
+  void backgroundColorChanged(const QColor &);
+  void ps1Changed(const QString &);
+  void ps2Changed(const QString &);
+  void editorHintsChanged(const EditorHints &);
+  void scrollBarPolicyChanged(const Qt::ScrollBarPolicy &);
+  void completerShortcutsChanged(const QList<QKeySequence> &);
+  void runFileOptionsChanged(const RunFileOptions &);
+  void maxVisibleCompleterItemsChanged(int);
+  void commandBufferChanged(const QString &);
+  void commandHistoryChanged(const QStringList &);
+
 public Q_SLOTS:
 
   /// Clears the contents of the console
@@ -318,8 +335,8 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkConsole::EditorHints);
 
 //-----------------------------------------------------------------------------
-class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter
-{
+class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter {
+  Q_OBJECT
 public:
 
   /// Update the completion model given a string.  The given string
@@ -343,6 +360,5 @@ protected:
 
   QStringList AutocompletePreferenceList;
 };
-
 
 #endif

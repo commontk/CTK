@@ -43,23 +43,23 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
   /**
     * Property for setting the table layout either to vertical or horizontal alignment
     */
-  Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
+  Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation NOTIFY tableOrientationChanged);
   /**
     * Property for setting a dynamic table layout which switches according to the current
     * window size between vertical and horizontal layout
     */
-  Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
+  Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout NOTIFY dynamicTableLayoutChanged);
 
   /**
     * Property for automatic selection of series when a study is selected. On by default
     */
-  Q_PROPERTY(bool autoSelectSeries READ autoSelectSeries WRITE setAutoSelectSeries)
+  Q_PROPERTY(bool autoSelectSeries READ autoSelectSeries WRITE setAutoSelectSeries NOTIFY autoSelectSeriesChanged);
 
   /**
     * Property for selection mode of the contained three table views.
     * QAbstractItemView::SelectionMode values are cast to/from integer. ExtendedSelection by default
     */
-  Q_PROPERTY(int selectionMode READ selectionMode WRITE setSelectionMode);
+  Q_PROPERTY(int selectionMode READ selectionMode WRITE setSelectionMode NOTIFY selectionModeChanged);
 
 public:
   typedef QWidget Superclass;
@@ -149,6 +149,12 @@ Q_SIGNALS:
   void patientsRightClicked(const QPoint&);
   void studiesRightClicked(const QPoint&);
   void seriesRightClicked(const QPoint&);
+
+  void selectionModeChanged(int);
+
+  void tableOrientationChanged(const Qt::Orientation &);
+  void dynamicTableLayoutChanged(bool);
+  void autoSelectSeriesChanged(bool);
 
 protected:
   virtual void resizeEvent(QResizeEvent *);

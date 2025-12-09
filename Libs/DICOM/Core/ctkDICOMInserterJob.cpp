@@ -77,6 +77,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString& status)
 void ctkDICOMInserterJob::setDatabaseFilename(const QString& databaseFilename)
 {
   this->DatabaseFilename = databaseFilename;
+  emit this->databaseFilenameChanged(databaseFilename);
 }
 
 //------------------------------------------------------------------------------
@@ -89,6 +90,7 @@ QString ctkDICOMInserterJob::databaseFilename() const
 void ctkDICOMInserterJob::setTagsToPrecache(const QStringList& tagsToPrecache)
 {
   this->TagsToPrecache = tagsToPrecache;
+  emit this->tagsToPrecacheChanged(tagsToPrecache);
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +103,7 @@ QStringList ctkDICOMInserterJob::tagsToPrecache() const
 void ctkDICOMInserterJob::setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage)
 {
   this->TagsToExcludeFromStorage = tagsToExcludeFromStorage;
+  emit this->tagsToExcludeFromStorageChanged(tagsToExcludeFromStorage);
 }
 
 //------------------------------------------------------------------------------

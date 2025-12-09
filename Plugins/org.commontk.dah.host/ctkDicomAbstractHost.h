@@ -165,7 +165,7 @@ Q_SIGNALS:
    *
    * @param state
   */
-  void stateChangedReceived(ctkDicomAppHosting::State state);
+  void stateChangedReceived(const ctkDicomAppHosting::State & state);
 
   /**
    * @brief

@@ -62,9 +62,9 @@ class QSettings;
 class CTK_CORE_EXPORT ctkCommandLineParser : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString errorString READ errorString)
-  Q_PROPERTY(QStringList unparsedArguments READ unparsedArguments)
-  Q_PROPERTY(bool settingsEnabled READ settingsEnabled)
+  Q_PROPERTY(QString errorString READ errorString CONSTANT)
+  Q_PROPERTY(QStringList unparsedArguments READ unparsedArguments CONSTANT)
+  Q_PROPERTY(bool settingsEnabled READ settingsEnabled CONSTANT)
 
 public:
 

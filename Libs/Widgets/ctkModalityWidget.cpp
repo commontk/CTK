@@ -244,6 +244,7 @@ void ctkModalityWidget::setSelectedModalities(const QStringList& selectedModalit
       modalityBox->blockSignals(wasBlocked);
 #endif
       modified = true;
+      emit this->selectedModalitiesChanged(selectedModalities);
     }
   }
   if (modified)
@@ -284,6 +285,7 @@ void ctkModalityWidget::setVisibleModalities(const QStringList& visibleModalitie
       modalityBox->setVisible(visible);
     }
   }
+  emit this->visibleModalitiesChanged(visibleModalities);
 }
 
 // --------------------------------------------------------------------------

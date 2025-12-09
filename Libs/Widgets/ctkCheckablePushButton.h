@@ -39,11 +39,11 @@ class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public ctkPushButton
   Q_OBJECT
   /// This property controls the location of the checkbox with regard to the text.
   /// Qt::AlignLeft|Qt::AlignVCenter by default
-  Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
+  Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment NOTIFY indicatorAlignmentChanged);
   Q_PROPERTY(Qt::CheckState checkState READ checkState WRITE setCheckState NOTIFY checkStateChanged)
-  Q_PROPERTY(bool checkBoxControlsButton READ checkBoxControlsButton WRITE setCheckBoxControlsButton)
-  Q_PROPERTY(bool checkBoxControlsButtonToggleState READ checkBoxControlsButtonToggleState WRITE setCheckBoxControlsButtonToggleState)
-  Q_PROPERTY(bool checkBoxUserCheckable READ isCheckBoxUserCheckable WRITE setCheckBoxUserCheckable)
+  Q_PROPERTY(bool checkBoxControlsButton READ checkBoxControlsButton WRITE setCheckBoxControlsButton NOTIFY checkBoxControlsButtonChanged);
+  Q_PROPERTY(bool checkBoxControlsButtonToggleState READ checkBoxControlsButtonToggleState WRITE setCheckBoxControlsButtonToggleState NOTIFY checkBoxControlsButtonToggleStateChanged);
+  Q_PROPERTY(bool checkBoxUserCheckable READ isCheckBoxUserCheckable WRITE setCheckBoxUserCheckable NOTIFY checkBoxUserCheckableChanged);
 
 public:
   ctkCheckablePushButton(QWidget *parent = 0);
@@ -89,8 +89,12 @@ Q_SIGNALS:
   /// Fired anytime the checkbox change of state
   void checkBoxToggled(bool);
   /// Fired anytime the checkbox change of state
-  void checkStateChanged(Qt::CheckState newCheckState);
+  void checkStateChanged(const Qt::CheckState & newCheckState);
 
+  void indicatorAlignmentChanged(const Qt::Alignment &);
+  void checkBoxControlsButtonChanged(bool);
+  void checkBoxControlsButtonToggleStateChanged(bool);
+  void checkBoxUserCheckableChanged(bool);
 protected:
   /// Reimplemented for internal reasons
   void mousePressEvent(QMouseEvent* event) override;

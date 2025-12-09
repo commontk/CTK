@@ -68,11 +68,11 @@ ctkDICOMInserter::ctkDICOMInserter(QObject* parentObject)
 ctkDICOMInserter::~ctkDICOMInserter() = default;
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMInserter, const QString&, setDatabaseFilename, DatabaseFilename);
+CTK_SET_CPP_EMIT(ctkDICOMInserter, const QString&, setDatabaseFilename, DatabaseFilename, databaseFilenameChanged);
 CTK_GET_CPP(ctkDICOMInserter, QString, databaseFilename, DatabaseFilename)
-CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToPrecache, TagsToPrecache);
+CTK_SET_CPP_EMIT(ctkDICOMInserter, const QStringList&, setTagsToPrecache, TagsToPrecache, tagsToPrecacheChanged);
 CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToPrecache, TagsToPrecache)
-CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToExcludeFromStorage, TagsToExcludeFromStorage);
+CTK_SET_CPP_EMIT(ctkDICOMInserter, const QStringList&, setTagsToExcludeFromStorage, TagsToExcludeFromStorage, tagsToExcludeFromStorageChanged);
 CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToExcludeFromStorage, TagsToExcludeFromStorage)
 
 //------------------------------------------------------------------------------

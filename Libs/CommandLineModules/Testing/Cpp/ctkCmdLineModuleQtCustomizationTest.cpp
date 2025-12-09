@@ -72,7 +72,7 @@ public:
 
   Q_PROPERTY(QString currentLabel READ currentLabel WRITE setCurrentLabel)
   Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath)
-  Q_PROPERTY(const MyImageData* currentImage READ currentImage)
+  Q_PROPERTY(const MyImageData* currentImage READ currentImage CONSTANT)
 
   MyImageComboBox(QWidget* parent = 0)
     : QComboBox(parent)

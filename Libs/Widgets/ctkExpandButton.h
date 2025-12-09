@@ -44,8 +44,12 @@ class CTK_WIDGETS_EXPORT ctkExpandButton
   : public QToolButton
 {
   Q_OBJECT
-  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
-  Q_PROPERTY(bool mirrorOnExpand READ mirrorOnExpand WRITE setMirrorOnExpand)
+  Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged);
+  Q_PROPERTY(bool mirrorOnExpand READ mirrorOnExpand WRITE setMirrorOnExpand NOTIFY mirrorOnExpandChanged);
+
+Q_SIGNALS:
+  void orientationChanged(const Qt::Orientation &);
+  void mirrorOnExpandChanged(bool);
 public:
   /// Superclass typedef
   typedef QToolButton Superclass;

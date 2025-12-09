@@ -101,6 +101,7 @@ void ctkBooleanMapper::setTrueValue(const QVariant& trueValue)
   }
   d->TrueValue = trueValue;
   this->emitValueAsChanged();
+  emit trueValueChanged(trueValue);
 }
 
 // --------------------------------------------------------------------------
@@ -113,6 +114,7 @@ void ctkBooleanMapper::setFalseValue(const QVariant& falseValue)
   }
   d->FalseValue = falseValue;
   this->emitValueAsChanged();
+  emit falseValueChanged(falseValue);
 }
 
 // --------------------------------------------------------------------------
@@ -145,12 +147,14 @@ QString ctkBooleanMapper::valueAsString()const
 void ctkBooleanMapper::setValue(bool value)
 {
   this->targetObject()->setProperty(this->propertyName(), QVariant(value));
+  emit complementChanged(value);
 }
 
 // --------------------------------------------------------------------------
 void ctkBooleanMapper::setComplement(bool value)
 {
   this->setValue(!value);
+  emit complementChanged(value);
 }
 
 // --------------------------------------------------------------------------
@@ -158,6 +162,7 @@ void ctkBooleanMapper::setValueAsInt(int intValue)
 {
   Q_D(ctkBooleanMapper);
   this->setValue( QVariant(intValue) == d->TrueValue);
+  emit valueAsIntChanged(intValue);
 }
 
 // --------------------------------------------------------------------------
@@ -165,6 +170,7 @@ void ctkBooleanMapper::setValueAsString(const QString& stringValue)
 {
   Q_D(ctkBooleanMapper);
   this->setValue( QVariant(stringValue) == d->TrueValue );
+  emit valueAsStringChanged(stringValue);
 }
 
 // --------------------------------------------------------------------------

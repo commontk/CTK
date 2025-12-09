@@ -109,6 +109,7 @@ void ctkLinearValueProxy::setCoefficient(double newCoeff)
   }
   emit proxyAboutToBeModified();
   d->Coefficient = newCoeff;
+  emit coefficientChanged(newCoeff);
   this->updateProxyValue();
   emit proxyModified();
 }
@@ -123,6 +124,7 @@ void ctkLinearValueProxy::setOffset(double newOffset)
   }
   emit proxyAboutToBeModified();
   d->Offset = newOffset;
+  emit offsetChanged(newOffset);
   this->updateProxyValue();
   emit proxyModified();
 }

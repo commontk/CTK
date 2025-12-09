@@ -34,9 +34,9 @@ class ctkAxesWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged)
-  Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset)
-  Q_PROPERTY(QStringList axesLabels READ axesLabels WRITE setAxesLabels)
+  Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged NOTIFY currentAxisChanged)
+  Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset NOTIFY autoResetChanged)
+  Q_PROPERTY(QStringList axesLabels READ axesLabels WRITE setAxesLabels NOTIFY axesLabelsChanged)
 public :
 
   enum Axis
@@ -65,7 +65,9 @@ public :
   bool autoReset() const;
 
 Q_SIGNALS:
-  void currentAxisChanged(ctkAxesWidget::Axis axis);
+  void currentAxisChanged(const ctkAxesWidget::Axis & axis);
+  void autoResetChanged(bool autoReset);
+  void axesLabelsChanged(const QStringList& labels);
 
 public slots :
   ///

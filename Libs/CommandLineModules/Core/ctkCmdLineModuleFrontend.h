@@ -52,6 +52,7 @@ struct ctkCmdLineModuleFrontendPrivate;
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontend : public QObject
 {
   Q_OBJECT
+  Q_ENUM(ParamterValueRole)
 
 public:
 

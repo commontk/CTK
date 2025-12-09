@@ -40,10 +40,10 @@ class ctkAddRemoveComboBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkAddRemoveComboBox : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString emptyText READ emptyText WRITE setEmptyText)
-  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
-  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
-  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
+  Q_PROPERTY(QString emptyText READ emptyText WRITE setEmptyText NOTIFY emptyTextChanged)
+  Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled NOTIFY addEnabledChanged)
+  Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled NOTIFY removeEnabledChanged)
+  Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled NOTIFY editEnabledChanged)
 
 public:
   /// Superclass typedef
@@ -137,6 +137,11 @@ Q_SIGNALS:
   ///
   void itemAboutToBeRemoved(int index);
   void itemRemoved(int index);
+
+  void emptyTextChanged(const QString& text);
+  void addEnabledChanged(bool enable);
+  void removeEnabledChanged(bool enable);
+  void editEnabledChanged(bool enable);
 
 public Q_SLOTS:
   ///

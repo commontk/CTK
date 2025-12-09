@@ -46,6 +46,7 @@ ctkDICOMJob::~ctkDICOMJob() = default;
 void ctkDICOMJob::setDICOMLevel(const DICOMLevels& dicomLevel)
 {
   this->DICOMLevel = dicomLevel;
+  emit this->dicomLevelChanged(dicomLevel);
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +59,7 @@ ctkDICOMJob::DICOMLevels ctkDICOMJob::dicomLevel() const
 void ctkDICOMJob::setPatientID(const QString& patientID)
 {
   this->PatientID = patientID;
+  emit this->patientIDChanged(patientID);
 }
 
 //----------------------------------------------------------------------------
@@ -70,6 +72,7 @@ QString ctkDICOMJob::patientID() const
 void ctkDICOMJob::setStudyInstanceUID(const QString& studyInstanceUID)
 {
   this->StudyInstanceUID = studyInstanceUID;
+  emit this->studyInstanceUIDChanged(studyInstanceUID);
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +85,7 @@ QString ctkDICOMJob::studyInstanceUID() const
 void ctkDICOMJob::setSeriesInstanceUID(const QString& seriesInstanceUID)
 {
   this->SeriesInstanceUID = seriesInstanceUID;
+  emit this->seriesInstanceUIDChanged(seriesInstanceUID);
 }
 
 //------------------------------------------------------------------------------
@@ -94,6 +98,7 @@ QString ctkDICOMJob::seriesInstanceUID() const
 void ctkDICOMJob::setSOPInstanceUID(const QString& sopInstanceUID)
 {
   this->SOPInstanceUID = sopInstanceUID;
+  emit this->sopInstanceUIDChanged(sopInstanceUID);
 }
 
 //------------------------------------------------------------------------------
@@ -106,6 +111,7 @@ QString ctkDICOMJob::sopInstanceUID() const
 void ctkDICOMJob::setReferenceInserterJobUID(const QString &referenceInserterJobUID)
 {
   this->ReferenceInserterJobUID = referenceInserterJobUID;
+  emit this->referenceInserterJobUIDChanged(referenceInserterJobUID);
 }
 
 //----------------------------------------------------------------------------

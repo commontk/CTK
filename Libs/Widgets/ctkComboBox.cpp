@@ -199,6 +199,7 @@ void ctkComboBox::setDefaultText(const QString& newDefaultText)
 {
   Q_D(ctkComboBox);
   d->DefaultText = newDefaultText;
+  emit this->defaultTextChanged(d->DefaultText);
   d->SizeHint = QSize();
   this->update();
 }
@@ -215,6 +216,7 @@ void ctkComboBox::setDefaultIcon(const QIcon& newIcon)
 {
   Q_D(ctkComboBox);
   d->DefaultIcon = newIcon;
+  emit this->defaultIconChanged(d->DefaultIcon);
   d->SizeHint = QSize();
   this->update();
 }
@@ -235,6 +237,7 @@ void ctkComboBox::forceDefault(bool newForceDefault)
     return;
   }
   d->ForceDefault = newForceDefault;
+  emit this->forceDefaultChanged(d->ForceDefault);
   d->SizeHint = QSize();
   this->updateGeometry();
 }
@@ -244,6 +247,7 @@ void ctkComboBox::setElideMode(const Qt::TextElideMode& newMode)
 {
   Q_D(ctkComboBox);
   d->ElideMode = newMode;
+  emit this->elideModeChanged(d->ElideMode);
   this->update();
 }
 // -------------------------------------------------------------------------
@@ -272,6 +276,7 @@ void ctkComboBox::setScrollWheelEffect(ctkComboBox::ScrollEffect scroll)
 {
   Q_D(ctkComboBox);
   d->ScrollWheelEffect = scroll;
+  emit this->scrollWheelEffectChanged(d->ScrollWheelEffect);
   this->setFocusPolicy( d->ScrollWheelEffect == ctkComboBox::ScrollWithFocus ?
                         Qt::StrongFocus : Qt::WheelFocus );
 }
@@ -400,6 +405,7 @@ void ctkComboBox::setCurrentUserDataAsString(QString userData)
     if (!userData.compare(currentItemUserData))
     {
       this->setCurrentIndex(index);
+      emit this->currentUserDataAsStringChanged(userData);
       return;
     }
   }

@@ -46,14 +46,14 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
   /// If \a dontShowAgainSettingsKey is set, the \a dontShowAgain is set with
   /// the value of the key.
   /// By default, dontShowAgain is false.
-  Q_PROPERTY(bool dontShowAgain READ dontShowAgain WRITE setDontShowAgain)
+  Q_PROPERTY(bool dontShowAgain READ dontShowAgain WRITE setDontShowAgain NOTIFY dontShowAgainChanged);
   /// This list contains button roles that are saved in dontShowAgain settings
   /// if dontShowAgain flag is set. By default the choice is only saved if the
   /// role of the pushed button is QMessageBox::AcceptRole.
   /// For example, if a message box has Yes, No, and Cancel buttons then it
   /// QMessageBox::YesRole and QMessageBox::YesRole roles have to be added to the list
   /// to allow saving yes/no selection in settings.
-  Q_PROPERTY(QList<QMessageBox::ButtonRole> dontShowAgainButtonRoles READ dontShowAgainButtonRoles WRITE setDontShowAgainButtonRoles)
+  Q_PROPERTY(QList<QMessageBox::ButtonRole> dontShowAgainButtonRoles READ dontShowAgainButtonRoles WRITE setDontShowAgainButtonRoles NOTIFY dontShowAgainButtonRolesChanged);
 
   /// This property holds the settings key that is used to synchronize the state
   /// of the checkbox "Don't show this message again"
@@ -64,14 +64,19 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
   /// If a non empty key is set, the check box gets visible, otherwise it is
   /// hidden.
   /// By default, no key is set.
-  Q_PROPERTY(QString dontShowAgainSettingsKey READ dontShowAgainSettingsKey WRITE setDontShowAgainSettingsKey)
+  Q_PROPERTY(QString dontShowAgainSettingsKey READ dontShowAgainSettingsKey WRITE setDontShowAgainSettingsKey NOTIFY dontShowAgainSettingsKeyChanged);
 
   /// This property controls the visibility of the "Don't show again" checkbox.
   /// Even if the checkbox is not visible, the dialog is not not shown if
   /// \a dontShowAgain is true.
   /// By default, the "Don't show again" checkbox is not visible.
-  Q_PROPERTY(bool dontShowAgainVisible READ isDontShowAgainVisible WRITE setDontShowAgainVisible)
+  Q_PROPERTY(bool dontShowAgainVisible READ isDontShowAgainVisible WRITE setDontShowAgainVisible NOTIFY dontShowAgainVisibleChanged);
 
+Q_SIGNALS:
+  void dontShowAgainChanged(bool);
+  void dontShowAgainButtonRolesChanged(const QList<QMessageBox::ButtonRole> &);
+  void dontShowAgainSettingsKeyChanged(const QString &);
+  void dontShowAgainVisibleChanged(bool);
 public:
   typedef QMessageBox Superclass;
   ctkMessageBox(QWidget* newParent = 0);

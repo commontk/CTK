@@ -42,7 +42,7 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 
   /// This property controls the name of the color.
   /// Black (0,0,0) by default.
-  Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
+  Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true NOTIFY colorChanged)
 
   /// This property controls the name of the color.
   /// If empty (default), the color in the format "#RRGGBB" is displayed in the
@@ -52,10 +52,10 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
   /// This properties controls whether the name of the color is shown on the
   /// button if true or the button text instead. True by default.
   /// \sa colorName, QPushButton::text
-  Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
+  Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true NOTIFY displayColorNameChanged)
 
   /// This property controls the properties of the dialog used in \a changeColor
-  Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions)
+  Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions NOTIFY dialogOptionsChanged);
 public:
   enum ColorDialogOption {
     ShowAlphaChannel    = 0x00000001,
@@ -128,10 +128,12 @@ public Q_SLOTS:
 Q_SIGNALS:
   /// colorChanged is fired anytime a new color is set. Programmatically or
   /// by the user when choosing a color from the color dialog
-  void colorChanged(QColor);
+  void colorChanged(const QColor &);
 
   /// This signaled is fired anytime a new color name is set.
-  void colorNameChanged(QString);
+  void colorNameChanged(const QString &);
+  void displayColorNameChanged(bool);
+  void dialogOptionsChanged(const ColorDialogOptions &);
 
 protected Q_SLOTS:
   void onToggled(bool change = true);

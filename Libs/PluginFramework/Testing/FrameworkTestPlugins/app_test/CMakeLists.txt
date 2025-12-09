@@ -27,6 +27,10 @@ set(SRCS
   ctkTestAppMain.cpp
 )
 
+set(MOC_SRCS )
+
+set(MY_MOC_CXX )
+
 set(test_executable ${fw_lib}AppTests)
 
 ctk_add_executable_utf8(${test_executable} ${SRCS})

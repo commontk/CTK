@@ -220,6 +220,7 @@ void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o)
 {
   Q_D(ctkDICOMTableManager);
   d->tableSplitter->setOrientation(o);
+  emit this->tableOrientationChanged(o);
   d->collapseTopHeader(o == Qt::Vertical);
 }
 
@@ -329,6 +330,7 @@ void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
 {
   Q_D(ctkDICOMTableManager);
   d->m_DynamicTableLayout = dynamic;
+  emit this->dynamicTableLayoutChanged(dynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -373,6 +375,7 @@ void ctkDICOMTableManager::setAutoSelectSeries(bool autoSelect)
   }
 
   d->m_AutoSelectSeries = autoSelect;
+  emit this->autoSelectSeriesChanged(autoSelect);
 }
 
 //------------------------------------------------------------------------------
@@ -419,6 +422,7 @@ void ctkDICOMTableManager::setSelectionMode(int mode)
     this->setAutoSelectSeries(false);
     this->setAutoSelectSeries(true);
   }
+  emit this->selectionModeChanged(mode);
 }
 
 //------------------------------------------------------------------------------

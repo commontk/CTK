@@ -28,14 +28,14 @@
 class ctkSettingsPanelTest2Helper : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QStringList list READ list WRITE setList)
+  Q_PROPERTY(QStringList list READ list WRITE setList NOTIFY listChanged);
 public:
   ctkSettingsPanelTest2Helper(QObject * parent = 0) : QObject(parent){}
   QStringList list()const;
 public Q_SLOTS:
   void setList(const QStringList& alist);
 Q_SIGNALS:
-  void listChanged();
+  void listChanged(const QStringList &);
 private:
   QStringList List;
 };

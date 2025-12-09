@@ -38,7 +38,7 @@ class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
   Q_OBJECT
   Q_FLAGS(SettingOptions)
 
-  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings NOTIFY settingsChanged);
 
 public:
   /// Superclass typedef
@@ -133,7 +133,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   /// Fired anytime a property is modified.
-  void settingChanged(const QString& key, const QVariant& value);
+  void oneSettingChanged(const QString& key, const QVariant& value);
+
+  /// Fired anytime all properties are modified (i.e. replaced
+  void settingsChanged(QSettings* settings);
 
 protected:
   /// Return the default value of a property identified by its settings \a key

@@ -34,18 +34,30 @@ class ctkMaterialPropertyPreviewLabelPrivate;
 class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
 {
   Q_OBJECT
-  Q_PROPERTY(double ambient READ ambient WRITE setAmbient)
-  Q_PROPERTY(double diffuse READ diffuse WRITE setDiffuse)
-  Q_PROPERTY(double specular READ specular WRITE setSpecular)
-  Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower)
+  Q_PROPERTY(double ambient READ ambient WRITE setAmbient NOTIFY ambientChanged);
+  Q_PROPERTY(double diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseChanged);
+  Q_PROPERTY(double specular READ specular WRITE setSpecular NOTIFY specularChanged);
+  Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower NOTIFY specularPowerChanged);
 
-  Q_PROPERTY(double metallic READ metallic WRITE setMetallic)
-  Q_PROPERTY(double roughness READ roughness WRITE setRoughness)
+  Q_PROPERTY(double metallic READ metallic WRITE setMetallic NOTIFY metallicChanged);
+  Q_PROPERTY(double roughness READ roughness WRITE setRoughness NOTIFY roughnessChanged);
 
-  Q_PROPERTY(QColor color READ color WRITE setColor)
-  Q_PROPERTY(bool interpolationPBR READ interpolationPBR WRITE setInterpolationPBR)
-  Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
-  Q_PROPERTY(double gridOpacity READ gridOpacity WRITE setGridOpacity)
+  Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged);
+  Q_PROPERTY(bool interpolationPBR READ interpolationPBR WRITE setInterpolationPBR NOTIFY interpolationPBRChanged);
+  Q_PROPERTY(double opacity READ opacity WRITE setOpacity NOTIFY opacityChanged);
+  Q_PROPERTY(double gridOpacity READ gridOpacity WRITE setGridOpacity NOTIFY gridOpacityChanged);
+
+Q_SIGNALS:
+  void ambientChanged(double);
+  void diffuseChanged(double);
+  void specularChanged(double);
+  void specularPowerChanged(double);
+  void metallicChanged(double);
+  void roughnessChanged(double);
+  void colorChanged(const QColor &);
+  void interpolationPBRChanged(bool);
+  void opacityChanged(double);
+  void gridOpacityChanged(double);
 public :
 
   ctkMaterialPropertyPreviewLabel(QWidget *parent = 0);

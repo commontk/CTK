@@ -186,6 +186,7 @@ void ctkFontButton::setFontTextFormat(const QString& fontTextFormat)
 {
   Q_D(ctkFontButton);
   d->FontTextFormat = fontTextFormat;
+  emit fontTextFormatChanged(fontTextFormat);
   d->updateText();
 }
 

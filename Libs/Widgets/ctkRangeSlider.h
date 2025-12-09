@@ -50,12 +50,12 @@ class ctkRangeSliderPrivate;
 class CTK_WIDGETS_EXPORT ctkRangeSlider : public QSlider
 {
   Q_OBJECT
-  Q_PROPERTY(int minimumValue READ minimumValue WRITE setMinimumValue)
-  Q_PROPERTY(int maximumValue READ maximumValue WRITE setMaximumValue)
-  Q_PROPERTY(int minimumPosition READ minimumPosition WRITE setMinimumPosition)
-  Q_PROPERTY(int maximumPosition READ maximumPosition WRITE setMaximumPosition)
-  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
-  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
+  Q_PROPERTY(int minimumValue READ minimumValue WRITE setMinimumValue NOTIFY minimumValueChanged);
+  Q_PROPERTY(int maximumValue READ maximumValue WRITE setMaximumValue NOTIFY maximumValueChanged);
+  Q_PROPERTY(int minimumPosition READ minimumPosition WRITE setMinimumPosition NOTIFY minimumPositionChanged);
+  Q_PROPERTY(int maximumPosition READ maximumPosition WRITE setMaximumPosition NOTIFY maximumPositionChanged);
+  Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves NOTIFY symmetricMovesChanged);
+  Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip NOTIFY handleToolTipChanged);
 
 public:
   // Superclass typedef
@@ -150,6 +150,9 @@ Q_SIGNALS:
   /// Utility signal that is fired when minimum or maximum positions
   /// have changed.
   void positionsChanged(int min, int max);
+
+  void symmetricMovesChanged(bool);
+  void handleToolTipChanged(const QString &);
 
 public Q_SLOTS:
   ///

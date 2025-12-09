@@ -50,12 +50,18 @@ class QTreeView;
 class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool actionsWithNoShortcutVisible READ areActionsWithNoShortcutVisible WRITE setActionsWithNoShortcutVisible)
-  Q_PROPERTY(bool menuActionsVisible READ areMenuActionsVisible WRITE setMenuActionsVisible)
+  Q_PROPERTY(bool actionsWithNoShortcutVisible READ areActionsWithNoShortcutVisible WRITE setActionsWithNoShortcutVisible NOTIFY actionsWithNoShortcutVisibleChanged)
+  Q_PROPERTY(bool menuActionsVisible READ areMenuActionsVisible WRITE setMenuActionsVisible NOTIFY menuActionsVisibleChanged)
   /// This property controls whether the actions are sorted by column (>=0) or
   /// not (-1). Not sorted by default.
   /// \sa sortColumn(), setSortColumn()
-  Q_PROPERTY(int sortColumn READ sortColumn WRITE setSortColumn)
+  Q_PROPERTY(int sortColumn READ sortColumn WRITE setSortColumn NOTIFY sortColumnChanged)
+
+Q_SIGNALS:
+  void actionsWithNoShortcutVisibleChanged(bool);
+  void menuActionsVisibleChanged(bool);
+  void sortColumnChanged(int);
+
 public:
   explicit ctkActionsWidget(QWidget* parent = 0);
   virtual ~ctkActionsWidget();

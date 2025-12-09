@@ -293,6 +293,7 @@ void ctkFittedTextBrowser::setCollapsed(bool collapsed)
     return;
   }
   d->Collapsed = collapsed;
+  emit collapsedChanged(d->Collapsed);
   d->updateCollapsedText();
 }
 
@@ -308,6 +309,7 @@ void ctkFittedTextBrowser::setDisableMouseScroll(bool disableMouseScroll)
 {
   Q_D(ctkFittedTextBrowser);
   d->DisableMouseScroll = disableMouseScroll;
+  emit disableMouseScrollChanged(d->DisableMouseScroll);
 }
 
 //-----------------------------------------------------------------------------
@@ -327,6 +329,7 @@ void ctkFittedTextBrowser::setShowDetailsText(const QString &text)
     return;
   }
   d->ShowDetailsText = text;
+  emit showDetailsTextChanged(d->ShowDetailsText);
   d->updateCollapsedText();
 }
 
@@ -347,6 +350,7 @@ void ctkFittedTextBrowser::setHideDetailsText(const QString &text)
     return;
   }
   d->HideDetailsText = text;
+  emit hideDetailsTextChanged(d->HideDetailsText);
   d->updateCollapsedText();
 }
 

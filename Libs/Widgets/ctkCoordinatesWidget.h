@@ -39,42 +39,42 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
 {
   Q_OBJECT
 
-  Q_PROPERTY(int dimension READ dimension WRITE setDimension)
+  Q_PROPERTY(int dimension READ dimension WRITE setDimension NOTIFY dimensionChanged);
   /// This property controls whether the coordinates must be normalized.
   /// If true, the norm of the coordinates is enforced to be 1.
   /// False by default.
-  Q_PROPERTY(bool normalized READ isNormalized WRITE setNormalized)
+  Q_PROPERTY(bool normalized READ isNormalized WRITE setNormalized NOTIFY normalizedChanged);
 
   /// This property controls how many decimals should be displayed by the
   /// spinboxes. This number might not be used depending on decimalsOption.
   /// In general, the coordinatesWidget tries to use the same number of
   /// decimals for all the spinboxes except if numbers require more decimals.
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged);
   /// This property provides more controls over the decimals.
   /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
-  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption NOTIFY decimalsOptionChanged);
 
-  Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
+  Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false NOTIFY singleStepChanged)
   /// This property controls the minimum value of the spinboxes.
   /// No limit (-max double) by default.
   /// \sa minimum(), setMinimum(), maximum, sizeHintPolicy
-  Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged);
   /// This property the maximum value of the spinboxes.
   /// No limit (max double) by default.
   /// \sa maximum(), setMaximum(), minimum, sizeHintPolicy
-  Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
+  Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged);
 
-  Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
+  Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString NOTIFY coordinatesChanged);
 
   /// This property controls the size hint of the spinboxes.
   /// ctkDoubleSpinBox::SizeHintByValue by default
   /// \sa ctkDoubleSpinBox::SizeHintPolicy
-  Q_PROPERTY(ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
+  Q_PROPERTY(ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy NOTIFY sizeHintPolicyChanged);
 
-  Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
+  Q_PROPERTY(bool frame READ hasFrame WRITE setFrame NOTIFY frameChanged);
 
   /// This property controls if values can be modified using the graphical user interface.
-  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
+  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly NOTIFY readOnlyChanged);
 
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
@@ -181,6 +181,18 @@ Q_SIGNALS:
   /// value is the point coordinates
   /// TODO: Don't fire the signal if the new values are not changed
   void coordinatesChanged(double* pos);
+
+  void dimensionChanged(int);
+  void normalizedChanged(bool);
+  void decimalsChanged(int);
+  void decimalsOptionChanged(const ctkDoubleSpinBox::DecimalsOptions &);
+  void singleStepChanged(double);
+  void minimumChanged(double);
+  void maximumChanged(double);
+  void coordinatesChanged(const QString &);
+  void sizeHintPolicyChanged(const ctkDoubleSpinBox::SizeHintPolicy &);
+  void frameChanged(bool);
+  void readOnlyChanged(bool);
 
 protected Q_SLOTS:
   void updateCoordinates();

@@ -41,13 +41,16 @@ class CTK_WIDGETS_EXPORT ctkFlatProxyModel : public QAbstractProxyModel
   Q_OBJECT
   /// level for which to start flattening the rows. -1 by default
   /// Not supported yet.
-  Q_PROPERTY(int startFlattenLevel READ startFlattenLevel WRITE setStartFlattenLevel)
+  Q_PROPERTY(int startFlattenLevel READ startFlattenLevel WRITE setStartFlattenLevel NOTIFY startFlattenLevelChanged);
   /// level for which to stop flattening the rows. -1 by default
-  Q_PROPERTY(int endFlattenLevel READ endFlattenLevel WRITE setEndFlattenLevel)
+  Q_PROPERTY(int endFlattenLevel READ endFlattenLevel WRITE setEndFlattenLevel NOTIFY endFlattenLevelChanged);
   /// level for which to stop flattening the rows. -1 by default
   /// Not supported yet.
-  Q_PROPERTY(int hideLevel READ hideLevel WRITE setHideLevel)
-
+  Q_PROPERTY(int hideLevel READ hideLevel WRITE setHideLevel NOTIFY hideLevelChanged);
+Q_SIGNALS:
+  void startFlattenLevelChanged(int);
+  void endFlattenLevelChanged(int);
+  void hideLevelChanged(int);
 public:
   typedef QAbstractProxyModel Superclass;
 

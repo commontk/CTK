@@ -243,6 +243,7 @@ void ctkErrorLogWidget::setLayoutOrientation(Qt::Orientation orientation)
   }
 
   d->LayoutOrientation = orientation;
+  emit layoutOrientationChanged(orientation);
 }
 
 // --------------------------------------------------------------------------

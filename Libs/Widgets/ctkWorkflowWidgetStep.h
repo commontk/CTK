@@ -59,15 +59,20 @@ class ctkWorkflowWidgetStepPrivate;
 class CTK_WIDGETS_EXPORT ctkWorkflowWidgetStep : public QWidget, public ctkWorkflowStep
 {
   Q_OBJECT
-  Q_PROPERTY(QString stepid READ id WRITE setId)
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString description READ description WRITE setDescription)
-  Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
-  Q_PROPERTY(QString statusText READ statusText)
-  Q_PROPERTY(QString backButtonText READ backButtonText WRITE setBackButtonText)
-  Q_PROPERTY(QString nextButtonText READ nextButtonText WRITE setNextButtonText)
+
+
   Q_FLAGS(ButtonBoxHint ButtonBoxHints)
-  Q_PROPERTY(ButtonBoxHints buttonBoxHints READ buttonBoxHints WRITE setButtonBoxHints)
+
+  // NOT USED
+  // Q_PROPERTY(QString statusText READ statusText CONSTANT)
+  // Q_PROPERTY(QString stepid READ id WRITE setId NOTIFY stepidChanged);
+  // Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
+  // Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged);
+
+  Q_PROPERTY(ButtonBoxHints buttonBoxHints READ buttonBoxHints WRITE setButtonBoxHints NOTIFY buttonBoxHintsChanged);
+  Q_PROPERTY(QString backButtonText READ backButtonText WRITE setBackButtonText NOTIFY backButtonTextChanged);
+  Q_PROPERTY(QString nextButtonText READ nextButtonText WRITE setNextButtonText NOTIFY nextButtonTextChanged);
+  Q_PROPERTY(QIcon icon READ icon WRITE setIcon NOTIFY iconChanged);
 public:
 
   enum ButtonBoxHint {
@@ -119,6 +124,15 @@ public:
   /// createUserInterface())
   virtual bool hasCreateUserInterfaceCommand()const;
   virtual void setHasCreateUserInterfaceCommand(bool flag);
+
+Q_SIGNALS:
+  void stepidChanged(const QString &);
+  void nameChanged(const QString &);
+  void descriptionChanged(const QString &);
+  void iconChanged(const QIcon &);
+  void backButtonTextChanged(const QString &);
+  void nextButtonTextChanged(const QString &);
+  void buttonBoxHintsChanged(const ButtonBoxHints &);
 
 protected:
 

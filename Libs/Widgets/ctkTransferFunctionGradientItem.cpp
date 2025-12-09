@@ -117,4 +117,5 @@ void ctkTransferFunctionGradientItem::setMask( bool mask )
 {
   Q_D( ctkTransferFunctionGradientItem );
   d->Mask = mask;
+  emit maskChanged( mask );
 }

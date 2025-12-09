@@ -537,6 +537,7 @@ void ctkBasePopupWidget::setAnimationEffect(ctkBasePopupWidget::AnimationEffect 
   Q_D(ctkBasePopupWidget);
   /// TODO: handle the case where there is an animation running
   d->Effect = effect;
+  emit this->animationEffectChanged(effect);
 }
 
 // -------------------------------------------------------------------------
@@ -553,6 +554,7 @@ void ctkBasePopupWidget::setEffectDuration(int duration)
   d->EffectDuration = duration;
   d->AlphaAnimation->setDuration(d->EffectDuration);
   d->ScrollAnimation->setDuration(d->EffectDuration);
+  emit this->effectDurationChanged(duration);
 }
 
 // -------------------------------------------------------------------------
@@ -568,6 +570,7 @@ void ctkBasePopupWidget::setEasingCurve(QEasingCurve::Type easingCurve)
   Q_D(ctkBasePopupWidget);
   d->AlphaAnimation->setEasingCurve(easingCurve);
   d->ScrollAnimation->setEasingCurve(easingCurve);
+  emit this->easingCurveChanged(easingCurve);
 }
 
 // -------------------------------------------------------------------------
@@ -582,6 +585,7 @@ void ctkBasePopupWidget::setAlignment(Qt::Alignment alignment)
 {
   Q_D(ctkBasePopupWidget);
   d->Alignment = alignment;
+  emit this->alignmentChanged(alignment);
 }
 
 // -------------------------------------------------------------------------
@@ -596,6 +600,7 @@ void ctkBasePopupWidget::setOrientation(Qt::Orientations orientations)
 {
   Q_D(ctkBasePopupWidget);
   d->Orientations = orientations;
+  emit this->orientationChanged(orientations);
 }
 
 // -------------------------------------------------------------------------
@@ -610,6 +615,7 @@ void ctkBasePopupWidget::setVerticalDirection(ctkBasePopupWidget::VerticalDirect
 {
   Q_D(ctkBasePopupWidget);
   d->VerticalDirection = verticalDirection;
+  emit this->verticalDirectionChanged(verticalDirection);
 }
 
 // -------------------------------------------------------------------------
@@ -624,6 +630,7 @@ void ctkBasePopupWidget::setHorizontalDirection(Qt::LayoutDirection horizontalDi
 {
   Q_D(ctkBasePopupWidget);
   d->HorizontalDirection = horizontalDirection;
+  emit this->horizontalDirectionChanged(horizontalDirection);
 }
 
 // -------------------------------------------------------------------------
@@ -835,6 +842,7 @@ void ctkBasePopupWidget::setEffectAlpha(double alpha)
 {
   Q_D(ctkBasePopupWidget);
   d->EffectAlpha = alpha;
+  emit this->effectAlphaChanged(alpha);
   this->repaint();
 }
 
@@ -851,4 +859,5 @@ void ctkBasePopupWidget::setEffectGeometry(QRect newGeometry)
   Q_D(ctkBasePopupWidget);
   d->PopupPixmapWidget->setGeometry(newGeometry);
   d->PopupPixmapWidget->repaint();
+  emit this->effectGeometryChanged(newGeometry);
 }

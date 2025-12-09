@@ -178,7 +178,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     ${${SRCS_LIST_NAME}}
     ${wrapper_init_cpp_filename}
     ${wrapper_module_init_cpp_filename}
-    ${wrapper_h_filename}
+    ${${TARGET}_MOC_CXX}
+    # Assume CMAKE_AUTOMOC ON
+    ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename}
     )
 
   #

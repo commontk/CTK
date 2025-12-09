@@ -418,21 +418,21 @@ ctkDICOMStudyItemWidget::~ctkDICOMStudyItemWidget()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QStringList&, setAllowedServers, AllowedServers);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QStringList&, setAllowedServers, AllowedServers, allowedServersChanged);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QStringList, allowedServers, AllowedServers);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const OperationStatus&, setOperationStatus, Status);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const OperationStatus&, setOperationStatus, Status, operationStatusChanged);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, ctkDICOMStudyItemWidget::OperationStatus, operationStatus, Status);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QString&, setStudyItem, StudyItem);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QString&, setStudyItem, StudyItem,studyItemChanged );
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, studyItem, StudyItem);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QString&, setPatientID, PatientID);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QString&, setPatientID, PatientID, patientIDChanged);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, patientID, PatientID);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QString&, setStudyInstanceUID, StudyInstanceUID);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QString&, setStudyInstanceUID, StudyInstanceUID, studyInstanceUIDChanged);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, studyInstanceUID, StudyInstanceUID);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, int, thumbnailSizePixel, ThumbnailSizePixel);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QString&, setFilteringSeriesDescription, FilteringSeriesDescription);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QString&, setFilteringSeriesDescription, FilteringSeriesDescription, filteringSeriesDescriptionChanged);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
-CTK_SET_CPP(ctkDICOMStudyItemWidget, const QStringList&, setFilteringModalities, FilteringModalities);
+CTK_SET_CPP_EMIT(ctkDICOMStudyItemWidget, const QStringList&, setFilteringModalities, FilteringModalities,filteringModalitiesChanged );
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QStringList, filteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, int, filteredSeriesCount, FilteredSeriesCount);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, stoppedJobUID, StoppedJobUID);
@@ -442,6 +442,7 @@ void ctkDICOMStudyItemWidget::setTitle(const QString& title)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->StudyItemCollapsibleGroupBox->setTitle(title);
+  emit titleChanged(title);
 }
 
 //------------------------------------------------------------------------------
@@ -483,7 +484,7 @@ void ctkDICOMStudyItemWidget::setDescription(const QString& description)
   {
     d->StudyDescriptionTextBrowser->setPlainText(description);
   }
-
+  emit descriptionChanged(description);
   d->StudyDescriptionTextBrowser->show();
 }
 
@@ -499,6 +500,7 @@ void ctkDICOMStudyItemWidget::setCollapsed(bool collapsed)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->StudyItemCollapsibleGroupBox->setCollapsed(collapsed);
+  emit collapsedChanged(collapsed);
 }
 
 //------------------------------------------------------------------------------
@@ -523,6 +525,7 @@ void ctkDICOMStudyItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::Th
   d->ThumbnailSizePixel = d->calculateThumbnailSizeInPixel(d->ThumbnailSize);
   d->SeriesListTableWidget->setColumnCount(d->calculateNumerOfSeriesPerRow());
   d->updateColumnsWidths();
+  emit thumbnailSizeChanged(thumbnailSize);
 }
 
 //------------------------------------------------------------------------------
@@ -537,7 +540,7 @@ void ctkDICOMStudyItemWidget::setSelection(bool selected)
   {
     d->SeriesListTableWidget->clearSelection();
   }
-
+  emit selectionChanged(selected);
   d->StudySelectionCheckBox->setChecked(selected);
 }
 

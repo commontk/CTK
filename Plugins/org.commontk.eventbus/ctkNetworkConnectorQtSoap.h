@@ -74,7 +74,7 @@ public:
 
 Q_SIGNALS:
     /// signal for the registration of the functions with parameters
-    void registerMethodsServer(mafRegisterMethodsMap registerMethodsList);
+    void registerMethodsServer(const mafRegisterMethodsMap & registerMethodsList);
 
 public Q_SLOTS:
     /// register methods on the server

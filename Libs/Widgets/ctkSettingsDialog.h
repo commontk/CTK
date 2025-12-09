@@ -40,18 +40,16 @@ class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
   /// This property controls whether the reset button is visible in the
   /// button box or not. The Cancel button is a reset button and closes
   /// the dialog at the same time.
-  Q_PROPERTY(bool resetButton READ resetButton WRITE setResetButton);
-
-  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
-
-  Q_PROPERTY(ctkSettingsPanel* currentPanel READ currentPanel WRITE setCurrentPanel);
+  Q_PROPERTY(bool resetButton READ resetButton WRITE setResetButton NOTIFY resetButtonChanged);
+  Q_PROPERTY(ctkSettingsPanel* currentPanel READ currentPanel WRITE setCurrentPanel NOTIFY currentPanelChanged);
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings NOTIFY settingsPtrChanged);
 
   /// Specifies if a restart required to fully apply changes.
   ///
   /// This property is \c true if at least one OptionRestartRequired setting is
   /// changed. It doesn't imply that the user accepted to restart the
   /// application.
-  Q_PROPERTY(bool restartRequired READ isRestartRequired);
+  Q_PROPERTY(bool restartRequired READ isRestartRequired CONSTANT);
 
 public:
   /// Superclass typedef
@@ -127,6 +125,9 @@ Q_SIGNALS:
   /// some OptionRestartRequired settings have changed.
   /// \sa isrestartRequired
   void restartRequested();
+  void settingsPtrChanged(QSettings* settings);
+  void resetButtonChanged(bool);
+  void currentPanelChanged(ctkSettingsPanel* panel);
 
 protected Q_SLOTS:
   void onSettingChanged(const QString& key, const QVariant& newVal);

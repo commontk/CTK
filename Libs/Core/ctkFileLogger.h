@@ -35,9 +35,12 @@ class ctkFileLoggerPrivate;
 class CTK_CORE_EXPORT ctkFileLogger : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled)
-  Q_PROPERTY(QString filePath READ filePath WRITE setFilePath)
+  Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged);
+  Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
 
+Q_SIGNALS:
+  void enabledChanged(bool);
+  void filePathChanged(const QString &);
 public:
   typedef QObject Superclass;
   typedef ctkFileLogger Self;

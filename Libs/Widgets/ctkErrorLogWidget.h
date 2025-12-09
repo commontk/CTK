@@ -37,7 +37,7 @@ class QModelIndex;
 class CTK_WIDGETS_EXPORT ctkErrorLogWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(Qt::Orientation layoutOrientation READ layoutOrientation WRITE setLayoutOrientation)
+  Q_PROPERTY(Qt::Orientation layoutOrientation READ layoutOrientation WRITE setLayoutOrientation NOTIFY layoutOrientationChanged);
 public:
   typedef QWidget Superclass;
   explicit ctkErrorLogWidget(QWidget* parentWidget = 0);
@@ -64,6 +64,8 @@ Q_SIGNALS:
   /// when this signal is emitted, because it indicates that the user had a look
   /// at the messages.
   void userViewed();
+
+  void layoutOrientationChanged(const Qt::Orientation &);
 
 public Q_SLOTS:
   void setLayoutOrientation(Qt::Orientation orientation);

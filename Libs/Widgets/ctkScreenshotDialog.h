@@ -46,10 +46,14 @@ class ctkScreenshotDialogPrivate;
 class CTK_WIDGETS_EXPORT ctkScreenshotDialog : public QDialog
 {
   Q_OBJECT
-  Q_PROPERTY(QString baseFileName READ baseFileName WRITE setBaseFileName)
-  Q_PROPERTY(QString directory READ directory WRITE setDirectory)
-  Q_PROPERTY(int delay READ delay WRITE setDelay)
+  Q_PROPERTY(QString baseFileName READ baseFileName WRITE setBaseFileName NOTIFY baseFileNameChanged);
+  Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged);
+  Q_PROPERTY(int delay READ delay WRITE setDelay NOTIFY delayChanged);
 
+Q_SIGNALS:
+  void baseFileNameChanged(const QString &);
+  void directoryChanged(const QString &);
+  void delayChanged(int);
 public:
   typedef QDialog Superclass;
   ctkScreenshotDialog(QWidget* parent = 0);

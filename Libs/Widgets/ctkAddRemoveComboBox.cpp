@@ -198,6 +198,7 @@ void ctkAddRemoveComboBox::setEmptyText(const QString& text)
     this->setItemText(0, text);
   }
   d->EmptyText = text;
+  emit this->emptyTextChanged(text);
 }
 
 // --------------------------------------------------------------------------
@@ -325,6 +326,7 @@ void ctkAddRemoveComboBox::setAddEnabled(bool enable)
 
   d->AddPushButton->setEnabled(enable);
   d->AddEnabled = enable;
+  emit this->addEnabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -344,6 +346,7 @@ void ctkAddRemoveComboBox::setRemoveEnabled(bool enable)
     d->RemovePushButton->setEnabled(enable);
   }
   d->RemoveEnabled = enable;
+  emit this->removeEnabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------
@@ -363,6 +366,7 @@ void ctkAddRemoveComboBox::setEditEnabled(bool enable)
     d->EditPushButton->setEnabled(enable);
   }
   d->EditEnabled = enable;
+  emit this->editEnabledChanged(enable);
 }
 
 // --------------------------------------------------------------------------

@@ -177,6 +177,14 @@ double ctkFooObject::property()const
     d->_VARNAME =  var;                             \
   }
 
+#define CTK_SET_CPP_EMIT(PUB, _TYPE, _NAME, _VARNAME, _SIGNALNAME)    \
+void PUB::_NAME(_TYPE var)                                            \
+{                                                                     \
+Q_D(PUB);                                                             \
+d->_VARNAME = var;                                                    \
+emit _SIGNALNAME(var);                                                \
+}
+
 /*!
  * Define the setter in the public class.
  *

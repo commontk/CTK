@@ -40,6 +40,8 @@ set(KIT_HELPER_SRCS
   ctkVTKObjectTestHelper.cpp
   )
 
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+
 #
 # Tests
 #

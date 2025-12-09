@@ -169,6 +169,7 @@ void ctkDateRangeWidget::setStartDateTime(QDateTime dateTime)
 {
   Q_D(ctkDateRangeWidget);
   d->StartDate->setDateTime(dateTime);
+  emit startDateTimeChanged(dateTime);
   d->autoselectRadioButton();
 }
 
@@ -177,6 +178,7 @@ void ctkDateRangeWidget::setEndDateTime(QDateTime dateTime)
 {
   Q_D(ctkDateRangeWidget);
   d->EndDate->setDateTime(dateTime);
+  emit endDateTimeChanged(dateTime);
   d->autoselectRadioButton();
 }
 
@@ -266,6 +268,7 @@ void ctkDateRangeWidget::setDisplayTime(bool displayTime)
 {
   Q_D(ctkDateRangeWidget);
   d->DisplayTime = displayTime;
+  emit displayTimeChanged(displayTime);
   if ( displayTime )
   {
     d->StartDate->setDisplayFormat( QString( "MMM dd, yyyy HH:mm:ss") );

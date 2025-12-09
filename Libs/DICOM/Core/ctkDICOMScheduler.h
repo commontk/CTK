@@ -27,6 +27,7 @@
 // Qt includes
 #include <QObject>
 #include <QMap>
+#include <QSharedPointer>
 
 // ctkCore includes
 #include <ctkJobScheduler.h>
@@ -37,16 +38,19 @@ class ctkAbstractJob;
 #include "ctkDICOMDatabase.h"
 class ctkDICOMJob;
 class ctkDICOMIndexer;
-class ctkDICOMSchedulerPrivate;
 class ctkDICOMServer;
 class ctkDICOMStorageListenerJob;
 struct ctkDICOMJobDetail;
 
 /// \ingroup DICOM_Core
+class  ctkDICOMSchedulerPrivate; // Forward decalaration needed within this file
 class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
 {
   Q_OBJECT
-  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
+  Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery NOTIFY maximumPatientsQueryChanged);
+
+Q_SIGNALS:
+  void maximumPatientsQueryChanged(int maximumPatientsQuery);
 
 public:
   typedef ctkJobScheduler Superclass;
@@ -232,4 +236,35 @@ private:
   Q_DISABLE_COPY(ctkDICOMScheduler);
 };
 
+//------------------------------------------------------------------------------
+class ctkDICOMSchedulerPrivate : public ctkJobSchedulerPrivate
+{
+  Q_OBJECT
+  Q_DECLARE_PUBLIC(ctkDICOMScheduler);
+
+public:
+  ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
+  virtual ~ctkDICOMSchedulerPrivate();
+
+  bool isServerAllowed(ctkDICOMServer* server, const QStringList& allowedSeversForPatient);
+  ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
+  bool isJobDuplicate(ctkDICOMJob* job);
+
+  QSharedPointer<ctkDICOMDatabase> DicomDatabase;
+  QList<QSharedPointer<ctkDICOMServer>> Servers;
+  QMap<QString, QMetaObject::Connection> ServersConnections;
+  QMap<QString, QVariant> Filters;
+
+  int MaximumPatientsQuery{25};
+
+  dcmtk::log4cplus::SharedAppenderPtr Appender;
+};
+
+//------------------------------------------------------------------------------
+struct ThumbnailUID
+{
+  QString studyInstanceUID;
+  QString seriesInstanceUID;
+  QString SOPInstanceUID;
+} ;
 #endif
