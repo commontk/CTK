@@ -11,13 +11,16 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMListenerWidgetTest1.cpp
   ctkDICOMModelTest2.cpp
   ctkDICOMObjectModelTest1.cpp
-  ctkDICOMPatientItemWidgetTest1.cpp
+  ctkDICOMPatientDelegateTest1.cpp
+  ctkDICOMPatientViewTest1.cpp
   ctkDICOMQueryResultsTabWidgetTest1.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
-  ctkDICOMSeriesItemWidgetTest1.cpp
-  ctkDICOMStudyItemWidgetTest1.cpp
+  ctkDICOMSeriesDelegateTest1.cpp
+  ctkDICOMSeriesTableViewTest1.cpp
   ctkDICOMServerNodeWidgetTest1.cpp
   ctkDICOMServerNodeWidget2Test1.cpp
+  ctkDICOMStudyDelegateTest1.cpp
+  ctkDICOMStudyListViewTest1.cpp
   ctkDICOMThumbnailListWidgetTest1.cpp
   ctkDICOMVisualBrowserWidgetTest1.cpp
   )
@@ -54,11 +57,8 @@ SIMPLE_TEST(ctkDICOMModelTest2
   ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMModelTest2-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
   )
-SIMPLE_TEST(ctkDICOMPatientItemWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
-SIMPLE_TEST(ctkDICOMSeriesItemWidgetTest1)
-SIMPLE_TEST(ctkDICOMStudyItemWidgetTest1)
 SIMPLE_TEST(ctkDICOMServerNodeWidget2Test1)
 SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1
   ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMThumbnailListWidgetTest1-dicom.db
@@ -75,5 +75,20 @@ if(EXISTS "${CTKData_DIR}")
   SIMPLE_TEST(ctkDICOMBrowserTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
   SIMPLE_TEST(ctkDICOMItemViewTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
   SIMPLE_TEST(ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+  SIMPLE_TEST(ctkDICOMPatientDelegateTest1)
+  SIMPLE_TEST(ctkDICOMPatientViewTest1
+    ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMPatientViewTest1-dicom.db
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
+    )
+  SIMPLE_TEST(ctkDICOMSeriesDelegateTest1)
+  SIMPLE_TEST(ctkDICOMSeriesTableViewTest1
+    ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMSeriesTableViewTest1-dicom.db
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
+    )
+  SIMPLE_TEST(ctkDICOMStudyDelegateTest1)
+  SIMPLE_TEST(ctkDICOMStudyListViewTest1
+    ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMStudyListViewTest1-dicom.db
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
+    )
   SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
 endif()

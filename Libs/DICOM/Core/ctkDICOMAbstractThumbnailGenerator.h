@@ -44,10 +44,9 @@ public:
   explicit ctkDICOMAbstractThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMAbstractThumbnailGenerator();
 
-  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path,
-                                 QColor backgroundColor = Qt::darkGray) = 0;
+  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path) = 0;
   virtual void generateDocumentThumbnail(const QString &thumbnailPath,
-                                         QColor backgroundColor = Qt::darkGray) = 0;
+                                         QColor backgroundColor = Qt::white) = 0;
 
 protected:
   QScopedPointer<ctkDICOMAbstractThumbnailGeneratorPrivate> d_ptr;

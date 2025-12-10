@@ -25,6 +25,7 @@
         <file>Icons/cleaning.svg</file>
         <file>Icons/reset.svg</file>
         <file>Icons/error_red.svg</file>
+        <file>Icons/deselect.svg</file>
         <file>Icons/select_all.svg</file>
         <file>Icons/select_none.svg</file>
         <file>Icons/query_failed.svg</file>
@@ -35,5 +36,16 @@
         <file>Icons/patient_failed.svg</file>
         <file>Icons/patient_pending.svg</file>
         <file>Icons/patient_success.svg</file>
+        <file>Icons/expand_down.svg</file>
+        <file>Icons/expand_right.svg</file>
+        <file>Icons/grid.svg</file>
+        <file>Icons/stack.svg</file>
+        <file>Icons/more_horiz.svg</file>
+        <file>Icons/tab.svg</file>
+        <file>Icons/download.svg</file>
+        <file>Icons/export.svg</file>
+        <file>Icons/metadata.svg</file>
+        <file>Icons/upload.svg</file>
+        <file>Icons/accept2.svg</file>
     </qresource>
 </RCC>

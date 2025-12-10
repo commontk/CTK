@@ -199,8 +199,8 @@ public:
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;
 
-  QStringList LoadedSeries;
-  QStringList VisibleSeries;
+  /// List of series that have been loaded
+  QStringList LoadedSeriesInstanceUIDs;
 };
 
 #endif

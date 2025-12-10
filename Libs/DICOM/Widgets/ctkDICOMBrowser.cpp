@@ -990,6 +990,28 @@ ctkDICOMBrowser::ImportDirectoryMode ctkDICOMBrowser::importDirectoryMode()const
 }
 
 //----------------------------------------------------------------------------
+QStringList ctkDICOMBrowser::selectedItems(ctkDICOMModel::IndexType level)
+{
+  Q_D(const ctkDICOMBrowser);
+  if (level == ctkDICOMModel::PatientType)
+  {
+    return d->dicomTableManager->currentPatientsSelection();
+  }
+  else if (level == ctkDICOMModel::StudyType)
+  {
+    return d->dicomTableManager->currentStudiesSelection();
+  }
+  else if (level == ctkDICOMModel::SeriesType)
+  {
+    return d->dicomTableManager->currentSeriesSelection();
+  }
+  else
+  {
+    return QStringList();
+  }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
