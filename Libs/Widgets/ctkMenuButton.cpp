@@ -186,9 +186,17 @@ void ctkMenuButton::mousePressEvent(QMouseEvent *e)
 {
   Q_D(ctkMenuButton);
   // we don't want to open the menu if the mouse is clicked anywhere on
-  // the button, only if it's clicked on the indecator
+  // the button, only if it's clicked on the indicator
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   this->disconnect(this,SIGNAL(pressed()), this, SLOT(_q_popupPressed()));
   this->QPushButton::mousePressEvent(e);
+#else
+  // Use blockSignals to prevent internal Qt slots from being called
+  // (disconnecting internal implementation slots does not work in Qt6)
+  const bool wasBlocked = this->blockSignals(true);
+  this->QPushButton::mousePressEvent(e);
+  this->blockSignals(wasBlocked);
+#endif
   if (e->isAccepted())
   {
     return;
