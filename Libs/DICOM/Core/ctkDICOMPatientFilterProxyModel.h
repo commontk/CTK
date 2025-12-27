@@ -81,6 +81,11 @@ public:
   bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
   bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
+  /// Font that is used for determining the number of visible items in TabMode.
+  /// By default, the application font is used, but it is recommended to set to the view widget font.
+  void setViewWidgetFont(const QFont& font);
+  QFont viewWidgetFont() const;
+
 Q_SIGNALS:
   void displayModeChanged(DisplayMode mode);
 

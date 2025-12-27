@@ -1009,6 +1009,12 @@ void ctkDICOMPatientView::setModel(QAbstractItemModel* model)
   // Set the new model
   Superclass::setModel(model);
 
+  ctkDICOMPatientFilterProxyModel* proxyModel = this->patientFilterProxyModel();
+  if (proxyModel)
+  {
+    proxyModel->setViewWidgetFont(this->font());
+  }
+
   // Connect signals for new model
   if (model)
   {
@@ -1629,8 +1635,14 @@ void ctkDICOMPatientView::mousePressEvent(QMouseEvent* event)
       {
         index = this->currentIndex();
         QRect itemRect = this->visualRect(index);
-        QRect selectAllIconRect = delegate->selectAllIconRect(itemRect, this->viewOptions());
-        QRect contextMenuIconRect = delegate->contextMenuButtonRect(itemRect, this->viewOptions());
+        QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        initViewItemOption(&option);
+#else
+        option = viewOptions();
+#endif
+        QRect selectAllIconRect = delegate->selectAllIconRect(itemRect, option);
+        QRect contextMenuIconRect = delegate->contextMenuButtonRect(itemRect, option);
         if (selectAllIconRect.contains(event->pos()))
         {
           d->SelectAllIconPressedIndex = index;
@@ -1650,8 +1662,14 @@ void ctkDICOMPatientView::mousePressEvent(QMouseEvent* event)
     else if (index.isValid()) // List Mode
     {
       QRect itemRect = this->visualRect(index);
-      QRect selectAllIconRect = delegate->selectAllIconRect(itemRect, this->viewOptions());
-      QRect contextMenuIconRect = delegate->contextMenuButtonRect(itemRect, this->viewOptions());
+      QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      initViewItemOption(&option);
+#else
+      option = viewOptions();
+#endif
+      QRect selectAllIconRect = delegate->selectAllIconRect(itemRect, option);
+      QRect contextMenuIconRect = delegate->contextMenuButtonRect(itemRect, option);
       if (selectAllIconRect.contains(event->pos()))
       {
         d->SelectAllIconPressedIndex = index;
@@ -1830,10 +1848,16 @@ void ctkDICOMPatientView::mouseReleaseEvent(QMouseEvent* event)
     if (index.isValid() && this->patientDelegate())
     {
       QRect itemRect = this->visualRect(index);
+      QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      initViewItemOption(&option);
+#else
+      option = viewOptions();
+#endif
 
       // Check if select all icon was clicked
       if (d->SelectAllIconPressedIndex == index &&
-          this->patientDelegate()->isSelectAllIconAt(event->pos(), itemRect, this->viewOptions()))
+          this->patientDelegate()->isSelectAllIconAt(event->pos(), itemRect, option))
       {
         this->onSelectAllIconClicked(index);
         d->SelectAllIconPressedIndex = QModelIndex();
@@ -1843,7 +1867,7 @@ void ctkDICOMPatientView::mouseReleaseEvent(QMouseEvent* event)
 
       // Check if context menu button was clicked
       if (d->ContextMenuButtonPressedIndex == index &&
-          this->patientDelegate()->isContextMenuButtonAt(event->pos(), itemRect, this->viewOptions()))
+          this->patientDelegate()->isContextMenuButtonAt(event->pos(), itemRect, option))
       {
         this->onPatientContextMenuRequested(event->globalPos(), index);
         d->ContextMenuButtonPressedIndex = QModelIndex();
@@ -1930,7 +1954,13 @@ void ctkDICOMPatientView::contextMenuEvent(QContextMenuEvent* event)
     ctkDICOMPatientDelegate* delegate = this->patientDelegate();
     if (delegate)
     {
-      QRect patientTabRect = delegate->patientsRect(itemRect, this->viewOptions(), index);
+      QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      initViewItemOption(&option);
+#else
+      option = viewOptions();
+#endif
+      QRect patientTabRect = delegate->patientsRect(itemRect, option, index);
       // Check if the click is within the patient controls area
       if (!patientTabRect.contains(event->pos()))
       {
@@ -1990,6 +2020,21 @@ void ctkDICOMPatientView::contextMenuEvent(QContextMenuEvent* event)
 
   emit this->patientContextMenuRequested(event->globalPos(), patientUIDs);
   event->accept();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientView::changeEvent(QEvent* event)
+{
+  Superclass::changeEvent(event);
+
+  if (event->type() == QEvent::FontChange)
+  {
+    ctkDICOMPatientFilterProxyModel* proxyModel = this->patientFilterProxyModel();
+    if (proxyModel)
+    {
+      proxyModel->setViewWidgetFont(this->font());
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2165,7 +2210,13 @@ void ctkDICOMPatientView::onPatientContextMenuRequested(const QPoint& globalPos,
   if (delegate)
   {
     QRect itemRect = this->visualRect(clickedPatientIndex);
-    QRect buttonRect = delegate->contextMenuButtonRect(itemRect, this->viewOptions());
+    QStyleOptionViewItem option;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    initViewItemOption(&option);
+#else
+    option = viewOptions();
+#endif
+    QRect buttonRect = delegate->contextMenuButtonRect(itemRect, option);
     // Position menu at the bottom-center of the button
     QPoint buttonBottomCenter = this->viewport()->mapToGlobal(QPoint(buttonRect.left() - 1, buttonRect.bottom() + 2));
     menuPos = buttonBottomCenter;

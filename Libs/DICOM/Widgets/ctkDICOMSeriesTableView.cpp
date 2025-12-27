@@ -24,6 +24,9 @@
 // Qt includes
 #include <QApplication>
 #include <QContextMenuEvent>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QEnterEvent>
+#endif
 #include <QHeaderView>
 #include <QHelpEvent>
 #include <QKeyEvent>
@@ -601,7 +604,11 @@ void ctkDICOMSeriesTableView::mouseDoubleClickEvent(QMouseEvent* event)
 }
 
 //------------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void ctkDICOMSeriesTableView::enterEvent(QEnterEvent *event)
+#else
 void ctkDICOMSeriesTableView::enterEvent(QEvent *event)
+#endif
 {
   Q_UNUSED(event)
   emit seriesTableViewEntered();

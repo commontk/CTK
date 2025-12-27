@@ -22,6 +22,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QFile>
 #include <QPainter>
 #include <QPainterPath>
 #include <QApplication>

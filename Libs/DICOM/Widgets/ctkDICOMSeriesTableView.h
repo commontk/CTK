@@ -26,6 +26,7 @@
 
 // Qt includes
 #include <QTableView>
+#include <QtGlobal>
 #include <QSize>
 
 // CTK includes
@@ -35,6 +36,9 @@ class ctkDICOMSeriesTableViewPrivate;
 class ctkDICOMSeriesModel;
 class ctkDICOMSeriesDelegate;
 class ctkDICOMSeriesFilterProxyModel;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+class QEnterEvent;
+#endif
 
 /// \ingroup DICOM_Widgets
 /// \brief Custom table view for displaying DICOM series as thumbnails
@@ -133,7 +137,11 @@ protected:
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
   void mouseDoubleClickEvent(QMouseEvent* event) override;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  void enterEvent(QEnterEvent* event) override;
+#else
   void enterEvent(QEvent* event) override;
+#endif
   void leaveEvent(QEvent* event) override;
   void contextMenuEvent(QContextMenuEvent* event) override;
 

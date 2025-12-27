@@ -26,9 +26,9 @@
 #include <QDateTime>
 #include <QFont>
 #include <QFontMetrics>
-#include <QWidget>
 
 // CTK includes
+#include "ctkPimpl.h"
 #include "ctkDICOMPatientFilterProxyModel.h"
 #include "ctkDICOMPatientModel.h"
 
@@ -50,6 +50,8 @@ public:
   int IconSize = 24;
   int Spacing = 4;
   mutable int FirstOutOfBoundsRow = -1;
+
+  QFont ViewWidgetFont;
 };
 
 //------------------------------------------------------------------------------
@@ -65,6 +67,9 @@ ctkDICOMPatientFilterProxyModelPrivate::~ctkDICOMPatientFilterProxyModelPrivate(
 
 //------------------------------------------------------------------------------
 // ctkDICOMPatientFilterProxyModel methods
+
+CTK_SET_CPP(ctkDICOMPatientFilterProxyModel, const QFont&, setViewWidgetFont, ViewWidgetFont);
+CTK_GET_CPP(ctkDICOMPatientFilterProxyModel, QFont, viewWidgetFont, ViewWidgetFont)
 
 //------------------------------------------------------------------------------
 ctkDICOMPatientFilterProxyModel::ctkDICOMPatientFilterProxyModel(QObject* parent)
@@ -140,15 +145,8 @@ bool ctkDICOMPatientFilterProxyModel::filterAcceptsRow(int source_row,
       return false;
     }
 
-    // Try to get font from the view if possible
-    QFont font;
-    const QObject* parentObj = this->parent();
-    const QWidget* viewWidget = qobject_cast<const QWidget*>(parentObj);
-    if (viewWidget)
-    {
-      font = viewWidget->font();
-    }
-    QFontMetrics fm(font);
+    // Use default font for font metrics calculation
+    QFontMetrics fm(d->ViewWidgetFont);
     int iconSize = d->IconSize * 2;
     int spacing = d->Spacing * 3;
     int maxTextWidth = d->MaxTextWidth;

@@ -24,6 +24,9 @@
 // Qt includes
 #include <QApplication>
 #include <QContextMenuEvent>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QEnterEvent>
+#endif
 #include <QHelpEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -1403,7 +1406,11 @@ void ctkDICOMStudyListView::mouseReleaseEvent(QMouseEvent* event)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::enterEvent(QEvent* event)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void ctkDICOMStudyListView::enterEvent(QEnterEvent *event)
+#else
+void ctkDICOMStudyListView::enterEvent(QEvent *event)
+#endif
 {
   Q_UNUSED(event)
   emit studyListViewEntered();

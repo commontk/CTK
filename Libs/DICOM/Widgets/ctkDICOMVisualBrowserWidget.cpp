@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QDate>
 #include <QDateEdit>
-#include <QDesktopWidget>
 #include <QFormLayout>
 #include <QMap>
 #include <QMenu>

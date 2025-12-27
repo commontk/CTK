@@ -204,6 +204,7 @@ protected:
   void leaveEvent(QEvent* event) override;
   void contextMenuEvent(QContextMenuEvent* event) override;
   void paintEvent(QPaintEvent* event) override;
+  void changeEvent(QEvent* event) override;
 
   /// Event filter to handle display mode button events
   bool eventFilter(QObject* watched, QEvent* event) override;
