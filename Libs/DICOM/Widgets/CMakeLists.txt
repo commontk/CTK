@@ -36,16 +36,22 @@ set(KIT_SRCS
   ctkDICOMQueryWidget.h
   ctkDICOMObjectListWidget.cpp
   ctkDICOMObjectListWidget.h
-  ctkDICOMPatientItemWidget.cpp
-  ctkDICOMPatientItemWidget.h
-  ctkDICOMSeriesItemWidget.cpp
-  ctkDICOMSeriesItemWidget.h
+  ctkDICOMPatientDelegate.cpp
+  ctkDICOMPatientDelegate.h
+  ctkDICOMPatientView.cpp
+  ctkDICOMPatientView.h
+  ctkDICOMSeriesDelegate.cpp
+  ctkDICOMSeriesDelegate.h
+  ctkDICOMSeriesTableView.cpp
+  ctkDICOMSeriesTableView.h
   ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
   ctkDICOMServerNodeWidget2.cpp
   ctkDICOMServerNodeWidget2.h
-  ctkDICOMStudyItemWidget.cpp
-  ctkDICOMStudyItemWidget.h
+  ctkDICOMStudyListView.cpp
+  ctkDICOMStudyListView.h
+  ctkDICOMStudyDelegate.cpp
+  ctkDICOMStudyDelegate.h
   ctkDICOMTableManager.h
   ctkDICOMTableManager.cpp
   ctkDICOMTableView.cpp
@@ -53,6 +59,34 @@ set(KIT_SRCS
   ctkDICOMThumbnailListWidget.cpp
   ctkDICOMThumbnailListWidget.h
   ctkDICOMVisualBrowserWidget.cpp
+  ctkDICOMVisualBrowserWidget.h
+  )
+
+# Headers that should run through moc
+set(KIT_MOC_SRCS
+  ctkDICOMAppWidget.h
+  ctkDICOMBrowser.h
+  ctkDICOMItemView.h
+  ctkDICOMDirectoryListWidget.h
+  ctkDICOMImage.h
+  ctkDICOMImportWidget.h
+  ctkDICOMJobListWidget.h
+  ctkDICOMMetadataDialog.h
+  ctkDICOMObjectListWidget.h
+  ctkDICOMObjectModel.h
+  ctkDICOMQueryRetrieveWidget.h
+  ctkDICOMQueryWidget.h
+  ctkDICOMPatientDelegate.h
+  ctkDICOMPatientView.h
+  ctkDICOMSeriesDelegate.h
+  ctkDICOMSeriesTableView.h
+  ctkDICOMServerNodeWidget.h
+  ctkDICOMServerNodeWidget2.h
+  ctkDICOMStudyListView.h
+  ctkDICOMStudyDelegate.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableView.h
+  ctkDICOMThumbnailListWidget.h
   ctkDICOMVisualBrowserWidget.h
   )
 
@@ -67,11 +101,8 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
   Resources/UI/ctkDICOMObjectListWidget.ui
-  Resources/UI/ctkDICOMPatientItemWidget.ui
-  Resources/UI/ctkDICOMSeriesItemWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget2.ui
-  Resources/UI/ctkDICOMStudyItemWidget.ui
   Resources/UI/ctkDICOMTableManager.ui
   Resources/UI/ctkDICOMTableView.ui
   Resources/UI/ctkDICOMVisualBrowserWidget.ui

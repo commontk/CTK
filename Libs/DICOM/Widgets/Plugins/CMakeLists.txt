@@ -16,11 +16,20 @@ set(PLUGIN_SRCS
   ctkDICOMJobListWidgetPlugin.cpp
   ctkDICOMJobListWidgetPlugin.h
 
+  ctkDICOMPatientViewPlugin.cpp
+  ctkDICOMPatientViewPlugin.h
+
   ctkDICOMQueryRetrieveWidgetPlugin.cpp
   ctkDICOMQueryRetrieveWidgetPlugin.h
 
   ctkDICOMServerNodeWidget2Plugin.cpp
   ctkDICOMServerNodeWidget2Plugin.h
+
+  ctkDICOMSeriesTableViewPlugin.cpp
+  ctkDICOMSeriesTableViewPlugin.h
+
+  ctkDICOMStudyListViewPlugin.cpp
+  ctkDICOMStudyListViewPlugin.h
 
   ctkDICOMTableManagerPlugin.cpp
   ctkDICOMTableManagerPlugin.h
@@ -28,6 +37,20 @@ set(PLUGIN_SRCS
   ctkDICOMTableViewPlugin.h
 
   ctkDICOMVisualBrowserWidgetPlugin.cpp
+  ctkDICOMVisualBrowserWidgetPlugin.h
+  )
+
+# Headers that should run through moc
+set(PLUGIN_MOC_SRCS
+  ctkDICOMWidgetsPlugins.h
+  ctkDICOMJobListWidgetPlugin.h
+  ctkDICOMPatientViewPlugin.h
+  ctkDICOMQueryRetrieveWidgetPlugin.h
+  ctkDICOMServerNodeWidget2Plugin.h
+  ctkDICOMSeriesTableViewPlugin.h
+  ctkDICOMStudyListViewPlugin.h
+  ctkDICOMTableManagerPlugin.h
+  ctkDICOMTableViewPlugin.h
   ctkDICOMVisualBrowserWidgetPlugin.h
   )
 

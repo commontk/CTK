@@ -15,13 +15,20 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMJobTest1.cpp
   ctkDICOMJobResponseSetTest1.cpp
   ctkDICOMModelTest1.cpp
+  ctkDICOMPatientFilterProxyModelTest1.cpp
+  ctkDICOMPatientModelTest1.cpp
   ctkDICOMPersonNameTest1.cpp
   ctkDICOMQueryTest1.cpp
   ctkDICOMQueryTest2.cpp
   ctkDICOMRetrieveTest1.cpp
   ctkDICOMRetrieveTest2.cpp
   ctkDICOMSchedulerTest1.cpp
+  ctkDICOMSeriesFilterProxyModelTest1.cpp
+  ctkDICOMSeriesModelTest1.cpp
   ctkDICOMServerTest1.cpp
+  ctkDICOMStudyFilterProxyModelTest1.cpp
+  ctkDICOMStudyMergedFilterProxyModelTest1.cpp
+  ctkDICOMStudyModelTest1.cpp
   ctkDICOMTesterTest1.cpp
   ctkDICOMTesterTest2.cpp
   )
@@ -120,3 +127,45 @@ SIMPLE_TEST( ctkDICOMTesterTest2
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
   )
 set_property(TEST "ctkDICOMTesterTest2" PROPERTY RESOURCE_LOCK "dcmqrscp")
+
+# ctkDICOMPatientModel
+SIMPLE_TEST(ctkDICOMPatientModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMPatientModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMPatientFilterProxyModel
+SIMPLE_TEST(ctkDICOMPatientFilterProxyModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMPatientFilterProxyModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMStudyModel
+SIMPLE_TEST(ctkDICOMStudyModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMStudyModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMStudyFilterProxyModel
+SIMPLE_TEST(ctkDICOMStudyFilterProxyModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMStudyFilterProxyModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMStudyMergedFilterProxyModel
+SIMPLE_TEST(ctkDICOMStudyMergedFilterProxyModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMStudyMergedFilterProxyModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMSeriesModel
+SIMPLE_TEST(ctkDICOMSeriesModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMSeriesModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )
+
+# ctkDICOMSeriesFilterProxyModel
+SIMPLE_TEST(ctkDICOMSeriesFilterProxyModelTest1
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMSeriesFilterProxyModelTest1-dicom.db
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
+  )

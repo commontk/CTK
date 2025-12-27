@@ -177,7 +177,7 @@ int ctkDICOMDatabaseTest6( int argc, char * argv [] )
     CHECK_INT(studyUIDs.count(), 0);
   }
   {
-    QSignalSpy spyPatient(&database, SIGNAL(patientRemoved(QString)));
+    QSignalSpy spyPatient(&database, SIGNAL(patientRemoved(QString, QString)));
     database.removePatient(patientUID);
     CHECK_INT(spyPatient.count(), 1);
     CHECK_QSTRING(spyPatient.at(0).value(0).toString(), patientUID);
