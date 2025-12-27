@@ -166,6 +166,10 @@ int ctkRangeWidgetPrivate::synchronizedSpinBoxWidth()const
 void ctkRangeWidgetPrivate::synchronizeSiblingSpinBox(int width)
 {
   Q_Q(const ctkRangeWidget);
+  if (!q->parent())
+  {
+    return;
+  }
   QList<ctkRangeWidget*> siblings =
     q->parent()->findChildren<ctkRangeWidget*>();
   foreach(ctkRangeWidget* sibling, siblings)
