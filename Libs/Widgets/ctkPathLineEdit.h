@@ -65,7 +65,7 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY(QString label READ label WRITE setLabel)
 
   Q_PROPERTY(Filters filters READ filters WRITE setFilters)
-  Q_FLAGS(Filters)
+  Q_FLAGS(Filter Filters)
 
   Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath USER true)
 
@@ -140,6 +140,7 @@ public:
                 NoDotDot      = 0x4000,
                 NoFilter = -1
   };
+  Q_ENUM(Filter)
   Q_DECLARE_FLAGS(Filters, Filter)
 
 #ifndef USE_QFILEDIALOG_OPTIONS
@@ -154,6 +155,7 @@ public:
     ReadOnly              = 0x00000020,
     HideNameFilterDetails = 0x00000040
   };
+  Q_ENUM(Option)
   Q_DECLARE_FLAGS(Options, Option)
 #endif
 
