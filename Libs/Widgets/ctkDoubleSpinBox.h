@@ -45,7 +45,6 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 {
   Q_OBJECT
-  Q_FLAGS(DecimalsOption DecimalsOptions)
 
   Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
   Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
@@ -152,6 +151,7 @@ public:
     /// \sa decimals
     DecimalPointAlwaysVisible = 0x080
   };
+  Q_ENUM(DecimalsOption)
   Q_DECLARE_FLAGS(DecimalsOptions, DecimalsOption)
 
   enum SizeHintPolicy

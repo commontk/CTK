@@ -36,7 +36,6 @@ class ctkErrorLogTerminalOutputPrivate;
 class CTK_CORE_EXPORT ctkErrorLogTerminalOutput : public QObject
 {
   Q_OBJECT
-  Q_FLAGS(TerminalOutputs)
 
 public:
   typedef QObject Superclass;
@@ -50,6 +49,7 @@ public:
     StandardOutput  = 0x2,
     All             = StandardError | StandardOutput
   };
+  Q_ENUM(TerminalOutput)
   Q_DECLARE_FLAGS(TerminalOutputs, TerminalOutput)
 
   bool enabled()const;

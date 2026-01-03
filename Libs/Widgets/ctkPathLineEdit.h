@@ -65,7 +65,6 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY(QString label READ label WRITE setLabel)
 
   Q_PROPERTY(Filters filters READ filters WRITE setFilters)
-  Q_FLAGS(Filter Filters)
 
   Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath USER true)
 
@@ -76,7 +75,6 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
   Q_PROPERTY(Options options READ options WRITE setOptions)
-  Q_FLAGS(Option Options)
 #endif
 
   /// This property controls the key used to search the settings for recorded
