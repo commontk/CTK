@@ -81,7 +81,6 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
   Q_PROPERTY(Options options READ options WRITE setOptions)
-  Q_FLAGS(Option Options);
 #endif
 
 public:
@@ -97,6 +96,7 @@ public:
     ReadOnly              = 0x00000020,
     HideNameFilterDetails = 0x00000040
   };
+  Q_ENUM(Option)
   Q_DECLARE_FLAGS(Options, Option)
 #endif
 

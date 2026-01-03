@@ -43,7 +43,6 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
-  Q_FLAGS(SynchronizeSiblings)
 
   /// This property holds the precision of the spin box, in decimals.
   /// 2 by default.
@@ -87,6 +86,7 @@ public:
     SynchronizeWidth = 0x001,
     SynchronizeDecimals = 0x002,
   };
+  Q_ENUM(SynchronizeSibling)
   Q_DECLARE_FLAGS(SynchronizeSiblings, SynchronizeSibling)
 
   /// Superclass typedef

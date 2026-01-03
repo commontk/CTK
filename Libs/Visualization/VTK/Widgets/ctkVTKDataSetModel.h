@@ -51,7 +51,6 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetModel
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_FLAGS(AttributeType AttributeTypes)
 
   /// This property holds the type of attribute that should be listed in the model.
   /// By default all attributes are considered.
@@ -84,6 +83,7 @@ public:
     EdgeFlagAttribute = 0x100,
     AllAttribute = NoAttribute | ScalarsAttribute | VectorsAttribute | NormalsAttribute | TCoordsAttribute | TensorsAttribute | GlobalIDsAttribute | PedigreeIDsAttribute | EdgeFlagAttribute
   };
+  Q_ENUM(AttributeType)
   Q_DECLARE_FLAGS(AttributeTypes, AttributeType)
 
   virtual void setDataSet(vtkDataSet* dataSet);
