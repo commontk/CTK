@@ -399,8 +399,8 @@ void vtkLightBoxRendererManager::vtkInternal
   {
     item->ImageActor->SetVisibility(false);
     item->HighlightedBoxActor->SetVisibility(false);
-    item->Renderer->AddActor2D(item->ImageActor);
-    item->Renderer->AddActor2D(item->HighlightedBoxActor);
+    item->Renderer->AddViewProp(item->ImageActor);
+    item->Renderer->AddViewProp(item->HighlightedBoxActor);
   }
   item->ImageActor->SetVisibility(this->ImageDataConnection != NULL);
 }
