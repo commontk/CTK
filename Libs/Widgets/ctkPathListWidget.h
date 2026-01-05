@@ -66,6 +66,8 @@ class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
   /// The icon to be shown for a directory entry.
   Q_PROPERTY(QIcon directoryIcon READ directoryIcon WRITE setDirectoryIcon RESET unsetDirectoryIcon)
 
+  Q_FLAGS(PathOption PathOptions)
+
 public:
 
   enum
@@ -88,7 +90,6 @@ public:
     /// The path must be executable by the current user.
     Executable = 0x08
   };
-  Q_ENUM(PathOption)
   Q_DECLARE_FLAGS(PathOptions, PathOption)
 
   enum Mode

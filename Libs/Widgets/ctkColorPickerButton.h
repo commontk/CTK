@@ -38,6 +38,7 @@ class ctkColorPickerButtonPrivate;
 class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
+  Q_FLAGS(ColorDialogOption ColorDialogOptions)
 
   /// This property controls the name of the color.
   /// Black (0,0,0) by default.
@@ -62,7 +63,6 @@ public:
     DontUseNativeDialog = 0x00000004,
     UseCTKColorDialog   = 0x0000000C
   };
-  Q_ENUM(ColorDialogOption)
   Q_DECLARE_FLAGS(ColorDialogOptions, ColorDialogOption)
 
   /// By default, the color is black
