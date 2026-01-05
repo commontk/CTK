@@ -79,10 +79,12 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(int cursorPosition READ cursorPosition)
   Q_PROPERTY(int cursorColumn READ cursorColumn)
   Q_PROPERTY(int cursorLine READ cursorLine)
+  Q_FLAGS(EditorHint EditorHints)
   Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
   Q_ENUM(Qt::ScrollBarPolicy)
   Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy)
   Q_PROPERTY(QList<QKeySequence> completerShortcuts READ completerShortcuts WRITE setCompleterShortcuts)
+  Q_FLAGS(RunFileOption RunFileOptions)
   Q_PROPERTY(RunFileOptions runFileOptions READ runFileOptions WRITE setRunFileOptions)
   Q_PROPERTY(int maxVisibleCompleterItems READ maxVisibleCompleterItems WRITE setMaxVisibleCompleterItems)
   Q_PROPERTY(QString commandBuffer READ commandBuffer WRITE setCommandBuffer)
@@ -97,7 +99,6 @@ public:
     RemoveTrailingSpaces = 0x02, /*!< Remove trailing spaces of the entered command */
     SplitCopiedTextByLine = 0x4  /*!< Copied text is split by lines and each one is executed (expected the last one) */
   };
-  Q_ENUM(EditorHint)
   Q_DECLARE_FLAGS(EditorHints, EditorHint)
 
   enum RunFileOption
@@ -106,7 +107,6 @@ public:
     RunFileButton = 0x01,   /*!< Show a button at the bottom of the console to run a file */
     RunFileShortcut = 0x02, /*!< Add the shortcut CTRL+G to run a file */
   };
-  Q_ENUM(RunFileOption)
   Q_DECLARE_FLAGS(RunFileOptions, RunFileOption)
 
   ctkConsole(QWidget* parentObject = 0);

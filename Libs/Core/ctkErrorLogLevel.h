@@ -32,6 +32,7 @@
 class CTK_CORE_EXPORT ctkErrorLogLevel : public QObject
 {
   Q_OBJECT
+  Q_FLAGS(LogLevel)
 public:
   typedef QObject Superclass;
   ctkErrorLogLevel(QObject* parent = 0);
@@ -49,7 +50,6 @@ public:
     Fatal    = 0x100,
     None     = 0x200,
   };
-  Q_ENUM(LogLevel)
   Q_DECLARE_FLAGS(LogLevels, LogLevel)
 
   QString operator ()(LogLevel logLevel);

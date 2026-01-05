@@ -40,6 +40,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKPropertyWidget
   QVTK_OBJECT;
   typedef QWidget Superclass;
 
+  Q_FLAGS(GroupsState)
+
   /// Show/Hide, expand/collapse groups in the widget.
   /// Groups are visible by default and Color is the only expanded group.
   /// \sa groupsState(), setGroupsState()
@@ -63,7 +65,6 @@ public:
     AllVisible            = RepresentationVisible | ColorVisible | LightingVisible | MaterialVisible,
     AllCollapsed          = RepresentationCollapsed | ColorCollapsed | LightingCollapsed | MaterialCollapsed
   };
-  Q_ENUM(GroupState)
   Q_DECLARE_FLAGS(GroupsState, GroupState)
 
   /// Construct a ctkVTKPropertyWidget with a default vtkProperty.

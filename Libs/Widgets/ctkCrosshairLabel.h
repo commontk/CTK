@@ -43,6 +43,7 @@ class ctkCrosshairLabelPrivate;
 class CTK_WIDGETS_EXPORT ctkCrosshairLabel : public QLabel
 {
   Q_OBJECT
+  Q_FLAGS(CrosshairType CrosshairTypes)
   Q_PROPERTY(bool showCrosshair READ showCrosshair WRITE setShowCrosshair)
   // QT designer does not yet support QPen properties, so we provide the
   // temporary properties crosshairColor and lineWidth.
@@ -65,7 +66,6 @@ public:
     SimpleCrosshair = 0,
     BullsEyeCrosshair
   };
-  Q_ENUM(CrosshairType)
   Q_DECLARE_FLAGS(CrosshairTypes, CrosshairType)
 
   /// Set/get whether or not to draw the crosshair.  Default True.
