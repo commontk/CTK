@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -31,10 +31,9 @@
 
 // ctkDICOMCore includes
 #include <ctkDICOMModel.h>
+#include <ctkDICOMPatientView.h>
 
 // ctkDICOMWidgets includes
-#include "ctkDICOMPatientItemWidget.h"
-#include "ctkDICOMStudyItemWidget.h"
 #include "ctkDICOMWidgetsExport.h"
 
 // DCMTK includes
@@ -44,6 +43,8 @@ class ctkCollapsibleGroupBox;
 class ctkDICOMVisualBrowserWidgetPrivate;
 class ctkDICOMDatabase;
 class ctkDICOMJobListWidget;
+class ctkDICOMPatientModel;
+
 class ctkDICOMScheduler;
 class ctkDICOMServer;
 class ctkDICOMServerNodeWidget2;
@@ -74,18 +75,48 @@ class ctkFileDialog;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
 {
   Q_OBJECT;
+  Q_ENUMS(ImportDirectoryMode DateType ThumbnailSizePresetOption)
+
+public:
+  /// Date filtering options
+  enum DateType
+  {
+    Any = 0,
+    Today,
+    Yesterday,
+    LastWeek,
+    LastMonth,
+    LastYear,
+    CustomRange
+  };
+
+  /// Thumbnail size options
+  enum ThumbnailSizePresetOption
+  {
+    None = 0,
+    Small,
+    Medium,
+    Large
+  };
+
+  enum ImportDirectoryMode
+  {
+    ImportDirectoryCopy = 0,
+    ImportDirectoryAddLink
+  };
+
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
   Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
   Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID);
   Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
   Q_PROPERTY(QString filteringStudyDescription READ filteringStudyDescription WRITE setFilteringStudyDescription);
-  Q_PROPERTY(ctkDICOMPatientItemWidget::DateType filteringDate READ filteringDate WRITE setFilteringDate);
+  Q_PROPERTY(DateType filteringDate READ filteringDate WRITE setFilteringDate);
   Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
   Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
   Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
-  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
+  Q_PROPERTY(ThumbnailSizePresetOption thumbnailSizePreset READ thumbnailSizePreset WRITE setThumbnailSizePreset);
+  Q_PROPERTY(ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
   Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
   Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
@@ -194,16 +225,10 @@ public:
 
   ///@{
   /// Available values:
-  /// Any,
-  /// Today,
-  /// Yesterday,
-  /// LastWeek,
-  /// LastMonth,
-  /// LastYear.
+  /// Any, Today, Yesterday, LastWeek, LastMonth, LastYear.
   /// Any by default.
-  /// \sa ctkDICOMPatientItemWidget::DateType
-  void setFilteringDate(const ctkDICOMPatientItemWidget::DateType& filteringDate);
-  ctkDICOMPatientItemWidget::DateType filteringDate() const;
+  void setFilteringDate(DateType filteringDate);
+  DateType filteringDate() const;
   ///@]
 
   ///@{
@@ -213,7 +238,7 @@ public:
   ///@}
 
   ///@{
-  /// ["Any", "CR", "CT", "MR", "NM", "US", "PT", "XA"] by default
+  /// ["Any", "CR", "CT", "MR", "NM", "US", "PT", "SEG", "XA"] by default
   void setFilteringModalities(const QStringList& filteringModalities);
   QStringList filteringModalities() const;
   ///@}
@@ -229,10 +254,10 @@ public:
   ///@}
 
   ///@{
-  /// Set the thumbnail size: small, medium, large
-  /// medium by default
-  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
-  ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
+  /// Set the thumbnail size preset: Small, Medium, Large
+  /// Small by default
+  void setThumbnailSizePreset(ThumbnailSizePresetOption thumbnailSizePreset);
+  ThumbnailSizePresetOption thumbnailSizePreset() const;
   ///@}
 
   ///@{
@@ -249,17 +274,11 @@ public:
   bool isDeleteActionVisible() const;
   ///@}
 
-  ///@{
-  /// Add/Remove Patient item widget
-  Q_INVOKABLE int addPatientItemWidget(const QString& patientItem);
-  Q_INVOKABLE void removePatientItemWidget(const QString& patientItem);
-  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientItem(const QString& patientItem);
-  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientID(const QString& patientID);
-  Q_INVOKABLE ctkDICOMPatientItemWidget* patientItemWidgetByPatientName(const QString& patientName);
-  ///@}
+  /// Get Patient View (model/view/delegate architecture)
+  Q_INVOKABLE ctkDICOMPatientView* patientView() const;
 
-  /// Get Patients tab widget
-  Q_INVOKABLE QTabWidget* patientsTabWidget();
+  /// Get Patient Model
+  Q_INVOKABLE ctkDICOMPatientModel* patientModel() const;
 
   ///@{
   /// Accessors to status of last directory import operation
@@ -271,13 +290,6 @@ public:
 
   /// Set counters of imported patients, studies, series, instances to zero.
   Q_INVOKABLE void resetItemsAddedDuringImportCounters();
-
-  enum ImportDirectoryMode
-  {
-    ImportDirectoryCopy = 0,
-    ImportDirectoryAddLink
-  };
-  Q_ENUM(ImportDirectoryMode)
 
   /// \brief Get value of ImportDirectoryMode settings.
   ///
@@ -298,6 +310,11 @@ public Q_SLOTS:
   /// \sa importDirectoryMode()
   void setImportDirectoryMode(ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
 
+  /// \brief Set database directory
+  ///
+  /// Updates application settings if databaseDirectorySettingsKey is set.
+  ///
+  /// \sa databaseDirectory(), setDatabaseDirectorySettingsKey(const QString&)
   void setDatabaseDirectory(const QString& directory);
 
   /// \brief Pop-up file dialog allowing to select and import one or multiple
@@ -365,14 +382,12 @@ public Q_SLOTS:
   void onFilteringSeriesDescriptionChanged();
   void onFilteringModalityCheckableComboBoxChanged();
   void onFilteringDateComboBoxChanged(int);
+  void onFilteringStartDateChanged(const QDate& date);
+  void onFilteringEndDateChanged(const QDate& date);
   ///@}
 
   /// start query/retrieve and show patients
   void onQueryPatients();
-  /// toggle query/retrieve option on search button
-  void onQueryRetrieveOptionToggled(bool);
-  /// show patients
-  void onShowPatients();
 
   ///@{
   /// update GUI after query/retrieve operations
@@ -391,19 +406,17 @@ public Q_SLOTS:
   void onClose();
   void onLoad();
   void onWarningPushButtonClicked();
+  void openServerSettingsSection();
   ///@}
-
-  /// user change patient selection
-  void onPatientItemChanged(int);
-
-  /// user clicked on patient tab item
-  void onOperationStatusTabBarItemClicked(int);
 
   /// server settings have been changed
   void onServersSettingsChanged();
 
   /// user selected a job in the job list widget
   void patientSelectedOnJobList(const QString&, const QString&, const QString&);
+
+  // Slot to handle display mode changes in PatientView
+  void onPatientViewDisplayModeChanged(ctkDICOMPatientView::DisplayMode mode);
 
 Q_SIGNALS:
   /// Emitted when directory is changed
@@ -418,9 +431,13 @@ Q_SIGNALS:
 protected:
   QScopedPointer<ctkDICOMVisualBrowserWidgetPrivate> d_ptr;
 
-  /// Reimplemented for internal reasons
-  virtual void closeEvent(QCloseEvent*);
-  virtual void keyPressEvent(QKeyEvent* event);
+  /// Custom close event to stop all operations before closing
+  void closeEvent(QCloseEvent*) override;
+  /// Custom wheel event to allow zooming in/out the thumbnails
+  void wheelEvent(QWheelEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  /// Custom resize event to adjust filter layout orientation
+  void resizeEvent(QResizeEvent* event) override;
 
   /// Confirm with the user that they wish to delete the selected uids.
   /// Add information about the selected UIDs to a message box, checks
@@ -430,18 +447,8 @@ protected:
   /// Remembers if the user doesn't want to show the confirmation again.
   bool confirmDeleteSelectedUIDs(const QStringList& uids);
 
-  /// Get file list for right click selection
-  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidget);
   /// Show window that displays DICOM fields of all selected items
   void showMetadata(const QStringList& fileList);
-  /// Force redownload of selected series widgets
-  void forceSeriesRetrieve(const QList<QWidget*>& selectedWidgets = QList<QWidget*>());
-  /// Remove items (both database and widget)
-  void removeSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidgets = QList<QWidget*>());
-  /// Export the items associated with the selected widget
-  void exportSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidgets);
-  /// Export the series associated with the selected UIDs
-  void exportSeries(const QString& dirPath, const QStringList& uids);
 
 protected Q_SLOTS:
   ///@{
@@ -455,16 +462,39 @@ protected Q_SLOTS:
   void onImportDirectoryComboBoxCurrentIndexChanged(int index);
   ///@}
 
-  /// Called when a right mouse click is made on a tab of the patient tab widget
-  void showPatientContextMenu(const QPoint& point);
+  /// Called when context menu is requested for patient(s)
+  void showPatientContextMenu(const QPoint& globalPos, const QStringList& selectedPatientUIDs);
   /// Called when a right mouse click is made in the studies table
-  void showStudyContextMenu(const QPoint& point);
-  /// Called when a right mouse click is made in the studies table
-  void showSeriesContextMenu(const QPoint& point);
-  /// Called when clicking patients tab menu
-  void onPatientsTabMenuToolButtonClicked();
-  /// Called when patient widget update is finished
-  void onPatientUpdateGUIFinished();
+  void showStudyContextMenu(const QPoint& globalPos, const QStringList& selectedStudyInstanceUIDs);
+  /// Called when a right mouse click is made in the series table
+  void showSeriesContextMenu(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs);
+
+  /// Called when a series is double-clicked
+  void onSeriesDoubleClicked(const QString& seriesInstanceUID);
+
+  /// Helper methods for patient operations
+  QStringList studiesForPatients(const QStringList& patientUIDs);
+  void onLoadPatients(const QStringList& patientUIDs);
+  void showMetadataForPatients(const QStringList& patientUIDs);
+  void removePatients(const QStringList& patientUIDs);
+  void exportPatients(const QStringList& patientUIDs);
+
+  /// Helper methods for study operations
+  QStringList seriesForStudies(const QStringList& studyInstanceUIDs);
+  void onLoadStudies(const QStringList& studyInstanceUIDs);
+  void showMetadataForStudies(const QStringList& studyInstanceUIDs);
+  void forceRetrieveStudies(const QStringList& studyInstanceUIDs);
+  void removeStudies(const QStringList& studyInstanceUIDs);
+  void exportStudies(const QStringList& studyInstanceUIDs);
+
+  /// Helper methods for series operations
+  QStringList filesForSeries(const QStringList& seriesInstanceUIDs);
+  void onLoadSeries(const QStringList& seriesInstanceUIDs);
+  void showMetadataForSeries(const QStringList& seriesInstanceUIDs);
+  void forceRetrieveSeries(const QStringList& seriesInstanceUIDs);
+  void removeSeries(const QStringList& seriesInstanceUIDs);
+  void exportSeries(const QStringList& seriesInstanceUIDs);
+  void exportSeriesToDirectory(const QString& dirPath, const QStringList& uids);
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMVisualBrowserWidget);

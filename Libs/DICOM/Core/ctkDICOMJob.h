@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -170,21 +170,21 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
     this->ConnectionName = responseSet.connectionName();
     this->NumberOfDataSets = responseSet.datasets().count();
     if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
-      {
-        this->QueriedPatientIDs = responseSet.datasets().keys();
-      }
+    {
+      this->QueriedPatientIDs = responseSet.datasets().keys();
+    }
     else if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
-      {
-        this->QueriedStudyInstanceUIDs = responseSet.datasets().keys();
-      }
+    {
+      this->QueriedStudyInstanceUIDs = responseSet.datasets().keys();
+    }
     else if (this->JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
-      {
-        this->QueriedSeriesInstanceUIDs = responseSet.datasets().keys();
-      }
+    {
+      this->QueriedSeriesInstanceUIDs = responseSet.datasets().keys();
+    }
     else if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
-      {
-        this->QueriedSOPInstanceUIDs = responseSet.datasets().keys();
-      }
+    {
+      this->QueriedSOPInstanceUIDs = responseSet.datasets().keys();
+    }
   }
   virtual ~ctkDICOMJobDetail() = default;
 

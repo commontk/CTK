@@ -81,6 +81,7 @@ int main(int argc, char** argv)
   QWidget mainWidget;
   mainWidget.setObjectName(QString::fromUtf8("MainWidget"));
   mainWidget.setWindowTitle(QString::fromUtf8("DICOM Visual Browser"));
+  mainWidget.resize(1600, 1200);
 
   QVBoxLayout mainLayout;
   mainLayout.setObjectName(QString::fromUtf8("mainLayout"));
@@ -107,7 +108,6 @@ int main(int argc, char** argv)
   ctkDICOMVisualBrowserWidget DICOMVisualBrowser;
   DICOMVisualBrowser.setObjectName(QString::fromUtf8("DICOMVisualBrowser"));
   DICOMVisualBrowser.setDatabaseDirectorySettingsKey("DatabaseDirectory");
-  DICOMVisualBrowser.setMinimumSize(QSize(1000, 1000));
   DICOMVisualBrowser.setDatabaseDirectory(databaseDirectory);
 
   QObject::connect(&directoryButton, SIGNAL(directoryChanged(const QString&)),
@@ -116,7 +116,6 @@ int main(int argc, char** argv)
   mainLayout.addWidget(&DICOMVisualBrowser);
   mainWidget.setLayout(&mainLayout);
   mainWidget.show();
-  DICOMVisualBrowser.onShowPatients();
 
   return app.exec();
 }

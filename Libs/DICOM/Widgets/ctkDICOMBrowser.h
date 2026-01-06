@@ -154,6 +154,9 @@ public:
   void setSendActionVisible(bool visible);
   bool isSendActionVisible() const;
 
+  /// Return selected items in a browser table.
+  Q_INVOKABLE QStringList selectedItems(ctkDICOMModel::IndexType level);
+
 public Q_SLOTS:
 
   /// \brief Set value of ImportDirectoryMode settings.
