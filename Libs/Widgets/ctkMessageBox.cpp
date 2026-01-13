@@ -279,8 +279,6 @@ void ctkMessageBox::setDontShowAgain(bool dontShow)
 //-----------------------------------------------------------------------------
 void ctkMessageBox::done(int resultCode)
 {
-  Q_D(ctkMessageBox);
-
 #if (QT_VERSION < QT_VERSION_CHECK(5,12,0))
   // QMessageBox::done(int) is not called after Qt-5.12
   // (see https://bugreports.qt.io/browse/QTBUG-74699),
@@ -296,10 +294,11 @@ void ctkMessageBox::done(int resultCode)
 void ctkMessageBox::onFinished(int resultCode)
 {
   Q_D(ctkMessageBox);
+  ButtonRole buttonRole = this->buttonRole(this->clickedButton());
   // Don't save if the button is not an accepting button
-  if (d->DontShowAgainButtonRoles.contains(this->buttonRole( this->clickedButton())))
+  if (d->DontShowAgainButtonRoles.contains(buttonRole))
   {
-    d->writeSettings(resultCode);
+    d->writeSettings(buttonRole);
   }
 }
 
@@ -313,10 +312,11 @@ void ctkMessageBox::setVisible(bool visible)
     QAbstractButton* autoAcceptButton = d->button(dontShowAgainButtonOrRole);
     if (autoAcceptButton)
     {
-      // Don't call click now, it would destroy the message box. The calling
-      // function might expect the message box to be still valid after
-      // setVisible() return.
-      QTimer::singleShot(0, autoAcceptButton, SLOT(click()));
+      // Show the dialog first, then auto-accept it after the event loop processes
+      this->Superclass::setVisible(visible);
+      QTimer::singleShot(0, this, [autoAcceptButton]() {
+        autoAcceptButton->click();
+      });
       return;
     }
   }
