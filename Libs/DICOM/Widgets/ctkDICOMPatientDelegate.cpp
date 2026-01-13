@@ -148,7 +148,7 @@ QSize ctkDICOMPatientDelegate::sizeHint(const QStyleOptionViewItem& option, cons
         if (index.row() == lastRow)
         {
           int viewportHeight = patientView->viewport()->height();
-          int bottomPadding = viewportHeight * 0.8;
+          int bottomPadding = viewportHeight;
           if (bottomPadding > 0)
           {
             size.setHeight(size.height() + bottomPadding);
