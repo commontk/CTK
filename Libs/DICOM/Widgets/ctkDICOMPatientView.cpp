@@ -310,13 +310,6 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
       this->updateSelectedPatientsCache();
       this->PatientsCacheNeedsUpdate = false;
 
-      // Use cached study filter proxy models if available
-      if (this->CachedStudyFilterProxyModels.isEmpty())
-      {
-        this->StudyListView->hide();
-        return;
-      }
-
       // Set the model only if it needs to change (avoid unnecessary rebuilds)
       if (this->CachedStudyFilterProxyModels.count() == 1)
       {
@@ -329,7 +322,7 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
           this->StudyModelsNeedRefresh = true;
         }
       }
-      else
+      else if (this->CachedStudyFilterProxyModels.count() > 1)
       {
         // Only update merged model if the source models have changed
         QList<ctkDICOMStudyFilterProxyModel*> cachedProxyModels = this->CachedStudyFilterProxyModels.values();
@@ -373,6 +366,13 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
           this->StudyModelsNeedRefresh = true;
         }
       }
+    }
+
+    // Check if cached study filter proxy models is empty - if so, hide study list view
+    if (this->CachedStudyFilterProxyModels.isEmpty())
+    {
+      this->StudyListView->hide();
+      return;
     }
 
     // Position study list below the splitter, spanning full width
@@ -1086,6 +1086,11 @@ void ctkDICOMPatientView::setDisplayMode(DisplayMode mode)
 
   // Clear cache when switching modes
   d->CachedStudyFilterProxyModels.clear();
+  // Mark cache as needing update for ListMode
+  if (mode == ctkDICOMPatientView::ListMode)
+  {
+    d->PatientsCacheNeedsUpdate = true;
+  }
 
   // Update button icon and tooltip based on mode
   if (d->DisplayModeButton)
