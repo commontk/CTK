@@ -191,6 +191,7 @@ public:
   bool IsGUIHorizontal;
   bool IsLoading;
   QString SelectedPatientUID;
+  QSet<QString> PendingStudyOpenPatientIDs; // Track patients with pending study opens to prevent duplicates
 
   QProgressDialog* UpdateSchemaProgress;
   QProgressDialog* ExportProgress;
@@ -2553,23 +2554,33 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
     {
-      // NOTE: if running query jobs, wait to open the first N studies of the patient.
+      // NOTE: if no more query jobs running, open the first N studies of the patient
       if (d->Scheduler->getJobsByDICOMUIDs({td.PatientID}).count() == 0)
       {
-        // Wait for the proxy model to finish sorting before opening studies
-        // The proxy model sorts asynchronously (due to dynamic sort filter)
-        // Since the studies are already in the model from QueryStudies, we just need
-        // to wait for the proxy model to complete its sorting after the data changes
+        // Check if we've already scheduled study opening for this patient
+        if (d->PendingStudyOpenPatientIDs.contains(td.PatientID))
+        {
+          continue;
+        }
+
+        // Mark this patient as having a pending study open
+        d->PendingStudyOpenPatientIDs.insert(td.PatientID);
+
+        // Wait for proxy model to finish sorting by deferring to next event loop iteration
+        // Use singleShot with 0 delay to ensure all model updates and sorting complete
         ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
-
-        // Use a lambda to capture the number of studies to open
         int numberOfStudies = this->numberOfOpenedStudiesPerPatient();
+        QString patientID = td.PatientID;
 
-        // Use QTimer::singleShot with a small delay to ensure the proxy model has finished sorting
-        // The proxy model processes data changes in the event loop, so we defer our action
-        // to the next event loop iteration
-        QTimer::singleShot(100, studyListView, [studyListView, numberOfStudies]() {
-          studyListView->onNumberOfOpenedStudiesChanged(numberOfStudies);
+        // Use singleShot with context object to ensure proper cleanup
+        QTimer::singleShot(0, this, [this, studyListView, numberOfStudies, patientID]() {
+          Q_D(ctkDICOMVisualBrowserWidget);
+          if (studyListView)
+          {
+            studyListView->onNumberOfOpenedStudiesChanged(numberOfStudies);
+          }
+          // Remove from pending set after execution
+          d->PendingStudyOpenPatientIDs.remove(patientID);
         });
       }
     }
