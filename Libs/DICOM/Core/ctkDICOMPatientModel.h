@@ -31,11 +31,11 @@
 
 // CTK includes
 #include "ctkDICOMCoreExport.h"
+#include "ctkDICOMStudyModel.h"
+#include "ctkDICOMStudyFilterProxyModel.h"
 
 class ctkDICOMDatabase;
 class ctkDICOMScheduler;
-class ctkDICOMStudyModel;
-class ctkDICOMStudyFilterProxyModel;
 class ctkDICOMPatientModelPrivate;
 
 /// \ingroup DICOM_Core

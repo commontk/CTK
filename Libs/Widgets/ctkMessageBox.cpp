@@ -294,6 +294,8 @@ void ctkMessageBox::done(int resultCode)
 void ctkMessageBox::onFinished(int resultCode)
 {
   Q_D(ctkMessageBox);
+  Q_UNUSED(resultCode);
+
   ButtonRole buttonRole = this->buttonRole(this->clickedButton());
   // Don't save if the button is not an accepting button
   if (d->DontShowAgainButtonRoles.contains(buttonRole))

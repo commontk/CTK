@@ -30,9 +30,9 @@
 
 // CTK includes
 #include "ctkDICOMWidgetsExport.h"
+#include "ctkDICOMStudyModel.h"
 
 class ctkDICOMStudyListViewPrivate;
-class ctkDICOMStudyModel;
 class ctkDICOMStudyDelegate;
 class ctkDICOMSeriesTableView;
 class ctkDICOMSeriesDelegate;
