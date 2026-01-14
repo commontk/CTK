@@ -9,9 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1066</width>
-    <height>1192</height>
+    <width>1057</width>
+    <height>1135</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Select data to load</string>
@@ -72,15 +84,12 @@
      <item>
       <widget class="ctkCollapsibleGroupBox" name="SearchPatientsCollapsibleGroupBox">
        <property name="title">
-        <string>Patients Search   </string>
+        <string>Filtering</string>
        </property>
        <property name="collapsed">
         <bool>false</bool>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
-        <property name="spacing">
-         <number>2</number>
-        </property>
+       <layout class="QGridLayout" name="gridLayout_2">
         <property name="leftMargin">
          <number>2</number>
         </property>
@@ -93,539 +102,180 @@
         <property name="bottomMargin">
          <number>2</number>
         </property>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
-          <property name="spacing">
-           <number>3</number>
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="ctkSearchBox" name="FilteringPatientIDSearchBox">
+          <property name="toolTip">
+           <string>Filter by patient ID</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="placeholderText">
+           <string> MRN...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="ctkSearchBox" name="FilteringPatientNameSearchBox">
+          <property name="toolTip">
+           <string>Filter by patient name</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="placeholderText">
+           <string> Name...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="FilteringModalityLabel">
+          <property name="text">
+           <string>Modality</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="FilteringDateLabel">
+          <property name="text">
+           <string>Date</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="ctkSearchBox" name="FilteringStudyDescriptionSearchBox">
+          <property name="toolTip">
+           <string>Filter by study description</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="placeholderText">
+           <string> Study Description...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="ctkSearchBox" name="FilteringSeriesDescriptionSearchBox">
+          <property name="toolTip">
+           <string>Filter by series description</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="placeholderText">
+           <string> Series Description ...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="ctkCheckableComboBox" name="FilteringModalityCheckableComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Filter by modality</string>
+          </property>
+          <property name="currentText">
+           <string/>
+          </property>
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="modelColumn">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="ctkComboBox" name="FilteringDateComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Filter by date</string>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="patientSelectionLayout">
-            <property name="spacing">
-             <number>3</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringPatientIDLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>ID</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkSearchBox" name="FilteringPatientIDSearchBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by patient ID</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>5</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringPatientNameLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Name</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkSearchBox" name="FilteringPatientNameSearchBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by patient name</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>5</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringStudyDescriptionLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Study</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkSearchBox" name="FilteringStudyDescriptionSearchBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by study description</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>5</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringSeriesDescriptionLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Series</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkSearchBox" name="FilteringSeriesDescriptionSearchBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by series description</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>5</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringModalityLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>150</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Modality</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkCheckableComboBox" name="FilteringModalityCheckableComboBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>150</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by modality</string>
-                </property>
-                <property name="currentText">
-                 <string>Any</string>
-                </property>
-                <property name="currentIndex">
-                 <number>0</number>
-                </property>
-                <property name="sizeAdjustPolicy">
-                 <enum>QComboBox::AdjustToContents</enum>
-                </property>
-                <property name="frame">
-                 <bool>true</bool>
-                </property>
-                <property name="modelColumn">
-                 <number>0</number>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Any</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>CR</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>CT</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>MR</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>NM</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>US</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>PT</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>XA</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>5</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
-              <property name="spacing">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="FilteringDateLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>150</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Date</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="ctkComboBox" name="FilteringDateComboBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>150</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>150</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>Filter by date</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Any</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Today</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Yesterday</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Last week</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Last month</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Last year</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="ctkMenuButton" name="SearchMenuButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search the database. If servers are specified, the widget will also conduct queries and retrieve the data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="ctkDICOMWidget.qrc">
-                <normaloff>:/Icons/query.svg</normaloff>:/Icons/query.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="text">
+            <string>Any</string>
+           </property>
           </item>
-         </layout>
+          <item>
+           <property name="text">
+            <string>Today</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Yesterday</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Last week</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Last month</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Last year</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Custom...</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>5</width>
-         <height>5</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="ctkCollapsibleGroupBox" name="ActionsCollapsibleGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Actions</string>
        </property>
        <property name="collapsed">
         <bool>false</bool>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_11">
-        <property name="spacing">
-         <number>0</number>
-        </property>
+       <layout class="QGridLayout" name="gridLayout_3">
         <property name="leftMargin">
          <number>2</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="rightMargin">
          <number>2</number>
@@ -633,8 +283,51 @@
         <property name="bottomMargin">
          <number>2</number>
         </property>
-        <item>
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="0" column="0" rowspan="2">
+         <widget class="ctkPushButton" name="SearchPushButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>68</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>68</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Query and retrieve. If filters are set, a patient query will be sent to the DICOM servers.
+If no filters are set, a study query for the currently selected patient in the local database
+(or the first patient if none is selected) will be sent to the DICOM servers.</string>
+          </property>
+          <property name="text">
+           <string>Query </string>
+          </property>
+          <property name="icon">
+           <iconset resource="ctkDICOMWidget.qrc">
+            <normaloff>:/Icons/query.svg</normaloff>:/Icons/query.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
          <widget class="ctkPushButton" name="ClosePushButton">
+          <property name="minimumSize">
+           <size>
+            <width>1</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
            <string> Close</string>
           </property>
@@ -650,10 +343,16 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <widget class="ctkPushButton" name="ImportPushButton">
+          <property name="minimumSize">
+           <size>
+            <width>1</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
-           <string> Import</string>
+           <string> Import </string>
           </property>
           <property name="icon">
            <iconset resource="ctkDICOMWidget.qrc">
@@ -667,6 +366,9 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="ctkDynamicSpacer" name="ActionsDynamicSpacer"/>
+        </item>
        </layout>
       </widget>
      </item>
@@ -675,23 +377,16 @@
    <item>
     <widget class="ctkPushButton" name="WarningPushButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>70</height>
-      </size>
      </property>
      <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
      <property name="text">
-      <string>No filters have been set and no patients have been found in the local database.
-Please set at least one filter to query the servers</string>
+      <string/>
      </property>
      <property name="icon">
       <iconset resource="ctkDICOMWidget.qrc">
@@ -747,61 +442,13 @@ Please set at least one filter to query the servers</string>
      <property name="opaqueResize">
       <bool>true</bool>
      </property>
-     <widget class="QTabWidget" name="PatientsTabWidget">
+     <widget class="ctkDICOMPatientView" name="PatientView">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>2</verstretch>
        </sizepolicy>
       </property>
-      <property name="tabPosition">
-       <enum>QTabWidget::North</enum>
-      </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="elideMode">
-       <enum>Qt::ElideNone</enum>
-      </property>
-      <property name="usesScrollButtons">
-       <bool>true</bool>
-      </property>
-      <property name="tabsClosable">
-       <bool>false</bool>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
-      </property>
-      <property name="tabBarAutoHide">
-       <bool>false</bool>
-      </property>
-      <widget class="QWidget" name="Patient1">
-       <attribute name="icon">
-        <iconset resource="ctkDICOMWidget.qrc">
-         <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Patient 1</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="Patient2">
-       <attribute name="icon">
-        <iconset resource="ctkDICOMWidget.qrc">
-         <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Patient 2</string>
-       </attribute>
-      </widget>
      </widget>
      <widget class="ctkCollapsibleGroupBox" name="AdvancedCollapsibleGroupBox">
       <property name="title">
@@ -960,9 +607,9 @@ Please set at least one filter to query the servers</string>
    <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkMenuButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkMenuButton.h</header>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
   </customwidget>
   <customwidget>
    <class>ctkPushButton</class>
@@ -973,6 +620,11 @@ Please set at least one filter to query the servers</string>
    <class>ctkSearchBox</class>
    <extends>QLineEdit</extends>
    <header>ctkSearchBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMPatientView</class>
+   <extends>QListView</extends>
+   <header>ctkDICOMPatientView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

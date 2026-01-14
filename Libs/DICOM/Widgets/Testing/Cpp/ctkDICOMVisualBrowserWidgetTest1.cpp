@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -62,9 +62,9 @@ int ctkDICOMVisualBrowserWidgetTest1(int argc, char* argv[])
   CHECK_QSTRING(browser.filteringStudyDescription(), "");
   CHECK_QSTRING(browser.filteringSeriesDescription(), "");
   CHECK_QSTRING(browser.filteringModalities().at(0), "Any");
-  CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
+  CHECK_INT(browser.filteringDate(), ctkDICOMVisualBrowserWidget::DateType::Any);
   CHECK_INT(browser.numberOfOpenedStudiesPerPatient(), 2);
-  CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
+  CHECK_INT(browser.thumbnailSizePreset(), ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption::Small);
   CHECK_BOOL(browser.isSendActionVisible(), false);
   CHECK_BOOL(browser.isDeleteActionVisible(), true);
 
@@ -143,12 +143,12 @@ int ctkDICOMVisualBrowserWidgetTest1(int argc, char* argv[])
   QStringList filteringModalities = {"CT"};
   browser.setFilteringModalities(filteringModalities);
   CHECK_QSTRING(browser.filteringModalities().at(0), "CT");
-  browser.setFilteringDate(ctkDICOMPatientItemWidget::DateType::LastYear);
-  CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
+  browser.setFilteringDate(ctkDICOMVisualBrowserWidget::DateType::LastYear);
+  CHECK_INT(browser.filteringDate(), ctkDICOMVisualBrowserWidget::DateType::LastYear);
   browser.setNumberOfOpenedStudiesPerPatient(6);
   CHECK_INT(browser.numberOfOpenedStudiesPerPatient(), 6);
-  browser.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
-  CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
+  browser.setThumbnailSizePreset(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption::Small);
+  CHECK_INT(browser.thumbnailSizePreset(), ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption::Small);
   browser.setSendActionVisible(true);
   CHECK_BOOL(browser.isSendActionVisible(), true);
   browser.setDeleteActionVisible(false);

@@ -31,11 +31,9 @@ public:
   ctkLoggerPrivate() = default;
   ~ctkLoggerPrivate() = default;
 
-#ifndef QT_NO_DEBUG
-  ctkErrorLogLevel::LogLevel LogLevel{ctkErrorLogLevel::LogLevel::Debug};
-#else
+  // Default to Warning level for both debug and release builds
+  // to reduce log verbosity. Use setLogLevel() to enable debug logs when needed.
   ctkErrorLogLevel::LogLevel LogLevel{ctkErrorLogLevel::LogLevel::Warning};
-#endif
 };
 
 //-----------------------------------------------------------------------------

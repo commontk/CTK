@@ -2398,8 +2398,7 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
                                           const QString &studyInstanceUID,
                                           const QString &seriesInstanceUID,
                                           const QString &sopInstanceUID,
-                                          const QString& modality,
-                                          QColor backgroundColor)
+                                          const QString& modality)
 {
   Q_D(ctkDICOMDatabase);
   if (!d->ThumbnailGenerator)
@@ -2427,14 +2426,15 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
   {
     // NOTE: currently SEG objects are not fully supported by ctkDICOMThumbnailGenerator,
     // The rendering will fail and in addition SEG object can be very large and
-    // loading the file can be slow. For now, we will just create a blank thumbnail with a document svg.
-    d->ThumbnailGenerator->generateDocumentThumbnail(thumbnailPath, backgroundColor);
-    return true;
+    // loading the file can be slow.
+    // To Do: refactor ctkDICOMThumbnailGenerator for rendering more modalities.
+    logger.warn(QString("SEG thumbnail generation is not available"));
+    return false;
   }
   else
   {
     DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8().data());
-    return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath, backgroundColor);
+    return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
   }
 }
 
@@ -2630,6 +2630,81 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
 {
   QString tag = this->groupElementToTag(group, element);
   return this->fileValue(fileName, tag);
+}
+
+//------------------------------------------------------------------------------
+QMap<QString, QString> ctkDICOMDatabase::instanceValues(const QStringList& sopInstanceUIDs, const QString& tag)
+{
+  Q_D(ctkDICOMDatabase);
+  QMap<QString, QString> result;
+
+  if (sopInstanceUIDs.isEmpty() || tag.isEmpty())
+  {
+    return result;
+  }
+
+  QString upperTag = tag.toUpper();
+
+  // Check if tag cache exists - if not, fall back to individual queries
+  if (!this->tagCacheExists())
+  {
+    // Fallback to individual instanceValue calls
+    foreach (const QString& sopInstanceUID, sopInstanceUIDs)
+    {
+      QString value = this->instanceValue(sopInstanceUID, upperTag);
+      if (!value.isEmpty())
+      {
+        result[sopInstanceUID] = value;
+      }
+    }
+    return result;
+  }
+
+  // Use bulk query from TagCache database for efficiency
+  QSqlQuery query(d->TagCacheDatabase);
+
+  // Build IN clause with placeholders
+  QStringList placeholders;
+  for (int i = 0; i < sopInstanceUIDs.size(); ++i)
+  {
+    placeholders << "?";
+  }
+
+  QString queryString = QString(
+    "SELECT SOPInstanceUID, Value FROM TagCache "
+    "WHERE SOPInstanceUID IN (%1) AND Tag = ?"
+  ).arg(placeholders.join(","));
+
+  query.prepare(queryString);
+
+  // Bind all instance UIDs first
+  foreach (const QString& sopInstanceUID, sopInstanceUIDs)
+  {
+    query.addBindValue(sopInstanceUID);
+  }
+
+  // Bind the tag last
+  query.addBindValue(upperTag);
+
+  if (d->loggedExec(query))
+  {
+    while (query.next())
+    {
+      QString sopInstanceUID = query.value(0).toString();
+      QString value = query.value(1).toString();
+
+      // Only include non-empty values that are not special markers
+      if (!value.isEmpty() &&
+          value != TagNotInInstance &&
+          value != ValueIsEmptyString &&
+          value != ValueIsNotStored)
+      {
+        result[sopInstanceUID] = value;
+      }
+    }
+  }
+
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -3002,6 +3077,12 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
       {
         QString patientUID = this->patientForStudy(studyInstanceUID);
         patientName = this->nameForPatient(patientUID);
+        dataset->SetElementAsString(DCM_PatientName, patientName);
+      }
+
+      if (patientName.isEmpty())
+      {
+        patientName = patientID;
         dataset->SetElementAsString(DCM_PatientName, patientName);
       }
 
@@ -3481,13 +3562,15 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID, bool cleanup
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::removePatient(const QString& patientID, bool cleanup/*=true*/)
+bool ctkDICOMDatabase::removePatient(const QString& patientUID, bool cleanup/*=true*/)
 {
   Q_D(ctkDICOMDatabase);
 
+  QString patientID = this->fieldForPatient("PatientID", patientUID);
+
   QSqlQuery studiesForPatient( d->Database );
   studiesForPatient.prepare("SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = :patientsID");
-  studiesForPatient.bindValue(":patientsID", patientID);
+  studiesForPatient.bindValue(":patientsID", patientUID);
   bool success = studiesForPatient.exec();
   if (!success)
   {
@@ -3507,7 +3590,7 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID, bool cleanup/*=tr
 
   if(result)
   {
-    emit patientRemoved(patientID);
+    emit patientRemoved(patientUID, patientID);
   }
 
   return result;
@@ -4017,29 +4100,21 @@ QString ctkDICOMDatabase::compositePatientID(const QString& patientID, const QSt
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setLoadedSeries(const QStringList &seriesList)
+void ctkDICOMDatabase::setLoadedSeriesInstanceUIDs(const QStringList &seriesInstanceUIDs)
 {
   Q_D(ctkDICOMDatabase);
-  d->LoadedSeries = seriesList;
+  if (d->LoadedSeriesInstanceUIDs == seriesInstanceUIDs)
+  {
+    return;
+  }
+
+  d->LoadedSeriesInstanceUIDs = seriesInstanceUIDs;
+  emit this->loadedSeriesInstanceUIDsChanged(d->LoadedSeriesInstanceUIDs);
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::loadedSeries() const
+QStringList ctkDICOMDatabase::loadedSeriesInstanceUIDs() const
 {
   Q_D(const ctkDICOMDatabase);
-  return d->LoadedSeries;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMDatabase::setVisibleSeries(const QStringList &seriesList)
-{
-  Q_D(ctkDICOMDatabase);
-  d->VisibleSeries = seriesList;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::visibleSeries() const
-{
-  Q_D(const ctkDICOMDatabase);
-  return d->VisibleSeries;
+  return d->LoadedSeriesInstanceUIDs;
 }

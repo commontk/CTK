@@ -802,6 +802,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   filters["StartDate"] = d->Filters["StartDate"];
   filters["EndDate"] = d->Filters["EndDate"];
   filters["Series"] = d->Filters["Series"];
+  // Note: Modalities filter is applied after query results are received (see below)
   QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
@@ -856,11 +857,29 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
+    // Get modality filter if present
+    QStringList modalityFilter;
+    if (d->Filters.contains("Modalities") && d->Filters["Modalities"].toStringList().count() > 0)
+    {
+      modalityFilter = d->Filters["Modalities"].toStringList();
+    }
+
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
     {
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
       {
+        // Apply modality filter if present
+        if (!modalityFilter.isEmpty())
+        {
+          OFString modality;
+          dataset->findAndGetOFString(DCM_Modality, modality);
+          if (!modalityFilter.contains(QString(modality.c_str()), Qt::CaseInsensitive))
+          {
+            continue; // Skip this series if modality doesn't match filter
+          }
+        }
+
         OFString seriesInstanceUID;
         dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);
         datasetsMap.insert(seriesInstanceUID.c_str(), dataset);
@@ -918,6 +937,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   d->QueryDcmDataset->insertEmptyElement(DCM_SOPInstanceUID);
   d->QueryDcmDataset->insertEmptyElement(DCM_Rows);
   d->QueryDcmDataset->insertEmptyElement(DCM_Columns);
+  d->QueryDcmDataset->insertEmptyElement(DCM_Modality);
 
   QMap<QString,QVariant> filters;
   filters["Name"] = d->Filters["Name"];
@@ -927,6 +947,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   filters["StartDate"] = d->Filters["StartDate"];
   filters["EndDate"] = d->Filters["EndDate"];
   filters["Series"] = d->Filters["Series"];
+  // Note: Modalities filter is applied after query results are received (see below)
   QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
@@ -982,11 +1003,29 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   OFCondition status = d->SCU->sendFINDRequest(d->PresentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
+    // Get modality filter if present
+    QStringList modalityFilter;
+    if (d->Filters.contains("Modalities") && d->Filters["Modalities"].toStringList().count() > 0)
+    {
+      modalityFilter = d->Filters["Modalities"].toStringList();
+    }
+
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
     {
       DcmItem *dataset = (*it)->m_dataset;
       if (dataset != NULL)
       {
+        // Apply modality filter if present (inherits from series/study)
+        if (!modalityFilter.isEmpty())
+        {
+          OFString modality;
+          dataset->findAndGetOFString(DCM_Modality, modality);
+          if (!modalityFilter.contains(QString(modality.c_str()), Qt::CaseInsensitive))
+          {
+            continue; // Skip this instance if modality doesn't match filter
+          }
+        }
+
         OFString SOPInstanceUID;
         dataset->findAndGetOFString(DCM_SOPInstanceUID, SOPInstanceUID);
         datasetsMap.insert(SOPInstanceUID.c_str(), dataset);

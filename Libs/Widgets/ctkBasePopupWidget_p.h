@@ -28,7 +28,7 @@ class QPropertyAnimation;
 
 // CTK includes
 #include "ctkBasePopupWidget.h"
-#define PopupWindowType Qt::Tool
+#define PopupWindowType Qt::ToolTip
 
 // -------------------------------------------------------------------------
 /// \ingroup Widgets

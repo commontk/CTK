@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -30,7 +30,7 @@
 
 // ctkCore includes
 #include <ctkJobScheduler.h>
-class ctkAbstractJob;
+#include <ctkAbstractJob.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
@@ -120,7 +120,7 @@ public:
                                      const QString &seriesInstanceUID,
                                      const QString &sopInstanceUID,
                                      const QString& modality,
-                                     QColor backgroundColor,
+                                     QColor backgroundColor = Qt::white,
                                      QThread::Priority priority = QThread::HighPriority);
 
   ///@{
@@ -180,6 +180,7 @@ public:
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
   Q_INVOKABLE QStringList getAllServersConnectionNames();
   Q_INVOKABLE QStringList getConnectionNamesForActiveServers();
+  Q_INVOKABLE bool serverHasProxy(const QString& connectionName);
   ///@}
 
   ///@{
@@ -192,10 +193,16 @@ public:
                                        const QStringList& studyInstanceUIDs = {},
                                        const QStringList& seriesInstanceUIDs = {},
                                        const QStringList& sopInstanceUIDs = {});
-  Q_INVOKABLE QList<QSharedPointer<ctkAbstractJob>> getJobsByDICOMUIDs(const QStringList& patientIDs = {},
-                                                                       const QStringList& studyInstanceUIDs = {},
-                                                                       const QStringList& seriesInstanceUIDs = {},
-                                                                       const QStringList& sopInstanceUIDs = {});
+  QList<QSharedPointer<ctkAbstractJob>> getJobsByDICOMUIDs(const QStringList& patientIDs = {},
+                                                           const QStringList& studyInstanceUIDs = {},
+                                                           const QStringList& seriesInstanceUIDs = {},
+                                                           const QStringList& sopInstanceUIDs = {},
+                                                           QList<ctkAbstractJob::JobStatus> statusFilters =
+                                                           {
+                                                             ctkAbstractJob::JobStatus::Initialized,
+                                                             ctkAbstractJob::JobStatus::Queued,
+                                                             ctkAbstractJob::JobStatus::Running
+                                                           });
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
   ///@}

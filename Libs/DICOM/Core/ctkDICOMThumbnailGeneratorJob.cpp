@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -38,7 +38,7 @@ static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGeneratorJob" );
 ctkDICOMThumbnailGeneratorJobPrivate::ctkDICOMThumbnailGeneratorJobPrivate(ctkDICOMThumbnailGeneratorJob* object)
  : q_ptr(object)
 {
-  this->BackgroundColor = Qt::darkGray;
+  this->BackgroundColor = Qt::white;
 }
 
 //------------------------------------------------------------------------------

@@ -857,9 +857,9 @@ QStringList ctkDICOMTableView::uidsForAllRows() const
   }
   else
   {
-    for(int i = 0; i < numberOfRows; ++i)
+    for(int row = 0; row < numberOfRows; ++row)
     {
-      uids << QString("%1").arg(tableModel->index(i,0).data().toString());
+      uids << QString("%1").arg(tableModel->index(row, 0).data().toString());
     }
   }
   return uids;
