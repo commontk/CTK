@@ -196,6 +196,7 @@ void ctkDICOMStudyListViewPrivate::selectAllSeriesForStudy(const QModelIndex& st
       selection.select(idx, idx);
     }
   }
+
   seriesView->selectionModel()->select(selection, selectionMode);
 }
 
@@ -1464,7 +1465,6 @@ void ctkDICOMStudyListView::contextMenuEvent(QContextMenuEvent* event)
 
   // Get the index at the click position
   QModelIndex clickedIndex = this->indexAt(event->pos());
-
   if (!clickedIndex.isValid())
   {
     event->accept();
@@ -1480,7 +1480,6 @@ void ctkDICOMStudyListView::contextMenuEvent(QContextMenuEvent* event)
   }
   QRect itemRect = this->visualRect(clickedIndex);
   QRect headerRect = delegate->studyHeaderRect(itemRect);
-
   // Check if the click is within the study header area (not in series area)
   if (!headerRect.contains(event->pos()))
   {
@@ -1495,6 +1494,7 @@ void ctkDICOMStudyListView::contextMenuEvent(QContextMenuEvent* event)
     return;
   }
 
+  this->createSeriesViewForStudy(studyInstanceUID);
   d->selectAllSeriesForStudy(clickedIndex);
 
   QStringList selectedUIDs = this->selectedStudyInstanceUIDs();
