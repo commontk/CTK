@@ -387,7 +387,7 @@ QString ctkDICOMStudyModelPrivate::formatDate(const QString& date) const
       return studyDate.toString("dd MMM yyyy");
     }
   }
-  
+
   // Try YYYY-MM-DD format (10 characters, from SQLite DATE fields)
   if (date.length() == 10)
   {
@@ -397,7 +397,7 @@ QString ctkDICOMStudyModelPrivate::formatDate(const QString& date) const
       return studyDate.toString("dd MMM yyyy");
     }
   }
-  
+
   return date;
 }
 
