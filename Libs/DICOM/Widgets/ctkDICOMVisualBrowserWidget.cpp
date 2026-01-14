@@ -35,6 +35,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTableWidget>
+#include <QTimer>
 #include <QToolButton>
 
 // CTK includes
@@ -2545,10 +2546,24 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
     {
-      // NOTE: if running query jobs, wait to open the first 2 studies of the patient.
+      // NOTE: if running query jobs, wait to open the first N studies of the patient.
       if (d->Scheduler->getJobsByDICOMUIDs({td.PatientID}).count() == 0)
       {
-        d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(this->numberOfOpenedStudiesPerPatient());
+        // Wait for the proxy model to finish sorting before opening studies
+        // The proxy model sorts asynchronously (due to dynamic sort filter)
+        // Since the studies are already in the model from QueryStudies, we just need
+        // to wait for the proxy model to complete its sorting after the data changes
+        ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+
+        // Use a lambda to capture the number of studies to open
+        int numberOfStudies = this->numberOfOpenedStudiesPerPatient();
+
+        // Use QTimer::singleShot with a small delay to ensure the proxy model has finished sorting
+        // The proxy model processes data changes in the event loop, so we defer our action
+        // to the next event loop iteration
+        QTimer::singleShot(100, studyListView, [studyListView, numberOfStudies]() {
+          studyListView->onNumberOfOpenedStudiesChanged(numberOfStudies);
+        });
       }
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
