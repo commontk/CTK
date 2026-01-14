@@ -129,6 +129,8 @@ void ctkDICOMStudyMergedFilterProxyModelPrivate::rebuildMergedRows()
       // Get study date and time for sorting
       QString studyDate = sourceProxyFilterModel->data(sourceProxyFilterIndex, ctkDICOMStudyModel::StudyDateRole).toString(); // StudyDateRole
       QString studyTime = sourceProxyFilterModel->data(sourceProxyFilterIndex, ctkDICOMStudyModel::StudyTimeRole).toString(); // StudyTimeRole
+      // Normalize date: remove dashes to handle both YYYYMMDD and YYYY-MM-DD formats
+      studyDate.remove('-');
       // Parse date/time
       QDateTime studyDateTime;
       if (!studyDate.isEmpty())

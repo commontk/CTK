@@ -782,7 +782,13 @@ int ctkDICOMStudyDelegate::calculateSeriesAreaHeight(const QModelIndex& studyInd
 //------------------------------------------------------------------------------
 QString ctkDICOMStudyDelegate::formatStudyDate(const QString& date) const
 {
-  if (date.length() == 8) // YYYYMMDD
+  if (date.isEmpty())
+  {
+    return date;
+  }
+
+  // Try YYYYMMDD format first (8 characters)
+  if (date.length() == 8)
   {
     QDate studyDate = QDate::fromString(date, "yyyyMMdd");
     if (studyDate.isValid())
@@ -790,6 +796,17 @@ QString ctkDICOMStudyDelegate::formatStudyDate(const QString& date) const
       return studyDate.toString("dd MMM yyyy");
     }
   }
+  
+  // Try YYYY-MM-DD format (10 characters, from SQLite DATE fields)
+  if (date.length() == 10)
+  {
+    QDate studyDate = QDate::fromString(date, "yyyy-MM-dd");
+    if (studyDate.isValid())
+    {
+      return studyDate.toString("dd MMM yyyy");
+    }
+  }
+  
   return date;
 }
 
