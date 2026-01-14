@@ -22,12 +22,15 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QCalendarWidget>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDate>
 #include <QDateEdit>
+#include <QEvent>
 #include <QFormLayout>
+#include <QKeyEvent>
 #include <QMap>
 #include <QMenu>
 #include <QProgressBar>
@@ -312,6 +315,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
 
   QObject::connect(this->FilteringSeriesDescriptionSearchBox, SIGNAL(returnPressed()),
                    q, SLOT(onQueryPatients()));
+
+  // Install event filters on search boxes to prevent Enter key from collapsing group boxes in Qt6
+  // We filter on the parent widget to catch events after they've been processed by search boxes
+  this->SearchPatientsCollapsibleGroupBox->installEventFilter(q);
 
   // To Do: add an option to disable styling
   this->FilteringModalityCheckableComboBox->setStyleSheet("combobox-popup: 0;");
@@ -3987,6 +3994,36 @@ void ctkDICOMVisualBrowserWidget::keyPressEvent(QKeyEvent *event)
   }
 
   Superclass::keyPressEvent(event);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMVisualBrowserWidget::eventFilter(QObject* object, QEvent* event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // Prevent Enter/Return key from collapsing the SearchPatientsCollapsibleGroupBox in Qt6
+  // when focus is on one of the search boxes
+  if (object == d->SearchPatientsCollapsibleGroupBox &&
+      event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)
+    {
+      // Check if focus is on one of the search boxes
+      QWidget* focusWidget = QApplication::focusWidget();
+      if (focusWidget == d->FilteringPatientIDSearchBox ||
+          focusWidget == d->FilteringPatientNameSearchBox ||
+          focusWidget == d->FilteringStudyDescriptionSearchBox ||
+          focusWidget == d->FilteringSeriesDescriptionSearchBox)
+      {
+        // Filter out the event to prevent the group box from handling it
+        return true;
+      }
+    }
+  }
+
+  // Pass the event to the base class
+  return Superclass::eventFilter(object, event);
 }
 
 //------------------------------------------------------------------------------

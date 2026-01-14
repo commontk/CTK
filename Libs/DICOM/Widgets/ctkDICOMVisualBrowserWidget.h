@@ -438,6 +438,8 @@ protected:
   void keyPressEvent(QKeyEvent* event) override;
   /// Custom resize event to adjust filter layout orientation
   void resizeEvent(QResizeEvent* event) override;
+  /// Event filter to handle Enter key in search boxes
+  bool eventFilter(QObject* object, QEvent* event) override;
 
   /// Confirm with the user that they wish to delete the selected uids.
   /// Add information about the selected UIDs to a message box, checks
