@@ -354,49 +354,17 @@ void ctkDICOMSeriesModelPrivate::loadSeriesForStudy()
       series.operationStatus = ctkDICOMSeriesModel::NoOperation;
       series.thumbnailGenerated = false;
 
-      // Check for existing cached thumbnail first
-      if (series.centerInstanceUID.isEmpty())
-      {
-        series.centerInstanceUID = this->getDICOMCenterFrameFromInstances(instances);
-      }
+      // Defer center frame computation until actually needed (for thumbnails)
+      // This significantly improves initial loading performance
+      series.centerInstanceUID = QString();
 
-      if (!series.centerInstanceUID.isEmpty())
+      // Get DICOM Rows/Columns from first instance if available (lightweight query)
+      if (!instances.isEmpty())
       {
-        // Get DICOM Rows/Columns from first instance (if available)
-        QString rowsStr = this->DicomDatabase->instanceValue(series.centerInstanceUID, "0028,0010"); // Rows
-        QString colsStr = this->DicomDatabase->instanceValue(series.centerInstanceUID, "0028,0011"); // Columns
+        QString rowsStr = this->DicomDatabase->instanceValue(instances.first(), "0028,0010");
+        QString colsStr = this->DicomDatabase->instanceValue(instances.first(), "0028,0011");
         series.rows = rowsStr.toInt();
         series.columns = colsStr.toInt();
-      }
-      else if (!instances.isEmpty())
-      {
-        // Get DICOM Rows/Columns from first instance (if available)
-        QString rowsStr = this->DicomDatabase->instanceValue(instances.first(), "0028,0010"); // Rows
-        QString colsStr = this->DicomDatabase->instanceValue(instances.first(), "0028,0011"); // Columns
-        series.rows = rowsStr.toInt();
-        series.columns = colsStr.toInt();
-      }
-
-      if (series.centerInstanceUID.isEmpty() ||
-          series.seriesInstanceUID.isEmpty() ||
-          series.studyInstanceUID.isEmpty() ||
-          !this->AutoGenerateThumbnails)
-      {
-        newSeriesData.append(series);
-        continue;
-      }
-
-      QString thumbnailPath = this->DicomDatabase->thumbnailPathForInstance(
-        series.studyInstanceUID, series.seriesInstanceUID, series.centerInstanceUID);
-      if (!thumbnailPath.isEmpty() && QFile::exists(thumbnailPath))
-      {
-        QPixmap cachedThumbnail(thumbnailPath);
-        if (!cachedThumbnail.isNull())
-        {
-          // Use cached thumbnail
-          series.thumbnailPath = thumbnailPath;
-          series.thumbnailGenerated = true;
-        }
       }
 
       newSeriesData.append(series);
@@ -537,20 +505,15 @@ QString ctkDICOMSeriesModelPrivate::getDICOMCenterFrameFromInstances(QStringList
     return QString();
   }
 
-  QString instanceUID;
-
-  // Use bulk query approach for better performance while maintaining proper DICOM ordering
-  if (instancesList.isEmpty())
-  {
-    return QString();
-  }
-
+  // Fast path for single instance series
   if (instancesList.size() == 1)
   {
     return instancesList.first();
   }
 
-  // Use the new efficient bulk query method to get all instance numbers at once
+  QString instanceUID;
+
+  // Use the efficient bulk query method to get all instance numbers at once
   QMap<int, QString> sortedInstancesMap;
 
   if (this->DicomDatabase && this->DicomDatabase->tagCacheExists())
@@ -574,19 +537,17 @@ QString ctkDICOMSeriesModelPrivate::getDICOMCenterFrameFromInstances(QStringList
     }
   }
 
-  // If bulk query didn't work or returned no results, fall back to middle selection
+  // If bulk query didn't work or returned no results, fall back to simple middle selection
   if (sortedInstancesMap.isEmpty())
   {
-    std::sort(instancesList.begin(), instancesList.end());
-    instanceUID = instancesList[floor(instancesList.size() * 0.5)];
+    // Simple middle selection without sorting (faster fallback)
+    instanceUID = instancesList[instancesList.size() / 2];
   }
   else
   {
-    // Sort by instance number and select the center one
+    // QMap keys are already sorted, select the center one
     QList<int> keys = sortedInstancesMap.keys();
-    std::sort(keys.begin(), keys.end());
-
-    int centerInstanceIndex = floor(keys.count() * 0.5);
+    int centerInstanceIndex = keys.count() / 2;
     int centerInstanceNumber = keys[centerInstanceIndex];
     instanceUID = sortedInstancesMap[centerInstanceNumber];
   }
