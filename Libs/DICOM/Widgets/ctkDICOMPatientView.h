@@ -51,6 +51,8 @@ class ctkDICOMPatientFilterProxyModel;
 /// The view uses a single shared study list view that is reused for all patients,
 /// improving performance and reducing memory overhead compared to per-patient views.
 ///
+/// In ListMode, uses a QSplitter widget to properly separate patient list from study list.
+///
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientView : public QListView
 {
   Q_OBJECT
@@ -158,9 +160,6 @@ public:
   /// Clean the view and all child views (study view and series views)
   Q_INVOKABLE void clean();
   ///@}
-
-  /// Get the splitter position for ListMode (for delegate rendering)
-  Q_INVOKABLE int splitterPosition() const;
 
   /// Check if a given index is currently hovered (for delegate rendering)
   Q_INVOKABLE bool isIndexHovered(const QModelIndex& index) const;
