@@ -24,12 +24,10 @@
 // Qt includes
 #include <QApplication>
 #include <QContextMenuEvent>
-#include <QHelpEvent>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPainterPath>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QResizeEvent>
@@ -37,8 +35,10 @@
 #include <QSharedPointer>
 #include <QItemSelectionModel>
 #include <QItemSelection>
+#include <QSplitter>
 #include <QTimer>
 #include <QToolTip>
+#include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QDebug>
 
@@ -51,6 +51,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 #include "ctkDICOMStudyDelegate.h"
+#include "ctkSplitter.h"
 #include "ctkDICOMStudyListView.h"
 #include "ctkDICOMStudyModel.h"
 #include "ctkDICOMStudyFilterProxyModel.h"
@@ -103,11 +104,11 @@ public:
   QModelIndex SelectAllIconHoveredIndex;
   QModelIndex SelectAllIconPressedIndex;
 
-  // Splitter for ListMode
-  int SplitterPosition;
-  bool SplitterDragging;
-  QCursor SplitterCursor;
-  bool SplitterHovered;
+  // Splitter for ListMode - reparents the patient view
+  QWidget* SplitterContainer;  // Wrapper that replaces patient view in parent's layout
+  ctkSplitter* Splitter;  // The splitter widget inside container
+  QWidget* OriginalParent;  // Original parent to restore in TabMode
+  int OriginalParentIndex;  // Index in parent's layout
 
   // Display mode toggle button
   QPushButton* DisplayModeButton;
@@ -119,13 +120,11 @@ public:
   // Helper methods
   QString getPatientUID(const QModelIndex& patientIndex) const;
   void updateStudyListViewGeometry();
-  void updateScrollBarGeometry();
   void updateAllowedServersComboBoxGeometry(const QModelIndex& index = QModelIndex());
   void updateAllowedServersComboBoxFromModel(const QModelIndex& index = QModelIndex());
-  bool isOverSplitter(const QPoint& pos) const;
-  void updateSplitterCursor(const QPoint& pos);
   void updateDisplayModeButtonPosition();
   void updateSelectedPatientsCache();
+  void setupSplitter();
 };
 
 //------------------------------------------------------------------------------
@@ -135,10 +134,10 @@ ctkDICOMPatientViewPrivate::ctkDICOMPatientViewPrivate(ctkDICOMPatientView& obje
   this->DisplayMode = ctkDICOMPatientView::TabMode;
   this->MousePressed = false;
   this->ModelResetInProgress = false;
-  this->SplitterPosition = 175;
-  this->SplitterDragging = false;
-  this->SplitterHovered = false;
-  this->SplitterCursor = QCursor(Qt::SplitVCursor);
+  this->SplitterContainer = nullptr;
+  this->Splitter = nullptr;
+  this->OriginalParent = nullptr;
+  this->OriginalParentIndex = -1;
   this->DisplayModeButton = nullptr;
   this->AllowedServersLabel = nullptr;
   this->AllowedServersComboBox = nullptr;
@@ -159,10 +158,78 @@ void ctkDICOMPatientViewPrivate::setupViewForDisplayMode()
   if (this->DisplayMode == ctkDICOMPatientView::TabMode)
   {
     q->setFlow(QListView::LeftToRight);
+
+    // Restore original parenting if we were in ListMode
+    if (this->SplitterContainer && this->OriginalParent)
+    {
+      // Reparent patient view back to original parent
+      q->setParent(this->OriginalParent);
+
+      // Restore to original position
+      QSplitter* parentSplitter = qobject_cast<QSplitter*>(this->OriginalParent);
+      if (parentSplitter)
+      {
+        // Parent is a splitter - insert at saved position
+        if (this->OriginalParentIndex >= 0)
+        {
+          parentSplitter->insertWidget(this->OriginalParentIndex, q);
+        }
+        else
+        {
+          parentSplitter->addWidget(q);
+        }
+      }
+      else
+      {
+        // Parent has a layout
+        QLayout* parentLayout = this->OriginalParent->layout();
+        if (parentLayout)
+        {
+          if (this->OriginalParentIndex >= 0)
+          {
+            QBoxLayout* boxLayout = qobject_cast<QBoxLayout*>(parentLayout);
+            if (boxLayout)
+            {
+              boxLayout->insertWidget(this->OriginalParentIndex, q);
+            }
+            else
+            {
+              parentLayout->addWidget(q);
+            }
+          }
+          else
+          {
+            parentLayout->addWidget(q);
+          }
+        }
+      }
+
+      // Reparent study view to viewport
+      if (!this->StudyListView.isNull())
+      {
+        this->StudyListView->setParent(q->viewport());
+      }
+
+      // Delete splitter container
+      delete this->SplitterContainer;
+      this->SplitterContainer = nullptr;
+      this->Splitter = nullptr;
+      this->OriginalParent = nullptr;
+      this->OriginalParentIndex = -1;
+    }
+    else
+    {
+      // First time setup - just ensure study view is child of viewport
+      if (!this->StudyListView.isNull())
+      {
+        this->StudyListView->setParent(q->viewport());
+      }
+    }
   }
   else if (this->DisplayMode == ctkDICOMPatientView::ListMode)
   {
     q->setFlow(QListView::TopToBottom);
+
     // Hide allowed servers combo box and label in ListMode
     if (this->AllowedServersComboBox)
     {
@@ -171,6 +238,12 @@ void ctkDICOMPatientViewPrivate::setupViewForDisplayMode()
     if (this->AllowedServersLabel)
     {
       this->AllowedServersLabel->hide();
+    }
+
+    // Setup splitter and reparent widgets
+    if (!this->SplitterContainer)
+    {
+      this->setupSplitter();
     }
   }
 
@@ -375,24 +448,10 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
       return;
     }
 
-    // Position study list below the splitter, spanning full width
-    int studyTop = this->SplitterPosition + spacing * 2;
-    int studyLeft = spacing * 2;
-    int studyWidth = viewportRect.width() - spacing * 4;
-    int studyHeight = viewportRect.height() - studyTop - spacing * 2;
-
-    QRect studyAreaRect(studyLeft, studyTop, studyWidth, studyHeight);
-
-    // Only show and position if the study area has valid size
-    if (studyAreaRect.height() > 50 && studyAreaRect.width() > 10)
+    // In ListMode, the splitter handles geometry, just ensure study list is visible
+    if (!this->StudyListView.isNull())
     {
-      this->StudyListView->setGeometry(studyAreaRect);
       this->StudyListView->show();
-      this->StudyListView->raise();
-    }
-    else
-    {
-      this->StudyListView->hide();
     }
   }
 
@@ -423,68 +482,6 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMPatientViewPrivate::isOverSplitter(const QPoint& pos) const
-{
-  if (this->DisplayMode != ctkDICOMPatientView::ListMode)
-  {
-    return false;
-  }
-
-  int tolerance = 5;
-  return qAbs(pos.y() - this->SplitterPosition) <= tolerance;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMPatientViewPrivate::updateSplitterCursor(const QPoint& pos)
-{
-  Q_Q(ctkDICOMPatientView);
-  if (this->DisplayMode != ctkDICOMPatientView::ListMode)
-  {
-    return;
-  }
-
-  bool overSplitter = this->isOverSplitter(pos);
-  if (overSplitter != this->SplitterHovered)
-  {
-    this->SplitterHovered = overSplitter;
-    if (overSplitter)
-    {
-      q->setCursor(this->SplitterCursor);
-    }
-    else
-    {
-      q->unsetCursor();
-    }
-    // Update only the splitter area
-    QRect splitterRect(0, this->SplitterPosition - 5, q->viewport()->width(), 10);
-    q->viewport()->update(splitterRect);
-  }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMPatientViewPrivate::updateScrollBarGeometry()
-{
-  Q_Q(ctkDICOMPatientView);
-
-  // Only adjust scrollbar in ListMode
-  if (this->DisplayMode != ctkDICOMPatientView::ListMode)
-  {
-    return;
-  }
-
-  QScrollBar* vScrollBar = q->verticalScrollBar();
-  if (!vScrollBar)
-  {
-    return;
-  }
-
-  // Get the default geometry from Qt
-  QRect defaultGeometry = vScrollBar->geometry();
-
-  // Set the new geometry - keep X and width same, but adjust Y and height
-  vScrollBar->setGeometry(defaultGeometry.x(), 0, defaultGeometry.width(), this->SplitterPosition);
-}
-
 //------------------------------------------------------------------------------
 void ctkDICOMPatientViewPrivate::updateDisplayModeButtonPosition()
 {
@@ -971,7 +968,7 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
   d->StudyListView->setItemDelegate(studyDelegate);
   d->StudyListView->hide();
 
-  // Setup for initial display mode
+  // Setup for initial display mode (splitter will be created if starting in ListMode)
   d->setupViewForDisplayMode();
 
   // Connect signals
@@ -980,6 +977,113 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
                 this, &ctkDICOMPatientView::onStudiesSelectionChanged);
   this->connect(d->StudyListView.data(), &ctkDICOMStudyListView::studyListViewEntered,
                 this, &ctkDICOMPatientView::onStudyViewEntered);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientViewPrivate::setupSplitter()
+{
+  Q_Q(ctkDICOMPatientView);
+
+  // Save original parent information
+  this->OriginalParent = q->parentWidget();
+  if (!this->OriginalParent)
+  {
+    qWarning() << "ctkDICOMPatientView: Cannot setup splitter - no parent widget";
+    return;
+  }
+
+  // Check if parent is a QSplitter (most likely case)
+  QSplitter* parentSplitter = qobject_cast<QSplitter*>(this->OriginalParent);
+  if (parentSplitter)
+  {
+    // Find our position in the parent splitter
+    this->OriginalParentIndex = parentSplitter->indexOf(q);
+  }
+  else
+  {
+    // Parent is a regular widget with layout
+    QLayout* parentLayout = this->OriginalParent->layout();
+    if (parentLayout)
+    {
+      for (int i = 0; i < parentLayout->count(); ++i)
+      {
+        if (parentLayout->itemAt(i)->widget() == q)
+        {
+          this->OriginalParentIndex = i;
+          break;
+        }
+      }
+    }
+  }
+
+  // Create container widget that will replace patient view in parent
+  this->SplitterContainer = new QWidget(this->OriginalParent);
+
+  // Create the splitter inside container
+  this->Splitter = new ctkSplitter(Qt::Vertical, this->SplitterContainer);
+
+  // Reparent patient view into splitter (top)
+  q->setParent(this->Splitter);
+  this->Splitter->addWidget(q);
+
+  // Reparent study list view into splitter (bottom)
+  if (!this->StudyListView.isNull())
+  {
+    this->StudyListView->setParent(this->Splitter);
+    this->Splitter->addWidget(this->StudyListView.data());
+  }
+
+  // Set initial sizes (20% for patients at top, 80% for studies at bottom)
+  this->Splitter->setSizes(QList<int>() << 200 << 800);
+
+  // Create layout for container
+  QVBoxLayout* layout = new QVBoxLayout(this->SplitterContainer);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
+  layout->addWidget(this->Splitter);
+
+  // Replace patient view with container in parent
+  if (parentSplitter)
+  {
+    // Parent is a splitter - insert at same position
+    if (this->OriginalParentIndex >= 0)
+    {
+      parentSplitter->insertWidget(this->OriginalParentIndex, this->SplitterContainer);
+    }
+    else
+    {
+      parentSplitter->addWidget(this->SplitterContainer);
+    }
+  }
+  else
+  {
+    // Parent has a layout
+    QLayout* parentLayout = this->OriginalParent->layout();
+    if (parentLayout)
+    {
+      if (this->OriginalParentIndex >= 0)
+      {
+        // Remove patient view from layout (it's now in splitter)
+        parentLayout->removeWidget(q);
+        // Insert container at same position
+        QBoxLayout* boxLayout = qobject_cast<QBoxLayout*>(parentLayout);
+        if (boxLayout)
+        {
+          boxLayout->insertWidget(this->OriginalParentIndex, this->SplitterContainer);
+        }
+        else
+        {
+          parentLayout->addWidget(this->SplitterContainer);
+        }
+      }
+      else
+      {
+        parentLayout->addWidget(this->SplitterContainer);
+      }
+    }
+  }
+
+  this->SplitterContainer->show();
 }
 
 //------------------------------------------------------------------------------
@@ -1384,13 +1488,15 @@ void ctkDICOMPatientView::scrollToPatientUID(const QString& patientUID)
   this->scrollTo(index);
 
   // Ensure the item is not hidden below the splitter in ListMode
-  if (d->DisplayMode != ctkDICOMPatientView::ListMode)
+  if (d->DisplayMode != ctkDICOMPatientView::ListMode || !d->Splitter)
   {
     return;
   }
   QRect rect = this->visualRect(index);
+  // Get the splitter position (size of first widget)
+  int splitterPos = d->Splitter->sizes().value(0, 0);
   // If the bottom of the item is below the splitter, scroll more
-  if (rect.bottom() < d->SplitterPosition)
+  if (rect.bottom() < splitterPos)
   {
     return;
   }
@@ -1405,7 +1511,7 @@ void ctkDICOMPatientView::scrollToPatientUID(const QString& patientUID)
     return;
   }
 
-  int offset = rect.bottom() - d->SplitterPosition + delegate->iconSize() + delegate->spacing() * 2;
+  int offset = rect.bottom() - splitterPos + delegate->iconSize() + delegate->spacing() * 2;
   vScrollBar->setValue(vScrollBar->value() + offset);
 }
 
@@ -1464,7 +1570,7 @@ void ctkDICOMPatientView::resizeEvent(QResizeEvent* event)
 
   if (d->DisplayMode == ctkDICOMPatientView::ListMode)
   {
-    d->updateScrollBarGeometry();
+    // Splitter handles its own geometry
   }
   else
   {
@@ -1487,8 +1593,6 @@ void ctkDICOMPatientView::wheelEvent(QWheelEvent *event)
 //------------------------------------------------------------------------------
 void ctkDICOMPatientView::paintEvent(QPaintEvent* event)
 {
-  Q_D(ctkDICOMPatientView);
-
   // Call base class paint
   Superclass::paintEvent(event);
 
@@ -1521,55 +1625,7 @@ void ctkDICOMPatientView::paintEvent(QPaintEvent* event)
     painter.setPen(QColor(128, 128, 128));
     QRect rect = this->viewport()->rect();
     painter.drawText(rect, Qt::AlignCenter, message);
-    return;
   }
-
-  // Draw splitter line and handle on top in ListMode
-  if (d->DisplayMode != ctkDICOMPatientView::ListMode || d->SplitterPosition == 0)
-  {
-    return;
-  }
-
-  QPainter painter(this->viewport());
-  painter.setRenderHint(QPainter::Antialiasing, true);
-
-  // Fill entire area below splitter with background color to clear artifacts
-  QRect belowSplitter(0, d->SplitterPosition, this->viewport()->width(),
-                       this->viewport()->height() - d->SplitterPosition);
-  painter.fillRect(belowSplitter, this->palette().base());
-
-  // Clear a small area around the splitter line to ensure clean rendering
-  int clearMargin = 3;
-  QRect clearRect(0, d->SplitterPosition - clearMargin,
-                  this->viewport()->width(), clearMargin * 2);
-  painter.fillRect(clearRect, this->palette().base());
-
-  // Draw splitter line
-  QColor splitterColor = QColor(128, 128, 128);
-  if (d->SplitterHovered && !d->SplitterDragging)
-  {
-    splitterColor = QColor(90, 90, 90);
-  }
-  else if (d->SplitterDragging)
-  {
-    splitterColor = QColor(117, 167, 255);
-  }
-
-  int lineWidth = d->SplitterHovered || d->SplitterDragging ? 3 : 2;
-
-  painter.setPen(QPen(splitterColor, lineWidth));
-  painter.drawLine(0, d->SplitterPosition, this->viewport()->width(), d->SplitterPosition);
-
-  // Draw grab handle in the middle
-  int handleWidth = 40;
-  int handleHeight = d->SplitterHovered ? 8 : 6;
-  int handleX = (this->viewport()->width() - handleWidth) / 2;
-  int handleY = d->SplitterPosition - handleHeight / 2;
-
-  QRect handleRect(handleX, handleY, handleWidth, handleHeight);
-  painter.setBrush(splitterColor);
-  painter.setPen(Qt::NoPen);
-  painter.drawRoundedRect(handleRect, 3, 3);
 }
 
 //------------------------------------------------------------------------------
@@ -1594,25 +1650,6 @@ void ctkDICOMPatientView::keyPressEvent(QKeyEvent* event)
 void ctkDICOMPatientView::mousePressEvent(QMouseEvent* event)
 {
   Q_D(ctkDICOMPatientView);
-
-  // In ListMode, check if clicking below splitter - ignore if so
-  if (d->DisplayMode == ctkDICOMPatientView::ListMode)
-  {
-    // Check if clicking on splitter
-    if (d->isOverSplitter(event->pos()))
-    {
-      d->SplitterDragging = true;
-      event->accept();
-      return;
-    }
-
-    // Ignore clicks below the splitter
-    if (event->pos().y() >= d->SplitterPosition)
-    {
-      event->accept();
-      return;
-    }
-  }
 
   QModelIndex index = this->indexAt(event->pos());
 
@@ -1704,34 +1741,8 @@ void ctkDICOMPatientView::mouseMoveEvent(QMouseEvent* event)
 
   d->HoveredIndex = this->indexAt(event->pos());
 
-  // Handle splitter dragging in ListMode
-  if (d->DisplayMode == ctkDICOMPatientView::ListMode)
-  {
-    if (d->SplitterDragging)
-    {
-      QRect viewportRect = this->viewport()->rect();
-      int newPos = event->pos().y();
-      int minPos = 10;
-      int maxPos = viewportRect.height() - 10;
-      d->SplitterPosition = qBound(minPos, newPos, maxPos);
-      d->updateScrollBarGeometry();
-      // Update geometries to recalculate scroll bars with new viewport size hint
-      this->refreshLayout();
-      this->viewport()->update();
-      event->accept();
-      return;
-    }
-
-    // Update cursor if over splitter
-    d->updateSplitterCursor(event->pos());
-
-    // Don't process hover for items below splitter
-    if (event->pos().y() >= d->SplitterPosition)
-    {
-      d->HoveredIndex = QModelIndex();
-    }
-  }
-  else if (d->DisplayMode == ctkDICOMPatientView::TabMode)
+  // In TabMode, check if hovering in study area
+  if (d->DisplayMode == ctkDICOMPatientView::TabMode)
   {
     ctkDICOMPatientDelegate* delegate = this->patientDelegate();
     if (delegate)
@@ -1814,16 +1825,6 @@ void ctkDICOMPatientView::mouseReleaseEvent(QMouseEvent* event)
 
   d->MousePressed = false;
 
-  if (d->DisplayMode == ctkDICOMPatientView::ListMode && d->SplitterDragging)
-  {
-    d->SplitterDragging = false;
-    d->updateSplitterCursor(event->pos());
-    QRect splitterRect(0, d->SplitterPosition - 5, this->viewport()->width(), 10);
-    this->viewport()->update(splitterRect);
-    event->accept();
-    return;
-  }
-
   // Handle clicks on interactive icons
   if (event->button() == Qt::LeftButton)
   {
@@ -1900,7 +1901,6 @@ void ctkDICOMPatientView::leaveEvent(QEvent* event)
   Q_D(ctkDICOMPatientView);
 
   d->MousePressed = false;
-  d->SplitterHovered = false;
   this->unsetCursor();
   d->updateAllowedServersComboBoxFromModel(d->HoveredIndex);
   d->updateAllowedServersComboBoxGeometry(d->HoveredIndex);
@@ -2059,13 +2059,6 @@ bool ctkDICOMPatientView::eventFilter(QObject* watched, QEvent* event)
   }
 
   return Superclass::eventFilter(watched, event);
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMPatientView::splitterPosition() const
-{
-  Q_D(const ctkDICOMPatientView);
-  return d->SplitterPosition;
 }
 
 //------------------------------------------------------------------------------

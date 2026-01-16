@@ -123,38 +123,11 @@ QSize ctkDICOMPatientDelegate::sizeHint(const QStyleOptionViewItem& option, cons
   }
   else // ListMode
   {
-    // Check if item is below splitter - if so, return zero size
-    const ctkDICOMPatientView* patientView = qobject_cast<const ctkDICOMPatientView*>(option.widget);
-    if (patientView)
-    {
-      int splitterPos = patientView->splitterPosition();
-      if (option.rect.top() >= splitterPos)
-      {
-        return QSize();
-      }
-    }
-
     QSize size;
     QRect patientsRect =  this->patientsRect(option.rect, option, index);
     if (patientsRect.isValid())
     {
       size = QSize(patientsRect.width(), patientsRect.height() + d->Spacing * 1.25);
-
-      // Check if this is the last item in the model
-      // Add extra bottom padding equal to the area below the splitter
-      if (patientView && index.model())
-      {
-        int lastRow = index.model()->rowCount() - 1;
-        if (index.row() == lastRow)
-        {
-          int viewportHeight = patientView->viewport()->height();
-          int bottomPadding = viewportHeight;
-          if (bottomPadding > 0)
-          {
-            size.setHeight(size.height() + bottomPadding);
-          }
-        }
-      }
     }
     return size;
   }
@@ -399,6 +372,7 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
   if (infoFm.horizontalAdvance(infoText) > infoRect.width())
   {
     QString elidedInfoText = infoFm.elidedText(infoText, Qt::ElideRight, infoRect.width());
+    elidedInfoText += "...";
     painter->drawText(infoRect, Qt::AlignLeft | Qt::AlignVCenter, elidedInfoText);
   }
   else
@@ -414,18 +388,9 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
 {
   Q_D(const ctkDICOMPatientDelegate);
 
+  // In ListMode, the QSplitter will handle clipping to the patient area
+  // We still need patientView for hover state and study list access
   const ctkDICOMPatientView* patientView = qobject_cast<const ctkDICOMPatientView*>(option.widget);
-  if (patientView)
-  {
-    int splitterPos = patientView->splitterPosition();
-    // Don't render items at or below splitter
-    // Also add small margin to avoid rendering items that touch the splitter
-    int margin = d->Spacing;
-    if (option.rect.top() >= (splitterPos - margin))
-    {
-      return;
-    }
-  }
 
   painter->save();
 

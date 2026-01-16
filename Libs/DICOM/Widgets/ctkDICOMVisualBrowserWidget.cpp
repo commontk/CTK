@@ -23,7 +23,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCalendarWidget>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDate>
@@ -37,9 +36,7 @@
 #include <QProgressDialog>
 #include <QScrollArea>
 #include <QScrollBar>
-#include <QTableWidget>
 #include <QTimer>
-#include <QToolButton>
 
 // CTK includes
 #include <ctkBasePopupWidget.h>
@@ -73,6 +70,7 @@
 #include "ctkDICOMSeriesTableView.h"
 #include "ctkDICOMServerNodeWidget2.h"
 #include "ctkDICOMStudyModel.h"
+#include "ctkSplitter.h"
 #include "ctkDICOMStudyMergedFilterProxyModel.h"
 #include "ctkDICOMStudyListView.h"
 #include "ctkDICOMVisualBrowserWidget.h"
@@ -2210,14 +2208,17 @@ void ctkDICOMVisualBrowserWidget::openServerSettingsSection()
   // Ensure the splitter shows the AdvancedCollapsibleGroupBox
   if (d->AdvancedCollapsibleGroupBox->parentWidget())
   {
-    QSplitter* splitter = qobject_cast<QSplitter*>(d->AdvancedCollapsibleGroupBox->parentWidget());
+    ctkSplitter* splitter = qobject_cast<ctkSplitter*>(d->AdvancedCollapsibleGroupBox->parentWidget());
     if (splitter)
     {
       int index = splitter->indexOf(d->AdvancedCollapsibleGroupBox);
       if (index >= 0)
       {
-        int height = splitter->size().height() * 0.5;
-        splitter->setSizes(QList<int>() << height << height);
+        // Give more space to PatientView (70%) and less to Advanced (30%)
+        int totalHeight = splitter->size().height();
+        int patientViewHeight = totalHeight * 0.7;
+        int advancedHeight = totalHeight * 0.3;
+        splitter->setSizes(QList<int>() << patientViewHeight << advancedHeight);
       }
     }
   }
