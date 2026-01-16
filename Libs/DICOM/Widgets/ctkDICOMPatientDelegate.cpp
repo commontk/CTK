@@ -66,7 +66,7 @@ ctkDICOMPatientDelegatePrivate::ctkDICOMPatientDelegatePrivate()
   this->Spacing = 4;
   this->CornerRadius = 8;
   this->TabModeHeight = 34;
-  this->PatientHeaderHeight = 100;
+  this->PatientHeaderHeight = 70;
   this->IconSize = 24;
   this->MaxTextWidth = 200;
 }
@@ -399,7 +399,6 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
   if (infoFm.horizontalAdvance(infoText) > infoRect.width())
   {
     QString elidedInfoText = infoFm.elidedText(infoText, Qt::ElideRight, infoRect.width());
-    elidedInfoText += "...";
     painter->drawText(infoRect, Qt::AlignLeft | Qt::AlignVCenter, elidedInfoText);
   }
   else
@@ -799,11 +798,11 @@ QRect ctkDICOMPatientDelegate::contextMenuButtonRect(const QRect& itemRect, cons
 
   if (displayMode == ctkDICOMPatientView::TabMode)
   {
-    // For TabMode, position button at right edge of the tab
+    // For TabMode, position button at right edge of the patient header, vertically centered
     QRect tabRect = this->patientsRect(itemRect, option, QModelIndex());
     QRect patientHeaderRect = this->patientHeaderRect(tabRect, option);
     return QRect(patientHeaderRect.right() - d->IconSize - d->Spacing,
-                patientHeaderRect.center().y() - d->IconSize * 0.5,
+                patientHeaderRect.top() + (patientHeaderRect.height() - d->IconSize) / 2,
                 d->IconSize,
                 d->IconSize);
   }

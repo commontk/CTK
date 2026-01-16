@@ -623,20 +623,14 @@ void ctkDICOMPatientViewPrivate::updateAllowedServersComboBoxGeometry(const QMod
 
   if (this->DisplayMode == ctkDICOMPatientView::TabMode)
   {
-    // Position label and combo box below patient header in their own row
-    int startX = patientHeaderRect.left() + spacing * 4;
-    int y = patientHeaderRect.bottom() - comboHeight - spacing * 2;
+    // Position combo box on the right side, vertically centered
+    // Place it to the left of the select all and context menu icons
+    int iconSize = delegate->iconSize();
+    int rightMargin = spacing * 2 + iconSize * 2 + spacing * 0.5; // Space for both icons
+    int comboX = patientHeaderRect.right() - comboWidth - rightMargin - spacing * 2;
+    int y = patientHeaderRect.top() + (patientHeaderRect.height() - comboHeight) / 2;
 
-    QFontMetrics fm(this->AllowedServersLabel->font());
-    int labelWidth = fm.horizontalAdvance(this->AllowedServersLabel->text()) + spacing;
-    int labelHeight = fm.height();
-
-    // Position combo box next to label
-    int comboX = startX + labelWidth + spacing;
-
-    this->AllowedServersLabel->setGeometry(startX, y + (comboHeight - labelHeight) / 2, labelWidth, labelHeight);
-    this->AllowedServersLabel->show();
-    this->AllowedServersLabel->raise();
+    this->AllowedServersLabel->hide();
 
     this->AllowedServersComboBox->setGeometry(comboX, y, comboWidth, comboHeight);
     this->AllowedServersComboBox->show();
