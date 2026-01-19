@@ -225,6 +225,9 @@ public slots:
   /// Called when number of opened studies changes
   void onNumberOfOpenedStudiesChanged(int count = 0);
 
+  /// Set study collapsed state by studyInstanceUID
+  void setStudyCollapsed(const QString& studyInstanceUID, bool collapsed);
+
   /// Called when study context menu is requested from delegate (3-dot button click)
   void onStudyContextMenuRequested(const QPoint& globalPos, const QModelIndex& studyIndex);
 
@@ -290,6 +293,9 @@ protected slots:
   /// Called when the series view is entered (mouse hover)
   void onSeriesViewEntered();
 
+  /// Called when load button is clicked
+  void onLoadButtonClicked();
+
 signals:
   /// Emitted when the mouse enters the study list view
   void studyListViewEntered();
@@ -314,6 +320,9 @@ signals:
 
   /// Emitted when series context menu is requested
   void seriesContextMenuRequested(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs);
+
+  /// Emitted when load button is clicked with selected series UIDs
+  void loadSeriesRequested(const QStringList& seriesInstanceUIDs);
 
   /// Emitted when view layout changes
   void layoutChanged();

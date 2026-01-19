@@ -32,6 +32,7 @@
 // ctkDICOMCore includes
 #include <ctkDICOMModel.h>
 #include <ctkDICOMPatientView.h>
+#include <ctkDICOMStudyModel.h>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMWidgetsExport.h"
@@ -93,7 +94,7 @@ public:
   /// Thumbnail size options
   enum ThumbnailSizePresetOption
   {
-    None = 0,
+    Hidden = 0,
     Small,
     Medium,
     Large
@@ -119,6 +120,7 @@ public:
   Q_PROPERTY(ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
   Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
+  Q_PROPERTY(bool alwaysShowQueryButton READ alwaysShowQueryButton WRITE setAlwaysShowQueryButton)
   Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
   Q_PROPERTY(int storagePort READ storagePort WRITE setStoragePort);
 
@@ -274,6 +276,13 @@ public:
   bool isDeleteActionVisible() const;
   ///@}
 
+  ///@{
+  /// Set if query button is always shown or only when query/retrieve servers are configured
+  /// true by default (always shown)
+  void setAlwaysShowQueryButton(bool alwaysShow);
+  bool alwaysShowQueryButton() const;
+  ///@}
+
   /// Get Patient View (model/view/delegate architecture)
   Q_INVOKABLE ctkDICOMPatientView* patientView() const;
 
@@ -417,6 +426,15 @@ public Q_SLOTS:
 
   // Slot to handle display mode changes in PatientView
   void onPatientViewDisplayModeChanged(ctkDICOMPatientView::DisplayMode mode);
+
+  // Slot to handle when a study model is created
+  void onStudyModelCreated(const QString& patientUID, ctkDICOMStudyModel* studyModel);
+
+  // Slot to handle when studies are sorted by date after QueryStudies
+  void onStudiesSortedByDate(const QStringList& sortedStudyInstanceUIDs);
+
+  // Slot to handle when a study is ready to open
+  void onStudyReadyToOpen(const QString& studyInstanceUID);
 
 Q_SIGNALS:
   /// Emitted when directory is changed

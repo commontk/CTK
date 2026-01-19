@@ -30,6 +30,7 @@
 #include <QHelpEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QItemSelectionModel>
@@ -88,6 +89,9 @@ public:
   bool IsOperationStatusIconPressed;
   bool IsOperationStatusIconHovered;
 
+  // Floating load button for loading multiple selected series
+  QPushButton* LoadSeriesButton;
+
   // Helper methods
   void cleanupSeriesView(const QString& studyInstanceUID);
   void clearSeriesViewCache();
@@ -97,6 +101,8 @@ public:
                                         const QStringList &seriesInstanceUIDs,
                                         QItemSelectionModel::SelectionFlags selectionMode = QItemSelectionModel::ClearAndSelect);
   void updateSeriesViewPositions();
+  void updateLoadButtonPosition();
+  void updateLoadButtonVisibility();
   QPair<ctkDICOMStudyModel*, QModelIndex> mapToStudyModelAndIndex(const QModelIndex& proxyIndex) const;
 };
 
@@ -113,6 +119,7 @@ ctkDICOMStudyListViewPrivate::ctkDICOMStudyListViewPrivate(ctkDICOMStudyListView
   this->IsContextMenuButtonHovered = false;
   this->IsOperationStatusIconPressed = false;
   this->IsOperationStatusIconHovered = false;
+  this->LoadSeriesButton = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -337,6 +344,80 @@ void ctkDICOMStudyListViewPrivate::updateSeriesViewPositions()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMStudyListViewPrivate::updateLoadButtonPosition()
+{
+  Q_Q(ctkDICOMStudyListView);
+  if (!this->LoadSeriesButton || !q->viewport())
+  {
+    return;
+  }
+
+  // Position button in lower-right corner with margin
+  int margin = 24;
+  int buttonWidth = this->LoadSeriesButton->sizeHint().width();
+  int buttonHeight = this->LoadSeriesButton->sizeHint().height();
+
+  QRect viewportRect = q->viewport()->rect();
+  int scrollBarWidth = 0;
+  if (q->verticalScrollBar() && q->verticalScrollBar()->isVisible())
+  {
+    scrollBarWidth = q->verticalScrollBar()->width();
+  }
+
+  int x = viewportRect.width() - buttonWidth - margin - scrollBarWidth;
+  int y = viewportRect.height() - buttonHeight - margin;
+
+  this->LoadSeriesButton->move(x, y);
+  this->LoadSeriesButton->raise(); // Ensure button stays on top
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListViewPrivate::updateLoadButtonVisibility()
+{
+  if (!this->LoadSeriesButton)
+  {
+    return;
+  }
+
+  // Count total selected series across all studies
+  int totalSelectedSeries = 0;
+  for (QMap<QString, ctkDICOMSeriesTableView*>::const_iterator it = this->SeriesViewCache.constBegin();
+       it != this->SeriesViewCache.constEnd(); ++it)
+  {
+    ctkDICOMSeriesTableView* seriesView = it.value();
+    if (seriesView)
+    {
+      totalSelectedSeries += seriesView->selectedSeriesInstanceUIDs().count();
+    }
+  }
+
+  // Show button only if more than 1 series is selected
+  bool shouldShow = totalSelectedSeries > 1;
+  this->LoadSeriesButton->setVisible(shouldShow);
+
+  if (shouldShow)
+  {
+    // Update button text with count - format large numbers compactly
+    QString buttonText;
+    if (totalSelectedSeries >= 10000)
+    {
+      buttonText = ctkDICOMStudyListView::tr("Load (%1k)").arg(totalSelectedSeries / 1000);
+    }
+    else if (totalSelectedSeries >= 1000)
+    {
+      // Show decimal for 1k-9.9k range
+      buttonText = ctkDICOMStudyListView::tr("Load (%1k)").arg(totalSelectedSeries / 1000.0, 0, 'f', 1);
+    }
+    else
+    {
+      buttonText = ctkDICOMStudyListView::tr("Load (%1)").arg(totalSelectedSeries);
+    }
+    this->LoadSeriesButton->setText(buttonText);
+    this->updateLoadButtonPosition(); // Update position when showing
+  }
+}
+
+//------------------------------------------------------------------------------
 QPair<ctkDICOMStudyModel*, QModelIndex> ctkDICOMStudyListViewPrivate::mapToStudyModelAndIndex(const QModelIndex& index) const
 {
   Q_Q(const ctkDICOMStudyListView);
@@ -380,7 +461,6 @@ ctkDICOMStudyListView::ctkDICOMStudyListView(QWidget* parent)
   // Remove frame border
   this->setFrameShape(QFrame::NoFrame);
   this->setFrameShadow(QFrame::Plain);
-  // To Do: add an option to disable styling
   this->verticalScrollBar()->setStyleSheet(QString(R"(
       QScrollBar:vertical {
         border: none;
@@ -439,6 +519,44 @@ ctkDICOMStudyListView::ctkDICOMStudyListView(QWidget* parent)
     this->connect(this->verticalScrollBar(), &QScrollBar::valueChanged,
                   this, &ctkDICOMStudyListView::onScrollBarValueChanged);
   }
+
+  // Create floating load button for loading multiple selected series
+  Q_D(ctkDICOMStudyListView);
+  d->LoadSeriesButton = new QPushButton(this->viewport());
+  d->LoadSeriesButton->setToolTip(tr("Load selected series"));
+  d->LoadSeriesButton->setCursor(Qt::PointingHandCursor);
+  d->LoadSeriesButton->setAttribute(Qt::WA_Hover, true);
+  d->LoadSeriesButton->hide();
+
+  // FAB-style button with solid color and transparency
+  d->LoadSeriesButton->setStyleSheet(QString(R"(
+    QPushButton {
+      background: rgba(33, 150, 243, 0.92);
+      border: none;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      padding: 14px 32px;
+      min-width: 90px;
+    }
+    QPushButton:hover {
+      background: rgba(33, 150, 243, 1.0);
+    }
+    QPushButton:pressed {
+      background: rgba(21, 101, 192, 1.0);
+      padding: 15px 31px 13px 33px;
+    }
+  )"));
+
+  QIcon loadIcon(":/Icons/load.svg");
+  d->LoadSeriesButton->setIcon(loadIcon);
+  d->LoadSeriesButton->setIconSize(QSize(20, 20));
+  d->LoadSeriesButton->setText(tr("Load"));
+
+  // Connect button to emit signal
+  this->connect(d->LoadSeriesButton, &QPushButton::clicked,
+                this, &ctkDICOMStudyListView::onLoadButtonClicked);
 }
 
 //------------------------------------------------------------------------------
@@ -493,6 +611,9 @@ void ctkDICOMStudyListView::setModel(QAbstractItemModel* model)
   d->IsOperationStatusIconHovered = false;
 
   d->clearSeriesViewCache();
+
+  // Update load button visibility after clearing cache
+  d->updateLoadButtonVisibility();
 
   // Update layout
   this->refreshLayout();
@@ -567,6 +688,9 @@ void ctkDICOMStudyListView::clearSelection()
     seriesView->clearSelection();
   }
   this->setCurrentIndex(QModelIndex());
+
+  // Update load button visibility after clearing selection
+  d->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -821,6 +945,9 @@ void ctkDICOMStudyListView::clean()
   d->IsSelectAllIconHovered = false;
   d->IsOperationStatusIconHovered = false;
   d->IsContextMenuButtonHovered = false;
+
+  // Update load button visibility
+  d->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -1028,8 +1155,10 @@ bool ctkDICOMStudyListView::hasSeriesViewForStudy(const QString& studyInstanceUI
 //------------------------------------------------------------------------------
 void ctkDICOMStudyListView::resizeEvent(QResizeEvent* event)
 {
+  Q_D(ctkDICOMStudyListView);
   Superclass::resizeEvent(event);
   this->refreshLayout();
+  d->updateLoadButtonPosition();
 }
 
 //------------------------------------------------------------------------------
@@ -1586,6 +1715,8 @@ void ctkDICOMStudyListView::onStudiesSelectionChanged()
 //------------------------------------------------------------------------------
 void ctkDICOMStudyListView::onSeriesSelectionChanged(const QString& studyInstanceUID, const QStringList& selectedSeriesInstanceUIDs)
 {
+  Q_D(ctkDICOMStudyListView);
+
   if (studyInstanceUID.isEmpty())
   {
     return;
@@ -1594,6 +1725,10 @@ void ctkDICOMStudyListView::onSeriesSelectionChanged(const QString& studyInstanc
   int numberOfSelectedSeries = selectedSeriesInstanceUIDs.count();
   this->selectStudyInstanceUID(studyInstanceUID, numberOfSelectedSeries > 0 ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
   emit this->seriesSelectionChanged(studyInstanceUID, selectedSeriesInstanceUIDs);
+
+  // Update load button visibility based on total selection count
+  d->updateLoadButtonVisibility();
+
   this->viewport()->update();
 }
 
@@ -1669,9 +1804,11 @@ void ctkDICOMStudyListView::onStudyContextMenuRequested(const QPoint& globalPos,
 //------------------------------------------------------------------------------
 void ctkDICOMStudyListView::onScrollBarValueChanged(int value)
 {
+  Q_D(ctkDICOMStudyListView);
   Q_UNUSED(value);
 
   this->refreshLayout(false);
+  d->updateLoadButtonPosition();
 }
 
 //------------------------------------------------------------------------------
@@ -1751,6 +1888,9 @@ void ctkDICOMStudyListView::onModelAboutToBeReset()
 
   // Clear all series view cache to avoid issues during reset
   d->clearSeriesViewCache();
+
+  // Update load button visibility after clearing cache
+  d->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -1810,6 +1950,55 @@ void ctkDICOMStudyListView::onNumberOfOpenedStudiesChanged(int count)
       if (sourceStudyModel)
       {
         sourceStudyModel->setStudyCollapsed(sourceIndex, row >= count);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListView::setStudyCollapsed(const QString& studyInstanceUID, bool collapsed)
+{
+  QAbstractItemModel* model = this->model();
+  if (!model || studyInstanceUID.isEmpty())
+  {
+    return;
+  }
+
+  ctkDICOMStudyModel* studyModel = this->studyModel();
+  ctkDICOMStudyMergedFilterProxyModel* mergedStudyModel = this->studyMergedFilterProxyModel();
+
+  if (studyModel)
+  {
+    // Find the study in the model
+    QModelIndex sourceIndex = studyModel->indexFromStudyInstanceUID(studyInstanceUID);
+    if (sourceIndex.isValid())
+    {
+      studyModel->setStudyCollapsed(sourceIndex, collapsed);
+    }
+  }
+  else if (mergedStudyModel)
+  {
+    // Find the study in the merged model
+    int rowCount = mergedStudyModel->rowCount();
+    for (int row = 0; row < rowCount; ++row)
+    {
+      QModelIndex mergedIndex = mergedStudyModel->index(row, 0);
+      if (!mergedIndex.isValid())
+      {
+        continue;
+      }
+
+      QString currentStudyUID = mergedStudyModel->data(mergedIndex, ctkDICOMStudyModel::StudyInstanceUIDRole).toString();
+      if (currentStudyUID == studyInstanceUID)
+      {
+        QPair<ctkDICOMStudyModel*, QModelIndex> sourceInfo = mergedStudyModel->mapToSource(mergedIndex);
+        ctkDICOMStudyModel* sourceStudyModel = sourceInfo.first;
+        QModelIndex sourceIndex = sourceInfo.second;
+        if (sourceStudyModel && sourceIndex.isValid())
+        {
+          sourceStudyModel->setStudyCollapsed(sourceIndex, collapsed);
+          break;
+        }
       }
     }
   }
@@ -2085,4 +2274,30 @@ void ctkDICOMStudyListView::onSeriesViewEntered()
 {
   QEvent leaveEv(QEvent::Leave);
   this->leaveEvent(&leaveEv);
+}
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListView::onLoadButtonClicked()
+{
+  Q_D(ctkDICOMStudyListView);
+
+  // Collect all selected series from all studies
+  QStringList selectedSeriesInstanceUIDs;
+  for (QMap<QString, ctkDICOMSeriesTableView*>::const_iterator it = d->SeriesViewCache.constBegin();
+       it != d->SeriesViewCache.constEnd(); ++it)
+  {
+    ctkDICOMSeriesTableView* seriesView = it.value();
+    if (seriesView)
+    {
+      selectedSeriesInstanceUIDs.append(seriesView->selectedSeriesInstanceUIDs());
+    }
+  }
+
+  // Remove duplicates
+  selectedSeriesInstanceUIDs.removeDuplicates();
+
+  // Emit signal for parent widget to handle loading
+  if (!selectedSeriesInstanceUIDs.isEmpty())
+  {
+    emit this->loadSeriesRequested(selectedSeriesInstanceUIDs);
+  }
 }

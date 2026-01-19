@@ -87,7 +87,6 @@ ctkDICOMSeriesTableView::ctkDICOMSeriesTableView(QWidget* parent)
   // Configure table appearance
   this->setShowGrid(false);
 
-  // To Do: add an option to disable styling
   // Disable default selection highlighting since we handle it in the delegate
   this->setStyleSheet(
     "QTableView { "

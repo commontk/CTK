@@ -277,6 +277,14 @@ Q_SIGNALS:
   /// Emitted when model is refreshed
   void modelRefreshed();
 
+  /// Emitted when a study has completed QueryInstances and is ready to be opened
+  /// This is used to progressively open studies as they become ready
+  void studyReadyToOpen(const QString& studyInstanceUID);
+
+  /// Emitted after QueryStudies completes with the list of studies sorted by date (newest first)
+  /// This allows views to determine which studies should be opened
+  void studiesSortedByDate(const QStringList& sortedStudyInstanceUIDs);
+
 protected:
   QScopedPointer<ctkDICOMStudyModelPrivate> d_ptr;
 

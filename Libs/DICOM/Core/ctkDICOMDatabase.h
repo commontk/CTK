@@ -71,6 +71,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames)
   Q_PROPERTY(QStringList loadedSeriesInstanceUIDs READ loadedSeriesInstanceUIDs WRITE setLoadedSeriesInstanceUIDs NOTIFY loadedSeriesInstanceUIDsChanged)
   Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath)
+  Q_PROPERTY(bool useSystemFileCopy READ useSystemFileCopy WRITE setUseSystemFileCopy)
 
 public:
   struct IndexingResult
@@ -303,6 +304,14 @@ public:
   /// for better compatibility, unless it can be guaranteed that the file system can store full UIDs.
   void setUseShortStoragePath(bool useShort);
   bool useShortStoragePath()const;
+
+  /// Set whether to use the operating system's file copy API (QFile::copy()) for file operations.
+  /// If useSystemFileCopy is false (default), direct read/write with buffering is used, which is
+  /// significantly faster in Qt6 (10-20x) but does not preserve file permissions, timestamps, or
+  /// extended attributes. If true, QFile::copy() is used, which preserves file metadata and may
+  /// perform better on network drives, but is slower for local operations.
+  void setUseSystemFileCopy(bool useSystemCopy);
+  bool useSystemFileCopy()const;
 
   /// Update the fields in the database that are used for displaying information
   /// from information stored in the tag-cache.

@@ -93,6 +93,7 @@ public:
     int filteredSeriesCount;
     bool isCollapsed;
     bool isVisible;
+    bool isQueryResult;
     ctkDICOMStudyModel::OperationStatus operationStatus;
     QString stoppedJobUID;
   };
@@ -252,6 +253,8 @@ void ctkDICOMStudyModelPrivate::populateStudies()
   QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", this->PatientUID);
   patientName.replace(R"(^)", R"( )");
   QString patientBirthDate = this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientUID);
+  // Fix YYYY-MM-DD format in YYYYMMDD
+  patientBirthDate.remove('-');
 
   foreach (const QString& studyInstanceUID, studiesList)
   {
@@ -260,6 +263,8 @@ void ctkDICOMStudyModelPrivate::populateStudies()
 
     int filteredSeriesCount = this->getFilteredSeriesCountForStudy(studyInstanceUID);
     int seriesCount = this->getSeriesCountForStudy(studyInstanceUID);
+    // Allow query results with zero series to be visible
+    bool isQueryResult = (seriesCount == 0);
     bool isVisible = q->studyMatchesFilters(studyInstanceUID) &&
                       (seriesCount == 0 || (seriesCount > 0 && filteredSeriesCount != 0));
 
@@ -271,6 +276,8 @@ void ctkDICOMStudyModelPrivate::populateStudies()
       study.studyID = this->DicomDatabase->fieldForStudy("StudyID", studyInstanceUID);
       study.studyDescription = this->DicomDatabase->fieldForStudy("StudyDescription", studyInstanceUID);
       study.studyDate = this->DicomDatabase->fieldForStudy("StudyDate", studyInstanceUID);
+      // Fix YYYY-MM-DD format in YYYYMMDD
+      study.studyDate.remove('-');
       study.studyTime = this->DicomDatabase->fieldForStudy("StudyTime", studyInstanceUID);
       study.accessionNumber = this->DicomDatabase->fieldForStudy("AccessionNumber", studyInstanceUID);
       study.modalitiesInStudy = this->DicomDatabase->fieldForStudy("ModalitiesInStudy", studyInstanceUID);
@@ -286,6 +293,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
       study.filteredSeriesCount = filteredSeriesCount;
       study.seriesCount = seriesCount;
       study.isVisible = isVisible;
+      study.isQueryResult = isQueryResult;
       study.operationStatus = ctkDICOMStudyModel::NoOperation;
       study.stoppedJobUID = "";
       study.isCollapsed = true;
@@ -384,17 +392,17 @@ QString ctkDICOMStudyModelPrivate::formatDate(const QString& date) const
     QDate studyDate = QDate::fromString(date, "yyyyMMdd");
     if (studyDate.isValid())
     {
-      return studyDate.toString("dd MMM yyyy");
+      return studyDate.toString("d MMM yyyy");
     }
   }
 
-  // Try YYYY-MM-DD format (10 characters, from SQLite DATE fields)
+  // Try YYYY-MM-DD format (10 characters)
   if (date.length() == 10)
   {
     QDate studyDate = QDate::fromString(date, "yyyy-MM-dd");
     if (studyDate.isValid())
     {
-      return studyDate.toString("dd MMM yyyy");
+      return studyDate.toString("d MMM yyyy");
     }
   }
 
@@ -540,8 +548,12 @@ void ctkDICOMStudyModelPrivate::updateFilteredSeriesCounts()
     ctkDICOMStudyModelPrivate::StudyData& study = this->Studies[index];
     int seriesCount = this->getSeriesCountForStudy(study.studyInstanceUID);
     study.filteredSeriesCount = this->getFilteredSeriesCountForStudy(study.studyInstanceUID);
+    // Allow query results with zero series to be visible
+    bool isQueryResult = (seriesCount == 0);
+    study.seriesCount = seriesCount;
     study.isVisible = q->studyMatchesFilters(study.studyInstanceUID) &&
-                      (seriesCount > 0 && study.filteredSeriesCount != 0);
+                      (seriesCount == 0 || (seriesCount > 0 && study.filteredSeriesCount != 0));
+    study.isQueryResult = isQueryResult;
   }
 
   q->emit dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
@@ -555,8 +567,11 @@ void ctkDICOMStudyModelPrivate::updateStudyCountsAndVisibility(int studyIndex)
 
   study.seriesCount = this->getSeriesCountForStudy(study.studyInstanceUID);
   study.filteredSeriesCount = this->getFilteredSeriesCountForStudy(study.studyInstanceUID);
+  // Allow query results with zero series to be visible
+  bool isQueryResult = (study.seriesCount == 0);
   study.isVisible = q->studyMatchesFilters(study.studyInstanceUID) &&
-                    (study.seriesCount > 0 && study.filteredSeriesCount != 0);
+                    (study.seriesCount == 0 || (study.seriesCount > 0 && study.filteredSeriesCount != 0));
+  study.isQueryResult = isQueryResult;
 }
 
 //------------------------------------------------------------------------------
@@ -794,7 +809,9 @@ bool ctkDICOMStudyModel::setData(const QModelIndex& index, const QVariant& value
     {
       if (study.studyDate != value.toString())
       {
-        study.studyDate = value.toString();
+        study.studyDate  = value.toString();
+        // Fix YYYY-MM-DD format in YYYYMMDD
+        study.studyDate .remove('-');
         changed = true;
       }
       break;
@@ -905,6 +922,8 @@ bool ctkDICOMStudyModel::setData(const QModelIndex& index, const QVariant& value
       if (study.patientBirthDate != value.toString())
       {
         study.patientBirthDate = value.toString();
+        // Fix YYYY-MM-DD format in YYYYMMDD
+        study.patientBirthDate.remove('-');
         changed = true;
       }
       break;
@@ -1561,17 +1580,68 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
     }
     this->refresh();
 
+    // Sort study UIDs by date/time (most recent first) using the same logic as proxy models
+    QList<QPair<QDateTime, QString>> studyDateTimePairs;
     for (const QString& studyInstanceUID : td.QueriedStudyInstanceUIDs)
     {
+      QModelIndex idx = this->indexFromStudyInstanceUID(studyInstanceUID);
+      QString studyDate = this->data(idx, ctkDICOMStudyModel::StudyDateRole).toString();
+      QString studyTime = this->data(idx, ctkDICOMStudyModel::StudyTimeRole).toString();
+
+      // Parse date/time
+      QDateTime studyDateTime;
+      if (!studyDate.isEmpty())
+      {
+        QString dateTimeStr = studyDate;
+        if (!studyTime.isEmpty())
+        {
+          dateTimeStr += studyTime;
+        }
+        studyDateTime = QDateTime::fromString(dateTimeStr, "yyyyMMddHHmmss");
+      }
+
+      studyDateTimePairs.append(qMakePair(studyDateTime, studyInstanceUID));
+    }
+
+    // Sort by date/time (most recent first)
+    std::sort(studyDateTimePairs.begin(), studyDateTimePairs.end(),
+              [](const QPair<QDateTime, QString>& a, const QPair<QDateTime, QString>& b) {
+                return a.first > b.first;
+              });
+
+    // Build the sorted list of study UIDs
+    QStringList sortedStudyUIDs;
+    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
+    {
+      sortedStudyUIDs.append(pair.second);
+    }
+
+    // Emit the sorted list so views can determine which studies to open
+    emit this->studiesSortedByDate(sortedStudyUIDs);
+
+    // Query series for each study, using HighPriority for the first N studies
+    int studyIndex = 0;
+    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
+    {
+      const QString& studyInstanceUID = pair.second;
       ctkDICOMSeriesModel* seriesModel = this->seriesModelForStudyInstanceUID(studyInstanceUID);
       if (!seriesModel)
       {
         continue;
       }
+
+      // Use HighPriority for the first N studies (that will be opened), LowPriority for the rest
+      QThread::Priority priority = (studyIndex < d->NumberOfOpenedStudies) ?
+                                    QThread::HighPriority : QThread::LowPriority;
+
+      // Set the priority on the series model for its QueryInstances and Retrieve operations
+      seriesModel->setJobPriority(priority);
+
       d->Scheduler->querySeries(d->PatientID,
                                 studyInstanceUID,
-                                QThread::NormalPriority,
+                                priority,
                                 d->AllowedServers);
+      studyIndex++;
     }
   }
 
@@ -1603,6 +1673,8 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
   if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
   {
     this->refreshStudy(td.StudyInstanceUID);
+    // Emit signal to notify that this study is ready to be opened
+    emit this->studyReadyToOpen(td.StudyInstanceUID);
   }
 }
 
