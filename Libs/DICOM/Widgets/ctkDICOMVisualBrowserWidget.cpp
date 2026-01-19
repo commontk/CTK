@@ -185,11 +185,12 @@ public:
   ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption ThumbnailSizePreset;
   bool SendActionVisible;
   bool DeleteActionVisible;
+  bool AlwaysShowQueryButton;
   bool IsGUIUpdating;
   bool IsGUIHorizontal;
   bool IsLoading;
   QString SelectedPatientUID;
-  QSet<QString> PendingStudyOpenPatientIDs; // Track patients with pending study opens to prevent duplicates
+  QMap<QString, QStringList> StudiesToOpenPerPatient; // Track which studies (by UID) should be opened for each patient
 
   QProgressDialog* UpdateSchemaProgress;
   QProgressDialog* ExportProgress;
@@ -228,6 +229,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->ThumbnailSizePreset = ctkDICOMVisualBrowserWidget::Small;
   this->SendActionVisible = false;
   this->DeleteActionVisible = true;
+  this->AlwaysShowQueryButton = true;
 
   this->FilteringDate = ctkDICOMVisualBrowserWidget::Any;
   this->CustomDateRangeWidget = nullptr;
@@ -387,7 +389,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->FilteringStartDateEdit->setMinimumDate(QDate());
   this->FilteringStartDateEdit->setDate(QDate()); // Set to null date (empty)
   this->FilteringStartDateEdit->setSpecialValueText(" "); // Show empty when null
-  this->FilteringStartDateEdit->setDisplayFormat("dd MMM yyyy");
+  this->FilteringStartDateEdit->setDisplayFormat("yyyyMMdd");
 
   QLabel* toLabel = new QLabel(ctkDICOMVisualBrowserWidget::tr("To:"), this->CustomDateRangeWidget);
   this->FilteringEndDateEdit = new QDateEdit(this->CustomDateRangeWidget);
@@ -395,7 +397,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->FilteringEndDateEdit->setMinimumDate(QDate());
   this->FilteringEndDateEdit->setDate(QDate());   // Set to null date (empty)
   this->FilteringEndDateEdit->setSpecialValueText(" ");   // Show empty when null
-  this->FilteringEndDateEdit->setDisplayFormat("dd MMM yyyy");
+  this->FilteringEndDateEdit->setDisplayFormat("yyyyMMdd");
 
   customDateLayout->addWidget(fromLabel);
   customDateLayout->addWidget(this->FilteringStartDateEdit);
@@ -439,6 +441,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->PatientView, &ctkDICOMPatientView::displayModeChanged,
                    q, &ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged);
 
+  // Connect patient model's studyModelCreated signal to handle study signals
+  QObject::connect(this->PatientModel.data(), &ctkDICOMPatientModel::studyModelCreated,
+                   q, &ctkDICOMVisualBrowserWidget::onStudyModelCreated);
+
   // Connect patient context menu (3-dot button or right-click)
   QObject::connect(this->PatientView, &ctkDICOMPatientView::patientContextMenuRequested,
                    q, &ctkDICOMVisualBrowserWidget::showPatientContextMenu);
@@ -454,6 +460,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   // Connect series activation (double-click) signal
   QObject::connect(this->PatientView->studyListView(), &ctkDICOMStudyListView::seriesActivated,
                    q, &ctkDICOMVisualBrowserWidget::onSeriesDoubleClicked);
+
+  // Connect study list view's load button to our load handler
+  QObject::connect(this->PatientView->studyListView(), &ctkDICOMStudyListView::loadSeriesRequested,
+                   q, &ctkDICOMVisualBrowserWidget::onLoadSeries);
 
   QObject::connect(this->ServerNodeWidget, SIGNAL(serversSettingsChanged()),
                    q, SLOT(onServersSettingsChanged()));
@@ -1354,7 +1364,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
 //----------------------------------------------------------------------------
 int ctkDICOMVisualBrowserWidgetPrivate::computeThumbnailSizeInPixels(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption sizeOption)
 {
-  if (sizeOption == ctkDICOMVisualBrowserWidget::None)
+  if (sizeOption == ctkDICOMVisualBrowserWidget::Hidden)
   {
     return ctkDICOMVisualBrowserWidgetThumbnailSizePixelsNone;
   }
@@ -1491,6 +1501,20 @@ CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionV
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isSendActionVisible, SendActionVisible);
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isDeleteActionVisible, DeleteActionVisible);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, alwaysShowQueryButton, AlwaysShowQueryButton);
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::setAlwaysShowQueryButton(bool alwaysShow)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (d->AlwaysShowQueryButton == alwaysShow)
+  {
+    return;
+  }
+  d->AlwaysShowQueryButton = alwaysShow;
+  // Trigger update of query button visibility
+  this->onServersSettingsChanged();
+}
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setThumbnailSizePreset(ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption thumbnailSizePreset)
@@ -2413,6 +2437,10 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 
   // Stop any fetching task.
   this->onStop();
+
+  // Reset the studies-to-open list for all patients since we're starting a new query
+  d->StudiesToOpenPerPatient.clear();
+
   d->SearchPushButton->setIcon(QIcon(":/Icons/query.svg"));
   d->WarningPushButton->hide();
   d->updateFiltersWarnings();
@@ -2499,7 +2527,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     }
 
     d->Scheduler->setFilters(parameters);
-    d->Scheduler->queryPatients(QThread::NormalPriority);
+    d->Scheduler->queryPatients(QThread::LowPriority);
   }
   else
   {
@@ -2555,35 +2583,10 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
     {
-      // NOTE: if no more query jobs running, open the first N studies of the patient
-      if (d->Scheduler->getJobsByDICOMUIDs({td.PatientID}).count() == 0)
-      {
-        // Check if we've already scheduled study opening for this patient
-        if (d->PendingStudyOpenPatientIDs.contains(td.PatientID))
-        {
-          continue;
-        }
-
-        // Mark this patient as having a pending study open
-        d->PendingStudyOpenPatientIDs.insert(td.PatientID);
-
-        // Wait for proxy model to finish sorting by deferring to next event loop iteration
-        // Use singleShot with 0 delay to ensure all model updates and sorting complete
-        ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
-        int numberOfStudies = this->numberOfOpenedStudiesPerPatient();
-        QString patientID = td.PatientID;
-
-        // Use singleShot with context object to ensure proper cleanup
-        QTimer::singleShot(0, this, [this, studyListView, numberOfStudies, patientID]() {
-          Q_D(ctkDICOMVisualBrowserWidget);
-          if (studyListView)
-          {
-            studyListView->onNumberOfOpenedStudiesChanged(numberOfStudies);
-          }
-          // Remove from pending set after execution
-          d->PendingStudyOpenPatientIDs.remove(patientID);
-        });
-      }
+      // NOTE: Study opening is now handled progressively via the studyReadyToOpen signal
+      // from the study model, which is emitted as soon as QueryInstances completes for each study.
+      // This allows studies to open immediately as they become ready, rather than waiting
+      // for all query jobs to finish.
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
@@ -2630,6 +2633,8 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
+      d->PatientModel->setQueryInProgress(true);
+      d->PatientView->viewport()->update();
       continue;
     }
 
@@ -2665,6 +2670,8 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      d->PatientModel->setQueryInProgress(false);
+      d->PatientView->viewport()->update();
       continue;
     }
 
@@ -2702,6 +2709,8 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
       d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
       d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
       d->WarningPushButton->show();
+      d->PatientModel->setQueryInProgress(false);
+      d->PatientView->viewport()->update();
       continue;
     }
 
@@ -2738,6 +2747,8 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/query_success.svg"));
+      d->PatientModel->setQueryInProgress(false);
+      d->PatientView->viewport()->update();
     }
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
         td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
@@ -2765,6 +2776,19 @@ void ctkDICOMVisualBrowserWidget::onServersSettingsChanged()
   foreach (const QString& patientUID, patientUIDs)
   {
     d->PatientModel->updateAllowedServersFromDB(patientUID);
+  }
+
+  // Update query button visibility based on alwaysShowQueryButton property
+  if (!d->AlwaysShowQueryButton && d->Scheduler)
+  {
+    // Only show query button if there are query/retrieve servers configured
+    bool hasQueryRetrieveServer = d->Scheduler->queryRetrieveServersCount() > 0;
+    d->SearchPushButton->setVisible(hasQueryRetrieveServer);
+  }
+  else
+  {
+    // Always show the query button
+    d->SearchPushButton->setVisible(true);
   }
 }
 
@@ -2806,6 +2830,99 @@ void ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged(ctkDICOMPatien
           ? ctkDICOMPatientFilterProxyModel::TabMode
           : ctkDICOMPatientFilterProxyModel::ListMode
       );
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onStudyModelCreated(const QString& patientUID, ctkDICOMStudyModel* studyModel)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  Q_UNUSED(patientUID);
+  if (!studyModel)
+  {
+    return;
+  }
+
+  // Connect the studyReadyToOpen signal from the newly created study model
+  QObject::connect(studyModel, &ctkDICOMStudyModel::studyReadyToOpen,
+                   this, &ctkDICOMVisualBrowserWidget::onStudyReadyToOpen);
+
+  // Connect the studiesSortedByDate signal to know which studies should be opened
+  QObject::connect(studyModel, &ctkDICOMStudyModel::studiesSortedByDate,
+                   this, &ctkDICOMVisualBrowserWidget::onStudiesSortedByDate);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onStudiesSortedByDate(const QStringList& sortedStudyInstanceUIDs)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel || sortedStudyInstanceUIDs.isEmpty())
+  {
+    return;
+  }
+
+  // Find which patient these studies belong to
+  QString patientID;
+  QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
+  for (ctkDICOMStudyModel* studyModel : studyModels)
+  {
+    if (studyModel && studyModel->studyInstanceUIDs().contains(sortedStudyInstanceUIDs.first()))
+    {
+      patientID = studyModel->patientID();
+      break;
+    }
+  }
+
+  if (patientID.isEmpty())
+  {
+    return;
+  }
+
+  // Take only the first N studies from the sorted list
+  int maxStudies = this->numberOfOpenedStudiesPerPatient();
+  QStringList studiesToOpen = sortedStudyInstanceUIDs.mid(0, qMin(maxStudies, sortedStudyInstanceUIDs.count()));
+  d->StudiesToOpenPerPatient[patientID] = studiesToOpen;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onStudyReadyToOpen(const QString& studyInstanceUID)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel || !d->PatientView || !d->PatientView->studyListView())
+  {
+    return;
+  }
+
+  // Get the patient ID for this study
+  QString patientID;
+  QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
+  for (ctkDICOMStudyModel* studyModel : studyModels)
+  {
+    if (studyModel && studyModel->studyInstanceUIDs().contains(studyInstanceUID))
+    {
+      patientID = studyModel->patientID();
+      break;
+    }
+  }
+
+  if (patientID.isEmpty())
+  {
+    return;
+  }
+
+  // Check if this study is in the list of studies that should be opened
+  QStringList studiesToOpen = d->StudiesToOpenPerPatient.value(patientID, QStringList());
+  if (!studiesToOpen.contains(studyInstanceUID))
+  {
+    // This study is not one of the first N studies by date, don't open it
+    return;
+  }
+
+  // Open this specific study
+  ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+  if (studyListView)
+  {
+    studyListView->setStudyCollapsed(studyInstanceUID, false);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -3846,6 +3963,8 @@ void ctkDICOMVisualBrowserWidget::exportSeriesToDirectory(const QString& dirPath
     QString seriesDescription = descriptions["SeriesDescription"];
     QString studyDateTag = QString("0008,0020");
     QString studyDate = d->DicomDatabase->fileValue(firstFilePath, studyDateTag);
+    // Fix YYYY-MM-DD format in YYYYMMDD
+    studyDate.remove('-');
     QString seriesNumberTag = QString("0020,0011");
     QString seriesNumber = d->DicomDatabase->fileValue(firstFilePath, seriesNumberTag);
 

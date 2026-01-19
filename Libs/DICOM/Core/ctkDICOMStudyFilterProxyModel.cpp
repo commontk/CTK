@@ -105,10 +105,6 @@ bool ctkDICOMStudyFilterProxyModel::lessThan(
   QString leftTime = source_left.data(ctkDICOMStudyModel::StudyTimeRole).toString();
   QString rightTime = source_right.data(ctkDICOMStudyModel::StudyTimeRole).toString();
 
-  // Normalize dates: remove dashes to handle both YYYYMMDD and YYYY-MM-DD formats
-  leftDate.remove('-');
-  rightDate.remove('-');
-
   // Handle empty dates by putting them at the end
   if (leftDate.isEmpty() && rightDate.isEmpty())
   {

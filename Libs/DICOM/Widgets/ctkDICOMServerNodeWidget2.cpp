@@ -1388,7 +1388,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
 
   settings.remove("DICOM/ServerNodes");
   this->stopAllJobs();
-  this->removeAllServers();
+  d->Scheduler->removeAllServers();
 
   settings.setValue("DICOM/ServerNodeCount", rowCount);
 
@@ -1753,7 +1753,9 @@ void ctkDICOMServerNodeWidget2::removeAllServers()
     return;
   }
 
-  d->Scheduler->removeAllServers();
+  d->NodeTable->clearContents();
+  d->NodeTable->setRowCount(0);
+  d->settingsModified();
 }
 
 //----------------------------------------------------------------------------

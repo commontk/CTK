@@ -25,13 +25,8 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QTimer>
-#include <QThread>
 #include <QPainter>
 #include <QFile>
-
-// STL includes
-#include <algorithm>
-#include <cmath>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -119,6 +114,7 @@ public:
   int ThumbnailSize;
   bool IsUpdating;
   bool AutoGenerateThumbnails;
+  QThread::Priority JobPriority;
 };
 
 //----------------------------------------------------------------------------
@@ -131,6 +127,7 @@ ctkDICOMSeriesModelPrivate::ctkDICOMSeriesModelPrivate(ctkDICOMSeriesModel& obj)
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
   this->AutoGenerateThumbnails = false;
+  this->JobPriority = QThread::NormalPriority;
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
   this->PatientID = "";
@@ -310,7 +307,10 @@ void ctkDICOMSeriesModelPrivate::loadSeriesForStudy()
     QString patientID = this->PatientID;
     QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", patientUID);
     patientName.replace(R"(^)", R"( )");
+
     QString patientBirthDate = this->DicomDatabase->fieldForPatient("PatientsBirthDate", patientUID);
+    // Fix YYYY-MM-DD format in YYYYMMDD
+    patientBirthDate.remove('-');
     QList<SeriesData> newSeriesData;
 
     // Load series data for new series
@@ -791,6 +791,25 @@ QStringList ctkDICOMSeriesModel::allowedServers() const
 {
   Q_D(const ctkDICOMSeriesModel);
   return d->AllowedServers;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMSeriesModel::setJobPriority(QThread::Priority priority)
+{
+  Q_D(ctkDICOMSeriesModel);
+  if (d->JobPriority == priority)
+  {
+    return;
+  }
+  d->JobPriority = priority;
+  emit this->jobPriorityChanged(priority);
+}
+
+//----------------------------------------------------------------------------
+QThread::Priority ctkDICOMSeriesModel::jobPriority() const
+{
+  Q_D(const ctkDICOMSeriesModel);
+  return d->JobPriority;
 }
 
 //----------------------------------------------------------------------------
@@ -1402,6 +1421,8 @@ bool ctkDICOMSeriesModel::setData(const QModelIndex& index, const QVariant& valu
       if (info.patientBirthDate != value.toString())
       {
         info.patientBirthDate = value.toString();
+        // Fix YYYY-MM-DD format in YYYYMMDD
+        info.patientBirthDate.remove('-');
         changed = true;
       }
       break;
@@ -1549,7 +1570,7 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
         d->Scheduler->queryInstances(d->PatientID,
                                      d->StudyFilter,
                                      seriesInstanceUID,
-                                     QThread::NormalPriority,
+                                     d->JobPriority,
                                      d->AllowedServers);
       }
       continue;
@@ -1613,7 +1634,7 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
                                           seriesData.studyInstanceUID,
                                           seriesData.seriesInstanceUID,
                                           seriesData.centerInstanceUID,
-                                          QThread::HighestPriority,
+                                          QThread::HighPriority,
                                           d->AllowedServers);
         return;
       }
@@ -1632,10 +1653,14 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
        seriesData.operationStatus != ctkDICOMSeriesModel::InProgress) ||
       td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
   {
-    QString rowsStr = d->DicomDatabase->instanceValue(seriesData.centerInstanceUID, "0028,0010"); // Rows
-    QString colsStr = d->DicomDatabase->instanceValue(seriesData.centerInstanceUID, "0028,0011"); // Columns
-    seriesData.rows = rowsStr.toInt();
-    seriesData.columns = colsStr.toInt();
+    if (seriesData.rows == 0)
+    {
+      seriesData.rows = d->DicomDatabase->instanceValue(seriesData.centerInstanceUID, "0028,0010").toInt();
+    }
+    if (seriesData.columns == 0)
+    {
+      seriesData.columns = d->DicomDatabase->instanceValue(seriesData.centerInstanceUID, "0028,0011").toInt();
+    }
     this->refreshSeries(seriesData.seriesInstanceUID);
 
     // Central instance has been retrieved, generate thumbnail
@@ -1648,7 +1673,7 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
       d->Scheduler->retrieveSeries(seriesData.patientID,
                                    seriesData.studyInstanceUID,
                                    seriesData.seriesInstanceUID,
-                                   QThread::LowPriority,
+                                   d->JobPriority,
                                    d->AllowedServers);
     }
   }

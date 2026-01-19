@@ -62,6 +62,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMPatientModel : public QAbstractListModel
   Q_PROPERTY(QStringList modalityFilter READ modalityFilter WRITE setModalityFilter NOTIFY modalityFilterChanged)
   Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient NOTIFY numberOfOpenedStudiesPerPatientChanged)
   Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged)
+  Q_PROPERTY(bool queryInProgress READ queryInProgress WRITE setQueryInProgress NOTIFY queryInProgressChanged)
 
 public:
   typedef QAbstractListModel Superclass;
@@ -181,6 +182,10 @@ public:
   int thumbnailSize() const;
   void setThumbnailSize(int size);
 
+  /// Check if a query operation is currently in progress
+  bool queryInProgress() const;
+  void setQueryInProgress(bool inProgress);
+
   /// Get patient item at index (internal database key)
   Q_INVOKABLE QString patientUID(const QModelIndex& index) const;
   Q_INVOKABLE QString patientID(const QModelIndex& index) const;
@@ -269,6 +274,7 @@ Q_SIGNALS:
   void allowedServersChanged(const QString& patientUID, const QStringList& servers);
   void numberOfOpenedStudiesPerPatientChanged(int count);
   void thumbnailSizeChanged(int size);
+  void queryInProgressChanged(bool inProgress);
 
   /// Emitted when study models are created/removed
   void studyModelCreated(const QString& patientUID, ctkDICOMStudyModel* studyModel);

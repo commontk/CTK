@@ -78,6 +78,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   : q_ptr(&o)
   , DisplayedFieldsTableAvailable(false)
   , UseShortStoragePath(true)
+  , UseSystemFileCopy(false)
   , ThumbnailGenerator(nullptr)
   , TagCacheVerified(false)
   , SchemaVersion("0.8.1")
@@ -721,10 +722,72 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
   }
   else
   {
-    // we're inserting an existing file
-    QFile currentFile(originalFilePath);
-    currentFile.copy(storedFilePath);
-    logger.debug("Copy file from: " + originalFilePath + " to: " + storedFilePath);
+    // Check if destination file already exists
+    if (QFile::exists(storedFilePath))
+    {
+      QFile::remove(storedFilePath);
+    }
+
+    bool copySuccess = false;
+    if (this->UseSystemFileCopy)
+    {
+      // Use QFile::copy() which calls the operating system's file copy API.
+      // This preserves file permissions, timestamps, and extended attributes.
+      // May be faster on network drives in some cases.
+      copySuccess = QFile::copy(originalFilePath, storedFilePath);
+      if (!copySuccess)
+      {
+        logger.error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
+        return false;
+      }
+    }
+    else
+    {
+      // Use direct read/write instead of QFile::copy() for better performance.
+      // QFile::copy() is significantly slower in Qt6 compared to Qt5 (10-20x).
+      // With thousands of files, this optimization reduces import time substantially.
+      QFile sourceFile(originalFilePath);
+      QFile destFile(storedFilePath);
+
+      if (!sourceFile.open(QIODevice::ReadOnly) || !destFile.open(QIODevice::WriteOnly))
+      {
+        logger.error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
+        return false;
+      }
+
+      const qint64 bufferSize = 1024 * 1024; // 1MB buffer
+      char* buffer = new char[bufferSize];
+      qint64 bytesRead;
+
+      while ((bytesRead = sourceFile.read(buffer, bufferSize)) > 0)
+      {
+        if (destFile.write(buffer, bytesRead) != bytesRead)
+        {
+          delete[] buffer;
+          sourceFile.close();
+          destFile.close();
+          logger.error("Failed to write to: " + storedFilePath);
+          return false;
+        }
+      }
+
+      delete[] buffer;
+      sourceFile.close();
+      destFile.close();
+
+      if (bytesRead < 0)
+      {
+        logger.error("Failed to read from: " + originalFilePath);
+        return false;
+      }
+
+      copySuccess = true;
+    }
+
+    if (copySuccess)
+    {
+      logger.debug("Copy file from: " + originalFilePath + " to: " + storedFilePath);
+    }
   }
 
   return true;
@@ -1412,6 +1475,8 @@ QString ctkDICOMDatabasePrivate::convertConnectionInfoToJson(const QStringList& 
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
+CTK_GET_CPP(ctkDICOMDatabase, bool, useSystemFileCopy, UseSystemFileCopy);
+CTK_SET_CPP(ctkDICOMDatabase, bool, setUseSystemFileCopy, UseSystemFileCopy);
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods

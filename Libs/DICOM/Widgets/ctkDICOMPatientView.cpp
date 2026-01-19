@@ -832,7 +832,6 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
 
   // Configure list appearance
   this->setAlternatingRowColors(false);
-  // To Do: add an option to disable styling
   this->verticalScrollBar()->setStyleSheet(QString(R"(
     QScrollBar:vertical {
       border: none;
@@ -898,7 +897,6 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
   d->DisplayModeButton->setCursor(Qt::PointingHandCursor);
   d->DisplayModeButton->setAttribute(Qt::WA_Hover, true); // Enable hover events
 
-  // To Do: add an option to disable styling
   // FAB-style circular button with subtle appearance and hover effect
   d->DisplayModeButton->setStyleSheet(QString(R"(
     QPushButton {
@@ -1617,7 +1615,19 @@ void ctkDICOMPatientView::paintEvent(QPaintEvent* event)
     // Paint a message that no results have been found in the database
     QPainter painter(this->viewport());
     painter.setRenderHint(QPainter::Antialiasing, true);
-    QString message = tr("No results found in the database");
+    QString message;
+
+    // Check if query is in progress from the model
+    ctkDICOMPatientModel* patModel = this->patientModel();
+    if (patModel && patModel->queryInProgress())
+    {
+      message = tr("Query in progress...");
+    }
+    else
+    {
+      message = tr("No results found in the database");
+    }
+
     QFont font = painter.font();
     font.setPointSize(font.pointSize() + 4);
     font.setBold(true);

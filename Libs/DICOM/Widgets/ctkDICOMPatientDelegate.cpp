@@ -323,11 +323,11 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
   QStringList infoParts;
   if (!patientID.isEmpty())
   {
-    infoParts << QString("MRN: %1").arg(patientID);
+    infoParts << tr("MRN: %1").arg(patientID);
   }
   if (!patientBirthDate.isEmpty())
   {
-    infoParts << QString("Birth Date: %1").arg(patientBirthDate);
+    infoParts << tr("Birth Date: %1").arg(this->formatPatientBirthDate(patientBirthDate));
   }
   if (!patientSex.isEmpty())
   {
@@ -362,7 +362,7 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
   // Add insert date time
   if (insertDateTime.isValid())
   {
-    QString dateAddedText = QString("Date added: %1").arg(insertDateTime.toString("dd MMM yyyy hh:mm"));
+    QString dateAddedText = tr("Date added: %1").arg(insertDateTime.toString("d MMM yyyy hh:mm"));
     infoParts << dateAddedText;
   }
 
@@ -478,7 +478,6 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
     patientIcon = QIcon(":/Icons/patient_success.svg");
   }
 
-
   if (!patientIcon.isNull())
   {
     QPixmap iconPixmap = patientIcon.pixmap(QSize(iconSize, iconSize));
@@ -505,15 +504,15 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
   QStringList infoParts;
   if (!patientID.isEmpty())
   {
-    infoParts << QString("MRN: %1").arg(patientID);
+    infoParts << tr("MRN: %1").arg(patientID);
   }
   if (!patientBirthDate.isEmpty())
   {
-    infoParts << QString("Birth Date: %1").arg(this->formatPatientBirthDate(patientBirthDate));
+    infoParts << tr("Birth Date: %1").arg(this->formatPatientBirthDate(patientBirthDate));
   }
   if (!patientSex.isEmpty())
   {
-    infoParts << QString("Sex: %1").arg(patientSex);
+    infoParts << tr("Sex: %1").arg(patientSex);
   }
   QString studyInfo;
   if (filteredStudyCount != studyCount)
@@ -541,7 +540,7 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
   QDateTime insertDateTime = index.data(ctkDICOMPatientModel::PatientInsertDateTimeRole).toDateTime();
   if (insertDateTime.isValid())
   {
-    infoParts << QString("Date added: %1").arg(insertDateTime.toString("dd MMM yyyy hh:mm"));
+    infoParts << tr("Date added: %1").arg(insertDateTime.toString("dd MMM yyyy hh:mm"));
   }
   QString infoText = infoParts.join("  |  ");
 
@@ -593,16 +592,23 @@ QString ctkDICOMPatientDelegate::formatPatientBirthDate(const QString& date) con
     return QString();
   }
 
-  // Try to parse DICOM date format (YYYYMMDD or YYYY-MM-DD)
-  QString cleanDate = date;
-  cleanDate.remove('-');
-
-  if (cleanDate.length() >= 8)
+  // Try YYYYMMDD format first (8 characters)
+  if (date.length() == 8)
   {
-    QDate parsedDate = QDate::fromString(cleanDate, "yyyyMMdd");
-    if (parsedDate.isValid())
+    QDate birthDate = QDate::fromString(date, "yyyyMMdd");
+    if (birthDate.isValid())
     {
-      return parsedDate.toString("dd MMM yyyy");
+      return birthDate.toString("d MMM yyyy");
+    }
+  }
+
+  // Try YYYY-MM-DD format (10 characters)
+  if (date.length() == 10)
+  {
+    QDate birthDate = QDate::fromString(date, "yyyy-MM-dd");
+    if (birthDate.isValid())
+    {
+      return birthDate.toString("d MMM yyyy");
     }
   }
 

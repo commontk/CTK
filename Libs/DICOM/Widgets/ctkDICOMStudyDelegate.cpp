@@ -444,11 +444,11 @@ void ctkDICOMStudyDelegate::paintSeriesInfo(QPainter* painter, const QRect& rect
   QString seriesText;
   if (filteredSeriesCount != seriesCount)
   {
-    seriesText = QString("%1/%2 series").arg(filteredSeriesCount).arg(seriesCount);
+    seriesText = tr("%1/%2 series").arg(filteredSeriesCount).arg(seriesCount);
   }
   else
   {
-    seriesText = QString("%1 series").arg(seriesCount);
+    seriesText = tr("%1 series").arg(seriesCount);
   }
 
   if (numberOfSeriesSelected > 0)
@@ -793,17 +793,17 @@ QString ctkDICOMStudyDelegate::formatStudyDate(const QString& date) const
     QDate studyDate = QDate::fromString(date, "yyyyMMdd");
     if (studyDate.isValid())
     {
-      return studyDate.toString("dd MMM yyyy");
+      return studyDate.toString("d MMM yyyy");
     }
   }
 
-  // Try YYYY-MM-DD format (10 characters, from SQLite DATE fields)
+  // Try YYYY-MM-DD format (10 characters)
   if (date.length() == 10)
   {
     QDate studyDate = QDate::fromString(date, "yyyy-MM-dd");
     if (studyDate.isValid())
     {
-      return studyDate.toString("dd MMM yyyy");
+      return studyDate.toString("d MMM yyyy");
     }
   }
 
@@ -949,14 +949,6 @@ void ctkDICOMStudyDelegate::paintOperationStatusButton(QPainter* painter,
   {
     operationStatusIconHovered = listView->isOperationStatusIconHovered(index);
     operationStatusIconPressed = listView->isOperationStatusIconPressed(index);
-  }
-
-  bool studyHoveredState = option.state & QStyle::State_MouseOver;
-  if (!studyHoveredState &&
-      !operationStatusIconHovered &&
-      !operationStatusIconPressed)
-  {
-    return;
   }
 
   painter->save();

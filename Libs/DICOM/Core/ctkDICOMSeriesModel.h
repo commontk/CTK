@@ -29,6 +29,7 @@
 #include <QSharedPointer>
 #include <QStringList>
 #include <QPixmap>
+#include <QThread>
 
 // CTK includes
 #include "ctkDICOMCoreExport.h"
@@ -61,6 +62,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMSeriesModel : public QAbstractTableModel
   Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged)
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged)
   Q_PROPERTY(bool autoGenerateThumbnails READ autoGenerateThumbnails WRITE setAutoGenerateThumbnails NOTIFY autoGenerateThumbnailsChanged)
+  Q_PROPERTY(QThread::Priority jobPriority READ jobPriority WRITE setJobPriority NOTIFY jobPriorityChanged)
 
 public:
   typedef QAbstractTableModel Superclass;
@@ -165,6 +167,11 @@ public:
   void setAllowedServers(const QStringList& servers);
   QStringList allowedServers() const;
 
+  /// Set job priority for QueryInstances and Retrieve operations (default: NormalPriority)
+  /// Use HighPriority for studies that should be opened immediately
+  void setJobPriority(QThread::Priority priority);
+  QThread::Priority jobPriority() const;
+
   /// Get series instance UID for model index
   Q_INVOKABLE QString seriesInstanceUID(const QModelIndex& index) const;
 
@@ -232,6 +239,9 @@ signals:
 
   /// Emitted when allowed servers change
   void allowedServersChanged(const QStringList& servers);
+
+  /// Emitted when job priority changes
+  void jobPriorityChanged(QThread::Priority priority);
 
   /// Emitted when series selection changes
   void seriesSelectionChanged(const QStringList& selectedSeriesInstanceUIDs);

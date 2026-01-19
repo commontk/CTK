@@ -377,6 +377,11 @@ public slots:
     ctk::setDICOMLogLevel(level);
   }
 
+  void static_ctk_setDICOMDetailedLogging(bool enable)
+  {
+    ctk::setDICOMDetailedLogging(enable);
+  }
+
   QString static_ctk_dicomLogLevelAsString()
   {
     return ctk::dicomLogLevelAsString();

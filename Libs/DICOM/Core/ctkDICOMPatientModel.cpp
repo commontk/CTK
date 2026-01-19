@@ -90,6 +90,7 @@ public:
     int seriesCount;
     int filteredSeriesCount;
     bool isVisible;
+    bool isQueryResult; // Set to true when patient is from a query result
     ctkDICOMPatientModel::OperationStatus operationStatus;
     QStringList allowedServers;
     QString stoppedJobUID;
@@ -125,6 +126,7 @@ public:
 
   // State
   bool IsUpdating;
+  bool QueryInProgress;
 };
 
 //------------------------------------------------------------------------------
@@ -139,6 +141,7 @@ ctkDICOMPatientModelPrivate::ctkDICOMPatientModelPrivate(ctkDICOMPatientModel& o
   this->NumberOfOpenedStudiesPerPatient = 2;
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
+  this->QueryInProgress = false;
 
   this->ModalityFilter = ctkDICOMModalities::AllModalities;
 }
@@ -242,7 +245,9 @@ void ctkDICOMPatientModelPrivate::populatePatients()
     int filteredStudyCount = this->getFilteredStudyCountForPatient(patientUID);
     int seriesCount = this->getSeriesCountForPatient(patientUID);
     int filteredSeriesCount = this->getFilteredSeriesCountForPatient(patientUID);
-    bool isVisible = (studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) &&
+    // Allow query results to be visible even with zero data
+    bool isQueryResult = (studyCount == 0 && seriesCount == 0);
+    bool isVisible = ((studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) || isQueryResult) &&
                      this->matchesPatientIDFilter(patientID) &&
                      this->matchesPatientNameFilter(patientName);
 
@@ -254,6 +259,8 @@ void ctkDICOMPatientModelPrivate::populatePatients()
       data.patientID = patientID;
       data.patientName = patientName;
       data.patientBirthDate = this->DicomDatabase->fieldForPatient("PatientsBirthDate", patientUID);
+      // Fix YYYY-MM-DD format in YYYYMMDD
+      data.patientBirthDate.remove('-');
       data.patientSex = this->DicomDatabase->fieldForPatient("PatientsSex", patientUID);
       data.insertDateTime = this->DicomDatabase->insertDateTimeForPatient(patientUID);
       data.studyCount = studyCount;
@@ -261,6 +268,7 @@ void ctkDICOMPatientModelPrivate::populatePatients()
       data.seriesCount = seriesCount;
       data.filteredSeriesCount = filteredSeriesCount;
       data.isVisible = isVisible;
+      data.isQueryResult = isQueryResult;
       data.operationStatus = ctkDICOMPatientModel::NoOperation;
       newPatients.append(data);
     }
@@ -479,8 +487,11 @@ void ctkDICOMPatientModelPrivate::updatePatientCountsAndVisibility(int patientIn
   patient.filteredStudyCount = filteredStudyCount;
   patient.seriesCount = seriesCount;
   patient.filteredSeriesCount = filteredSeriesCount;
-  patient.isVisible = (studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) &&
+  // Allow query results to be visible even with zero data
+  bool isQueryResult = (studyCount == 0 && seriesCount == 0);
+  patient.isVisible = ((studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) || isQueryResult) &&
                       q->patientMatchesFilters(patient.patientUID);
+  patient.isQueryResult = isQueryResult;
 }
 
 //------------------------------------------------------------------------------
@@ -717,7 +728,9 @@ bool ctkDICOMPatientModel::setData(const QModelIndex& index, const QVariant& val
     {
       if (patient.patientBirthDate != value.toString())
       {
-        patient.patientBirthDate = value.toString();
+        patient.patientBirthDate= value.toString();
+        // Fix YYYY-MM-DD format in YYYYMMDD
+        patient.patientBirthDate.remove('-');
         changed = true;
       }
       break;
@@ -1165,6 +1178,26 @@ void ctkDICOMPatientModel::setThumbnailSize(int size)
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMPatientModel::queryInProgress() const
+{
+  Q_D(const ctkDICOMPatientModel);
+  return d->QueryInProgress;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientModel::setQueryInProgress(bool inProgress)
+{
+  Q_D(ctkDICOMPatientModel);
+  if (d->QueryInProgress == inProgress)
+  {
+    return;
+  }
+
+  d->QueryInProgress = inProgress;
+  emit this->queryInProgressChanged(inProgress);
+}
+
+//------------------------------------------------------------------------------
 QString ctkDICOMPatientModel::patientUID(const QModelIndex& index) const
 {
   return this->data(index, this->PatientUIDRole).toString();
@@ -1498,7 +1531,7 @@ bool ctkDICOMPatientModel::queryStudies(const QString &patientID)
   }
 
   d->Scheduler->queryStudies(patientID,
-                             QThread::NormalPriority,
+                             QThread::LowPriority,
                              this->allowedServers(patientUID));
   return true;
 }

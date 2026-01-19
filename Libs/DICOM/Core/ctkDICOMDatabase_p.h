@@ -139,6 +139,7 @@ public:
   bool DisplayedFieldsTableAvailable;
 
   bool UseShortStoragePath;
+  bool UseSystemFileCopy;
 
   ctkDICOMAbstractThumbnailGenerator* ThumbnailGenerator;
 
