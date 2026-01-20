@@ -122,13 +122,13 @@ QList<QVariantMap> ctkXnatAPI::parseXmlResponse(qRestResult* /*restResult*/, con
 // --------------------------------------------------------------------------
 QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const QByteArray& response)
 {
-  QScriptValue scriptValue = this->ScriptEngine.evaluate("(" + QString(response) + ")");
+  QJSValue scriptValue = this->ScriptEngine.evaluate("(" + QString(response) + ")");
 
   QList<QVariantMap> result;
 
   // e.g. {"ResultSet":{"Result": [{"p1":"v1","p2":"v2",...}], "totalRecords":"13"}}
-  QScriptValue resultSet = scriptValue.property("ResultSet");
-  QScriptValue data = resultSet.property("Result");
+  QJSValue resultSet = scriptValue.property("ResultSet");
+  QJSValue data = resultSet.property("Result");
   if (!data.isObject())
   {
     if (!data.toString().isEmpty())
@@ -138,7 +138,7 @@ QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const 
   }
   if (data.isArray())
   {
-    quint32 length = data.property("length").toUInt32();
+    quint32 length = data.property("length").toUInt();
     for(quint32 i = 0; i < length; ++i)
     {
       qRestAPI::appendScriptValueToVariantMapList(result, data.property(i));
