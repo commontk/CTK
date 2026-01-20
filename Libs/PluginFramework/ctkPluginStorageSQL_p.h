@@ -348,7 +348,7 @@ private:
 
 
   QString m_databasePath;
-  mutable QThreadStorage<QString> m_connectionNames;
+  mutable QString m_connectionNames;
 
   QMutex m_archivesLock;
 
