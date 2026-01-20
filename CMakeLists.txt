@@ -374,6 +374,25 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 mark_as_superbuild(ADDITIONAL_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
+# Linker flags
+#
+# This section is adapted to enhance the build process by introducing the
+# possibility of customizing linker flags. This was added in connection with
+# enabling the gold linker in 3D Slicer, as outlined in PR:
+# https://github.com/Slicer/Slicer/pull/7294.
+#
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}" CACHE STRING "Flags used by the linker" FORCE)
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS}" CACHE STRING "Flags used by the linker (module)" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}"  CACHE STRING "Flags used by the linker (shared)" FORCE)
+
+mark_as_superbuild(VARS
+  CMAKE_EXE_LINKER_FLAGS:STRING
+  CMAKE_MODULE_LINKER_FLAGS:STRING
+  CMAKE_SHARED_LINKER_FLAGS:STRING
+  ALL_PROJECTS
+)
+
+#-----------------------------------------------------------------------------
 # Set symbol visibility Flags
 #
 
