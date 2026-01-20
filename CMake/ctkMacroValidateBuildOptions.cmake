@@ -179,7 +179,7 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
       endif()
 
       ctkMacroGetOptionName("${target_directories_with_target_name}" ${dep} dep_option)
-      if(${${option_name}} AND NOT ${${dep_option}})
+      if("${${option_name}}" AND NOT "${${dep_option}}")
         # Enable option
         message(STATUS "Enabling option [${dep_option}] required by [${target_project_name}]")
         set(${dep_option} ON CACHE BOOL "Enable ${target_project_name} library" FORCE)
