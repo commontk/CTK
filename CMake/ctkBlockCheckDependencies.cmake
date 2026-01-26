@@ -43,6 +43,20 @@ if(CTK_SUPERBUILD)
     set(ep_cxx_standard_arg "-DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}")
   endif()
 
+  # macOS-specific architecture settings
+  set(ep_osx_arch_args)
+  if(APPLE)
+    if(CMAKE_OSX_ARCHITECTURES)
+      list(APPEND ep_osx_arch_args -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES})
+    endif()
+    if(CMAKE_OSX_DEPLOYMENT_TARGET)
+      list(APPEND ep_osx_arch_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    endif()
+    if(CMAKE_OSX_SYSROOT)
+      list(APPEND ep_osx_arch_args -DCMAKE_OSX_SYSROOT:PATH=${CMAKE_OSX_SYSROOT})
+    endif()
+  endif()
+
   set(ep_common_cache_args
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -54,6 +68,7 @@ if(CTK_SUPERBUILD)
       -DBUILD_TESTING:BOOL=OFF
       -DCMAKE_MACOSX_RPATH:BOOL=${CMAKE_MACOSX_RPATH}
       ${ep_cxx_standard_arg}
+      ${ep_osx_arch_args}
      )
 endif()
 
