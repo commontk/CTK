@@ -28,9 +28,11 @@ class ctkVTKScalarsToColorsViewPrivate;
 
 // VTK includes
 #include <vtkChartXY.h>
+// Qt6 requires complete type definitions for Q_INVOKABLE methods
+#include <vtkPlot.h>
+#include <vtkControlPointsItem.h>
 
 class vtkColorTransferFunction;
-class vtkControlPointsItem;
 class vtkLookupTable;
 class vtkPiecewiseFunction;
 
