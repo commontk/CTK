@@ -106,9 +106,9 @@ public:
   void importOldSettings();
   void showUpdateSchemaDialog();
   void updateModalityCheckableComboBox();
-  void createPatients(bool queryRetrieve = false,
-                      const QStringList& queriedPatientIDs = QStringList(),
-                      bool isImport = false);
+  QString createPatients(bool queryRetrieve = false,
+                         const QStringList& queriedPatientIDs = QStringList(),
+                         bool isImport = false);
   bool areFiltersEmpty();
   void resetFilters();
   void updateUIAfterFilters();
@@ -752,26 +752,26 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
-                                                        const QStringList& queriedPatientIDs,
-                                                        bool isImport)
+QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
+                                                           const QStringList& queriedPatientIDs,
+                                                           bool isImport)
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
   if (this->IsGUIUpdating)
   {
-    return;
+    return QString();
   }
 
   if (!this->DicomDatabase)
   {
     logger.error("createPatients failed, no DICOM database has been set. \n");
-    return;
+    return QString();
   }
 
   if (!this->PatientModel)
   {
     logger.error("createPatients failed, no PatientModel has been set. \n");
-    return;
+    return QString();
   }
 
   QStringList patientList = this->DicomDatabase->patients();
@@ -779,7 +779,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
   {
     // Clear the model by refreshing with empty database
     this->PatientModel->refresh();
-    return;
+    return QString();
   }
   else if (patientList.count() > 5)
   {
@@ -892,6 +892,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
     }
   }
   this->IsGUIUpdating = false;
+
+  return patientUIDToShow;
 }
 
 //----------------------------------------------------------------------------
@@ -1872,6 +1874,34 @@ ctkFileDialog* ctkDICOMVisualBrowserWidget::importDialog() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::refreshBrowser(bool isImport)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // Stop any fetching task.
+  this->onStop();
+
+  // Reset the studies-to-open list for all patients since we're starting a new query
+  d->StudiesToOpenPerPatient.clear();
+  // Hide warning button and update warnings because the previous warnings may no longer be relevant after refresh
+  d->SearchPushButton->setIcon(QIcon(":/Icons/query.svg"));
+  d->WarningPushButton->hide();
+  d->updateFiltersWarnings();
+
+  // Clean the view (this will clean study view and all series views as well)
+  d->PatientView->clean();
+  // Clean model (this will clean all study models and series models as well)
+  d->PatientModel->clean();
+  // Repopulate the model and view with current database content
+  QString selectedPatientUID = d->createPatients(false, QStringList(), isImport);
+  // Refresh the patient view to make sure everything is updated
+  d->PatientModel->refreshPatient(selectedPatientUID);
+  // Update the number of opened studies for each patient in the view,
+  // since some studies may have been closed during refresh
+  d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(this->numberOfOpenedStudiesPerPatient());
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setImportDirectoryMode(ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
@@ -1986,11 +2016,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
     settings.sync();
   }
 
-  // Clean model first (this will clean all study models and series models)
-  d->PatientModel->clean();
-  // Then clean the view (this will clean study view and all series views)
-  d->PatientView->clean();
-  d->createPatients();
+  this->refreshBrowser();
   emit databaseDirectoryChanged(absDirectory);
 }
 
@@ -2094,7 +2120,7 @@ void ctkDICOMVisualBrowserWidget::onIndexingComplete(int patientsAdded, int stud
   // allow users of this widget to know that the process has finished
   emit directoryImported();
 
-  d->createPatients(false, QStringList(), true);
+  this->refreshBrowser(true);
   d->setBackgroundColorToFilterWidgets();
 }
 
@@ -2835,7 +2861,6 @@ void ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged(ctkDICOMPatien
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onStudyModelCreated(const QString& patientUID, ctkDICOMStudyModel* studyModel)
 {
-  Q_D(ctkDICOMVisualBrowserWidget);
   Q_UNUSED(patientUID);
   if (!studyModel)
   {
@@ -3807,8 +3832,6 @@ void ctkDICOMVisualBrowserWidget::removeSeries(const QStringList& seriesInstance
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-
   // Stop any running jobs for these series
   d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesInstanceUIDs);
 
@@ -3876,8 +3899,6 @@ void ctkDICOMVisualBrowserWidget::removeSeries(const QStringList& seriesInstance
     d->DicomDatabase->removeSeries(seriesInstanceUID);
   }
   d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
-
-  QApplication::restoreOverrideCursor();
 
   // Refresh the affected series models and update their views' viewports
   foreach (const QString& studyUID, affectedSeriesModels.keys())
