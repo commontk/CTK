@@ -578,6 +578,8 @@ ctkDICOMSeriesModel::ctkDICOMSeriesModel(QObject* parent)
 //----------------------------------------------------------------------------
 ctkDICOMSeriesModel::~ctkDICOMSeriesModel()
 {
+  QSignalBlocker blocker(this);
+  this->clean();
 }
 
 //----------------------------------------------------------------------------
