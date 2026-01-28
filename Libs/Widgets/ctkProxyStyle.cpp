@@ -114,15 +114,18 @@ void ctkProxyStyle::ensureBaseStyle() const
   // Set the proxy to the entire hierarchy.
   QProxyStyle* proxyStyle = const_cast<QProxyStyle*>(qobject_cast<const QProxyStyle*>(
     this->proxy() ? this->proxy() : this));
-  QStyle* proxyBaseStyle = proxyStyle->baseStyle(); // calls ensureBaseStyle
-  QStyle* baseStyle = proxyBaseStyle;
-  while (baseStyle)
+  if (proxyStyle) // avoid crash when no proxy style in use
   {
-    d->setProxyStyle(proxyStyle, baseStyle);// set proxy on itself to all children
-    QProxyStyle* proxy = qobject_cast<QProxyStyle*>(baseStyle);
-    baseStyle = proxy ? proxy->baseStyle() : 0;
+    QStyle* proxyBaseStyle = proxyStyle->baseStyle(); // calls ensureBaseStyle
+    QStyle* baseStyle = proxyBaseStyle;
+    while (baseStyle)
+    {
+      d->setProxyStyle(proxyStyle, baseStyle);// set proxy on itself to all children
+      QProxyStyle* proxy = qobject_cast<QProxyStyle*>(baseStyle);
+      baseStyle = proxy ? proxy->baseStyle() : 0;
+    }
+    d->setBaseStyle(proxyStyle, proxyBaseStyle);
   }
-  d->setBaseStyle(proxyStyle, proxyBaseStyle);
   d->ensureBaseStyleInProgress = false;
 }
 
