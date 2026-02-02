@@ -475,6 +475,19 @@ endif()
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
 mark_as_advanced(DART_TESTING_TIMEOUT)
 
+# Option to enable MSVC multi-processor compilation (/MP) and /FS to reduce PDB write conflicts
+option(CTK_MSVC_ENABLE_MP "Enable MSVC /MP multi-processor compilation (and add /FS to reduce PDB write conflicts)" ON)
+mark_as_superbuild(CTK_MSVC_ENABLE_MP)
+mark_as_advanced(CTK_MSVC_ENABLE_MP)
+
+if(CTK_MSVC_ENABLE_MP)
+  if(MSVC OR (CMAKE_C_COMPILER_ID STREQUAL "Clang" AND CMAKE_C_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
+    # Add compiler flags globally for MSVC or clang-cl frontend on Windows
+    add_compile_options(/MP /FS)
+    message(STATUS "Enabling [CTK_MSVC_ENABLE_MP]: adding /MP and /FS for MSVC-compatible compilers")
+  endif()
+endif()
+
 # Qt Designer Plugins
 option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
