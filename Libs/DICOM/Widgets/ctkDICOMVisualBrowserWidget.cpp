@@ -1046,6 +1046,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
     return;
   }
 
+  // This will be applied if no styleSheet has been set on the widget
   QPalette pal = widget->palette();
   QComboBox* comboBox = qobject_cast<QComboBox*>(widget);
   if (comboBox)
@@ -1057,6 +1058,18 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
     pal.setColor(widget->backgroundRole(), color);
   }
   widget->setPalette(pal);
+
+  // If the widget has a styleSheet, the styleSheet will overrride the palette
+  if (ctkDICOMVisualBrowserWidgetWarningColor == color)
+  {
+    widget->setProperty("warning", true);
+  }
+  else
+  {
+    widget->setProperty("warning", false);
+  }
+  widget->style()->unpolish(widget);
+  widget->style()->polish(widget);
 }
 
 //----------------------------------------------------------------------------
