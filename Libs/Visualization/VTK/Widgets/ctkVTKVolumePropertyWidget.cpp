@@ -123,8 +123,8 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(onAxesModified()), Qt::QueuedConnection);
   QObject::connect(this->ScalarColorWidget, SIGNAL(axesModified()),
                    q, SLOT(onAxesModified()), Qt::QueuedConnection);
-  QObject::connect(this->GradientWidget, SIGNAL(axesModified()),
-                   q, SLOT(onAxesModified()), Qt::QueuedConnection);
+  // Gradient widget has a different range than the other two,
+  // there is no need to update the range of the other two when its axes are modified.
 
   this->GradientGroupBox->setCollapsed(true);
   this->AdvancedGroupBox->setCollapsed(true);
@@ -141,6 +141,13 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(setSpecular(double)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularPowerChanged(double)),
                    q, SLOT(setSpecularPower(double)));
+
+  double chartBounds[8] = { 0.0 };
+  this->GradientWidget->view()->chartBounds(chartBounds);
+  chartBounds[2] = 0; // bottom axis min
+  chartBounds[3] = 4000; // bottom axis max
+  this->GradientWidget->view()->setChartUserBounds(chartBounds);
+  this->GradientWidget->view()->update();
 }
 
 // ----------------------------------------------------------------------------
@@ -583,6 +590,10 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
   ctkVTKScalarsToColorsWidget* senderWidget =
     qobject_cast<ctkVTKScalarsToColorsWidget*>(this->sender());
 
+  // Link X axis ranges of the scalar opacity and color transfer function widgets.
+  // Gradient opacity transfer function range must not be updated, as scalar and
+  // gradient ranges are independent.
+
   double xRange[2] = {0.,0.};
   senderWidget->xRange(xRange);
   if (senderWidget != d->ScalarOpacityWidget)
@@ -596,12 +607,6 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
     bool wasBlocking = d->ScalarColorWidget->blockSignals(true);
     d->ScalarColorWidget->setXRange(xRange[0], xRange[1]);
     d->ScalarColorWidget->blockSignals(wasBlocking);
-  }
-  if (senderWidget != d->GradientWidget)
-  {
-    bool wasBlocking = d->GradientWidget->blockSignals(true);
-    d->GradientWidget->setXRange(xRange[0], xRange[1]);
-    d->GradientWidget->blockSignals(wasBlocking);
   }
 }
 
