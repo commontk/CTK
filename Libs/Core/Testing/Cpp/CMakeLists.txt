@@ -108,8 +108,11 @@ target_link_libraries(${KIT}CppTests
   )
 
 # Configure CMake Qt automatic code generation
+# ENABLE_EXPORTS adds -rdynamic on Linux so that dladdr() can resolve
+# symbols in the executable (needed by ctkBackTraceTest).
 set_target_properties(${KIT}CppTests PROPERTIES
   AUTOMOC ON
+  ENABLE_EXPORTS ON
   )
 
 if(UNIX AND NOT APPLE)
