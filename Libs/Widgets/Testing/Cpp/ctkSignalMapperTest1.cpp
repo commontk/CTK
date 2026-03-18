@@ -54,7 +54,11 @@ int ctkSignalMapperTest1(int argc, char* argv[])
 
   QObject::connect(&actionGroup, SIGNAL(triggered(QAction*)),
                    &signalMapper, SLOT(map(QAction*)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  QSignalSpy signalSpy(&signalMapper, SIGNAL(mappedInt(int)));
+#else
   QSignalSpy signalSpy(&signalMapper, SIGNAL(mapped(int)));
+#endif
 
   action2.trigger();
 
