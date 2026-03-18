@@ -50,6 +50,8 @@ set_target_properties(${KIT}CppTests PROPERTIES
 # Add Tests
 #
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary)
+
 SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
 SIMPLE_TEST(ctkDICOMImportWidgetTest1)
 SIMPLE_TEST(ctkDICOMListenerWidgetTest1)
