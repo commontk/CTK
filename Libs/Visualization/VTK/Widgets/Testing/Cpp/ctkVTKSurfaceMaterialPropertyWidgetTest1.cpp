@@ -30,6 +30,7 @@
 #include <vtkProperty.h>
 
 // STD includes
+#include <cmath>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -128,8 +129,8 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
   }
 
   property->SetOpacity(0.111);
-  // Only 2 decimals are supported by the widget
-  if (propertyWidget.opacity() != 0.11)
+  // The widget stores the exact value, display is limited to 2 decimals
+  if (std::abs(propertyWidget.opacity() - 0.111) > 1e-10)
   {
     std::cerr << "vtkProperty::SetOpacity() failed: " << propertyWidget.opacity() << std::endl;
     return EXIT_FAILURE;
@@ -137,7 +138,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 
   propertyWidget.setOpacity(0.999);
 
-  if (property->GetOpacity() != 1.00)
+  if (std::abs(property->GetOpacity() - 0.999) > 1e-10)
   {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setOpacity() failed: "
               << property->GetOpacity() << std::endl;
