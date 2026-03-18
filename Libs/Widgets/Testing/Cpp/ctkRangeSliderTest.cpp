@@ -97,6 +97,10 @@ void ctkRangeSliderTester::testGrooveMouseEvents()
   rangeSlider.setValues(10, 90);
 
   QStyleOptionSlider option;
+  option.initFrom(&rangeSlider);
+  option.minimum = rangeSlider.minimum();
+  option.maximum = rangeSlider.maximum();
+  option.orientation = rangeSlider.orientation();
   // Resize to enforce a 1 to 1 mapping between pixel position and slider value.
   // Size of the handle is added because of the following line in ctkRangeSlider:
   //  sliderMax = gr.right() - sliderLength + 1;
@@ -142,6 +146,10 @@ void ctkRangeSliderTester::testHandleMouseEvents()
   rangeSlider.setValues(10, 80);
 
   QStyleOptionSlider option;
+  option.initFrom(&rangeSlider);
+  option.minimum = rangeSlider.minimum();
+  option.maximum = rangeSlider.maximum();
+  option.orientation = rangeSlider.orientation();
   // Resize to enforce a 1 to 1 mapping between pixel position and slider value.
   // Size of the handle is added because of the following line in ctkRangeSlider:
   //  sliderMax = gr.right() - sliderLength + 1;
