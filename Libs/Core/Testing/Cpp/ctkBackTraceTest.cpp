@@ -27,21 +27,44 @@
 void Q_DECL_EXPORT bt_func1()
 {
   ctkBackTrace bt;
-  qDebug() << bt.stackTrace();
+  QList<QString> trace = bt.stackTrace();
+  qDebug() << trace;
 
-  if (!bt.stackFrame(1).contains("ctkBackTrace"))
+  // Search all frames for expected symbols instead of checking fixed indices.
+  // Frame ordering varies by platform and compiler (e.g. ARM64 may insert
+  // extra constructor thunks that shift frame numbers).
+  bool foundBackTrace = false;
+  bool foundFunc1 = false;
+  bool foundFunc2 = false;
+  for (const QString& frame : trace)
+  {
+    if (frame.contains("ctkBackTrace"))
+    {
+      foundBackTrace = true;
+    }
+    if (frame.contains("bt_func1"))
+    {
+      foundFunc1 = true;
+    }
+    if (frame.contains("bt_func2"))
+    {
+      foundFunc2 = true;
+    }
+  }
+
+  if (!foundBackTrace)
   {
     qCritical() << "Stack frame for ctkBackTrace::ctkBackTrace(...) missing";
     exit(EXIT_FAILURE);
   }
 
-  if (!bt.stackFrame(2).contains("bt_func1"))
+  if (!foundFunc1)
   {
     qCritical() << "Stack frame for bt_func1() missing";
     exit(EXIT_FAILURE);
   }
 
-  if (!bt.stackFrame(3).contains("bt_func2"))
+  if (!foundFunc2)
   {
     qCritical() << "Stack frame for bt_func2() missing";
     exit(EXIT_FAILURE);
