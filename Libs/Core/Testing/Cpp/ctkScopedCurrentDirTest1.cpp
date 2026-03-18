@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDir>
+#include <QFileInfo>
 #include <QTemporaryFile>
 
 // CTK includes
@@ -49,8 +50,9 @@ int ctkScopedCurrentDirTest1(int argc, char * argv [])
   {
   ctkScopedCurrentDir scopedCurrentDir(QDir::tempPath());
 
-  QString currentPath = scopedCurrentDir.currentPath();
-  QString expectedCurrentPath = QDir::tempPath();
+  // Use canonical paths to resolve symlinks (e.g. macOS /var -> /private/var)
+  QString currentPath = QFileInfo(scopedCurrentDir.currentPath()).canonicalFilePath();
+  QString expectedCurrentPath = QFileInfo(QDir::tempPath()).canonicalFilePath();
   if (currentPath != expectedCurrentPath)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with ctkScopedCurrentDir\n"
