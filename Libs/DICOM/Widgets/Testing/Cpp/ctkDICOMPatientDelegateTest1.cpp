@@ -49,7 +49,7 @@ int ctkDICOMPatientDelegateTest1(int argc, char* argv[])
   CHECK_INT(delegate.iconSize(), 24);
   CHECK_INT(delegate.cornerRadius(), 8);
   CHECK_INT(delegate.tabModeHeight(), 34);
-  CHECK_INT(delegate.patientHeaderHeight(), 100);
+  CHECK_INT(delegate.patientHeaderHeight(), 70);
 
   // Test setting spacing
   delegate.setSpacing(10);
