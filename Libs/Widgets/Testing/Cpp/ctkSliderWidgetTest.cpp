@@ -196,7 +196,12 @@ void ctkSliderWidgetTester::testValueChangedWithNoTracking()
   ctkTest::mouseMove(slider.slider()->slider(), Qt::LeftButton, Qt::KeyboardModifiers(), nextPoint);
   QTest::mouseRelease(slider.slider()->slider(), Qt::LeftButton, Qt::KeyboardModifiers(), nextPoint);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  // Qt6 fires valueChanged on both press and release when tracking is off
+  QCOMPARE(spy.count(), 2);
+#else
   QCOMPARE(spy.count(), 1);
+#endif
 }
 
 // ----------------------------------------------------------------------------
