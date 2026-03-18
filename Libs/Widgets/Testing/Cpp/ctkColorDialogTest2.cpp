@@ -40,10 +40,15 @@ int ctkColorDialogTest2(int argc, char * argv [] )
 
   if (argc < 2 || QString(argv[1]) != "-I" )
   {
-    // quit the opened dialog, which doesn't quit the application
-    // as app.exec() is not executed yet
-    QTimer::singleShot(200, &app, SLOT(quit()));
-    QTimer::singleShot(300, &app, SLOT(quit()));
+    // Close the modal dialog after it opens. QApplication::quit() does not
+    // close modal dialogs in Qt6, so we must find the active modal widget
+    // and reject it directly.
+    QTimer::singleShot(200, &app, [&app]() {
+      if (QWidget* modal = app.activeModalWidget())
+      {
+        modal->close();
+      }
+    });
   }
 
   QColor color = ctkColorDialog::getColor(Qt::black,0 , "", QColorDialog::DontUseNativeDialog);
