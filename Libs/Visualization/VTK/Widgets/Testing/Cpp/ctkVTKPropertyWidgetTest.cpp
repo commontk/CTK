@@ -104,8 +104,8 @@ void ctkVTKPropertyWidgetTester::testProperties()
   QCOMPARE(propertyWidget.representation(), 0);
   propertyWidget.setPointSize(3.5);
   QCOMPARE(propertyWidget.pointSize(), 3.5);
-  propertyWidget.setLineWidth(10.11);
-  QCOMPARE(propertyWidget.lineWidth(), 10.11);
+  propertyWidget.setLineWidth(10.5);
+  QCOMPARE(propertyWidget.lineWidth(), 10.5);
   propertyWidget.setFrontfaceCulling(true);
   QCOMPARE(propertyWidget.frontfaceCulling(), true);
   propertyWidget.setBackfaceCulling(true);
