@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSettings>
 #include <QString>
 #include <QStringList>
 #include <QTimer>
@@ -39,6 +40,10 @@
 int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
+
+  // Clear any QSettings from prior test runs to ensure clean defaults
+  QSettings settings;
+  settings.clear();
 
   QStringList arguments = app.arguments();
   QString testName = arguments.takeFirst();
