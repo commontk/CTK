@@ -102,11 +102,8 @@ int TestDefaults()
 {
   ctkLogger logger("Logger.TestDefaults");
 
-#ifndef QT_NO_DEBUG
-  CHECK_INT(logger.logLevel(), ctkErrorLogLevel::LogLevel::Debug);
-#else
+  // Default log level is Warning for both debug and release builds
   CHECK_INT(logger.logLevel(), ctkErrorLogLevel::LogLevel::Warning);
-#endif
   return EXIT_SUCCESS;
 }
 
