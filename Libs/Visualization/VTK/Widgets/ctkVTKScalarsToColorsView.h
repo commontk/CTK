@@ -28,9 +28,10 @@ class ctkVTKScalarsToColorsViewPrivate;
 
 // VTK includes
 #include <vtkChartXY.h>
+#include <vtkControlPointsItem.h>
+#include <vtkPlot.h>
 
 class vtkColorTransferFunction;
-class vtkControlPointsItem;
 class vtkLookupTable;
 class vtkPiecewiseFunction;
 
