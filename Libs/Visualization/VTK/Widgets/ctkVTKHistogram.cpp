@@ -206,8 +206,12 @@ ctkControlPoint* ctkVTKHistogram::controlPoint(int index)const
 {
   Q_D(const ctkVTKHistogram);
   ctkHistogramBar* cp = new ctkHistogramBar();
-  cp->P.X = this->indexToPos(index);
-  cp->P.Value = d->Bins->GetValue(index);
+  const int binCount = d->Bins->GetNumberOfTuples();
+  if (index >= 0 && index < binCount)
+  {
+    cp->P.X = this->indexToPos(index);
+    cp->P.Value = d->Bins->GetValue(index);
+  }
   return cp;
 }
 
