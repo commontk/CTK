@@ -28,6 +28,7 @@
 // STD includes
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 //-----------------------------------------------------------------------------
 class ctkDummyLibrary
@@ -40,9 +41,9 @@ class ctkDummyLibraryItem: public ctkFactoryLibraryItem<ctkDummyLibrary>
 protected:
   virtual ctkDummyLibrary* instanciator()
   {
-    // Using a scoped pointer ensures the memory will be cleaned if instanciator
-    // fails before returning the module. See QScopedPointer::take()
-    QScopedPointer<ctkDummyLibrary> module(new ctkDummyLibrary());
+    // Using a unique_ptr ensures the memory will be cleaned if instanciator
+    // fails before returning the module.
+    std::unique_ptr<ctkDummyLibrary> module(new ctkDummyLibrary());
     foreach(QString symbol, this->Symbols)
     {
       SymbolAddressType res = this->symbolAddress(symbol);
@@ -50,7 +51,7 @@ protected:
       {
       }
     }
-    return module.take();
+    return module.release();
   }
 };
 
