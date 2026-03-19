@@ -204,18 +204,9 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
     case QVariant::StringList:
 #endif
     {
-      if (Value.isNull())
-      {
-        QStringList list;
-        list << value;
-        Value.setValue(list);
-      }
-      else
-      {
-        QStringList list = Value.toStringList();
-        list << value;
-        Value.setValue(list);
-      }
+      QStringList list = Value.toStringList();
+      list << value;
+      Value.setValue(list);
     }
       break;
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
