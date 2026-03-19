@@ -1,6 +1,7 @@
 
 // Qt includes
 #include <QCoreApplication>
+#include <QMetaType>
 #include <QVariant>
 #include <QColor>
 
@@ -70,7 +71,11 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
   //------Test Function Value-------------------
   qreal defaultPos = 1.;
   QVariant defaultVariant = defaultTF.value(defaultPos);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  if (defaultTF.value(defaultPos).typeId() != QMetaType::QColor)
+#else
   if (defaultTF.value(defaultPos).type() != QVariant::Color)
+#endif
   {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::value> "
