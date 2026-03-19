@@ -18,7 +18,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =============================================================================*/
 
@@ -114,8 +114,8 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   CHECK_INT(database.patients().count(), 1);
 
-  QString patientItem = database.patients().at(0);
-  QStringList studies = database.studiesForPatient(patientItem);
+  QString patientUID = database.patients().at(0);
+  QStringList studies = database.studiesForPatient(patientUID);
   CHECK_INT(studies.count(), 1);
 
   std::cout << qPrintable(testName) << ": Running querySeries" << std::endl;

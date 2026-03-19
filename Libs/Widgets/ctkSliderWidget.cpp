@@ -136,6 +136,10 @@ void ctkSliderWidgetPrivate::synchronizeSiblingWidth(int width)
 {
   Q_UNUSED(width);
   Q_Q(const ctkSliderWidget);
+  if (!q->parent())
+  {
+    return;
+  }
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)
@@ -154,6 +158,10 @@ void ctkSliderWidgetPrivate::synchronizeSiblingDecimals(int decimals)
 {
   Q_UNUSED(decimals);
   Q_Q(const ctkSliderWidget);
+  if (!q->parent())
+  {
+    return;
+  }
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)

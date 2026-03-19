@@ -88,6 +88,8 @@ set(PLUGIN_SRCS
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.cpp
   ctkSliderWidgetPlugin.h
+  ctkSplitterPlugin.cpp
+  ctkSplitterPlugin.h
   ctkThumbnailLabelPlugin.cpp
   ctkThumbnailLabelPlugin.h
   ctkTransferFunctionViewPlugin.cpp

@@ -266,6 +266,12 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ThumbnailsWidget->setThumbnailSize(
     QSize(d->ThumbnailWidthSlider->value(), d->ThumbnailWidthSlider->value()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(6,7,0)
+    connect(d->AutoPlayCheckbox, &QCheckBox::checkStateChanged, this, &ctkDICOMAppWidget::onAutoPlayCheckboxStateChanged);
+#else
+    connect(d->AutoPlayCheckbox, &QCheckBox::stateChanged, this, &ctkDICOMAppWidget::onAutoPlayCheckboxStateChanged);
+#endif
+
   // Treeview signals
   connect(d->TreeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
   connect(d->TreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));

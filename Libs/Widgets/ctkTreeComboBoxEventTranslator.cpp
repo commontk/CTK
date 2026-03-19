@@ -63,8 +63,13 @@ bool ctkTreeComboBoxEventTranslator::translateEvent(QObject *Object,
 //      connect(treeCombo, SIGNAL(popupHide()), this, SLOT(onPopupHide()));
       connect(treeCombo, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed(QObject*)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+      connect(treeCombo, &QComboBox::currentTextChanged,
+              this, &ctkTreeComboBoxEventTranslator::onCurrentIndexChanged);
+#else
       connect(treeCombo, SIGNAL(currentIndexChanged(const QString&)),
               this, SLOT(onCurrentIndexChanged(const QString&)));
+#endif
       return true;
     }
   }

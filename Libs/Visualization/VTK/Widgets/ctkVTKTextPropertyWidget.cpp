@@ -64,8 +64,13 @@ void ctkVTKTextPropertyWidgetPrivate::init()
                    q, SLOT(setColor(QColor)));
   QObject::connect(this->OpacitySlider, SIGNAL(valueChanged(double)),
                    q, SLOT(setOpacity(double)));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QObject::connect(this->FontComboBox, &QComboBox::currentTextChanged,
+                   q, &ctkVTKTextPropertyWidget::setFont);
+#else
   QObject::connect(this->FontComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SLOT(setFont(QString)));
+#endif
   QObject::connect(this->BoldCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setBold(bool)));
   QObject::connect(this->ItalicCheckBox, SIGNAL(toggled(bool)),

@@ -29,6 +29,8 @@ namespace ctk {
 
 void CTK_DICOM_CORE_EXPORT setDICOMLogLevel(ctkErrorLogLevel::LogLevel level);
 
+void CTK_DICOM_CORE_EXPORT setDICOMDetailedLogging(bool enable);
+
 ctkErrorLogLevel::LogLevel CTK_DICOM_CORE_EXPORT dicomLogLevel();
 
 QString CTK_DICOM_CORE_EXPORT dicomLogLevelAsString();

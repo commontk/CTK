@@ -47,6 +47,19 @@ void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 }
 
 //------------------------------------------------------------------------------
+void ctk::setDICOMDetailedLogging(bool enable)
+{
+  if (enable)
+  {
+    ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
+  }
+  else
+  {
+    ctk::setDICOMLogLevel(ctkErrorLogLevel::Warning);
+  }
+}
+
+//------------------------------------------------------------------------------
 ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
 {
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();

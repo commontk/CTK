@@ -17,7 +17,7 @@
   limitations under the License.
 
   This file was originally developed by Davide Punzo, punzodavide@hotmail.it,
-  and development was supported by the Center for Intelligent Image-guided Interventions (CI3).
+  and development was supported by the Program for Intelligent Image-Guided Interventions (PI3).
 
 =========================================================================*/
 
@@ -137,7 +137,7 @@ public:
           opt.state |= QStyle::State_On;
           break;
       }
-      auto rect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &opt, widget);
+      QRect rect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &opt, widget);
       opt.rect = QStyle::alignedRect(opt.direction, Qt::AlignCenter, rect.size(), opt.rect);
       opt.state = opt.state & ~QStyle::State_HasFocus;
       style->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &opt, painter, widget);
@@ -354,8 +354,13 @@ void ctkDICOMServerNodeWidget2Private::init()
 
   q->readSettings();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  QObject::connect(this->StorageEnabledCheckBox, &QCheckBox::checkStateChanged,
+                   q, &ctkDICOMServerNodeWidget2::onSettingsModified);
+#else
   QObject::connect(this->StorageEnabledCheckBox, SIGNAL(stateChanged(int)),
                    q, SLOT(onSettingsModified()));
+#endif
   QObject::connect(this->StorageAETitle, SIGNAL(textChanged(QString)),
                    q, SLOT(onSettingsModified()));
   QObject::connect(this->StoragePort, SIGNAL(textChanged(QString)),
@@ -375,10 +380,10 @@ void ctkDICOMServerNodeWidget2Private::init()
   QObject::connect(this->RestoreDefaultPushButton, SIGNAL(clicked()),
                    q, SLOT(onRestoreDefaultServers()));
   this->SaveButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Save);
-  this->SaveButton->setText(ctkDICOMServerNodeWidget2::tr("Apply changes  "));
+  this->SaveButton->setText(ctkDICOMServerNodeWidget2::tr("Apply"));
   this->SaveButton->setIcon(QIcon(":/Icons/save.svg"));
   this->CancelButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Discard);
-  this->CancelButton->setText(ctkDICOMServerNodeWidget2::tr("Discard changes"));
+  this->CancelButton->setText(ctkDICOMServerNodeWidget2::tr("Discard"));
   this->CancelButton->setIcon(QIcon(":/Icons/cancel.svg"));
   QObject::connect(this->CancelButton, SIGNAL(clicked()),
                    q, SLOT(readSettings()));
@@ -671,7 +676,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
     nodesNames.append(proxyName);
   }
   proxyComboBox->addItems(nodesNames);
-  proxyComboBox->setCurrentIndex(proxyComboBox->findText(node["Retrieve Proxy"].toString()));
+  proxyComboBox->setCurrentIndex(proxyComboBox->findText(proxyName));
   QObject::connect(proxyComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onSettingsModified()));
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, proxyComboBox);
@@ -1383,7 +1388,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
 
   settings.remove("DICOM/ServerNodes");
   this->stopAllJobs();
-  this->removeAllServers();
+  d->Scheduler->removeAllServers();
 
   settings.setValue("DICOM/ServerNodeCount", rowCount);
 
@@ -1399,7 +1404,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
 
     // Convert QMap to QJsonObject
     QJsonObject jsonObject;
-    for (auto it = node.constBegin(); it != node.constEnd(); ++it)
+    for (QMap<QString, QVariant>::const_iterator it = node.constBegin(); it != node.constEnd(); ++it)
     {
       jsonObject[it.key()] = QJsonValue::fromVariant(it.value());
     }
@@ -1550,7 +1555,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
 
     // Convert QJsonObject back to QMap<QString, QVariant>
     QMap<QString, QVariant> node;
-    for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it)
+    for (QJsonObject::ConstIterator it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it)
     {
       node.insert(it.key(), it.value().toVariant());
     }
@@ -1748,7 +1753,9 @@ void ctkDICOMServerNodeWidget2::removeAllServers()
     return;
   }
 
-  d->Scheduler->removeAllServers();
+  d->NodeTable->clearContents();
+  d->NodeTable->setRowCount(0);
+  d->settingsModified();
 }
 
 //----------------------------------------------------------------------------
@@ -1789,4 +1796,18 @@ void ctkDICOMServerNodeWidget2::stopAllJobs()
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   d->Scheduler->stopAllJobs(true, false);
   QApplication::restoreOverrideCursor();
+}
+
+//----------------------------------------------------------------------------
+ctkCollapsibleGroupBox *ctkDICOMServerNodeWidget2::storageCollapsibleGroupBox() const
+{
+  Q_D(const ctkDICOMServerNodeWidget2);
+  return d->StorageCollapsibleGroupBox;
+}
+
+//----------------------------------------------------------------------------
+ctkCollapsibleGroupBox *ctkDICOMServerNodeWidget2::serversCollapsibleGroupBox() const
+{
+  Q_D(const ctkDICOMServerNodeWidget2);
+  return d->ServersCollapsibleGroupBox;
 }
