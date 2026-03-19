@@ -23,6 +23,7 @@
 #include "ctkPluginLocalization.h"
 
 #include "ctkPlugin.h"
+#include "ctkException.h"
 
 #include <QTranslator>
 
@@ -33,14 +34,20 @@ struct ctkPluginLocalizationData : public QSharedData
                             const QSharedPointer<ctkPlugin>& plugin)
     : locale(locale), translation(plugin->getResource(fileName))
   {
-    translator.load(reinterpret_cast<const uchar*>(translation.constData()), translation.size());
+    if (!translator.load(reinterpret_cast<const uchar*>(translation.constData()), translation.size()))
+    {
+      throw ctkRuntimeException(QString("Failed to load translation resource: %1").arg(fileName));
+    }
   }
 
   ctkPluginLocalizationData(const ctkPluginLocalizationData& other)
     : QSharedData(other),
       locale(other.locale), translation(other.translation)
   {
-    translator.load(reinterpret_cast<const uchar*>(translation.constData()), translation.size());
+    if (!translator.load(reinterpret_cast<const uchar*>(translation.constData()), translation.size()))
+    {
+      throw ctkRuntimeException("Failed to load translation resource from copy");
+    }
   }
 
   ~ctkPluginLocalizationData()
