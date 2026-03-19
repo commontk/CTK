@@ -549,7 +549,11 @@ void ctkDICOMSeriesTableView::mouseReleaseEvent(QMouseEvent* event)
           if (contextMenuButtonRect.contains(event->pos()))
           {
             // Open context menu at global position
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            this->onDelegateContextMenuRequested(event->globalPosition().toPoint(), index);
+#else
             this->onDelegateContextMenuRequested(event->globalPos(), index);
+#endif
             event->accept();
           }
         }
