@@ -26,7 +26,10 @@ int ctkVTKHistogramTest3( int argc, char * argv [])
   ctkVTKHistogram histogram;
 
   vtkSmartPointer<vtkDataArray> dataArray;
-  dataArray.TakeReference(vtkDataArray::CreateDataArray(VTK_CHAR));
+  // Use VTK_UNSIGNED_CHAR instead of VTK_CHAR because the signedness of
+  // VTK_CHAR is platform-dependent. With unsigned char the range is always
+  // [0, 255], so the position-based value() lookups below are well-defined.
+  dataArray.TakeReference(vtkDataArray::CreateDataArray(VTK_UNSIGNED_CHAR));
   dataArray->InsertNextTuple1(0);
   dataArray->InsertNextTuple1(0);
   dataArray->InsertNextTuple1(0);
