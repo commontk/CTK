@@ -105,7 +105,7 @@ void ctkFontButtonPrivate::updateText()
   text.replace("sss", QString("%1pt").arg(this->Font.pointSize()));
   text.replace("ss", QString("%1").arg(this->Font.pointSize()));
   text.replace("www", this->fullNameWeight());
-  text.replace("ww", QString("%1").arg(this->Font.weight()));
+  text.replace("ww", QString("%1").arg(static_cast<int>(this->Font.weight())));
   text.replace("biu", QString("%1%2%3")
     .arg(this->Font.bold() ? 'b' : '-')
     .arg(this->Font.italic() ? 'i' : '-')
