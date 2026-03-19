@@ -1480,7 +1480,11 @@ void ctkDICOMStudyListView::mouseReleaseEvent(QMouseEvent* event)
         if (contextMenuButtonRect.contains(event->pos()))
         {
           // Open context menu at global position
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+          this->onStudyContextMenuRequested(event->globalPosition().toPoint(), index);
+#else
           this->onStudyContextMenuRequested(event->globalPos(), index);
+#endif
           event->accept();
         }
       }

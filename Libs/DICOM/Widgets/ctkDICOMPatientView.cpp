@@ -1879,7 +1879,11 @@ void ctkDICOMPatientView::mouseReleaseEvent(QMouseEvent* event)
       if (d->ContextMenuButtonPressedIndex == index &&
           this->patientDelegate()->isContextMenuButtonAt(event->pos(), itemRect, option))
       {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        this->onPatientContextMenuRequested(event->globalPosition().toPoint(), index);
+#else
         this->onPatientContextMenuRequested(event->globalPos(), index);
+#endif
         d->ContextMenuButtonPressedIndex = QModelIndex();
         event->accept();
         return;
