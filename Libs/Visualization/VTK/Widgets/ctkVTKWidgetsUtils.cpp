@@ -132,7 +132,11 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
   // Qt image is upside-down compared to VTK, so return mirrored image.
   // Mirroring also takes care of the pixel buffer ownership, because mirroring deep-copies the pixel buffer
   // (therefore the returned QImage() owns its own pixel buffer).
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  return image.flipped();
+#else
   return image.mirrored();
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -157,17 +161,23 @@ bool ctk::qImageToVTKImageData(const QImage& inputQImage, vtkImageData* outputVT
   vtkIdType numberOfScalarComponents = 0;
   if (inputQImage.hasAlphaChannel() || forceAlphaChannel)
   {
-#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGBA8888).flipped();
+#elif QT_VERSION >= QT_VERSION_CHECK(5,2,0)
     normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
-    numberOfScalarComponents = 4;
 #else
     qWarning() << Q_FUNC_INFO << " failed: conversion of 4-component image is not available with Qt < 5.2";
     return false;
 #endif
+    numberOfScalarComponents = 4;
   }
   else
   {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGB888).flipped();
+#else
     normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGB888).mirrored();
+#endif
     numberOfScalarComponents = 3;
   }
 
