@@ -382,7 +382,11 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   }
   pixelData->Delete();
   image = image.rgbSwapped();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  image = image.flipped();
+#else
   image = image.mirrored();
+#endif
 
   // Scale the image to zoom, using FastTransformation to prevent smoothing
   QSize imageSize = actualSize * this->Magnification;

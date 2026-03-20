@@ -1020,7 +1020,14 @@ void ctkQImageView::update( bool zoomChanged,
       }
       if( d->FlipXAxis || d->FlipYAxis )
       {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+        Qt::Orientations flipOrient;
+        if( d->FlipXAxis ) flipOrient |= Qt::Horizontal;
+        if( d->FlipYAxis ) flipOrient |= Qt::Vertical;
+        tmpI = tmpI.flipped( flipOrient );
+#else
         tmpI = tmpI.mirrored( d->FlipXAxis, d->FlipYAxis );
+#endif
         if( d->FlipXAxis )
         {
           sourceX = tmpI.width() - (d->TmpXMax - d->TmpXMin) - d->TmpXMin;
