@@ -137,9 +137,14 @@ void ctkExpandButton::updateIcon()
   }
   else
   {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    QImage mirrorImage =
+        d->defaultPixmap.toImage().flipped(d->orientation);
+#else
     QImage mirrorImage =
         d->defaultPixmap.toImage().mirrored(d->orientation == Qt::Horizontal,
                                             d->orientation == Qt::Vertical);
+#endif
     this->setIcon(QIcon(QPixmap::fromImage(mirrorImage)));
   }
 }
