@@ -50,7 +50,11 @@ int ctkVTKErrorLogModelFileLoggingTest1(int argc, char * argv [])
   // Create log file
   QTemporaryFile logFile(QDir::tempPath() + "/ctkVTKErrorLogModelFileLoggingTest1.XXXXXX");
   logFile.setAutoRemove(false);
-  logFile.open();
+  if (!logFile.open())
+  {
+    qWarning() << "Failed to open temporary log file";
+    return EXIT_FAILURE;
+  }
   logFile.close();
   QString logFilePath = logFile.fileName();
 

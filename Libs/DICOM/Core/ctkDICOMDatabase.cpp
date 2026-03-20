@@ -258,8 +258,7 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
 bool ctkDICOMDatabasePrivate::executeScript(const QString script)
 {
   QFile scriptFile(script);
-  scriptFile.open(QIODevice::ReadOnly);
-  if  ( !scriptFile.isOpen() )
+  if  ( !scriptFile.open(QIODevice::ReadOnly) )
   {
     qDebug() << "Script file " << script << " could not be opened!\n";
     return false;
