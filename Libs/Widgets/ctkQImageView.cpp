@@ -1083,8 +1083,7 @@ void ctkQImageView::update( bool zoomChanged,
               &intBound );
 
             QString wlString = tr("W / L = %1 / %2")
-              .arg(QString::number(this->intensityWindow(), 'f', 3))
-              .arg(QString::number(this->intensityLevel(), 'f', 3));
+              .arg(QString::number(this->intensityWindow(), 'f', 3), QString::number(this->intensityLevel(), 'f', 3));
             QRectF wlBound = painter.boundingRect( pointRect, textFlags,
               wlString );
             QRectF wlRect(
@@ -1096,9 +1095,7 @@ void ctkQImageView::update( bool zoomChanged,
           }
 
           QString spacingString = tr("Spacing = %1, %2, %3")
-            .arg(QString::number(this->xSpacing(), 'f', 3))
-            .arg(QString::number(this->ySpacing(), 'f', 3))
-            .arg(QString::number(this->sliceThickness(), 'f', 3));
+            .arg(QString::number(this->xSpacing(), 'f', 3), QString::number(this->ySpacing(), 'f', 3), QString::number(this->sliceThickness(), 'f', 3));
           QRectF spacingBound = painter.boundingRect( pointRect, textFlags,
             spacingString );
           QRectF spacingRect(
@@ -1109,9 +1106,7 @@ void ctkQImageView::update( bool zoomChanged,
             &spacingBound );
 
           QString dimString = tr("Size = %1, %2, %3")
-            .arg(QString::number( d->ImageList[ d->SliceNumber ].width()))
-            .arg(QString::number(d->ImageList[d->SliceNumber].height()))
-            .arg(QString::number(d->ImageList.size()));
+            .arg(QString::number( d->ImageList[ d->SliceNumber ].width()), QString::number(d->ImageList[d->SliceNumber].height()), QString::number(d->ImageList.size()));
           QRectF dimBound = painter.boundingRect( pointRect, textFlags,
             dimString );
           QRectF dimRect(
@@ -1121,9 +1116,7 @@ void ctkQImageView::update( bool zoomChanged,
           painter.drawText( dimRect, textFlags, dimString, &dimBound );
 
           QString rasString = tr("RAS = %1, %2, %3")
-            .arg(QString::number(this->xPosition() * this->xSpacing(), 'f', 3))
-            .arg(QString::number(this->yPosition() * this->ySpacing(), 'f', 3))
-            .arg(QString::number(this->slicePosition() * this->sliceSpacing(), 'f', 3));
+            .arg(QString::number(this->xPosition() * this->xSpacing(), 'f', 3), QString::number(this->yPosition() * this->ySpacing(), 'f', 3), QString::number(this->slicePosition() * this->sliceSpacing(), 'f', 3));
           QRectF rasBound = painter.boundingRect( pointRect, textFlags,
             rasString );
           QRectF rasRect(

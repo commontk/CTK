@@ -831,9 +831,7 @@ void ctkDICOMBrowser::onRepairAction()
             "Study Description: %2\n"
             "Series Description: %3\n"
             "Do you want to remove the series from the DICOM database?"
-          ).arg(descriptions["PatientsName"])
-           .arg(descriptions["StudyDescription"])
-           .arg(descriptions["SeriesDescription"])
+          ).arg(descriptions["PatientsName"], descriptions["StudyDescription"], descriptions["SeriesDescription"])
         );
 
         repairMessageBox->setDetailedText(unavailableFileNames);
@@ -1467,8 +1465,7 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
         //: %1 and %2 refers to source and destination file paths
         QString errorString = tr("Failed to copy\n\n%1\n\nto\n\n%2"
             "\n\nHalting export.")
-            .arg(filePath)
-            .arg(destinationFileName);
+            .arg(filePath, destinationFileName);
         ctkMessageBox copyErrorMessageBox(this);
         copyErrorMessageBox.setText(errorString);
         copyErrorMessageBox.setIcon(QMessageBox::Warning);
@@ -1770,10 +1767,7 @@ void ctkDICOMBrowser::onIndexingComplete(int patientsAdded, int studiesAdded, in
   {
     //: Arguments correspond to the number of patients, studies, series and instancies
     QString message = tr("Import completed: added %1 patients, %2 studies, %3 series, %4 instances.")
-      .arg(QString::number(patientsAdded))
-      .arg(QString::number(studiesAdded))
-      .arg(QString::number(seriesAdded))
-      .arg(QString::number(imagesAdded));
+      .arg(QString::number(patientsAdded), QString::number(studiesAdded), QString::number(seriesAdded), QString::number(imagesAdded));
     d->InformationMessageLabel->setText(message);
     d->InformationMessageFrame->show();
   }

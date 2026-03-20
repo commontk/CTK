@@ -77,8 +77,7 @@ QString ctkDICOMStorageListenerJob::loggerReport(const QString& status)
 {
   QString fullLogMsg = QString("ctkDICOMStorageListenerJob: listener job %1.\n"
                                "JobUID: %2\n")
-                               .arg(status)
-                               .arg(this->jobUID());
+                               .arg(status, this->jobUID());
   QString logMsg = QString("Listener job %1.\n")
                           .arg(status);
   QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");

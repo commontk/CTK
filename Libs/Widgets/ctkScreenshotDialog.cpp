@@ -385,8 +385,7 @@ void ctkScreenshotDialog::instantScreenshot()
       d->HeightSpinBox->value());
   }
 
-  QString filename = QString("%1/%2_%3.png").arg(d->DirectoryPathLineEdit->currentPath())
-                     .arg(d->ImageNameLineEdit->text())
+  QString filename = QString("%1/%2_%3.png").arg(d->DirectoryPathLineEdit->currentPath(), d->ImageNameLineEdit->text())
                      .arg(d->ImageVersionNumberSpinBox->value());
 
   // Check if file exists

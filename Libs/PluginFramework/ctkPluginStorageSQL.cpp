@@ -99,7 +99,7 @@ QSqlDatabase ctkPluginStorageSQL::getConnection(bool create) const
   if (!database.open())
   {
     close();
-    throw ctkPluginDatabaseException(QString("Could not open database connection: %1 (%2)").arg(m_connectionNames.localData()).arg(database.lastError().text()),
+    throw ctkPluginDatabaseException(QString("Could not open database connection: %1 (%2)").arg(m_connectionNames.localData(), database.lastError().text()),
       ctkPluginDatabaseException::DB_SQL_ERROR);
   }
 
@@ -433,8 +433,7 @@ void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, 
   pluginLoader.setFileName(pa->getLibLocation());
   if (!pluginLoader.load())
   {
-    ctkPluginException exc(QString("The plugin \"%1\" could not be loaded: %2").arg(pa->getLibLocation())
-                           .arg(pluginLoader.errorString()));
+    ctkPluginException exc(QString("The plugin \"%1\" could not be loaded: %2").arg(pa->getLibLocation(), pluginLoader.errorString()));
     throw exc;
   }
 
@@ -759,8 +758,7 @@ void ctkPluginStorageSQL::executeQuery(QSqlQuery *query, const QString &statemen
       query->finish();
       query->clear();
 
-      throw ctkPluginDatabaseException(errorText.arg(stage == Prepare ? "prepare":"execute")
-                  .arg(statement).arg(query->lastError().text()).arg(parameters), errorType);
+      throw ctkPluginDatabaseException(errorText.arg(stage == Prepare ? "prepare":"execute", statement, query->lastError().text(), parameters), errorType);
     }
 
     if (stage == Prepare)

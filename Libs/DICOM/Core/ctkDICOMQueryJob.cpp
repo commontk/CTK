@@ -114,9 +114,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status)
       fullLogMsg = QString("ctkDICOMQueryJob: query job at patients level %1.\n"
                        "JobUID: %2\n"
                        "Server: %3\n")
-                      .arg(status)
-                      .arg(this->jobUID())
-                      .arg(this->server()->connectionName());
+                      .arg(status, this->jobUID(), this->server()->connectionName());
       logMsg = QString("Query job at patients level %1.\n")
                       .arg(status);
       break;
@@ -125,10 +123,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status)
                        "JobUID: %2\n"
                        "Server: %3\n"
                        "PatientID: %4\n")
-                      .arg(status)
-                      .arg(this->jobUID())
-                      .arg(this->server()->connectionName())
-                      .arg(this->patientID());
+                      .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID());
       logMsg = QString("Query job at studies level %1.\n")
                       .arg(status);
       break;
@@ -138,11 +133,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status)
                        "Server: %3\n"
                        "PatientID: %4\n"
                        "StudyInstanceUID: %5\n")
-                      .arg(status)
-                      .arg(this->jobUID())
-                      .arg(this->server()->connectionName())
-                      .arg(this->patientID())
-                      .arg(this->studyInstanceUID());
+                      .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID(), this->studyInstanceUID());
       logMsg = QString("Query job at studies level %1.\n")
                       .arg(status);
       break;
@@ -153,12 +144,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status)
                        "PatientID: %4\n"
                        "StudyInstanceUID: %5\n"
                        "SeriesInstanceUID: %6\n")
-                      .arg(status)
-                      .arg(this->jobUID())
-                      .arg(this->server()->connectionName())
-                      .arg(this->patientID())
-                      .arg(this->studyInstanceUID())
-                      .arg(this->seriesInstanceUID());
+                      .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID(), this->studyInstanceUID(), this->seriesInstanceUID());
       logMsg = QString("Query job at instances level %1.\n")
                       .arg(status);
       break;

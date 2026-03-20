@@ -634,8 +634,7 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
     }
     float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
     logger.info(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
-                .arg(directoryName)
-                .arg(QString::number(elapsedTimeInSeconds,'f', 2)));
+                .arg(directoryName, QString::number(elapsedTimeInSeconds,'f', 2)));
     this->addListOfFiles(listOfInstances, copyFile);
   }
   return success;

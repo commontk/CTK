@@ -706,7 +706,7 @@ void ctkPluginPrivate::startDependencies()
         // started if all its dependencies could be resolved.
         throw ctkPluginException(
             QString("Internal error: dependent plugin %1 inside version range %2 is not installed.").
-            arg(pr->name).arg(pr->pluginRange.toString()));
+            arg(pr->name, pr->pluginRange.toString()));
       }
       else
       {
@@ -734,14 +734,14 @@ ctkPluginException* ctkPluginPrivate::start0()
     if (!pluginLoader.isLoaded())
     {
       error_type = ctkPluginException::ACTIVATOR_ERROR;
-      throw ctkPluginException(QString("Loading plugin %1 failed: %2").arg(pluginLoader.fileName()).arg(pluginLoader.errorString()),
+      throw ctkPluginException(QString("Loading plugin %1 failed: %2").arg(pluginLoader.fileName(), pluginLoader.errorString()),
                                ctkPluginException::ACTIVATOR_ERROR);
     }
 
     pluginActivator = qobject_cast<ctkPluginActivator*>(pluginLoader.instance());
     if (!pluginActivator)
     {
-      throw ctkPluginException(QString("Creating ctkPluginActivator instance from %1 failed: %2").arg(pluginLoader.fileName()).arg(pluginLoader.errorString()),
+      throw ctkPluginException(QString("Creating ctkPluginActivator instance from %1 failed: %2").arg(pluginLoader.fileName(), pluginLoader.errorString()),
                                ctkPluginException::ACTIVATOR_ERROR);
     }
 

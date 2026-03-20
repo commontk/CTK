@@ -145,15 +145,13 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
   {
     logger.debug(QString("ctkJobScheduler: job object %1 of type %2 in thread %3 "
                          "not added to the job list since jobs are being stopped.\n")
-      .arg(job->jobUID())
-      .arg(job->className())
+      .arg(job->jobUID(), job->className())
       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
     return false;
   }
 
   logger.debug(QString("ctkJobScheduler: creating job object %1 of type %2 in thread %3.\n")
-    .arg(job->jobUID())
-    .arg(job->className())
+    .arg(job->jobUID(), job->className())
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   QMetaObject::Connection startedConnection = QObject::connect(job.data(), &ctkAbstractJob::started, q, [q, job](){
@@ -226,8 +224,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 bool ctkJobSchedulerPrivate::cleanJob(const QString &jobUID)
 {
   logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
-    .arg(jobUID)
-    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
+    .arg(jobUID, QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
   {
     // The QWriteLocker is enclosed within brackets to restrict its scope and
@@ -277,8 +274,7 @@ void ctkJobSchedulerPrivate::cleanJobs(const QStringList &jobUIDs)
 bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
   logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
-    .arg(jobUID)
-    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
+    .arg(jobUID, QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
   {
     // The QWriteLocker is enclosed within brackets to restrict its scope and

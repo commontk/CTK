@@ -684,10 +684,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
           "%2 New Studies\n"
           "%3 New Series\n"
           "%4 New Instances\n")
-          .arg(QString::number(d->PatientsAddedDuringImport))
-          .arg(QString::number(d->StudiesAddedDuringImport))
-          .arg(QString::number(d->SeriesAddedDuringImport))
-          .arg(QString::number(d->InstancesAddedDuringImport));
+          .arg(QString::number(d->PatientsAddedDuringImport), QString::number(d->StudiesAddedDuringImport), QString::number(d->SeriesAddedDuringImport), QString::number(d->InstancesAddedDuringImport));
       QMessageBox::information(this, tr("DICOM Directory Import"), message);
     }
   }
