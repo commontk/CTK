@@ -140,7 +140,7 @@ public:
   ctkProperties loadProperties(const QUrl& location)
   {
     ctkProperties result;
-    if (!location.isValid() || !QFileInfo(location.toLocalFile()).exists())
+    if (!location.isValid() || !QFileInfo::exists(location.toLocalFile()))
     {
       return result;
     }

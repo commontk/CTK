@@ -186,7 +186,7 @@ void ctkDICOMThumbnailListWidgetPrivate
                           "/thumbs/" + model->data(studyIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                           model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                           model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
-  if(!QFileInfo(thumbnailPath).exists())
+  if(!QFileInfo::exists(thumbnailPath))
   {
     return;
   }
