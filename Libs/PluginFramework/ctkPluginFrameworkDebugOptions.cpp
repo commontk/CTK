@@ -197,11 +197,11 @@ void ctkPluginFrameworkDebugOptions::setOptions(const QHash<QString, QVariant>& 
       return;
     }
     // first check for removals
-    foreach (const QString& key, this->options.keys())
+    for (auto it = this->options.constBegin(); it != this->options.constEnd(); ++it)
     {
-      if (!newOptions.contains(key))
+      if (!newOptions.contains(it.key()))
       {
-        QString symbolicName = this->getSymbolicName(key);
+        QString symbolicName = this->getSymbolicName(it.key());
         if (!symbolicName.isEmpty())
         {
           fireChangesTo.insert(symbolicName);

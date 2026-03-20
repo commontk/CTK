@@ -691,25 +691,25 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
     }
     ++filterIt;
   }
-  foreach (const QString& column, d->sqlGreaterWhereConditions.keys())
+  for (auto it = d->sqlGreaterWhereConditions.constBegin(); it != d->sqlGreaterWhereConditions.constEnd(); ++it)
   {
-    queryString += " AND " + column + " > ?" ;
-    boundValues << d->sqlGreaterWhereConditions[column];
+    queryString += " AND " + it.key() + " > ?" ;
+    boundValues << it.value();
   }
-  foreach (const QString& column, d->sqlLessWhereConditions.keys())
+  for (auto it = d->sqlLessWhereConditions.constBegin(); it != d->sqlLessWhereConditions.constEnd(); ++it)
   {
-    queryString += " AND " + column + " < ?" ;
-    boundValues << d->sqlLessWhereConditions[column];
+    queryString += " AND " + it.key() + " < ?" ;
+    boundValues << it.value();
   }
-  foreach (const QString& column, d->sqlGreaterEqualWhereConditions.keys())
+  for (auto it = d->sqlGreaterEqualWhereConditions.constBegin(); it != d->sqlGreaterEqualWhereConditions.constEnd(); ++it)
   {
-    queryString += " AND " + column + " >= ?" ;
-    boundValues << d->sqlGreaterEqualWhereConditions[column];
+    queryString += " AND " + it.key() + " >= ?" ;
+    boundValues << it.value();
   }
-  foreach (const QString& column, d->sqlLessEqualWhereConditions.keys())
+  for (auto it = d->sqlLessEqualWhereConditions.constBegin(); it != d->sqlLessEqualWhereConditions.constEnd(); ++it)
   {
-    queryString += " AND " + column + " <= ?" ;
-    boundValues << d->sqlLessEqualWhereConditions[column];
+    queryString += " AND " + it.key() + " <= ?" ;
+    boundValues << it.value();
   }
 
   if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen()
