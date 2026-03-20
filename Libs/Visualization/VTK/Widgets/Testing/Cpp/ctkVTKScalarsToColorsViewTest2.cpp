@@ -101,7 +101,7 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   vtkSmartPointer<vtkPlotBar> histogramPlot =
     vtkSmartPointer<vtkPlotBar>::New();
   histogramPlot->SetInputData(table, 0, 1);
-  histogramPlot->SetColor(0.078, 0.008, 0);//not exactly black...just because.
+  histogramPlot->SetColor(20, 2, 0);//not exactly black...just because. (20≈0.078*255, 2≈0.008*255)
   histogramPlot->GetPen()->SetLineType(vtkPen::NO_PEN);
 
   ctkVTKScalarsToColorsView view(0);
