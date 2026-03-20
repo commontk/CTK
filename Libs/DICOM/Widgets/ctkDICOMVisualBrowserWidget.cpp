@@ -1241,10 +1241,10 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
   foreach (QString patientUID, patientList)
   {
     bool filtered = false;
-    for (QString key : filters.keys())
+    for (auto it = filters.constBegin(); it != filters.constEnd(); ++it)
     {
-      QString filter = this->DicomDatabase->fieldForPatient(key, patientUID);
-      QString filterValue = filters.value(key).toString();
+      QString filter = this->DicomDatabase->fieldForPatient(it.key(), patientUID);
+      QString filterValue = it.value().toString();
       if (!filter.contains(filterValue, Qt::CaseInsensitive))
       {
         filtered = true;
@@ -1277,11 +1277,11 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterStudyList(const QStringLis
   foreach (QString studyItem, studyList)
   {
     bool filtered = false;
-    for (QString key : filters.keys())
+    for (auto it = filters.constBegin(); it != filters.constEnd(); ++it)
     {
-      QString filter = this->DicomDatabase->fieldForStudy(key, studyItem);
-      QString filterValue = filters.value(key).toString();
-      if (key == "StudyDate")
+      QString filter = this->DicomDatabase->fieldForStudy(it.key(), studyItem);
+      QString filterValue = it.value().toString();
+      if (it.key() == QLatin1String("StudyDate"))
       {
         int nDays = filterValue.toInt();
         if (nDays != -1)
@@ -1329,12 +1329,12 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
   foreach (QString seriesItem, seriesList)
   {
     bool filtered = false;
-    for (QString key : filters.keys())
+    for (auto it = filters.constBegin(); it != filters.constEnd(); ++it)
     {
-      QString filter = this->DicomDatabase->fieldForSeries(key, seriesItem);
-      if (key == "Modality")
+      QString filter = this->DicomDatabase->fieldForSeries(it.key(), seriesItem);
+      if (it.key() == QLatin1String("Modality"))
       {
-        QStringList filterValues = filters.value(key).toStringList();
+        QStringList filterValues = it.value().toStringList();
         if (!filterValues.contains("Any") && !filterValues.contains(filter))
         {
           filtered = true;
@@ -1343,7 +1343,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
       }
       else
       {
-        QString filterValue = filters.value(key).toString();
+        QString filterValue = it.value().toString();
         if (!filter.contains(filterValue, Qt::CaseInsensitive))
         {
           filtered = true;
@@ -3901,16 +3901,16 @@ void ctkDICOMVisualBrowserWidget::removeSeries(const QStringList& seriesInstance
   d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
 
   // Refresh the affected series models and update their views' viewports
-  foreach (const QString& studyUID, affectedSeriesModels.keys())
+  for (auto it = affectedSeriesModels.constBegin(); it != affectedSeriesModels.constEnd(); ++it)
   {
-    ctkDICOMSeriesModel* seriesModel = affectedSeriesModels.value(studyUID, nullptr);
+    ctkDICOMSeriesModel* seriesModel = it.value();
     if (seriesModel)
     {
       seriesModel->refresh();
     }
 
     // Also refresh the series view and force layout recalculation
-    ctkDICOMSeriesTableView* seriesView = studyListView->getSeriesViewForStudy(studyUID);
+    ctkDICOMSeriesTableView* seriesView = studyListView->getSeriesViewForStudy(it.key());
     if (seriesView)
     {
       // reset the model to force a full view update

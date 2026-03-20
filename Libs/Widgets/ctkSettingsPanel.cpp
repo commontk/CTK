@@ -231,8 +231,9 @@ void ctkSettingsPanel::setSettings(QSettings* settings)
 void ctkSettingsPanel::reloadSettings()
 {
   Q_D(ctkSettingsPanel);
-  foreach(const QString& key, d->Properties.keys())
+  for (auto it = d->Properties.begin(); it != d->Properties.end(); ++it)
   {
+    const QString& key = it.key();
     QSettings* settings = d->settings(key);
     if (!settings)
     {
@@ -241,7 +242,7 @@ void ctkSettingsPanel::reloadSettings()
     if (settings->contains(key))
     {
       QVariant value = settings->value(key);
-      PropertyType& prop = d->Properties[key];
+      PropertyType& prop = it.value();
       // Update object registered using registerProperty()
       prop.setValue(value);
       prop.setPreviousValue(value);
@@ -388,12 +389,11 @@ QStringList ctkSettingsPanel::changedSettings()const
 {
   Q_D(const ctkSettingsPanel);
   QStringList settingsKeys;
-  foreach(const QString& key, d->Properties.keys())
+  for (auto it = d->Properties.constBegin(); it != d->Properties.constEnd(); ++it)
   {
-    const PropertyType& prop = d->Properties[key];
-    if (prop.previousValue() != prop.value())
+    if (it.value().previousValue() != it.value().value())
     {
-      settingsKeys << key;
+      settingsKeys << it.key();
     }
   }
   return settingsKeys;
@@ -418,13 +418,13 @@ ctkSettingsPanel::SettingOptions ctkSettingsPanel
 void ctkSettingsPanel::applySettings()
 {
   Q_D(ctkSettingsPanel);
-  foreach(const QString& key, d->Properties.keys())
+  for (auto it = d->Properties.begin(); it != d->Properties.end(); ++it)
   {
-    PropertyType& prop = d->Properties[key];
+    PropertyType& prop = it.value();
     if (prop.previousValue() != prop.value())
     {
       prop.setPreviousValue(prop.value());
-      emit settingChanged(key, prop.value());
+      emit settingChanged(it.key(), prop.value());
     }
   }
 }
@@ -433,9 +433,9 @@ void ctkSettingsPanel::applySettings()
 void ctkSettingsPanel::resetSettings()
 {
   Q_D(ctkSettingsPanel);
-  foreach(const QString& key, d->Properties.keys())
+  for (auto it = d->Properties.constBegin(); it != d->Properties.constEnd(); ++it)
   {
-    this->setSetting(key, d->Properties[key].previousValue());
+    this->setSetting(it.key(), it.value().previousValue());
   }
 }
 
@@ -443,8 +443,8 @@ void ctkSettingsPanel::resetSettings()
 void ctkSettingsPanel::restoreDefaultSettings()
 {
   Q_D(ctkSettingsPanel);
-  foreach(const QString& key, d->Properties.keys())
+  for (auto it = d->Properties.constBegin(); it != d->Properties.constEnd(); ++it)
   {
-    this->setSetting(key, d->Properties[key].DefaultValue);
+    this->setSetting(it.key(), it.value().DefaultValue);
   }
 }

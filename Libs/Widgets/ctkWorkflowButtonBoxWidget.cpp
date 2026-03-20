@@ -209,10 +209,10 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
   // Remove the buttons if the set of steps to have goTo buttons has changed
   if (goToStepsThatHaveButtons != goToStepsToHaveButtons)
   {
-    foreach (ctkPushButton* goToButton, this->GoToButtonToStepMap.keys())
+    for (auto it = this->GoToButtonToStepMap.constBegin(); it != this->GoToButtonToStepMap.constEnd(); ++it)
     {
-      q->layout()->removeWidget(goToButton);
-      goToButton->deleteLater();
+      q->layout()->removeWidget(it.key());
+      it.key()->deleteLater();
     }
     this->GoToButtonToStepMap.clear();
   }
@@ -236,13 +236,14 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
 
   // Show/hide the goTo buttons depending on whether they are accessible from the current step
   ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
-  foreach (ctkPushButton* goToButton, this->GoToButtonToStepMap.keys())
+  for (auto it = this->GoToButtonToStepMap.constBegin(); it != this->GoToButtonToStepMap.constEnd(); ++it)
   {
+    ctkPushButton* goToButton = it.key();
     // TODO enable and show the goTo button if we can go to it
     // ctkWorkflowStep* goToStep = this->GoToButtonToStepMap[goToButton];
     // if (this->Workflow->canGoToStep(currentStep, goToStep))
     // for now we'll assume we can go to the step
-    ctkWorkflowStep* goToStep = this->GoToButtonToStepMap[goToButton];
+    ctkWorkflowStep* goToStep = it.value();
     Q_ASSERT(goToStep);
     bool enable = currentStep && this->Workflow->canGoToStep(goToStep->id(), currentStep);
     bool visible = step ? !(step->buttonBoxHints() & ctkWorkflowWidgetStep::ButtonBoxHidden) : true;

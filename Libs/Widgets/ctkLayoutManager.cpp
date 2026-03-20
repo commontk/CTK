@@ -339,8 +339,9 @@ void ctkLayoutManager::setupLayout()
   {
     qWarning() << "Expected 'viewports' or 'layout' as XML root element, found" << d->Layout.documentElement().tagName();
   }
-  foreach (const QString& viewportName, d->Viewports.keys())
+  for (auto it = d->Viewports.constBegin(); it != d->Viewports.constEnd(); ++it)
   {
+    const QString& viewportName = it.key();
     bool usedInLayout = viewportNamesUsedInLayout.contains(viewportName);
     QWidget* viewport = d->viewport(viewportName);
     if (d->isViewportUsedInLayout(viewport) == usedInLayout)
