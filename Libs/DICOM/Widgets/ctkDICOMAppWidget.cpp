@@ -219,7 +219,7 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int,int,int,int)),
             q, SLOT(setIndexingResult(int,int,int,int)));
     // reset the database to show new data
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int,int,int,int)),
             &DICOMModel, SLOT(reset()));
     // stop indexing and reset the database if canceled
     q->connect(IndexerProgress, SIGNAL(canceled()),
@@ -230,7 +230,7 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     // allow users of this widget to know that the process has finished
     q->connect(IndexerProgress, SIGNAL(canceled()),
             q, SIGNAL(directoryImported()));
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int,int,int,int)),
             q, SIGNAL(directoryImported()));
   }
   IndexerProgress->show();

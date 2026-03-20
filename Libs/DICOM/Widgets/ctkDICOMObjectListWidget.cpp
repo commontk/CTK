@@ -229,8 +229,8 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
 
   d->currentPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
   connect(d->fileSliderWidget, SIGNAL(valueChanged(double)), this, SLOT(updateWidget()));
-  connect(d->dcmObjectTreeView, SIGNAL(doubleClicked(const QModelIndex&)),
-    this, SLOT(itemDoubleClicked(const QModelIndex&)));
+  connect(d->dcmObjectTreeView, SIGNAL(doubleClicked(QModelIndex)),
+    this, SLOT(itemDoubleClicked(QModelIndex)));
   connect(d->copyPathPushButton , SIGNAL(clicked(bool)),this, SLOT(copyPath()));
 
   connect(d->expandAllPushButton, SIGNAL(clicked(bool)), d->dcmObjectTreeView, SLOT(expandAll()));

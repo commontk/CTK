@@ -110,8 +110,8 @@ int main(int argc, char** argv)
   DICOMVisualBrowser.setDatabaseDirectorySettingsKey("DatabaseDirectory");
   DICOMVisualBrowser.setDatabaseDirectory(databaseDirectory);
 
-  QObject::connect(&directoryButton, SIGNAL(directoryChanged(const QString&)),
-                   &DICOMVisualBrowser, SLOT(setDatabaseDirectory(const QString&)));
+  QObject::connect(&directoryButton, SIGNAL(directoryChanged(QString)),
+                   &DICOMVisualBrowser, SLOT(setDatabaseDirectory(QString)));
 
   mainLayout.addWidget(&DICOMVisualBrowser);
   mainWidget.setLayout(&mainLayout);

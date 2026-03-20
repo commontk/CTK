@@ -136,8 +136,7 @@ void ctkDICOMDirectoryListWidget::setDICOMDatabase(ctkDICOMDatabase* dicomDataba
   connect ( d->directoryListView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             this,
-            SLOT(directorySelectionChanged(const QItemSelection & ,
-                                           const QItemSelection &  )));
+            SLOT(directorySelectionChanged(QItemSelection,QItemSelection)));
 }
 
 //----------------------------------------------------------------------------

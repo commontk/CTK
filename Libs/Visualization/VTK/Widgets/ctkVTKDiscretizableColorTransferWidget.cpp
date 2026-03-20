@@ -224,8 +224,8 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(invertColorTransferFunctionButton, SIGNAL(clicked()),
     q, SLOT(invertColorTransferFunction()));
 
-  QObject::connect(rangeSlider, SIGNAL(valuesChanged(double, double)),
-    q, SLOT(onRangeSliderValueChange(double, double)));
+  QObject::connect(rangeSlider, SIGNAL(valuesChanged(double,double)),
+    q, SLOT(onRangeSliderValueChange(double,double)));
 
   /// Option panel menu
   QWidget* nanColorWidget = new QWidget(optionButton);
