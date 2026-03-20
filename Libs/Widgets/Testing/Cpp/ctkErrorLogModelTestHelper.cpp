@@ -162,7 +162,11 @@ void appendToFile(const QString& fileName, const QString& text)
 {
   QMutexLocker locker(&AppendToFileMutex);
   QFile f(fileName);
-  f.open(QFile::Append);
+  if (!f.open(QFile::Append))
+  {
+    qWarning() << "appendToFile: Failed to open" << fileName;
+    return;
+  }
   QTextStream s(&f);
   s << QDateTime::currentDateTime().toString() << " - " << text << "\n";
   f.close();

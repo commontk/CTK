@@ -439,7 +439,12 @@ void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, 
   }
 
   QFile manifestResource(resourcePrefix + "META-INF/MANIFEST.MF");
-  manifestResource.open(QIODevice::ReadOnly);
+  if (!manifestResource.open(QIODevice::ReadOnly))
+  {
+    ctkPluginDatabaseException exc(
+      QString("Failed to open MANIFEST.MF resource: %1").arg(manifestResource.fileName()));
+    throw exc;
+  }
   QByteArray manifest = manifestResource.readAll();
   manifestResource.close();
 
@@ -478,7 +483,11 @@ void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, 
     if (QFileInfo(resourcePath).isDir()) continue;
 
     QFile resourceFile(resourcePath);
-    resourceFile.open(QIODevice::ReadOnly);
+    if (!resourceFile.open(QIODevice::ReadOnly))
+    {
+      qWarning() << "ctkPluginStorageSQL: Failed to open resource:" << resourcePath;
+      continue;
+    }
     QByteArray resourceData = resourceFile.readAll();
     resourceFile.close();
 

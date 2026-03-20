@@ -215,7 +215,11 @@ QByteArray ctkPluginFramework::getResource(const QString& path) const
     resourcePath += QString("/") + path;
 
   QFile resourceFile(resourcePath);
-  resourceFile.open(QIODevice::ReadOnly);
+  if (!resourceFile.open(QIODevice::ReadOnly))
+  {
+    qWarning() << "ctkPluginFramework: Failed to open resource:" << resourcePath;
+    return QByteArray();
+  }
   return resourceFile.readAll();
 }
 
