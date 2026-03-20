@@ -215,9 +215,9 @@ QSharedPointer<ctkDICOMItem> ctkDICOMJobResponseSet::datasetShared() const
 void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem*>& dcmItems, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
-  for (const QString& key : dcmItems.keys())
+  for (auto it = dcmItems.constBegin(); it != dcmItems.constEnd(); ++it)
   {
-    DcmItem* dcmItem = dcmItems.value(key);
+    DcmItem* dcmItem = it.value();
     if (!dcmItem)
     {
       continue;
@@ -227,7 +227,7 @@ void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem*>& dcmItems
       QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
     dataset->InitializeFromItem(dcmItem, takeOwnership);
 
-    d->Datasets.insert(key, dataset);
+    d->Datasets.insert(it.key(), dataset);
   }
 }
 
@@ -237,15 +237,15 @@ QMap<QString, ctkDICOMItem*> ctkDICOMJobResponseSet::datasets() const
   Q_D(const ctkDICOMJobResponseSet);
   QMap<QString, ctkDICOMItem*> datasets;
 
-  for (const QString& key : d->Datasets.keys())
+  for (auto it = d->Datasets.constBegin(); it != d->Datasets.constEnd(); ++it)
   {
-    QSharedPointer<ctkDICOMItem> dcmItem = d->Datasets.value(key);
+    QSharedPointer<ctkDICOMItem> dcmItem = it.value();
     if (!dcmItem)
     {
       continue;
     }
 
-    datasets.insert(key, dcmItem.data());
+    datasets.insert(it.key(), dcmItem.data());
   }
 
   return datasets;
@@ -276,16 +276,16 @@ ctkDICOMJobResponseSet* ctkDICOMJobResponseSet::clone()
 
   // Clone datasets
   QMap<QString, ctkDICOMItem*> datasets = this->datasets();
-  for (const QString& key : datasets.keys())
+  for (auto it = datasets.constBegin(); it != datasets.constEnd(); ++it)
   {
-    ctkDICOMItem* dataset = datasets.value(key);
+    ctkDICOMItem* dataset = it.value();
     if (!dataset)
     {
       continue;
     }
     QSharedPointer<ctkDICOMItem> newDataset =
       QSharedPointer<ctkDICOMItem>(dataset->Clone());
-    newJobResponseSet->d_func()->Datasets.insert(key, newDataset);
+    newJobResponseSet->d_func()->Datasets.insert(it.key(), newDataset);
   }
 
   return newJobResponseSet;

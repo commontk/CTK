@@ -445,9 +445,10 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   float progressRatio = 25. / d->StudyDatasets.count();
   int i = 0;
 
-  foreach(QString studyInstanceUID, d->StudyDatasets.keys())
+  for (auto it = d->StudyDatasets.constBegin(); it != d->StudyDatasets.constEnd(); ++it)
   {
-    DcmDataset *studyDataset = d->StudyDatasets.value(studyInstanceUID);
+    const QString& studyInstanceUID = it.key();
+    DcmDataset *studyDataset = it.value();
     DcmElement *patientName, *patientID;
     studyDataset->findAndGetElement(DCM_PatientName, patientName);
     studyDataset->findAndGetElement(DCM_PatientID, patientID);
@@ -1130,37 +1131,38 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
    * Study Description, Modalities in Study, and Study Date are used.
    */
   QString seriesDescription;
-  foreach(QString key, filters.keys())
+  for (auto it = filters.constBegin(); it != filters.constEnd(); ++it)
   {
-    if (key == QString("Name") && !filters[key].toString().isEmpty())
+    const QString& key = it.key();
+    if (key == QString("Name") && !it.value().toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString(DCM_PatientName,
-        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
+        (QString("*") + it.value().toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("ID") && !filters[key].toString().isEmpty())
+    else if (key == QString("ID") && !it.value().toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString(DCM_PatientID,
-        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
+        (QString("*") + it.value().toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("Study") && !filters[key].toString().isEmpty())
+    else if (key == QString("Study") && !it.value().toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString(DCM_StudyDescription,
-        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
+        (QString("*") + it.value().toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("AccessionNumber") && !filters[key].toString().isEmpty())
+    else if (key == QString("AccessionNumber") && !it.value().toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
-        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
+        (QString("*") + it.value().toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("Modalities") && filters[key].toStringList().count() != 0)
+    else if (key == QString("Modalities") && it.value().toStringList().count() != 0)
     {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
-      foreach (const QString& modality, filters[key].toStringList())
+      foreach (const QString& modality, it.value().toStringList())
       {
         modalitySearch += modality + QString("\\");
       }
@@ -1170,10 +1172,10 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
       d->QueryDcmDataset->putAndInsertString(DCM_ModalitiesInStudy, modalitySearch.toLatin1().data());
     }
     // Remember Series Description for later series query if we go through the keys now
-    else if (key == QString("Series") && !filters[key].toString().isEmpty())
+    else if (key == QString("Series") && !it.value().toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      seriesDescription = "*" + filters[key].toString() + "*";
+      seriesDescription = "*" + it.value().toString() + "*";
     }
     else
     {
@@ -1181,7 +1183,7 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
     }
   }
 
-  if (filters.keys().contains("StartDate") && filters.keys().contains("EndDate") &&
+  if (filters.contains("StartDate") && filters.contains("EndDate") &&
     !filters["StartDate"].toString().isEmpty() && !filters["EndDate"].toString().isEmpty())
   {
     QString dateRange = filters["StartDate"].toString() +

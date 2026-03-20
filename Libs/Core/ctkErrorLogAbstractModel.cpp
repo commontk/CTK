@@ -92,10 +92,9 @@ ctkErrorLogAbstractModelPrivate::ctkErrorLogAbstractModelPrivate(ctkErrorLogAbst
 // --------------------------------------------------------------------------
 ctkErrorLogAbstractModelPrivate::~ctkErrorLogAbstractModelPrivate()
 {
-  foreach(const QString& handlerName, this->RegisteredHandlers.keys())
+  for (auto it = this->RegisteredHandlers.constBegin(); it != this->RegisteredHandlers.constEnd(); ++it)
   {
-    ctkErrorLogAbstractMessageHandler * msgHandler =
-        this->RegisteredHandlers.value(handlerName);
+    ctkErrorLogAbstractMessageHandler * msgHandler = it.value();
     Q_ASSERT(msgHandler);
     msgHandler->setEnabled(false);
     delete msgHandler;
@@ -162,7 +161,7 @@ bool ctkErrorLogAbstractModel::registerMsgHandler(ctkErrorLogAbstractMessageHand
   {
     return false;
   }
-  if (d->RegisteredHandlers.keys().contains(msgHandler->handlerName()))
+  if (d->RegisteredHandlers.contains(msgHandler->handlerName()))
   {
     return false;
   }
@@ -187,7 +186,7 @@ QStringList ctkErrorLogAbstractModel::msgHandlerNames()const
 bool ctkErrorLogAbstractModel::msgHandlerEnabled(const QString& handlerName) const
 {
   Q_D(const ctkErrorLogAbstractModel);
-  if (!d->RegisteredHandlers.keys().contains(handlerName))
+  if (!d->RegisteredHandlers.contains(handlerName))
   {
     return false;
   }
@@ -198,7 +197,7 @@ bool ctkErrorLogAbstractModel::msgHandlerEnabled(const QString& handlerName) con
 void ctkErrorLogAbstractModel::setMsgHandlerEnabled(const QString& handlerName, bool enabled)
 {
   Q_D(ctkErrorLogAbstractModel);
-  if (!d->RegisteredHandlers.keys().contains(handlerName))
+  if (!d->RegisteredHandlers.contains(handlerName))
   {
 //    qCritical() << "Failed to enable/disable message handler " << handlerName
 //                << "-  Handler not registered !";
@@ -212,11 +211,11 @@ QStringList ctkErrorLogAbstractModel::msgHandlerEnabled() const
 {
   Q_D(const ctkErrorLogAbstractModel);
   QStringList msgHandlers;
-  foreach(const QString& handlerName, d->RegisteredHandlers.keys())
+  for (auto it = d->RegisteredHandlers.constBegin(); it != d->RegisteredHandlers.constEnd(); ++it)
   {
-    if (d->RegisteredHandlers.value(handlerName)->enabled())
+    if (it.value()->enabled())
     {
-      msgHandlers << handlerName;
+      msgHandlers << it.key();
     }
   }
   return msgHandlers;
@@ -247,9 +246,9 @@ void ctkErrorLogAbstractModel::disableAllMsgHandler()
 void ctkErrorLogAbstractModel::setAllMsgHandlerEnabled(bool enabled)
 {
   Q_D(ctkErrorLogAbstractModel);
-  foreach(const QString& msgHandlerName, d->RegisteredHandlers.keys())
+  for (auto it = d->RegisteredHandlers.constBegin(); it != d->RegisteredHandlers.constEnd(); ++it)
   {
-    this->setMsgHandlerEnabled(msgHandlerName, enabled);
+    this->setMsgHandlerEnabled(it.key(), enabled);
   }
 }
 
@@ -478,10 +477,9 @@ void ctkErrorLogAbstractModel::setAsynchronousLogging(bool value)
     return;
   }
 
-  foreach(const QString& handlerName, d->RegisteredHandlers.keys())
+  for (auto it = d->RegisteredHandlers.constBegin(); it != d->RegisteredHandlers.constEnd(); ++it)
   {
-    d->setMessageHandlerConnection(
-          d->RegisteredHandlers.value(handlerName), value);
+    d->setMessageHandlerConnection(it.value(), value);
   }
 
   QObject::disconnect(this,
@@ -582,7 +580,7 @@ int ctkErrorLogAbstractModel::logEntryCount()const
 ctkErrorLogAbstractMessageHandler* ctkErrorLogAbstractModel::msgHandler(const QString& handlerName)const
 {
   Q_D(const ctkErrorLogAbstractModel);
-  if (!d->RegisteredHandlers.keys().contains(handlerName))
+  if (!d->RegisteredHandlers.contains(handlerName))
   {
     return nullptr;
   }

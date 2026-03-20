@@ -296,12 +296,12 @@ void ctkWorkflowPrivate::createTransitionToPreviousStartingStep(ctkWorkflowStep*
 // --------------------------------------------------------------------------
 ctkWorkflowStep* ctkWorkflowPrivate::stepFromId(const QString& id)const
 {
-  foreach(ctkWorkflowStep* step, this->StepToForwardAndBackwardStepMap.keys())
+  for (auto it = this->StepToForwardAndBackwardStepMap.constBegin(); it != this->StepToForwardAndBackwardStepMap.constEnd(); ++it)
   {
-    Q_ASSERT(step);
-    if (QString::compare(step->id(), id, Qt::CaseInsensitive) == 0)
+    Q_ASSERT(it.key());
+    if (QString::compare(it.key()->id(), id, Qt::CaseInsensitive) == 0)
     {
-      return step;
+      return it.key();
     }
   }
   return 0;
@@ -739,11 +739,11 @@ QList<ctkWorkflowStep*> ctkWorkflow::finishSteps()const
 
   // iterate through our list of steps, and keep the steps that don't have anything following them
   QList<ctkWorkflowStep*> finishSteps;
-  foreach (ctkWorkflowStep* step, d->StepToForwardAndBackwardStepMap.keys())
+  for (auto it = d->StepToForwardAndBackwardStepMap.constBegin(); it != d->StepToForwardAndBackwardStepMap.constEnd(); ++it)
   {
-    if (!this->canGoForward(step))
+    if (!this->canGoForward(it.key()))
     {
-      finishSteps.append(step);
+      finishSteps.append(it.key());
     }
   }
   return finishSteps;

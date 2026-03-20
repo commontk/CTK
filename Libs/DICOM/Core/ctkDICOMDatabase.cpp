@@ -1151,9 +1151,9 @@ QString ctkDICOMDatabasePrivate::getDisplayPatientFieldsKey(const QString& patie
 QString ctkDICOMDatabasePrivate::getDisplayStudyFieldsKey(QString studyInstanceUID, QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy)
 {
   // Look for the study in the displayed fields cache first
-  foreach (QString currentStudyInstanceUid, displayedFieldsMapStudy.keys())
+  for (auto it = displayedFieldsMapStudy.constBegin(); it != displayedFieldsMapStudy.constEnd(); ++it)
   {
-    if ( !displayedFieldsMapStudy[currentStudyInstanceUid]["StudyInstanceUID"].compare(studyInstanceUID) )
+    if ( !it.value()["StudyInstanceUID"].compare(studyInstanceUID) )
     {
       return studyInstanceUID;
     }
@@ -1192,9 +1192,9 @@ QString ctkDICOMDatabasePrivate::getDisplayStudyFieldsKey(QString studyInstanceU
 QString ctkDICOMDatabasePrivate::getDisplaySeriesFieldsKey(QString seriesInstanceUID, QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries)
 {
   // Look for the series in the displayed fields cache first
-  foreach (QString currentSeriesInstanceUid, displayedFieldsMapSeries.keys())
+  for (auto it = displayedFieldsMapSeries.constBegin(); it != displayedFieldsMapSeries.constEnd(); ++it)
   {
-    if ( !displayedFieldsMapSeries[currentSeriesInstanceUid]["SeriesInstanceUID"].compare(seriesInstanceUID) )
+    if ( !it.value()["SeriesInstanceUID"].compare(seriesInstanceUID) )
     {
       return seriesInstanceUID;
     }
@@ -1238,14 +1238,15 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
 
   // Update patient fields
 
-  foreach (QString compositeID, displayedFieldsMapPatient.keys())
+  for (auto it = displayedFieldsMapPatient.constBegin(); it != displayedFieldsMapPatient.constEnd(); ++it)
   {
+    const QString& compositeID = it.key();
     if (compositeID.isEmpty())
     {
       continue;
     }
 
-    QMap<QString, QString> currentPatient = displayedFieldsMapPatient[compositeID];
+    QMap<QString, QString> currentPatient = it.value();
     if (currentPatient["PatientID"].isEmpty() || currentPatient["PatientsName"].isEmpty())
     {
       logger.error("Unable to locate the patient due to missing values for PatientsName and/or PatientID. "
@@ -1267,14 +1268,14 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     {
       QString displayPatientsFieldUpdateString;
       QList<QString> boundValues;
-      foreach (QString tagName, currentPatient.keys())
+      for (auto tagIt = currentPatient.constBegin(); tagIt != currentPatient.constEnd(); ++tagIt)
       {
-        if (tagName == "PatientCompositeID")
+        if (tagIt.key() == "PatientCompositeID")
         {
           continue; // Do not write patient index that is only used internally and temporarily
         }
-        displayPatientsFieldUpdateString.append( tagName + " = ? , " );
-        boundValues << currentPatient[tagName];
+        displayPatientsFieldUpdateString.append( tagIt.key() + " = ? , " );
+        boundValues << tagIt.value();
       }
 
       // Trim the separators from the end
@@ -1307,13 +1308,14 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
   } // For each patient in displayedFieldsVectorPatient
 
   // Update study fields
-  foreach (QString currentStudyInstanceUid, displayedFieldsMapStudy.keys())
+  for (auto studyIt = displayedFieldsMapStudy.constBegin(); studyIt != displayedFieldsMapStudy.constEnd(); ++studyIt)
   {
+    const QString& currentStudyInstanceUid = studyIt.key();
     if (currentStudyInstanceUid.isEmpty())
     {
       continue;
     }
-    QMap<QString, QString> currentStudy = displayedFieldsMapStudy[currentStudyInstanceUid];
+    QMap<QString, QString> currentStudy = studyIt.value();
     QSqlQuery displayStudiesQuery(this->Database);
     displayStudiesQuery.prepare("SELECT StudyInstanceUID FROM Studies WHERE StudyInstanceUID = ? ;");
     displayStudiesQuery.addBindValue(currentStudyInstanceUid);
@@ -1326,8 +1328,9 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     {
       QString displayStudiesFieldUpdateString;
       QList<QString> boundValues;
-      foreach (QString tagName, currentStudy.keys())
+      for (auto tagIt = currentStudy.constBegin(); tagIt != currentStudy.constEnd(); ++tagIt)
       {
+        const QString& tagName = tagIt.key();
         if (!tagName.compare("PatientCompositeID"))
         {
           displayStudiesFieldUpdateString.append( "PatientsUID = ? , " );
@@ -1364,14 +1367,15 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
   } // For each study in displayedFieldsMapStudy
 
   // Update series fields
-  foreach (QString currentSeriesInstanceUid, displayedFieldsMapSeries.keys())
+  for (auto seriesIt = displayedFieldsMapSeries.constBegin(); seriesIt != displayedFieldsMapSeries.constEnd(); ++seriesIt)
   {
+    const QString& currentSeriesInstanceUid = seriesIt.key();
     if (currentSeriesInstanceUid.isEmpty())
     {
       continue;
     }
     // Insert row into Series if does not exist
-    QMap<QString, QString> currentSeries = displayedFieldsMapSeries[currentSeriesInstanceUid];
+    QMap<QString, QString> currentSeries = seriesIt.value();
     QSqlQuery displaySeriesQuery(this->Database);
     displaySeriesQuery.prepare("SELECT SeriesInstanceUID FROM Series WHERE SeriesInstanceUID = ? ;");
     displaySeriesQuery.addBindValue(currentSeriesInstanceUid);
@@ -1384,10 +1388,10 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     {
       QString displaySeriesFieldUpdateString;
       QList<QString> boundValues;
-      foreach (QString tagName, currentSeries.keys())
+      for (auto tagIt = currentSeries.constBegin(); tagIt != currentSeries.constEnd(); ++tagIt)
       {
-        displaySeriesFieldUpdateString.append( tagName + " = ? , " );
-        boundValues << currentSeries[tagName];
+        displaySeriesFieldUpdateString.append( tagIt.key() + " = ? , " );
+        boundValues << tagIt.value();
       }
       // Trim the separators from the end
       displaySeriesFieldUpdateString = displaySeriesFieldUpdateString.left(displaySeriesFieldUpdateString.size() - 3);
@@ -3085,9 +3089,9 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
     bool storeFile = jobResponseSet->copyFile();
 
     QMap<QString, ctkDICOMItem*> datasets = jobResponseSet->datasets();
-    for(QString key : datasets.keys())
+    for (auto it = datasets.constBegin(); it != datasets.constEnd(); ++it)
     {
-      ctkDICOMItem* dataset = datasets.value(key);
+      ctkDICOMItem* dataset = it.value();
       if (!dataset)
       {
         continue;
@@ -3102,7 +3106,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
       {
         if (jobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
         {
-          patientID = key;
+          patientID = it.key();
         }
         else if (jobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
                  jobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
@@ -3121,7 +3125,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
       {
         if (jobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
         {
-          studyInstanceUID = key;
+          studyInstanceUID = it.key();
         }
         else if (jobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
                  jobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
@@ -3152,7 +3156,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
       {
         if (jobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
         {
-          seriesInstanceUID = key;
+          seriesInstanceUID = it.key();
         }
         else if (jobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
                  jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
@@ -3168,7 +3172,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
       {
         if (jobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
         {
-          sopInstanceUID = key;
+          sopInstanceUID = it.key();
         }
         else if (jobType == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
                  jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||

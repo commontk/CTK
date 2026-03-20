@@ -87,13 +87,13 @@ ctkDICOMQueryRetrieveWidgetPrivate::ctkDICOMQueryRetrieveWidgetPrivate(
 //----------------------------------------------------------------------------
 ctkDICOMQueryRetrieveWidgetPrivate::~ctkDICOMQueryRetrieveWidgetPrivate()
 {
-  foreach(ctkDICOMQuery* query, this->QueriesByServer.values())
+  for (auto it = this->QueriesByServer.constBegin(); it != this->QueriesByServer.constEnd(); ++it)
   {
-    delete query;
+    delete it.value();
   }
-  foreach(ctkDICOMRetrieve* retrieval, this->RetrievalsByStudyUID.values())
+  for (auto it = this->RetrievalsByStudyUID.constBegin(); it != this->RetrievalsByStudyUID.constEnd(); ++it)
   {
-    delete retrieval;
+    delete it.value();
   }
 }
 
@@ -279,7 +279,7 @@ void ctkDICOMQueryRetrieveWidget::query()
 
     d->dicomTableManager->setDICOMDatabase(&(d->QueryResultDatabase));
   }
-  d->RetrieveButton->setEnabled(d->QueriesByStudyUID.keys().size() != 0);
+  d->RetrieveButton->setEnabled(!d->QueriesByStudyUID.isEmpty());
 
   // We would need to call database.updateDisplayedFields() now, but currently
   // updateDisplayedFields requires entries in the Image table and tag cache
@@ -380,12 +380,12 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     {
       // perform the retrieve
       QMap<QString, QVariant> parameters;
-      foreach(QString server, d->QueriesByServer.keys())
+      for (auto it = d->QueriesByServer.constBegin(); it != d->QueriesByServer.constEnd(); ++it)
       {
-        ctkDICOMQuery* query = d->QueriesByServer[server];
+        ctkDICOMQuery* query = it.value();
         if (query == currentQuery)
         {
-          parameters = d->ServerNodeWidget->serverNodeParameters(server);
+          parameters = d->ServerNodeWidget->serverNodeParameters(it.key());
           break;
         }
       }
