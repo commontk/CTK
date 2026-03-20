@@ -517,14 +517,14 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->JobListWidget->setScheduler(this->Scheduler);
   this->connectScheduler();
 
-  QObject::connect(this->JobListWidget, SIGNAL(patientSelected(QString, QString, QString)),
-                   q, SLOT(patientSelectedOnJobList(QString, QString, QString)));
+  QObject::connect(this->JobListWidget, SIGNAL(patientSelected(QString,QString,QString)),
+                   q, SLOT(patientSelectedOnJobList(QString,QString,QString)));
 
   QObject::connect(this->ProgressCancelButton, SIGNAL(clicked()), this->Indexer.data(), SLOT(cancel()));
   QObject::connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
   QObject::connect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
   QObject::connect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
-  QObject::connect(this->Indexer.data(), SIGNAL(indexingComplete(int, int, int, int)), q, SLOT(onIndexingComplete(int, int, int, int)));
+  QObject::connect(this->Indexer.data(), SIGNAL(indexingComplete(int,int,int,int)), q, SLOT(onIndexingComplete(int,int,int,int)));
 }
 
 //----------------------------------------------------------------------------

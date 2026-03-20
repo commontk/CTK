@@ -113,38 +113,38 @@ void ctkDICOMTableManagerPrivate::init()
     q, SLOT(showSeriesFilterActiveWarning(bool)));
 
   // For propagating patient selection changes
-  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
-                   q, SIGNAL(patientsSelectionChanged(const QStringList&)));
+  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                   q, SIGNAL(patientsSelectionChanged(QItemSelection,QItemSelection)));
+  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(QStringList)),
+                   q, SIGNAL(patientsSelectionChanged(QStringList)));
 
   // For propagating study selection changes
-  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
-                   q, SIGNAL(studiesSelectionChanged(const QStringList&)));
+  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                   q, SIGNAL(studiesSelectionChanged(QItemSelection,QItemSelection)));
+  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(QStringList)),
+                   q, SIGNAL(studiesSelectionChanged(QStringList)));
 
   // For propagating series selection changes
-  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
-                   q, SIGNAL(seriesSelectionChanged(const QStringList&)));
+  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                   q, SIGNAL(seriesSelectionChanged(QItemSelection,QItemSelection)));
+  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(QStringList)),
+                   q, SIGNAL(seriesSelectionChanged(QStringList)));
 
-  QObject::connect( this->patientsTable, SIGNAL( doubleClicked( const QModelIndex& ) ),
-                    q, SIGNAL( patientsDoubleClicked( const QModelIndex& ) ) );
-  QObject::connect( this->studiesTable, SIGNAL( doubleClicked( const QModelIndex& ) ),
-                    q, SIGNAL( studiesDoubleClicked( const QModelIndex& ) ) );
-  QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
-                   q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
+  QObject::connect(this->patientsTable, SIGNAL(doubleClicked(QModelIndex)),
+                   q, SIGNAL(patientsDoubleClicked(QModelIndex)));
+  QObject::connect(this->studiesTable, SIGNAL(doubleClicked(QModelIndex)),
+                   q, SIGNAL(studiesDoubleClicked(QModelIndex)));
+  QObject::connect(this->seriesTable, SIGNAL(doubleClicked(QModelIndex)),
+                   q, SIGNAL(seriesDoubleClicked(QModelIndex)));
 
   // For propagating right clicks, the table takes care of translating to a global position
-  QObject::connect(this->patientsTable, SIGNAL(customContextMenuRequested(const QPoint&)),
-                   q, SIGNAL(patientsRightClicked(const QPoint&)));
-  QObject::connect(this->studiesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
-                   q, SIGNAL(studiesRightClicked(const QPoint&)));
+  QObject::connect(this->patientsTable, SIGNAL(customContextMenuRequested(QPoint)),
+                   q, SIGNAL(patientsRightClicked(QPoint)));
+  QObject::connect(this->studiesTable, SIGNAL(customContextMenuRequested(QPoint)),
+                   q, SIGNAL(studiesRightClicked(QPoint)));
 
-  QObject::connect(this->seriesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
-                   q, SIGNAL(seriesRightClicked(const QPoint&)));
+  QObject::connect(this->seriesTable, SIGNAL(customContextMenuRequested(QPoint)),
+                   q, SIGNAL(seriesRightClicked(QPoint)));
 
   q->setTableOrientation(this->tableSplitter->orientation());
 }
@@ -353,20 +353,20 @@ void ctkDICOMTableManager::setAutoSelectSeries(bool autoSelect)
     QAbstractItemView::SelectionMode selectionMode = static_cast<QAbstractItemView::SelectionMode>(this->selectionMode());
     if (selectionMode == QAbstractItemView::SingleSelection)
     {
-      QObject::connect( d->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
+      QObject::connect( d->studiesTable, SIGNAL(selectionChanged(QStringList)),
                         d->seriesTable, SLOT(selectFirst()) );
     }
     else
     {
-      QObject::connect( d->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
+      QObject::connect( d->studiesTable, SIGNAL(selectionChanged(QStringList)),
                         d->seriesTable, SLOT(selectAll()) );
     }
   }
   else
   {
-    QObject::disconnect( d->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
+    QObject::disconnect( d->studiesTable, SIGNAL(selectionChanged(QStringList)),
                          d->seriesTable, SLOT(selectAll()) );
-    QObject::disconnect( d->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
+    QObject::disconnect( d->studiesTable, SIGNAL(selectionChanged(QStringList)),
                          d->seriesTable, SLOT(selectFirst()) );
     // Remove selection to avoid loading any previously auto-selected series
     d->seriesTable->clearSelection();
@@ -398,18 +398,18 @@ void ctkDICOMTableManager::setSelectionMode(int mode)
   d->seriesTable->tableView()->setSelectionMode(selectionMode);
 
   // Re-connect the proper slots for studies
-  QObject::disconnect( d->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
+  QObject::disconnect( d->patientsTable, SIGNAL(selectionChanged(QStringList)),
                        d->studiesTable, SLOT(selectAll()) );
-  QObject::disconnect( d->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
+  QObject::disconnect( d->patientsTable, SIGNAL(selectionChanged(QStringList)),
                        d->studiesTable, SLOT(selectFirst()) );
   if (selectionMode == QAbstractItemView::SingleSelection)
   {
-    QObject::connect( d->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
+    QObject::connect( d->patientsTable, SIGNAL(selectionChanged(QStringList)),
                       d->studiesTable, SLOT(selectFirst()) );
   }
   else
   {
-    QObject::connect( d->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
+    QObject::connect( d->patientsTable, SIGNAL(selectionChanged(QStringList)),
                       d->studiesTable, SLOT(selectAll()) );
   }
 

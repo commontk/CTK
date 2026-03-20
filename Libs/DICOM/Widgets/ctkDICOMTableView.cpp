@@ -174,21 +174,21 @@ void ctkDICOMTableViewPrivate::init()
   this->tblDicomDatabaseView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
-                   SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                   SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                    q, SLOT(onSelectionChanged()));
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
-                   SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
-                   q, SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)));
+                   SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                   q, SIGNAL(selectionChanged(QItemSelection,QItemSelection)));
 
-  QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(const QModelIndex&)),
-                   q, SIGNAL(doubleClicked(const QModelIndex&)));
+  QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(QModelIndex)),
+                   q, SIGNAL(doubleClicked(QModelIndex)));
 
   // enable right click menu, with mapping to global position (for use within the DICOM table manager)
   this->tblDicomDatabaseView->setContextMenuPolicy(Qt::CustomContextMenu);
   QObject::connect(this->tblDicomDatabaseView,
-                   SIGNAL(customContextMenuRequested(const QPoint&)),
-                   q, SLOT(onCustomContextMenuRequested(const QPoint&)));
+                   SIGNAL(customContextMenuRequested(QPoint)),
+                   q, SLOT(onCustomContextMenuRequested(QPoint)));
 
   QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged(QString)));
 }
@@ -436,7 +436,7 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
   if (d->dicomDatabase)
   {
     //Create connections for new database
-    QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)), this, SLOT(onInstanceAdded()));
+    QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(QString)), this, SLOT(onInstanceAdded()));
     QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
     QObject::connect(d->dicomDatabase, SIGNAL(opened()), this, SLOT(onDatabaseOpened()));
     QObject::connect(d->dicomDatabase, SIGNAL(closed()), this, SLOT(onDatabaseClosed()));

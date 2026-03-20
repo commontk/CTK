@@ -278,28 +278,28 @@ void ctkDICOMBrowserPrivate::init()
   this->dicomTableManager->setDICOMDatabase(this->DICOMDatabase.data());
 
   // TableView signals
-  q->connect(this->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),
+  q->connect(this->dicomTableManager, SIGNAL(patientsSelectionChanged(QItemSelection,QItemSelection)),
     this->InformationMessageFrame, SLOT(hide()));
-  q->connect(this->dicomTableManager, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)),
+  q->connect(this->dicomTableManager, SIGNAL(studiesSelectionChanged(QItemSelection,QItemSelection)),
     this->InformationMessageFrame, SLOT(hide()));
-  q->connect(this->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
+  q->connect(this->dicomTableManager, SIGNAL(seriesSelectionChanged(QItemSelection,QItemSelection)),
     this->InformationMessageFrame, SLOT(hide()));
 
-  q->connect(this->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),
-    q, SLOT(onModelSelected(const QItemSelection&, const QItemSelection&)));
-  q->connect(this->dicomTableManager, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)),
-    q, SLOT(onModelSelected(const QItemSelection&, const QItemSelection&)));
-  q->connect(this->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
-    q, SLOT(onModelSelected(const QItemSelection&, const QItemSelection&)));
+  q->connect(this->dicomTableManager, SIGNAL(patientsSelectionChanged(QItemSelection,QItemSelection)),
+    q, SLOT(onModelSelected(QItemSelection,QItemSelection)));
+  q->connect(this->dicomTableManager, SIGNAL(studiesSelectionChanged(QItemSelection,QItemSelection)),
+    q, SLOT(onModelSelected(QItemSelection,QItemSelection)));
+  q->connect(this->dicomTableManager, SIGNAL(seriesSelectionChanged(QItemSelection,QItemSelection)),
+    q, SLOT(onModelSelected(QItemSelection,QItemSelection)));
 
 
   // set up context menus for working on selected patients, studies, series
-  q->connect(this->dicomTableManager, SIGNAL(patientsRightClicked(const QPoint&)),
-          q, SLOT(onPatientsRightClicked(const QPoint&)));
-  q->connect(this->dicomTableManager, SIGNAL(studiesRightClicked(const QPoint&)),
-          q, SLOT(onStudiesRightClicked(const QPoint&)));
-  q->connect(this->dicomTableManager, SIGNAL(seriesRightClicked(const QPoint&)),
-          q, SLOT(onSeriesRightClicked(const QPoint&)));
+  q->connect(this->dicomTableManager, SIGNAL(patientsRightClicked(QPoint)),
+          q, SLOT(onPatientsRightClicked(QPoint)));
+  q->connect(this->dicomTableManager, SIGNAL(studiesRightClicked(QPoint)),
+          q, SLOT(onStudiesRightClicked(QPoint)));
+  q->connect(this->dicomTableManager, SIGNAL(seriesRightClicked(QPoint)),
+          q, SLOT(onSeriesRightClicked(QPoint)));
 
   // Initialize directoryMode widget
   QFormLayout *layout = new QFormLayout;
