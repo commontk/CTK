@@ -107,7 +107,12 @@ void ctkDICOMPatientFilterProxyModel::setDisplayMode(DisplayMode mode)
   d->DisplayMode = mode;
 
   // Trigger re-filtering
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 
   emit displayModeChanged(mode);
 }
@@ -217,7 +222,12 @@ void ctkDICOMPatientFilterProxyModel::setWidgetWidth(int width)
   {
     d->WidgetWidth = width;
     d->FirstOutOfBoundsRow = -1;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
   }
 }
 
@@ -236,7 +246,12 @@ void ctkDICOMPatientFilterProxyModel::setMaxTextWidth(int width)
   {
     d->MaxTextWidth = width;
     d->FirstOutOfBoundsRow = -1;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
   }
 }
 
@@ -255,7 +270,12 @@ void ctkDICOMPatientFilterProxyModel::setIconSize(int size)
   {
     d->IconSize = size;
     d->FirstOutOfBoundsRow = -1;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
   }
 }
 
@@ -274,7 +294,12 @@ void ctkDICOMPatientFilterProxyModel::setSpacing(int spacing)
   {
     d->Spacing = spacing;
     d->FirstOutOfBoundsRow = -1;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
   }
 }
 

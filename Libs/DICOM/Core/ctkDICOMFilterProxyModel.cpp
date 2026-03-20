@@ -66,29 +66,57 @@ ctkDICOMFilterProxyModel::~ctkDICOMFilterProxyModel(){
 //----------------------------------------------------------------------------
 void ctkDICOMFilterProxyModel::setNameSearchText(const QString &text){
     Q_D(ctkDICOMFilterProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+#endif
     d->searchTextName = text;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMFilterProxyModel::setStudySearchText(const QString &text){
     Q_D(ctkDICOMFilterProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+#endif
     d->searchTextStudy = text;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMFilterProxyModel::setSeriesSearchText(const QString &text){
     Q_D(ctkDICOMFilterProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+#endif
     d->searchTextSeries = text;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMFilterProxyModel::setIdSearchText(const QString &text){
     Q_D(ctkDICOMFilterProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->beginFilterChange();
+#endif
     d->searchTextID = text;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    this->endFilterChange();
+#else
     this->invalidateFilter();
+#endif
 }
 
 bool ctkDICOMFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const{
