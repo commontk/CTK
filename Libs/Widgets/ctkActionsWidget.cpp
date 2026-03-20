@@ -348,8 +348,15 @@ ctkSortFilterActionsProxyModel::ctkSortFilterActionsProxyModel(QObject* parentOb
 void ctkSortFilterActionsProxyModel::setActionsWithNoShortcutVisible(bool visible)
 {
   Q_D(ctkSortFilterActionsProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->ActionsWithNoShortcutVisible = visible;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -363,8 +370,15 @@ bool ctkSortFilterActionsProxyModel::areActionsWithNoShortcutVisible()const
 void ctkSortFilterActionsProxyModel::setMenuActionsVisible(bool visible)
 {
   Q_D(ctkSortFilterActionsProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->MenuActionsVisible = visible;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
