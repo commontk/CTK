@@ -56,8 +56,8 @@ void ctkVTKScalarsToColorsComboBoxPrivate::init()
   Q_Q(ctkVTKScalarsToColorsComboBox);
 
   QObject::connect(q->model(),
-    SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
-    q, SLOT(onRowsAboutToBeRemoved(const QModelIndex&, int, int)));
+    SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+    q, SLOT(onRowsAboutToBeRemoved(QModelIndex,int,int)));
 
   q->setIconSize(QSize(100, 20));
 

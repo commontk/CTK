@@ -116,8 +116,8 @@ void ctkErrorLogAbstractModelPrivate::init(QAbstractItemModel* itemModel)
   this->ItemModel = itemModel;
 
   QObject::connect(q,
-    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
-    q, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    SIGNAL(entryPosted(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
+    q, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
     this->AsynchronousLogging ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 }
 
@@ -483,12 +483,12 @@ void ctkErrorLogAbstractModel::setAsynchronousLogging(bool value)
   }
 
   QObject::disconnect(this,
-    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
-    this, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
+    SIGNAL(entryPosted(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
+    this, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)));
 
   QObject::connect(this,
-    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
-    this, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    SIGNAL(entryPosted(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
+    this, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
     value ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 
   d->AsynchronousLogging = value;
