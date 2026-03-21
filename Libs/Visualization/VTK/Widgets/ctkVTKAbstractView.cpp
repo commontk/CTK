@@ -37,7 +37,7 @@
 #include <vtkVersion.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKAbstractView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKAbstractView"))
 //--------------------------------------------------------------------------
 int ctkVTKAbstractViewPrivate::MultiSamples = 0;  // Default for static var
 //--------------------------------------------------------------------------
@@ -183,7 +183,7 @@ void ctkVTKAbstractView::scheduleRender()
 {
   Q_D(ctkVTKAbstractView);
 
-  //logger.trace(QString("scheduleRender - RenderEnabled: %1 - Request render elapsed: %2ms").
+  //logger->trace(QString("scheduleRender - RenderEnabled: %1 - Request render elapsed: %2ms").
   //             arg(d->RenderEnabled ? "true" : "false")
   //             .arg(d->RequestTime.elapsed()));
 
@@ -254,7 +254,7 @@ void ctkVTKAbstractView::forceRender()
   d->RequestTime = QTime();
 #endif
 
-  //logger.trace(QString("forceRender - RenderEnabled: %1")
+  //logger->trace(QString("forceRender - RenderEnabled: %1")
   //             .arg(d->RenderEnabled ? "true" : "false"));
 
   if (!d->RenderEnabled || !this->isVisible())

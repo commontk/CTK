@@ -44,7 +44,7 @@
 #include <vtkVersionMacros.h> // For VTK_VERSION_CHECK
 
 //----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsView"))
 //----------------------------------------------------------------------------
 
 class ctkVTKScalarsToColorsViewPrivate

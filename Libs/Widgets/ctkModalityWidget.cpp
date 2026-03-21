@@ -31,11 +31,15 @@
 // STD includes
 #include <cmath>
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkModalityWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkModalityWidget"))
 
 namespace
 {
-  QStringList sDefaultVisibleModalities;
+  const QStringList& sDefaultVisibleModalities()
+  {
+    static const QStringList list = {"CT", "MR", "US", "CR", "XA", "NM", "PT"};
+    return list;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -60,10 +64,6 @@ public:
 ctkModalityWidgetPrivate::ctkModalityWidgetPrivate(ctkModalityWidget& object)
   :q_ptr(&object)
 {
-  if (sDefaultVisibleModalities.isEmpty())
-  {
-    sDefaultVisibleModalities << "CT" << "MR" << "US" << "CR" << "XA" << "NM" << "PT";
-  }
 }
 
 // --------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void ctkModalityWidgetPrivate::init()
   delete layout;
   q->setLayout(flowLayout);
 
-  q->setVisibleModalities(sDefaultVisibleModalities);
+  q->setVisibleModalities(sDefaultVisibleModalities());
   QSize sizeHint = flowLayout->sizeHint();
   double area = sizeHint.width() * sizeHint.height();
   area = sqrt(area);

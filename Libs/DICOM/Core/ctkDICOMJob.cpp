@@ -23,12 +23,13 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger ("org.commontk.dicom.DICOMJob");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMJob"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMJob methods

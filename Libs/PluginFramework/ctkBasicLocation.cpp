@@ -37,8 +37,16 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-static const QString PROP_OSGI_LOCKING = "blueberry.locking";
-static const QString DEFAULT_LOCK_FILENAME = ".metadata/.lock";
+static const QString& PROP_OSGI_LOCKING()
+{
+  static const QString s = QStringLiteral("blueberry.locking");
+  return s;
+}
+static const QString& DEFAULT_LOCK_FILENAME()
+{
+  static const QString s = QStringLiteral(".metadata/.lock");
+  return s;
+}
 
 
 //----------------------------------------------------------------------------
@@ -254,7 +262,7 @@ bool ctkBasicLocation::set_unlocked(const QUrl& value_, bool lock, const QString
     }
     else
     {
-      file = QFileInfo(QDir(value.toLocalFile()), DEFAULT_LOCK_FILENAME);
+      file = QFileInfo(QDir(value.toLocalFile()), DEFAULT_LOCK_FILENAME());
     }
   }
   lock = lock && !this->m_isReadOnly;
@@ -394,7 +402,7 @@ void ctkBasicLocation::setLocker_unlocked(const QFileInfo& lock)
 {
   if (this->m_locker != NULL) return;
 
-  QString lockMode = ctkPluginFrameworkProperties::getProperty(PROP_OSGI_LOCKING).toString();
+  QString lockMode = ctkPluginFrameworkProperties::getProperty(PROP_OSGI_LOCKING()).toString();
 
   this->m_locker = this->createLocker_unlocked(lock, lockMode);
 }
@@ -405,7 +413,7 @@ ctkBasicLocation::Locker* ctkBasicLocation::createLocker_unlocked(const QFileInf
   QString lockMode = lockMode_;
   if (lockMode.isEmpty())
   {
-    lockMode = ctkPluginFrameworkProperties::getProperty(PROP_OSGI_LOCKING).toString();
+    lockMode = ctkPluginFrameworkProperties::getProperty(PROP_OSGI_LOCKING()).toString();
   }
 
   if (lockMode == "none")
