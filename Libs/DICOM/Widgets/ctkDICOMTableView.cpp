@@ -677,8 +677,8 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   }
 
   // Add where statements
-  QHash<QString, QStringList>::const_iterator filterIt = d->sqlWhereConditions.begin();
-  while (filterIt != d->sqlWhereConditions.end())
+  QHash<QString, QStringList>::const_iterator filterIt = d->sqlWhereConditions.constBegin();
+  while (filterIt != d->sqlWhereConditions.constEnd())
   {
     if (!filterIt.value().empty())
     {

@@ -64,8 +64,8 @@ QSharedPointer<ctkPlugin> ctkPlugins::install(const QUrl& location, QIODevice* i
   {
     QMutexLocker lock(&objectLock);
 
-    QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.find(location.toString());
-    if (it != plugins.end())
+    QHash<QString, QSharedPointer<ctkPlugin> >::const_iterator it = plugins.constFind(location.toString());
+    if (it != plugins.constEnd())
     {
       return it.value();
     }
