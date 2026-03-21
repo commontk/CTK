@@ -107,9 +107,9 @@ void ctkFontButtonPrivate::updateText()
   text.replace("www", this->fullNameWeight());
   text.replace("ww", QString("%1").arg(static_cast<int>(this->Font.weight())));
   text.replace("biu", QString("%1%2%3")
-    .arg(this->Font.bold() ? 'b' : '-')
-    .arg(this->Font.italic() ? 'i' : '-')
-    .arg(this->Font.underline() ? 'u' : '-'));
+    .arg(QChar(this->Font.bold() ? 'b' : '-'))
+    .arg(QChar(this->Font.italic() ? 'i' : '-'))
+    .arg(QChar(this->Font.underline() ? 'u' : '-')));
   text.replace("bbb", this->Font.bold() ? "bold" : "");
   text.replace("bb", this->Font.bold() ? "b" : "");
   text.replace("iii", this->Font.italic() ? "italic" : "");
