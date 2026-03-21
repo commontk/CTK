@@ -3820,9 +3820,9 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
   QSqlQuery insertTags(d->TagCacheDatabase);
   insertTags.prepare( "INSERT OR REPLACE INTO TagCache VALUES(?,?,?)" );
 
-  QStringList::const_iterator sopInstanceUIDsIt = sopInstanceUIDs.begin();
-  QStringList::const_iterator tagsIt = tags.begin();
-  QStringList::const_iterator valuesIt = values.begin();
+  QStringList::const_iterator sopInstanceUIDsIt = sopInstanceUIDs.cbegin();
+  QStringList::const_iterator tagsIt = tags.cbegin();
+  QStringList::const_iterator valuesIt = values.cbegin();
   bool success = true;
   for (int i = 0; i<itemCount; ++i)
   {
