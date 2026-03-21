@@ -140,7 +140,8 @@ void ctkSettingsDialogPrivate::updatePanelTitle(ctkSettingsPanel* panel)
 {
   QTreeWidgetItem* panelItem = this->item(panel);
   QString title = panelItem->text(0);
-  title.replace(QRegularExpression("\\*$"), "");
+  static const QRegularExpression reTrailingStar("\\*$");
+  title.replace(reTrailingStar, "");
   if (!panel->changedSettings().isEmpty())
   {
     title.append('*');

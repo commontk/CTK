@@ -821,7 +821,8 @@ void ctkConsolePrivate::internalExecuteCommand()
   QString command = this->commandBuffer();
   if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
   {
-    command.replace(QRegularExpression("\\s*$"), ""); // Remove trailing spaces
+    static const QRegularExpression trailingSpacesRe("\\s*$");
+    command.replace(trailingSpacesRe, ""); // Remove trailing spaces
     this->commandBuffer() = command; // Update buffer
   }
 
@@ -868,7 +869,8 @@ void ctkConsolePrivate::processInput()
 
   if (this->EditorHints & ctkConsole::RemoveTrailingSpaces)
   {
-    command.replace(QRegularExpression("\\s*$"), ""); // Remove trailing spaces
+    static const QRegularExpression trailingSpacesRe("\\s*$");
+    command.replace(trailingSpacesRe, ""); // Remove trailing spaces
     this->commandBuffer() = command; // Update buffer
   }
 
@@ -1092,7 +1094,8 @@ void ctkConsolePrivate::pasteText(const QString& text)
   if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
   {
     // Execute line by line
-    QStringList lines = text.split(QRegularExpression("(?:\r\n|\r|\n)"));
+    static const QRegularExpression newlineRe("(?:\r\n|\r|\n)");
+    QStringList lines = text.split(newlineRe);
     for(int i=0; i < lines.count(); ++i)
     {
       this->switchToUserInputTextColor(&textCursor);
