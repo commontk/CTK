@@ -690,8 +690,6 @@ void ctkDICOMPatientViewPrivate::updateAllowedServersComboBoxFromModel(const QMo
     sourceIndex = proxyModel->mapToSource(currentIndex);
   }
 
-  QStringList allowedServers = sourceIndex.data(ctkDICOMPatientModel::AllowedServersRole).toStringList();
-
   // Get scheduler to get all active servers
   ctkDICOMScheduler* scheduler = patientModel->scheduler();
   if (!scheduler)

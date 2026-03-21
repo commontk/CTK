@@ -209,7 +209,7 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
   }
 
   int row = 0;
-  QString backupLogging, creationDateTime;
+  QString creationDateTime;
   this->insertRow(row);
   creationDateTime = td.CreationDateTime;
 
@@ -1251,8 +1251,6 @@ void ctkDICOMJobListWidget::onJobsViewSelectionChanged()
     int row = rowIndex.row();
     QString status = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::Status).data().toString();
-    QString jobUID = d->showCompletedProxyModel->index
-      (row, QCenteredItemModel::Columns::JobUID).data().toString();
     QString jobClass = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
 

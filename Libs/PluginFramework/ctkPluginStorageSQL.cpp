@@ -375,8 +375,6 @@ QSharedPointer<ctkPluginArchive> ctkPluginStorageSQL::insertPlugin(const QUrl& l
     throw ctkInvalidArgumentException(localPath + " does not exist");
   }
 
-  const QString libTimestamp = getStringFromQDateTime(fileInfo.lastModified());
-
   QSharedPointer<ctkPluginArchiveSQL> archive(new ctkPluginArchiveSQL(this, location, localPath,
                                                                       m_nextFreeId++));
   try

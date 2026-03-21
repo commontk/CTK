@@ -548,7 +548,6 @@ QStringList ctkDICOMServerNodeWidget2Private::getAllNodesName() const
 //----------------------------------------------------------------------------
 int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const QString& connectionName) const
 {
-  QMap<QString, QVariant> parameters;
   int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
   {
@@ -1492,7 +1491,6 @@ void ctkDICOMServerNodeWidget2::readSettings()
 
   QSettings settings;
 
-  QMap<QString, QVariant> node;
   if (settings.status() == QSettings::AccessError ||
       settings.value("DICOM/ServerNodeCount").toInt() == 0)
   {
