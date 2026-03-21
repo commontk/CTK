@@ -223,9 +223,9 @@ QVariant ctkWorkflowWidget::buttonItem(QString item,
                                        ctkWorkflowWidgetStep* step)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-  QRegularExpression backRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]back:(.*)[\\}\\)\\]]"));
-  QRegularExpression nextRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]next:(.*)[\\}\\)\\]]"));
-  QRegularExpression currentRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]current:(.*)[\\}\\)\\]]"));
+  static const QRegularExpression backRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]back:(.*)[\\}\\)\\]]"));
+  static const QRegularExpression nextRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]next:(.*)[\\}\\)\\]]"));
+  static const QRegularExpression currentRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[]current:(.*)[\\}\\)\\]]"));
   if (backRegExp.match(item).hasMatch())
 #else
   QRegExp backRegExp("^[\\{\\(\\[]back:(.*)[\\}\\)\\]]$");
@@ -262,8 +262,8 @@ QVariant ctkWorkflowWidget::buttonItem(QString item,
   }
   QVariant res;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-  QRegularExpression quotesRegExp(QRegularExpression::anchoredPattern("\"(.*)\""));
-  QRegularExpression propsRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[](.*)[\\}\\)\\]]"));
+  static const QRegularExpression quotesRegExp(QRegularExpression::anchoredPattern("\"(.*)\""));
+  static const QRegularExpression propsRegExp(QRegularExpression::anchoredPattern("[\\{\\(\\[](.*)[\\}\\)\\]]"));
   QRegularExpressionMatch match;
 #else
   QRegExp quotesRegExp("^\"(.*)\"$");
@@ -376,7 +376,7 @@ QMap<QString, QVariant> ctkWorkflowWidget
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
   //QRegularExpression splitBrackets("\\{([^}]+)\\}");
   //QRegularExpression splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");
-  QRegularExpression splitBrackets(QString("(%1|%2|%3|%4)")
+  static const QRegularExpression splitBrackets(QString("(%1|%2|%3|%4)")
 #else
   //QRegExp splitBrackets("\\{([^}]+)\\}");
   //QRegExp splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");

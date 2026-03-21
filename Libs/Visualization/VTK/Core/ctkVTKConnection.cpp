@@ -323,7 +323,8 @@ void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
   d->Priority = priority;
   d->ConnectionType = connectionType;
 
-  if (d->QtSlot.contains(QRegularExpression(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
+  static const QRegularExpression reVtkObjPair("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)");
+  if (d->QtSlot.contains(reVtkObjPair))
   {
     d->SlotType = ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT;
   }
