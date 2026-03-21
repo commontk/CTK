@@ -23,6 +23,7 @@
 
 // ctkDICOM includes
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMDisplayedFieldGenerator.h"
 #include "ctkDICOMDisplayedFieldGenerator_p.h"
@@ -30,7 +31,7 @@
 #include "ctkDICOMDisplayedFieldGeneratorRuleFactory.h"
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMDisplayedFieldGenerator" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMDisplayedFieldGenerator"))
 //------------------------------------------------------------------------------
 
 

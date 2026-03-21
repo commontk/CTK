@@ -37,22 +37,66 @@
 namespace {
 
 // Constants for configuration location discovery
-static const QString CTK = "commontk";
-static const QString PRODUCT_SITE_MARKER = ".commontkproduct";
-static const QString PRODUCT_SITE_ID = "id";
-static const QString PRODUCT_SITE_VERSION = "version";
+static const QString& CTK()
+{
+  static const QString s = QStringLiteral("commontk");
+  return s;
+}
+static const QString& PRODUCT_SITE_MARKER()
+{
+  static const QString s = QStringLiteral(".commontkproduct");
+  return s;
+}
+static const QString& PRODUCT_SITE_ID()
+{
+  static const QString s = QStringLiteral("id");
+  return s;
+}
+static const QString& PRODUCT_SITE_VERSION()
+{
+  static const QString s = QStringLiteral("version");
+  return s;
+}
 
-static const QString CONFIG_DIR = "configuration";
+static const QString& CONFIG_DIR()
+{
+  static const QString s = QStringLiteral("configuration");
+  return s;
+}
 
 // Data mode constants for user, configuration and data locations.
-static const QString NONE = "@none";
-static const QString NO_DEFAULT = "@noDefault";
-static const QString USER_HOME = "@user.home";
-static const QString USER_DIR = "@user.dir";
+static const QString& NONE()
+{
+  static const QString s = QStringLiteral("@none");
+  return s;
+}
+static const QString& NO_DEFAULT()
+{
+  static const QString s = QStringLiteral("@noDefault");
+  return s;
+}
+static const QString& USER_HOME()
+{
+  static const QString s = QStringLiteral("@user.home");
+  return s;
+}
+static const QString& USER_DIR()
+{
+  static const QString s = QStringLiteral("@user.dir");
+  return s;
+}
 // Placeholder for hashcode of installation directory
-static const QString INSTALL_HASH_PLACEHOLDER = "@install.hash";
+static const QString& INSTALL_HASH_PLACEHOLDER()
+{
+  static const QString s = QStringLiteral("@install.hash");
+  return s;
+}
 
-static const QString INSTANCE_DATA_AREA_PREFIX = ".metadata/.plugins/";
+static const QString& INSTANCE_DATA_AREA_PREFIX()
+{
+  static const QString s = QStringLiteral(".metadata/.plugins/");
+  return s;
+}
 
 static QScopedPointer<ctkBasicLocation> installLocation;
 static QScopedPointer<ctkBasicLocation> configurationLocation;
@@ -117,32 +161,32 @@ ctkBasicLocation* BuildLocation(const QString& property, const QUrl& defaultLoca
                                 dataAreaPrefix);
   }
   QString trimmedLocation = location.trimmed();
-  if (trimmedLocation.compare(NONE, Qt::CaseInsensitive) == 0)
+  if (trimmedLocation.compare(NONE(), Qt::CaseInsensitive) == 0)
   {
     return NULL;
   }
-  if (trimmedLocation.compare(NO_DEFAULT, Qt::CaseInsensitive) == 0)
+  if (trimmedLocation.compare(NO_DEFAULT(), Qt::CaseInsensitive) == 0)
   {
     return new ctkBasicLocation(property, QUrl(), readOnly, dataAreaPrefix);
   }
-  if (trimmedLocation.startsWith(USER_HOME))
+  if (trimmedLocation.startsWith(USER_HOME()))
   {
-    QString base = SubstituteVar(location, USER_HOME, ctkPluginFrameworkLauncher::PROP_USER_HOME);
+    QString base = SubstituteVar(location, USER_HOME(), ctkPluginFrameworkLauncher::PROP_USER_HOME);
     location = QFileInfo(QDir(base), userDefaultAppendage).absoluteFilePath();
   }
-  else if (trimmedLocation.startsWith(USER_DIR))
+  else if (trimmedLocation.startsWith(USER_DIR()))
   {
-    QString base = SubstituteVar(location, USER_DIR, ctkPluginFrameworkLauncher::PROP_USER_DIR);
+    QString base = SubstituteVar(location, USER_DIR(), ctkPluginFrameworkLauncher::PROP_USER_DIR);
     location = QFileInfo(QDir(base), userDefaultAppendage).absoluteFilePath();
   }
-  int idx = location.indexOf(INSTALL_HASH_PLACEHOLDER);
+  int idx = location.indexOf(INSTALL_HASH_PLACEHOLDER());
   if (idx == 0)
   {
-    throw ctkRuntimeException("The location cannot start with '" + INSTALL_HASH_PLACEHOLDER + "': " + location);
+    throw ctkRuntimeException("The location cannot start with '" + INSTALL_HASH_PLACEHOLDER() + "': " + location);
   }
   else if (idx > 0)
   {
-    location = location.left(idx) + GetInstallDirHash() + location.mid(idx + INSTALL_HASH_PLACEHOLDER.size());
+    location = location.left(idx) + GetInstallDirHash() + location.mid(idx + INSTALL_HASH_PLACEHOLDER().size());
   }
   QUrl url = BuildUrl(location, true);
   ctkBasicLocation* result = NULL;
@@ -218,7 +262,7 @@ static QString ComputeDefaultConfigurationLocation()
   if (installURL.isValid() && installURL.scheme() == "file")
   {
     QDir installDir(installURL.toLocalFile());
-    QFileInfo defaultConfigDir(installDir, CONFIG_DIR);
+    QFileInfo defaultConfigDir(installDir, CONFIG_DIR());
     if (!defaultConfigDir.exists())
     {
       installDir.mkpath(defaultConfigDir.absoluteFilePath());
@@ -229,7 +273,7 @@ static QString ComputeDefaultConfigurationLocation()
     }
   }
   // We can't write in the CTK install dir so try for some place in the user's home dir
-  return ComputeDefaultUserAreaLocation(CONFIG_DIR);
+  return ComputeDefaultUserAreaLocation(CONFIG_DIR());
 }
 
 //----------------------------------------------------------------------------
@@ -280,18 +324,18 @@ static QString ComputeDefaultUserAreaLocation(const QString& pathAppendage)
   QFileInfo installDir(installURL.toLocalFile());
   QString installDirHash = GetInstallDirHash();
 
-  QString appName = "." + CTK;
-  QFileInfo ctkProduct(QDir(installDir.absoluteFilePath()), PRODUCT_SITE_MARKER);
+  QString appName = "." + CTK();
+  QFileInfo ctkProduct(QDir(installDir.absoluteFilePath()), PRODUCT_SITE_MARKER());
   if (ctkProduct.exists())
   {
     QSettings props(ctkProduct.absoluteFilePath(), QSettings::IniFormat);
 
-    QString appId = props.value(PRODUCT_SITE_ID).toString();
+    QString appId = props.value(PRODUCT_SITE_ID()).toString();
     if (appId.trimmed().isEmpty())
     {
-      appId = CTK;
+      appId = CTK();
     }
-    QString appVersion = props.value(PRODUCT_SITE_VERSION).toString();
+    QString appVersion = props.value(PRODUCT_SITE_VERSION()).toString();
     if (appVersion.trimmed().isEmpty())
     {
       appVersion = "";
@@ -366,13 +410,13 @@ void ctkLocationManager::initializeLocations()
   }
   userLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA, defaultLocation, "", false, false, QString()));
 
-  temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA_DEFAULT, QUrl(), "", false, false, INSTANCE_DATA_AREA_PREFIX));
+  temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA_DEFAULT, QUrl(), "", false, false, INSTANCE_DATA_AREA_PREFIX()));
   defaultLocation = temp ? temp->getUrl() : QUrl();
   if (!defaultLocation.isValid())
   {
     defaultLocation = BuildUrl(QFileInfo(QDir(ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_USER_DIR).toString()), "workspace").absoluteFilePath(), true);
   }
-  instanceLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA, defaultLocation, "", false, false, INSTANCE_DATA_AREA_PREFIX));
+  instanceLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA, defaultLocation, "", false, false, INSTANCE_DATA_AREA_PREFIX()));
 
   //mungeConfigurationLocation();
 

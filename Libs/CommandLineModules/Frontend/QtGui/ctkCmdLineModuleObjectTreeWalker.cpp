@@ -27,10 +27,26 @@
 
 namespace {
 
-static QString PREFIX_EXECUTABLE = "executable:";
-static QString PREFIX_PARAMETER_GROUP = "paramGroup:";
-static QString PREFIX_PARAMETER_CONTAINER = "paramContainer:";
-static QString PREFIX_PARAMETER = "parameter:";
+static const QString& PREFIX_EXECUTABLE()
+{
+  static const QString s = QStringLiteral("executable:");
+  return s;
+}
+static const QString& PREFIX_PARAMETER_GROUP()
+{
+  static const QString s = QStringLiteral("paramGroup:");
+  return s;
+}
+static const QString& PREFIX_PARAMETER_CONTAINER()
+{
+  static const QString s = QStringLiteral("paramContainer:");
+  return s;
+}
+static const QString& PREFIX_PARAMETER()
+{
+  static const QString s = QStringLiteral("parameter:");
+  return s;
+}
 
 }
 
@@ -93,10 +109,10 @@ QString ctkCmdLineModuleObjectTreeWalker::name() const
   if (CurrentObject == 0) return QString();
   switch(CurrentToken)
   {
-  case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE.size());
-  case ParameterGroup: return CurrentObject->objectName().mid(PREFIX_PARAMETER_GROUP.size());
-  case ParameterContainer: return CurrentObject->objectName().mid(PREFIX_PARAMETER_CONTAINER.size());
-  case Parameter: return CurrentObject->objectName().mid(PREFIX_PARAMETER.size());
+  case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE().size());
+  case ParameterGroup: return CurrentObject->objectName().mid(PREFIX_PARAMETER_GROUP().size());
+  case ParameterContainer: return CurrentObject->objectName().mid(PREFIX_PARAMETER_CONTAINER().size());
+  case Parameter: return CurrentObject->objectName().mid(PREFIX_PARAMETER().size());
   default: return QString();
   }
 }
@@ -107,7 +123,7 @@ QString ctkCmdLineModuleObjectTreeWalker::label() const
   if (CurrentObject == 0) return QString();
   switch(CurrentToken)
   {
-  case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE.size());
+  case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE().size());
   case ParameterGroup: return property("title").toString();
   case ParameterContainer: return property("name").toString();
   case Parameter: return property("label").toString();
@@ -276,10 +292,10 @@ QVariant ctkCmdLineModuleObjectTreeWalker::prefixedProperty(const QString& propN
   QString prefixedName;
   switch(CurrentToken)
   {
-  case ctkCmdLineModuleObjectTreeWalker::Executable: prefixedName = PREFIX_EXECUTABLE + propName; break;
-  case ctkCmdLineModuleObjectTreeWalker::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName; break;
-  case ctkCmdLineModuleObjectTreeWalker::ParameterContainer: prefixedName = PREFIX_PARAMETER_CONTAINER + propName; break;
-  case ctkCmdLineModuleObjectTreeWalker::Parameter: prefixedName = PREFIX_PARAMETER + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::Executable: prefixedName = PREFIX_EXECUTABLE() + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP() + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::ParameterContainer: prefixedName = PREFIX_PARAMETER_CONTAINER() + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::Parameter: prefixedName = PREFIX_PARAMETER() + propName; break;
   default: ;
   }
 
@@ -292,10 +308,10 @@ ctkCmdLineModuleObjectTreeWalker::token(QObject* obj)
 {
   if (obj == 0) return ctkCmdLineModuleObjectTreeWalker::NoToken;
   QString name = obj->objectName();
-  if (name.startsWith(PREFIX_EXECUTABLE)) return ctkCmdLineModuleObjectTreeWalker::Executable;
-  if (name.startsWith(PREFIX_PARAMETER_GROUP)) return ctkCmdLineModuleObjectTreeWalker::ParameterGroup;
-  if (name.startsWith(PREFIX_PARAMETER_CONTAINER)) return ctkCmdLineModuleObjectTreeWalker::ParameterContainer;
-  if (name.startsWith(PREFIX_PARAMETER)) return ctkCmdLineModuleObjectTreeWalker::Parameter;
+  if (name.startsWith(PREFIX_EXECUTABLE())) return ctkCmdLineModuleObjectTreeWalker::Executable;
+  if (name.startsWith(PREFIX_PARAMETER_GROUP())) return ctkCmdLineModuleObjectTreeWalker::ParameterGroup;
+  if (name.startsWith(PREFIX_PARAMETER_CONTAINER())) return ctkCmdLineModuleObjectTreeWalker::ParameterContainer;
+  if (name.startsWith(PREFIX_PARAMETER())) return ctkCmdLineModuleObjectTreeWalker::Parameter;
   return ctkCmdLineModuleObjectTreeWalker::NoToken;
 }
 
