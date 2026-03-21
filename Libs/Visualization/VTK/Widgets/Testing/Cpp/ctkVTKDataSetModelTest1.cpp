@@ -21,7 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QComboBox>
-#include <QMap>
+#include <QHash>
 #include <QTimer>
 #include <QDebug>
 
@@ -48,7 +48,7 @@ namespace
 bool checkItems(int line,
                 const QList<vtkAbstractArray*>& expectedAttributeArrays,
                 ctkVTKDataSetModel* dataSetModel,
-                QMap<vtkAbstractArray*, int> locations)
+                QHash<vtkAbstractArray*, int> locations)
 {
   foreach(vtkAbstractArray* expectedDataArray, expectedAttributeArrays)
   {
@@ -89,7 +89,7 @@ int ctkVTKDataSetModelTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QMap<vtkAbstractArray*, int> locations;
+  QHash<vtkAbstractArray*, int> locations;
 
   vtkNew<vtkPolyData> dataSet;
 
