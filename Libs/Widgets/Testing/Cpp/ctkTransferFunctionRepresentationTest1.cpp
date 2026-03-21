@@ -247,7 +247,6 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
   }
 
   //--------Test points----------------------
-  QList<QPointF> expectedPoints;
   if(representation.points().size() != 0)
   {
     std::cerr << "Line " << __LINE__

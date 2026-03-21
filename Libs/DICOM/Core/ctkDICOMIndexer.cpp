@@ -474,7 +474,6 @@ void ctkDICOMIndexer::addDirectory(const QString& directoryName, bool copyFile/*
 {
   Q_D(ctkDICOMIndexer);
 
-  QStringList listOfFiles;
   QDir directory(directoryName);
   if (directory.exists("DICOMDIR"))
   {

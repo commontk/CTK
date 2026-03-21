@@ -140,7 +140,6 @@ QModelIndex ctkFlatProxyModelPrivate
   Q_Q(const ctkFlatProxyModel);
   QModelIndexList sourceIndexes;
   sourceIndexes << QModelIndex();
-  QMap<int, int> rowCountsPerLevel;
   while (!sourceIndexes.isEmpty())
   {
     QModelIndex sourceIndex = sourceIndexes.takeFirst();

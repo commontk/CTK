@@ -341,7 +341,6 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
     // insert patient
     QString patientsBirthTime(dataset.GetElementAsString(DCM_PatientBirthTime));
     QString patientsSex(dataset.GetElementAsString(DCM_PatientSex));
-    QString patientsAge(dataset.GetElementAsString(DCM_PatientAge));
     QString patientComments(dataset.GetElementAsString(DCM_PatientComments));
 
     QSqlQuery insertPatientStatement(this->Database);
@@ -2934,7 +2933,6 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
 
-  QDir databaseDirectory(this->databaseDirectory());
   foreach(const ctkDICOMDatabase::IndexingResult & indexingResult, indexingResults)
   {
     const ctkDICOMItem& dataset = *indexingResult.dataset.data();
@@ -3077,7 +3075,6 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
 
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
-  QDir databaseDirectory(this->databaseDirectory());
   foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
   {
     ctkDICOMJobResponseSet::JobType jobType = jobResponseSet->jobType();
@@ -3587,7 +3584,7 @@ bool ctkDICOMDatabase::cleanup(bool vacuum/*=false*/)
   {
     seriesCleanup.exec("VACUUM;");
     QSqlQuery tagcacheCleanup(d->TagCacheDatabase);
-    seriesCleanup.exec("VACUUM;");
+    tagcacheCleanup.exec("VACUUM;");
   }
   d->resetLastInsertedValues();
   return true;

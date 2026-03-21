@@ -101,8 +101,6 @@ QByteArray ctkCmdLineModuleCache::rawXmlDescription(const QUrl& moduleLocation) 
   }
   // lazily load the XML description from the file system
   QByteArray xml;
-  QString a = moduleLocation.toString();
-  QString fn = d->xmlFileName(moduleLocation);
   QFile xmlFile(d->xmlFileName(moduleLocation));
   if (xmlFile.exists() && xmlFile.open(QIODevice::ReadOnly))
   {

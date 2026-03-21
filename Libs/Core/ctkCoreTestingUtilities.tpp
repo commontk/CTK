@@ -63,7 +63,6 @@ bool CheckList(int line, const QString& description,
                const QList<TYPE>& current, const QList<TYPE>& expected,
                const QString& testName)
 {
-  QString msg;
   if (current.count() != expected.count())
     {
     qWarning() << "\nLine " << line << " - " << description
