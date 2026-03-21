@@ -39,6 +39,7 @@
 #include "ctkDICOMJobResponseSet.h"
 
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 #include "ctkUtils.h"
 
 // DCMTK includes
@@ -58,17 +59,33 @@
 #include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMDatabase"))
 //------------------------------------------------------------------------------
 
 /// Flag for tag cache to avoid repeated searches for tags that do no exist
-static QString TagNotInInstance("__TAG_NOT_IN_INSTANCE__");
+static const QString& TagNotInInstance()
+{
+  static const QString s = QStringLiteral("__TAG_NOT_IN_INSTANCE__");
+  return s;
+}
 /// Flag for tag cache indicating that the value really is the empty string
-static QString ValueIsEmptyString("__VALUE_IS_EMPTY_STRING__");
+static const QString& ValueIsEmptyString()
+{
+  static const QString s = QStringLiteral("__VALUE_IS_EMPTY_STRING__");
+  return s;
+}
 /// Tag exists in the instance and non-empty but its value is not stored (e.g., because it is too long)
-static QString ValueIsNotStored("__VALUE_IS_NOT_STORED__");
+static const QString& ValueIsNotStored()
+{
+  static const QString s = QStringLiteral("__VALUE_IS_NOT_STORED__");
+  return s;
+}
 /// Separator character for table and field names to be used in display rules manager
-static QString TableFieldSeparator(":");
+static const QString& TableFieldSeparator()
+{
+  static const QString s = QStringLiteral(":");
+  return s;
+}
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabasePrivate methods
@@ -137,7 +154,7 @@ int ctkDICOMDatabasePrivate::rowCount(const QString& tableName)
   }
   else
   {
-    logger.error("SQLITE ERROR: " + numberOfItemsQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + numberOfItemsQuery.lastError().driverText());
   }
   return numberOfItems;
 }
@@ -166,7 +183,7 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
   {
     QString sqlError = query.lastError().text();
     QString lastQuery = query.lastQuery();
-    logger.error(QString("SQL failed: \n%1 \nError: \n%2")
+    logger->error(QString("SQL failed: \n%1 \nError: \n%2")
       .arg(lastQuery, sqlError));
   }
 
@@ -182,7 +199,7 @@ bool ctkDICOMDatabasePrivate::loggedExecBatch(QSqlQuery& query)
   {
     QString sqlError = query.lastError().text();
     QString lastQuery = query.lastQuery();
-    logger.error(QString("SQL failed: \n%1 \nError: \n%2")
+    logger->error(QString("SQL failed: \n%1 \nError: \n%2")
       .arg(lastQuery, sqlError));
   }
   return (success);
@@ -223,7 +240,7 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
   dataset.InitializeFromFile(fileName);
   if (!dataset.IsInitialized())
   {
-    logger.error("File " + fileName + " could not be initialized.");
+    logger->error("File " + fileName + " could not be initialized.");
     return "";
   }
 
@@ -236,11 +253,11 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
   {
     if (dataset.TagExists(tagKey))
     {
-      value = ValueIsNotStored;
+      value = ValueIsNotStored();
     }
     else
     {
-      value = TagNotInInstance;
+      value = TagNotInInstance();
     }
   }
   else
@@ -332,8 +349,8 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
   {
     // patient found
     dbPatientID = checkPatientExistsQuery.value(checkPatientExistsQuery.record().indexOf("UID")).toInt();
-    logger.debug("Found patient in the database as UID: " + QString::number(dbPatientID));
-    logger.debug("New patient ID cache item: " + compositeID + "->" + QString::number(dbPatientID));
+    logger->debug("Found patient in the database as UID: " + QString::number(dbPatientID));
+    logger->debug("New patient ID cache item: " + compositeID + "->" + QString::number(dbPatientID));
   }
   else
   {
@@ -363,7 +380,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
     }
     dbPatientID = insertPatientStatement.lastInsertId().toInt();
 
-    logger.debug("New patient inserted: database item ID = " + QString().setNum(dbPatientID));
+    logger->debug("New patient inserted: database item ID = " + QString().setNum(dbPatientID));
   }
 
   this->InsertedPatientsCompositeIDCache[compositeID] = dbPatientID;
@@ -385,8 +402,8 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertConnectionName(
   if (connectionNameFound)
   {
     // connection name found
-    logger.debug("Found connection name in the patient database as UID: " + QString::number(dbPatientID));
-    logger.debug("New connection name ID cache item: " + QString::number(dbPatientID) + "->" + connectionName);
+    logger->debug("Found connection name in the patient database as UID: " + QString::number(dbPatientID));
+    logger->debug("New connection name ID cache item: " + QString::number(dbPatientID) + "->" + connectionName);
   }
   else if (!denyList.contains(connectionName))
   {
@@ -403,7 +420,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertConnectionName(
     {
       return ctkDICOMDatabase::InsertResult::Failed;
     }
-    logger.debug("New connection name inserted: patient database item ID = " + QString().setNum(dbPatientID));
+    logger->debug("New connection name inserted: patient database item ID = " + QString().setNum(dbPatientID));
   }
 
   if (this->InsertedConnectionsIDCache.contains(dbPatientID))
@@ -454,7 +471,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertStudy(
   }
   if (!checkStudyExistsQuery.next())
   {
-    logger.debug("Need to insert new study: " + studyInstanceUID);
+    logger->debug("Need to insert new study: " + studyInstanceUID);
 
     QString studyID(dataset.GetElementAsString(DCM_StudyID) );
     QString studyDate(dataset.GetElementAsString(DCM_StudyDate) );
@@ -485,7 +502,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertStudy(
     insertStudyStatement.addBindValue(QDateTime::currentDateTime());
     if (!insertStudyStatement.exec())
     {
-      logger.error("Error executing statement: " + insertStudyStatement.lastQuery() + " Error: " + insertStudyStatement.lastError().text() );
+      logger->error("Error executing statement: " + insertStudyStatement.lastQuery() + " Error: " + insertStudyStatement.lastError().text() );
       return ctkDICOMDatabase::InsertResult::Failed;
     }
     else
@@ -497,7 +514,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertStudy(
   }
   else
   {
-    logger.debug("Used existing study: " + studyInstanceUID);
+    logger->debug("Used existing study: " + studyInstanceUID);
     this->InsertedStudyUIDsCache.insert(studyInstanceUID);
     return ctkDICOMDatabase::InsertResult::NotInserted;
   }
@@ -511,14 +528,14 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertSeries(
   QSqlQuery checkSeriesExistsQuery(this->Database);
   checkSeriesExistsQuery.prepare( "SELECT * FROM Series WHERE SeriesInstanceUID = ?" );
   checkSeriesExistsQuery.bindValue( 0, seriesInstanceUID );
-  logger.debug("Statement: " + checkSeriesExistsQuery.lastQuery() );
+  logger->debug("Statement: " + checkSeriesExistsQuery.lastQuery() );
   if (!loggedExec(checkSeriesExistsQuery))
   {
     return ctkDICOMDatabase::InsertResult::Failed;
   }
   if (!checkSeriesExistsQuery.next())
   {
-    logger.debug("Need to insert new series: " + seriesInstanceUID);
+    logger->debug("Need to insert new series: " + seriesInstanceUID);
 
     QString seriesDate(dataset.GetElementAsString(DCM_SeriesDate) );
     QString seriesTime(dataset.GetElementAsString(DCM_SeriesTime) );
@@ -555,7 +572,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertSeries(
     insertSeriesStatement.addBindValue(QDateTime::currentDateTime());
     if (!insertSeriesStatement.exec())
     {
-      logger.error("Error executing statement: "
+      logger->error("Error executing statement: "
                      + insertSeriesStatement.lastQuery()
                      + " Error: " + insertSeriesStatement.lastError().text());
       return ctkDICOMDatabase::InsertResult::Failed;
@@ -569,7 +586,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertSeries(
   }
   else
   {
-    logger.debug("Used existing series: " + seriesInstanceUID);
+    logger->debug("Used existing series: " + seriesInstanceUID);
     this->InsertedSeriesUIDsCache.insert(seriesInstanceUID);
     return ctkDICOMDatabase::InsertResult::NotInserted;
   }
@@ -624,11 +641,11 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
     {
       if (dataset.TagExists(tagKey))
       {
-        value = ValueIsNotStored;
+        value = ValueIsNotStored();
       }
       else
       {
-        value = TagNotInInstance;
+        value = TagNotInInstance();
       }
     }
     else
@@ -653,7 +670,7 @@ bool ctkDICOMDatabasePrivate::removeImage(const QString& sopInstanceUID)
   bool success = deleteFile.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR deleting old image row: " + deleteFile.lastError().driverText());
+    logger->error("SQLITE ERROR deleting old image row: " + deleteFile.lastError().driverText());
   }
   return success;
 }
@@ -711,10 +728,10 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
 
   if (originalFilePath.isEmpty())
   {
-    logger.debug("Saving file: " + storedFilePath);
+    logger->debug("Saving file: " + storedFilePath);
     if (!dataset.SaveToFile(storedFilePath))
     {
-      logger.error("Error saving file: " + storedFilePath);
+      logger->error("Error saving file: " + storedFilePath);
       return false;
     }
   }
@@ -735,7 +752,7 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
       copySuccess = QFile::copy(originalFilePath, storedFilePath);
       if (!copySuccess)
       {
-        logger.error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
+        logger->error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
         return false;
       }
     }
@@ -749,7 +766,7 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
 
       if (!sourceFile.open(QIODevice::ReadOnly) || !destFile.open(QIODevice::WriteOnly))
       {
-        logger.error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
+        logger->error("Failed to copy file from: " + originalFilePath + " to: " + storedFilePath);
         return false;
       }
 
@@ -764,7 +781,7 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
           delete[] buffer;
           sourceFile.close();
           destFile.close();
-          logger.error("Failed to write to: " + storedFilePath);
+          logger->error("Failed to write to: " + storedFilePath);
           return false;
         }
       }
@@ -775,7 +792,7 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
 
       if (bytesRead < 0)
       {
-        logger.error("Failed to read from: " + originalFilePath);
+        logger->error("Failed to read from: " + originalFilePath);
         return false;
       }
 
@@ -784,7 +801,7 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
 
     if (copySuccess)
     {
-      logger.debug("Copy file from: " + originalFilePath + " to: " + storedFilePath);
+      logger->debug("Copy file from: " + originalFilePath + " to: " + storedFilePath);
     }
   }
 
@@ -805,7 +822,7 @@ bool ctkDICOMDatabasePrivate::indexingStatusForFile(const QString& filePath, con
   bool success = fileExistsQuery.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
     return false;
   }
   bool foundSOPInstanceUID = fileExistsQuery.next();
@@ -862,7 +879,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries
   }
   else
   {
-    logger.debug("Insert new patient if not already in database: " + patientID + " " + patientsName);
+    logger->debug("Insert new patient if not already in database: " + patientID + " " + patientsName);
     ctkDICOMDatabase::InsertResult patientMetadataInsertOperationResult =
       this->insertPatient(dataset, patientID, patientsName, dbPatientID);
     if (patientMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
@@ -885,7 +902,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries
   }
   if (connections.count() == 0 || !connections.contains(connectionName))
   {
-    logger.debug("Insert new connection name if not already in database: " + connectionName);
+    logger->debug("Insert new connection name if not already in database: " + connectionName);
     ctkDICOMDatabase::InsertResult connectionMetadataInsertOperationResult =
       this->insertConnectionName(dbPatientID, connectionName);
     if (connectionMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
@@ -899,7 +916,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries
     }
   }
 
-  logger.debug("Going to insert this instance with dbPatientID: " + QString::number(dbPatientID));
+  logger->debug("Going to insert this instance with dbPatientID: " + QString::number(dbPatientID));
 
   // Insert new study if needed
   QString studyInstanceUID(dataset.GetElementAsString(DCM_StudyInstanceUID));
@@ -909,7 +926,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries
       this->insertStudy(dataset, dbPatientID);
     if (studyMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
-      logger.debug("Study Added");
+      logger->debug("Study Added");
       databaseWasChanged = true;
       // let users of this class track when things happen
       emit q->studyAdded(studyInstanceUID);
@@ -927,7 +944,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatientStudySeries
       this->insertSeries(dataset, studyInstanceUID);
     if (seriesMetadataInsertOperationResult == ctkDICOMDatabase::InsertResult::Inserted)
     {
-      logger.debug("Series Added");
+      logger->debug("Series Added");
       databaseWasChanged = true;
       emit q->seriesAdded(seriesInstanceUID);
     }
@@ -960,7 +977,7 @@ bool ctkDICOMDatabasePrivate::uidsForDataSet(QString& patientsName, QString& pat
   {
     // Use study instance uid as patient id if patient id is empty - can happen on anonymized datasets
     // see: http://www.na-mic.org/Bug/view.php?id=2040
-    logger.warn(QString("Patient ID is empty, using studyInstanceUID (%1) as patient ID").arg(studyInstanceUID));
+    logger->warn(QString("Patient ID is empty, using studyInstanceUID (%1) as patient ID").arg(studyInstanceUID));
     patientID = studyInstanceUID;
   }
   if (patientsName.isEmpty() && !patientID.isEmpty())
@@ -972,7 +989,7 @@ bool ctkDICOMDatabasePrivate::uidsForDataSet(QString& patientsName, QString& pat
   // We accept the dataset without seriesInstanceUID, as query/retrieve result may not contain it
   if (patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty())
   {
-    logger.error("Required information (patient name, patient ID, study instance UID) is missing from dataset");
+    logger->error("Required information (patient name, patient ID, study instance UID) is missing from dataset");
     return false;
   }
   // Valid data set
@@ -1005,13 +1022,13 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
   {
     if (datasetUpToDate)
     {
-      logger.debug("File " + databaseFilename + " already added");
+      logger->debug("File " + databaseFilename + " already added");
       return;
     }
     // File is updated, delete record and re-index
     if (!this->removeImage(sopInstanceUID))
     {
-      logger.debug("File " + filePath + " cannot be added, failed to update existing values in the database");
+      logger->debug("File " + filePath + " cannot be added, failed to update existing values in the database");
       return;
     }
   }
@@ -1030,7 +1047,7 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
   {
     if (!this->storeDatasetFile(dataset, filePath, studyInstanceUID, seriesInstanceUID, sopInstanceUID, storedFilePath))
     {
-      logger.error("Error saving file: " + filePath);
+      logger->error("Error saving file: " + filePath);
       return;
     }
   }
@@ -1077,7 +1094,7 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
 
       if (!insertImageStatement.exec())
       {
-        logger.error("Error executing statement: "
+        logger->error("Error executing statement: "
                      + insertImageStatement.lastQuery()
                      + " Error: " + insertImageStatement.lastError().text());
       }
@@ -1123,12 +1140,12 @@ QString ctkDICOMDatabasePrivate::getDisplayPatientFieldsKey(const QString& patie
   displayPatientsQuery.bindValue(":patientsName", patientsName);
   if (!displayPatientsQuery.exec())
   {
-    logger.error("SQLITE ERROR: " + displayPatientsQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + displayPatientsQuery.lastError().driverText());
     return QString();
   }
   if (displayPatientsQuery.size() > 1)
   {
-    logger.warn("Multiple patients found with PatientsName=" + patientsName + " and PatientID=" + patientID);
+    logger->warn("Multiple patients found with PatientsName=" + patientsName + " and PatientID=" + patientID);
   }
   if (displayPatientsQuery.next())
   {
@@ -1142,7 +1159,7 @@ QString ctkDICOMDatabasePrivate::getDisplayPatientFieldsKey(const QString& patie
     return compositeID;
   }
 
-  logger.error("Failed to find patient with PatientsName=" + patientsName + " and PatientID=" + patientID);
+  logger->error("Failed to find patient with PatientsName=" + patientsName + " and PatientID=" + patientID);
   return QString();
 }
 
@@ -1164,12 +1181,12 @@ QString ctkDICOMDatabasePrivate::getDisplayStudyFieldsKey(QString studyInstanceU
   displayStudiesQuery.bindValue(":studyInstanceUID", studyInstanceUID);
   if (!displayStudiesQuery.exec())
   {
-    logger.error("SQLITE ERROR: " + displayStudiesQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + displayStudiesQuery.lastError().driverText());
     return QString();
   }
   if (displayStudiesQuery.size() > 1)
   {
-    logger.warn("Multiple studies found with StudyInstanceUID=" + studyInstanceUID);
+    logger->warn("Multiple studies found with StudyInstanceUID=" + studyInstanceUID);
   }
   if (displayStudiesQuery.next())
   {
@@ -1183,7 +1200,7 @@ QString ctkDICOMDatabasePrivate::getDisplayStudyFieldsKey(QString studyInstanceU
     return studyInstanceUID;
   }
 
-  logger.error("Failed to find study with StudyInstanceUID=" + studyInstanceUID);
+  logger->error("Failed to find study with StudyInstanceUID=" + studyInstanceUID);
   return QString();
 }
 
@@ -1205,12 +1222,12 @@ QString ctkDICOMDatabasePrivate::getDisplaySeriesFieldsKey(QString seriesInstanc
   displaySeriesQuery.bindValue(":seriesInstanceUID", seriesInstanceUID);
   if (!displaySeriesQuery.exec())
   {
-    logger.error("SQLITE ERROR: " + displaySeriesQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + displaySeriesQuery.lastError().driverText());
     return QString();
   }
   if (displaySeriesQuery.size() > 1)
   {
-    logger.warn("Multiple series found with SeriesInstanceUID=" + seriesInstanceUID);
+    logger->warn("Multiple series found with SeriesInstanceUID=" + seriesInstanceUID);
   }
   if (displaySeriesQuery.next())
   {
@@ -1224,7 +1241,7 @@ QString ctkDICOMDatabasePrivate::getDisplaySeriesFieldsKey(QString seriesInstanc
     return seriesInstanceUID;
   }
 
-  logger.error("in getDisplaySeriesFieldsKey: Failed to find series with SeriesInstanceUID=" + seriesInstanceUID);
+  logger->error("in getDisplaySeriesFieldsKey: Failed to find series with SeriesInstanceUID=" + seriesInstanceUID);
   return QString();
 }
 
@@ -1248,7 +1265,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     QMap<QString, QString> currentPatient = it.value();
     if (currentPatient["PatientID"].isEmpty() || currentPatient["PatientsName"].isEmpty())
     {
-      logger.error("Unable to locate the patient due to missing values for PatientsName and/or PatientID. "
+      logger->error("Unable to locate the patient due to missing values for PatientsName and/or PatientID. "
                    "If this error recurs, please manually remove the patient from the database, ensuring to"
                    " address the missing PatientsName/PatientID.");
       continue;
@@ -1260,7 +1277,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     displayPatientsQuery.bindValue(":patientsName", currentPatient["PatientsName"]);
     if (!displayPatientsQuery.exec())
     {
-      logger.error("SQLITE ERROR: " + displayPatientsQuery.lastError().driverText());
+      logger->error("SQLITE ERROR: " + displayPatientsQuery.lastError().driverText());
       return false;
     }
     if (displayPatientsQuery.next())
@@ -1301,7 +1318,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("Failed to find patient with PatientsName=" + currentPatient["PatientsName"] + " and PatientID=" + currentPatient["PatientID"]);
+      logger->error("Failed to find patient with PatientsName=" + currentPatient["PatientsName"] + " and PatientID=" + currentPatient["PatientID"]);
       continue;
     }
   } // For each patient in displayedFieldsVectorPatient
@@ -1320,7 +1337,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     displayStudiesQuery.addBindValue(currentStudyInstanceUid);
     if (!displayStudiesQuery.exec())
     {
-      logger.error("SQLITE ERROR: " + displayStudiesQuery.lastError().driverText());
+      logger->error("SQLITE ERROR: " + displayStudiesQuery.lastError().driverText());
       return false;
     }
     if (displayStudiesQuery.next())
@@ -1360,7 +1377,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("in applyDisplayedFieldsChanges: Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
+      logger->error("in applyDisplayedFieldsChanges: Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
       continue;
     }
   } // For each study in displayedFieldsMapStudy
@@ -1380,7 +1397,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     displaySeriesQuery.addBindValue(currentSeriesInstanceUid);
     if (!displaySeriesQuery.exec())
     {
-      logger.error("SQLITE ERROR: " + displaySeriesQuery.lastError().driverText());
+      logger->error("SQLITE ERROR: " + displaySeriesQuery.lastError().driverText());
       return false;
     }
     if (displaySeriesQuery.next())
@@ -1411,7 +1428,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("in applyDisplayedFieldsChanges: Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
+      logger->error("in applyDisplayedFieldsChanges: Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
       continue;
     }
   } // For each series in displayedFieldsMapSeries
@@ -2495,7 +2512,7 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
     // The rendering will fail and in addition SEG object can be very large and
     // loading the file can be slow.
     // To Do: refactor ctkDICOMThumbnailGenerator for rendering more modalities.
-    logger.warn(QString("SEG thumbnail generation is not available"));
+    logger->warn(QString("SEG thumbnail generation is not available"));
     return false;
   }
   else
@@ -2614,7 +2631,7 @@ QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
   tag = tag.toUpper();
   // Read from cache, if available
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+  if (value == TagNotInInstance() || value == ValueIsEmptyString() || value == ValueIsNotStored())
   {
     return "";
   }
@@ -2671,7 +2688,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
     // The instance is available in the database, look for the value
     tag = tag.toUpper();
     QString value = this->cachedTag(sopInstanceUID, tag);
-    if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+    if (value == TagNotInInstance() || value == ValueIsEmptyString() || value == ValueIsNotStored())
     {
       return "";
     }
@@ -2762,9 +2779,9 @@ QMap<QString, QString> ctkDICOMDatabase::instanceValues(const QStringList& sopIn
 
       // Only include non-empty values that are not special markers
       if (!value.isEmpty() &&
-          value != TagNotInInstance &&
-          value != ValueIsEmptyString &&
-          value != ValueIsNotStored)
+          value != TagNotInInstance() &&
+          value != ValueIsEmptyString() &&
+          value != ValueIsNotStored())
       {
         result[sopInstanceUID] = value;
       }
@@ -2780,11 +2797,11 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const Q
   Q_D(ctkDICOMDatabase);
   QString upperTag = tag.toUpper();
   QString value = this->cachedTag(sopInstanceUID, upperTag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  if (value == TagNotInInstance() || value == ValueIsEmptyString())
   {
     return false;
   }
-  if (value == ValueIsNotStored || !value.isEmpty())
+  if (value == ValueIsNotStored() || !value.isEmpty())
   {
     return true;
   }
@@ -2796,7 +2813,7 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const Q
     return false;
   }
   value = d->readValueFromFile(filePath, sopInstanceUID, upperTag);
-  return (value != TagNotInInstance && value != ValueIsEmptyString);
+  return (value != TagNotInInstance() && value != ValueIsEmptyString());
 }
 
 //------------------------------------------------------------------------------
@@ -2820,18 +2837,18 @@ bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
 
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  if (value == TagNotInInstance() || value == ValueIsEmptyString())
   {
     return false;
   }
-  if (value == ValueIsNotStored || !value.isEmpty())
+  if (value == ValueIsNotStored() || !value.isEmpty())
   {
     return true;
   }
 
   // Read value from file
   value = d->readValueFromFile(fileName, sopInstanceUID, tag);
-  return (value != TagNotInInstance && value != ValueIsEmptyString);
+  return (value != TagNotInInstance() && value != ValueIsEmptyString());
 }
 
 //------------------------------------------------------------------------------
@@ -2909,7 +2926,7 @@ void ctkDICOMDatabase::insert( const QString& filePath, bool storeFile, bool gen
   /// first we check if the file is already in the database
   if (fileExistsAndUpToDate(filePath))
   {
-    logger.debug( "File " + filePath + " already added.");
+    logger->debug( "File " + filePath + " already added.");
     return;
   }
 
@@ -2922,7 +2939,7 @@ void ctkDICOMDatabase::insert( const QString& filePath, bool storeFile, bool gen
   }
   else
   {
-    logger.warn(QString("Could not read DICOM file:") + filePath);
+    logger->warn(QString("Could not read DICOM file:") + filePath);
   }
 }
 
@@ -2974,7 +2991,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       // File is updated, delete record and re-index
       if (!d->removeImage(sopInstanceUID))
       {
-        logger.error("Failed to insert file into database (cannot update pre-existing item): " + filePath);
+        logger->error("Failed to insert file into database (cannot update pre-existing item): " + filePath);
         continue;
       }
     }
@@ -2983,7 +3000,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
     QString patientsName, patientID, studyInstanceUID, seriesInstanceUID;
     if (!d->uidsForDataSet(dataset, patientsName, patientID, studyInstanceUID, seriesInstanceUID))
     {
-      logger.error("Failed to insert file into database (required fields missing): " + filePath);
+      logger->error("Failed to insert file into database (required fields missing): " + filePath);
       continue;
     }
 
@@ -3017,11 +3034,11 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         {
           if (dataset.TagExists(tagKey))
           {
-            value = ValueIsNotStored;
+            value = ValueIsNotStored();
           }
           else
           {
-            value = TagNotInInstance;
+            value = TagNotInInstance();
           }
         }
         else
@@ -3031,7 +3048,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         insertTags.bindValue(1, tag);
         if (value.isEmpty())
         {
-          insertTags.bindValue(2, TagNotInInstance);
+          insertTags.bindValue(2, TagNotInInstance());
         }
         else
         {
@@ -3186,19 +3203,19 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
 
       if (patientID.isEmpty())
       {
-        logger.error("ctkDICOMDatabase::insert: dataset has no patientID");
+        logger->error("ctkDICOMDatabase::insert: dataset has no patientID");
         continue;
       }
 
       if (patientName.isEmpty())
       {
-        logger.error("ctkDICOMDatabase::insert: dataset has no patientName");
+        logger->error("ctkDICOMDatabase::insert: dataset has no patientName");
         continue;
       }
 
       if (studyInstanceUID.isEmpty() && jobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
       {
-        logger.error("ctkDICOMDatabase::insert: dataset has no studyInstanceUID");
+        logger->error("ctkDICOMDatabase::insert: dataset has no studyInstanceUID");
         continue;
       }
 
@@ -3249,7 +3266,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
         // File is updated, delete record and re-index
         if (!d->removeImage(sopInstanceUID))
         {
-          logger.error("Failed to insert file into database (cannot update pre-existing item): " + filePath);
+          logger->error("Failed to insert file into database (cannot update pre-existing item): " + filePath);
           continue;
         }
       }
@@ -3320,7 +3337,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
 
           if (!insertImageStatement.exec())
           {
-            logger.error("Error executing statement: "
+            logger->error("Error executing statement: "
                          + insertImageStatement.lastQuery()
                          + " Error: " + insertImageStatement.lastError().text());
             insertFailed = true;
@@ -3471,7 +3488,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   bool success = fileExistsQuery.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
+    logger->error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
     return false;
   }
 
@@ -3493,12 +3510,12 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   QSqlQuery fileRemove(d->Database);
   fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == :seriesID");
   fileRemove.bindValue(":seriesID", seriesInstanceUID);
-  logger.debug("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
+  logger->debug("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
   success = fileRemove.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
-    logger.error("SQLITE ERROR: " + fileRemove.lastError().driverText());
+    logger->error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
+    logger->error("SQLITE ERROR: " + fileRemove.lastError().driverText());
   }
 
   if (!removeTagCacheSOPInstanceUIDs.isEmpty())
@@ -3536,7 +3553,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
         }
         else
         {
-          logger.warn("Failed to remove file " + absPath);
+          logger->warn("Failed to remove file " + absPath);
         }
       }
     }
@@ -3546,7 +3563,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
     {
       if (!thumbnailFile.remove())
       {
-      logger.warn("Failed to remove thumbnail " + thumbnailFile.fileName());
+      logger->warn("Failed to remove thumbnail " + thumbnailFile.fileName());
       }
       QString fileFolder = QFileInfo(thumbnailFile).absoluteDir().path();
       if (foldersToRemove.isEmpty() || foldersToRemove.last() != fileFolder)
@@ -3604,7 +3621,7 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID, bool cleanup
   bool success = seriesForStudy.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR: " + seriesForStudy.lastError().driverText());
+    logger->error("SQLITE ERROR: " + seriesForStudy.lastError().driverText());
     return false;
   }
   bool result = true;
@@ -3639,7 +3656,7 @@ bool ctkDICOMDatabase::removePatient(const QString& patientUID, bool cleanup/*=t
   bool success = studiesForPatient.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR: " + studiesForPatient.lastError().driverText());
+    logger->error("SQLITE ERROR: " + studiesForPatient.lastError().driverText());
     return false;
   }
   bool result = true;
@@ -3749,7 +3766,7 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
     result = selectValue.value(0).toString();
     if (result == QString(""))
     {
-      result = ValueIsEmptyString;
+      result = ValueIsEmptyString();
     }
   }
   return( result );
@@ -3778,7 +3795,7 @@ void ctkDICOMDatabase::getCachedTags(const QString sopInstanceUID, QMap<QString,
   {
     tag = selectValue.value(0).toString().toUpper();
     value = selectValue.value(1).toString();
-    if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+    if (value == TagNotInInstance() || value == ValueIsEmptyString() || value == ValueIsNotStored())
     {
       value = QString("");
     }
@@ -3803,7 +3820,7 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
   int itemCount = sopInstanceUIDs.size();
   if (tags.size() != itemCount || values.size() != itemCount)
   {
-    logger.error("Failed to cache tags: number of inputs do not match");
+    logger->error("Failed to cache tags: number of inputs do not match");
     return false;
   }
 
@@ -3831,7 +3848,7 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
     if (valuesIt->isEmpty())
     {
       // replace empty strings with special flag string
-      insertTags.bindValue(2, TagNotInInstance);
+      insertTags.bindValue(2, TagNotInInstance());
     }
     else
     {
@@ -3865,7 +3882,7 @@ void ctkDICOMDatabase::removeCachedTags(const QString sopInstanceUID)
   bool success = deleteFile.exec();
   if (!success)
   {
-    logger.error("SQLITE ERROR deleting tag cache row: " + deleteFile.lastError().driverText());
+    logger->error("SQLITE ERROR deleting tag cache row: " + deleteFile.lastError().driverText());
   }
 }
 
@@ -3914,7 +3931,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
     QString compositeId = d->getDisplayPatientFieldsKey(patientID, patientsName, patientsBirthDate, displayedFieldsMapPatient);
     if (compositeId.isEmpty())
     {
-      logger.error("Failed to find patient for SOP Instance UID = " + sopInstanceUID);
+      logger->error("Failed to find patient for SOP Instance UID = " + sopInstanceUID);
       continue;
     }
     QMap<QString, QString> displayedFieldsForCurrentPatient = displayedFieldsMapPatient[compositeId];
@@ -3924,7 +3941,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
       cachedTags[ctkDICOMItem::TagKeyStripped(DCM_StudyInstanceUID)], displayedFieldsMapStudy );
     if (displayedFieldsKeyForCurrentStudy.isEmpty())
     {
-      logger.error("Failed to find study for SOP Instance UID = " + sopInstanceUID);
+      logger->error("Failed to find study for SOP Instance UID = " + sopInstanceUID);
       continue;
     }
     QMap<QString, QString> displayedFieldsForCurrentStudy = displayedFieldsMapStudy[ displayedFieldsKeyForCurrentStudy ];
@@ -3934,7 +3951,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
     QString displayedFieldsKeyForCurrentSeries = d->getDisplaySeriesFieldsKey(seriesInstanceUID, displayedFieldsMapSeries);
     if (displayedFieldsKeyForCurrentSeries.isEmpty())
     {
-      logger.error("Failed to find series for SOP Instance UID = " + sopInstanceUID);
+      logger->error("Failed to find series for SOP Instance UID = " + sopInstanceUID);
       continue;
     }
     QMap<QString, QString> displayedFieldsForCurrentSeries = displayedFieldsMapSeries[ displayedFieldsKeyForCurrentSeries ];
@@ -3993,7 +4010,7 @@ QString ctkDICOMDatabase::displayedNameForField(QString table, QString field) co
   query.addBindValue(field);
   if (!query.exec())
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return QString();
   }
 
@@ -4008,7 +4025,7 @@ void ctkDICOMDatabase::setDisplayedNameForField(QString table, QString field, QS
 
   if (!this->isOpen())
   {
-    logger.warn("Database needs to be open to set column display properties");
+    logger->warn("Database needs to be open to set column display properties");
     return;
   }
 
@@ -4019,7 +4036,7 @@ void ctkDICOMDatabase::setDisplayedNameForField(QString table, QString field, QS
   query.addBindValue(field);
   if (!d->loggedExec(query))
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return;
   }
 
@@ -4037,7 +4054,7 @@ bool ctkDICOMDatabase::visibilityForField(QString table, QString field) const
   query.addBindValue(field);
   if (!query.exec())
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return false;
   }
 
@@ -4052,7 +4069,7 @@ void ctkDICOMDatabase::setVisibilityForField(QString table, QString field, bool 
 
   if (!this->isOpen())
   {
-    logger.warn("Database needs to be open to set column display properties");
+    logger->warn("Database needs to be open to set column display properties");
     return;
   }
 
@@ -4063,7 +4080,7 @@ void ctkDICOMDatabase::setVisibilityForField(QString table, QString field, bool 
   query.addBindValue(field);
   if (!d->loggedExec(query))
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return;
   }
 
@@ -4081,7 +4098,7 @@ int ctkDICOMDatabase::weightForField(QString table, QString field) const
   query.addBindValue(field);
   if (!query.exec())
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return INT_MAX;
   }
 
@@ -4096,7 +4113,7 @@ void ctkDICOMDatabase::setWeightForField(QString table, QString field, int weigh
 
   if (!this->isOpen())
   {
-    logger.warn("Database needs to be open to set column display properties");
+    logger->warn("Database needs to be open to set column display properties");
     return;
   }
 
@@ -4107,7 +4124,7 @@ void ctkDICOMDatabase::setWeightForField(QString table, QString field, int weigh
   query.addBindValue(field);
   if (!d->loggedExec(query))
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return;
   }
 
@@ -4125,7 +4142,7 @@ QString ctkDICOMDatabase::formatForField(QString table, QString field) const
   query.addBindValue(field);
   if (!query.exec())
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return QString();
   }
 
@@ -4140,7 +4157,7 @@ void ctkDICOMDatabase::setFormatForField(QString table, QString field, QString f
 
   if (!this->isOpen())
   {
-    logger.warn("Database needs to be open to set column display properties");
+    logger->warn("Database needs to be open to set column display properties");
     return;
   }
 
@@ -4151,7 +4168,7 @@ void ctkDICOMDatabase::setFormatForField(QString table, QString field, QString f
   query.addBindValue(field);
   if (!d->loggedExec(query))
   {
-    logger.error("SQLITE ERROR: " + query.lastError().driverText());
+    logger->error("SQLITE ERROR: " + query.lastError().driverText());
     return;
   }
 

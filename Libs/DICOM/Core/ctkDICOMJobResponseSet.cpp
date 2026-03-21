@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMItem.h"
@@ -32,7 +33,7 @@
 // DCMTK includes
 #include <dcmtk/dcmdata/dcdeftag.h>
 
-static ctkLogger logger("org.commontk.dicom.DICOMJobResponseSet");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMJobResponseSet"))
 
 //------------------------------------------------------------------------------
 class ctkDICOMJobResponseSetPrivate : public QObject {

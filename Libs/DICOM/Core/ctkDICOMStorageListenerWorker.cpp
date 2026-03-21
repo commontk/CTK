@@ -26,6 +26,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
@@ -36,7 +37,7 @@
 // DCMTK includes
 #include <dcmtk/oflog/spi/logevent.h>
 
-static ctkLogger logger ("org.commontk.dicom.DICOMStorageListenerWorker");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMStorageListenerWorker"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerWorkerPrivate methods
@@ -141,7 +142,7 @@ void ctkDICOMStorageListenerWorker::run()
   storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit storageListenerJob->started();
 
-  logger.debug(QString("ctkDICOMStorageListenerWorker : running job %1 in thread %2.\n")
+  logger->debug(QString("ctkDICOMStorageListenerWorker : running job %1 in thread %2.\n")
                        .arg(storageListenerJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 

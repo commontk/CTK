@@ -25,18 +25,22 @@
 #include "ctkPluginFrameworkDebugOptions_p.h"
 #include "ctkPluginFrameworkProperties_p.h"
 
-static QString CTK_OSGI = "org.commontk.pluginfw";
+static const QString& CTK_OSGI()
+{
+  static const QString s = QStringLiteral("org.commontk.pluginfw");
+  return s;
+}
 
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_GENERAL = CTK_OSGI + "/debug";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_FRAMEWORK = CTK_OSGI + "/debug/framework";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_ERRORS = CTK_OSGI + "/debug/errors";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_HOOKS = CTK_OSGI + "/debug/hooks";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_LAZY_ACTIVATION = CTK_OSGI + "/debug/lazy_activation";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_LDAP = CTK_OSGI + "/debug/ldap";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_SERVICE_REFERENCE = CTK_OSGI + "/debug/service_reference";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_STARTLEVEL = CTK_OSGI + "/debug/startlevel";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_URL = CTK_OSGI + "/debug/url";
-QString ctkPluginFrameworkDebug::OPTION_DEBUG_RESOLVE = CTK_OSGI + "/debug/resolve";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_GENERAL = CTK_OSGI() + "/debug";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_FRAMEWORK = CTK_OSGI() + "/debug/framework";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_ERRORS = CTK_OSGI() + "/debug/errors";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_HOOKS = CTK_OSGI() + "/debug/hooks";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_LAZY_ACTIVATION = CTK_OSGI() + "/debug/lazy_activation";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_LDAP = CTK_OSGI() + "/debug/ldap";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_SERVICE_REFERENCE = CTK_OSGI() + "/debug/service_reference";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_STARTLEVEL = CTK_OSGI() + "/debug/startlevel";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_URL = CTK_OSGI() + "/debug/url";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_RESOLVE = CTK_OSGI() + "/debug/resolve";
 
 //----------------------------------------------------------------------------
 ctkPluginFrameworkDebug::ctkPluginFrameworkDebug()
