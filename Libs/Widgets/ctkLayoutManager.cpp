@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QHash>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLayout>
@@ -250,7 +251,7 @@ void ctkLayoutManager::setSpacing(int spacing)
 void ctkLayoutManager::refresh()
 {
   Q_D(ctkLayoutManager);
-  QMap<QWidget*, bool> updatesEnabled;
+  QHash<QWidget*, bool> updatesEnabled;
   foreach(QWidget* viewport, d->Viewports)
   {
     if (!viewport)
@@ -265,7 +266,7 @@ void ctkLayoutManager::refresh()
   this->setupLayout();
   foreach(QWidget* viewport, d->Viewports)
   {
-    QMap<QWidget*, bool>::iterator updatesEnabledIt = updatesEnabled.find(viewport);
+    QHash<QWidget*, bool>::iterator updatesEnabledIt = updatesEnabled.find(viewport);
     if (updatesEnabledIt == updatesEnabled.end())
     {
       continue;
