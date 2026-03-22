@@ -62,13 +62,13 @@ protected:
 
   bool created;
 
-  void invokeShowUserInterfaceCommandInternal()const;
+  void invokeShowUserInterfaceCommandInternal();
 
-  void showUserInterfaceCompleteInternal()const;
+  void showUserInterfaceCompleteInternal();
 
-  void invokeCreateUserInterfaceCommandInternal()const;
+  void invokeCreateUserInterfaceCommandInternal();
 
-  void createUserInterfaceCompleteInternal()const;
+  void createUserInterfaceCompleteInternal();
 
 protected Q_SLOTS:
 
@@ -79,13 +79,13 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
 
-  void invokeShowUserInterfaceCommand()const;
+  void invokeShowUserInterfaceCommand();
 
-  void showUserInterfaceComplete()const;
+  void showUserInterfaceComplete();
 
-  void invokeCreateUserInterfaceCommand()const;
+  void invokeCreateUserInterfaceCommand();
 
-  void createUserInterfaceComplete()const;
+  void createUserInterfaceComplete();
 
 };
 

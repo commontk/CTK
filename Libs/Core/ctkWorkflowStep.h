@@ -208,37 +208,37 @@ protected:
   /// step's processing should be performed.
   ///
   /// \sa validation()
-  void invokeValidateCommand(const QString& desiredBranchId = QString())const;
+  void invokeValidateCommand(const QString& desiredBranchId = QString());
 
   /// \brief Signal (emitted by the private implementation) indicating that validation of this
   /// step's processing has completed.
   ///
   /// \sa validation()
-  void validationComplete(bool validationSuceeded, const QString& branchId = QString())const;
+  void validationComplete(bool validationSuceeded, const QString& branchId = QString());
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's 'onEntry'
   /// processing should be performed.
   ///
   /// \sa onEntry()
-  void invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's 'onEntry'
   /// processing has completed.
   ///
   /// \sa onEntry()
-  void onEntryComplete()const;
+  void onEntryComplete();
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's 'onExit'
   /// processing should be performed.
   ///
   /// \sa onExit()
-  void invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// \brief Signal (emitted by the private implementation) indicating that the step's 'onExit'
   /// processing has completed.
   ///
   /// \sa onExit()
-  void onExitComplete()const;
+  void onExitComplete();
 
 protected:
   QScopedPointer<ctkWorkflowStepPrivate> d_ptr;

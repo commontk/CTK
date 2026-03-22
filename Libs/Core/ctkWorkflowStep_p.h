@@ -71,31 +71,31 @@ protected:
   bool HasOnEntryCommand;
   bool HasOnExitCommand;
 
-  void invokeValidateCommandInternal(const QString& desiredBranchId)const;
+  void invokeValidateCommandInternal(const QString& desiredBranchId);
 
-  void validationCompleteInternal(bool validationSuceeded, const QString& branchId)const;
+  void validationCompleteInternal(bool validationSuceeded, const QString& branchId);
 
-  void invokeOnEntryCommandInternal(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnEntryCommandInternal(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
-  void onEntryCompleteInternal()const;
+  void onEntryCompleteInternal();
 
-  void invokeOnExitCommandInternal(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnExitCommandInternal(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
-  void onExitCompleteInternal()const;
+  void onExitCompleteInternal();
 
 
 Q_SIGNALS:
-  void invokeValidateCommand(const QString& desiredBranchId)const;
+  void invokeValidateCommand(const QString& desiredBranchId);
 
-  void validationComplete(bool validationSuceeded, const QString& branchId)const;
+  void validationComplete(bool validationSuceeded, const QString& branchId);
 
-  void invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
-  void onEntryComplete()const;
+  void onEntryComplete();
 
-  void invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const;
+  void invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
-  void onExitComplete()const;
+  void onExitComplete();
 
 private:
   friend class ctkWorkflowPrivate; // for access to invoke...Internal() methods

@@ -83,6 +83,8 @@ public:
   /// Get gradient extents of the chart.
   Q_INVOKABLE QList<double> chartsGradientExtent()const;
 
+  int currentComponent() const;
+
 public Q_SLOTS:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
 
@@ -124,7 +126,6 @@ public Q_SLOTS:
   void setChartsGradientExtent(double extent[2]);
   void setChartsGradientExtent(double min, double max);
 
-  int currentComponent() const;
   void setCurrentComponent(int component);
 
 Q_SIGNALS:
