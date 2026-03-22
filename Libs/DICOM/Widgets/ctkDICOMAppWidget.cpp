@@ -459,7 +459,7 @@ bool ctkDICOMAppWidget::searchWidgetPopUpMode(){
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMAppWidget::setTagsToPrecache( const QStringList tags)
+void ctkDICOMAppWidget::setTagsToPrecache( const QStringList& tags)
 {
   Q_D(ctkDICOMAppWidget);
   d->DICOMDatabase->setTagsToPrecache(tags);
@@ -659,7 +659,7 @@ void ctkDICOMAppWidget::setIndexingResult(int patientsAdded, int studiesAdded, i
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onImportDirectory(QString directory)
+void ctkDICOMAppWidget::onImportDirectory(const QString& directory)
 {
   Q_D(ctkDICOMAppWidget);
   if (QDir(directory).exists())

@@ -46,9 +46,9 @@ protected:
 public:
   ctkDICOMDatabasePrivate(ctkDICOMDatabase&);
   ~ctkDICOMDatabasePrivate();
-  void init(QString databaseFile);
+  void init(const QString& databaseFile);
   void registerCompressionLibraries();
-  bool executeScript(const QString script);
+  bool executeScript(const QString& script);
 
   /// Run a query and prints debug output of status
   bool loggedExec(QSqlQuery& query);
@@ -108,7 +108,7 @@ public:
   QString getDisplaySeriesFieldsKey(QString seriesInstanceUID, QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries);
 
   /// Get all Filename values from table
-  QStringList filenames(QString table);
+  QStringList filenames(const QString& table);
 
   int rowCount(const QString& tableName);
 
@@ -174,7 +174,7 @@ public:
   QStringList TagsToPrecache;
   QStringList TagsToExcludeFromStorage;
   bool openTagCacheDatabase();
-  void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
+  void precacheTags(const ctkDICOMItem& dataset, const QString& sopInstanceUID);
 
   /// Insert metadata
   ctkDICOMDatabase::InsertResult insertPatientStudySeries(const ctkDICOMItem& dataset,

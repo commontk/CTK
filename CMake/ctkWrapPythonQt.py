@@ -112,7 +112,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 
             # Skip wrapping if object has a virtual pure method
             # "x3b" is the unicode for semicolon
-            regex = r"virtual[\w\n\s\*\(\)]+\=[\s\n]*(0|NULL|nullptr)[\s\n]*\x3b"
+            regex = r"virtual[\w\n\s\*\&\(\),:<>]+\=[\s\n]*(0|NULL|nullptr)[\s\n]*\x3b"
             res = re.search(regex, content, re.MULTILINE)
             if res is not None:
                 if extra_verbose:

@@ -65,7 +65,7 @@ public:
   /// factory. By default, returns true if the layout element name is
   /// contained in supportedElementNames().
   /// \sa supportedElementNames()
-  virtual bool isElementSupported(QDomElement layoutElement)const;
+  virtual bool isElementSupported(const QDomElement& layoutElement)const;
 
   /// Return the useCachedViews property value.
   /// \sa useCachedViews
@@ -85,7 +85,7 @@ public:
   /// This method can be reimplemented. Sets the widget visibility to true
   /// and register the view by default.
   /// \sa viewsFromXML()
-  virtual void setupView(QDomElement layoutElement, QWidget* view);
+  virtual void setupView(const QDomElement& layoutElement, QWidget* view);
   /// Virtual method that returns a widget from a "view" layout element.
   /// You are ensured that the tagName of the element is one of the element
   /// from the supportedElementNames() list.
@@ -94,7 +94,7 @@ public:
   /// a new view using createViewFromXML(). Must be reimplemented.
   /// \sa viewsFromXML(), setupView(), registeredViews(), useCachedView,
   /// createViewFromXML()
-  virtual QWidget* viewFromXML(QDomElement layoutElement);
+  virtual QWidget* viewFromXML(const QDomElement& layoutElement);
   /// Virtual method that returns a list of widgets from a "view" layout
   /// element.
   /// If the parent "item" element has a "multiple=true" XML attribute,
@@ -105,7 +105,7 @@ public:
   /// Returns previously registered or cached views if any, otherwise create
   /// new views using createViewsFromXML().
   /// \sa viewFromXML(), registeredViews(),
-  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> viewsFromXML(const QDomElement& layoutElement);
 
   /// Return all the widgets that have been registered.
   /// Used internally for testing.
@@ -116,11 +116,11 @@ protected:
 
   /// Create a new view from a layoutElement. Returns 0 by default
   /// \sa viewFromXML
-  virtual QWidget* createViewFromXML(QDomElement layoutElement);
+  virtual QWidget* createViewFromXML(const QDomElement& layoutElement);
   /// Create new views from a layoutElement. Returns createViewFromXML()
   /// by default.
   /// \sa viewsFromXML(), createViewFromXML()
-  virtual QList<QWidget*> createViewsFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> createViewsFromXML(const QDomElement& layoutElement);
 
   /// Return the list of widgets that have already been created by
   /// view(s)FromXML().
@@ -129,11 +129,11 @@ protected:
 
   /// Save the view to reuse it later on (in view(s)FromXML() ).
   /// \sa registerView(), registeredViews()
-  virtual void registerView(QDomElement layoutElement, QWidget* view);
+  virtual void registerView(const QDomElement& layoutElement, QWidget* view);
 
   /// Forget about the view. The view is not being deleted.
   /// \sa registerView(), registeredViews()
-  virtual void unregisterView(QDomElement layoutElement, QWidget* view);
+  virtual void unregisterView(const QDomElement& layoutElement, QWidget* view);
 
   /// Forget about the view. The view is not being deleted.
   /// \sa registerView(), unregisterView()
@@ -179,7 +179,7 @@ public:
   {
     this->setUseCachedViews(true);
   }
-  virtual QWidget* createViewFromXML(QDomElement layoutElement){
+  virtual QWidget* createViewFromXML(const QDomElement& layoutElement){
     Q_UNUSED(layoutElement);
     return new T;
   }

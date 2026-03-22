@@ -187,7 +187,7 @@ public:
    * @return Customized object for the tracked item or <code>null</code> if
    *         the item is not to be tracked.
    */
-  virtual T customizerAdding(S item, const R& related) = 0;
+  virtual T customizerAdding(const S& item, const R& related) = 0;
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -197,7 +197,7 @@ public:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  virtual void customizerModified(S item, const R& related,
+  virtual void customizerModified(const S& item, const R& related,
                                   T object) = 0;
 
   /**
@@ -208,7 +208,7 @@ public:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  virtual void customizerRemoved(S item, const R& related,
+  virtual void customizerRemoved(const S& item, const R& related,
                                  T object) = 0;
 
   /**

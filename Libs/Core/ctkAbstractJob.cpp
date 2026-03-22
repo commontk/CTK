@@ -207,7 +207,7 @@ QString ctkAbstractJob::runningThreadID() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
+void ctkAbstractJob::setRunningThreadID(const QString& runningThreadID)
 {
   this->RunningThreadID = runningThreadID;
 }
@@ -219,7 +219,7 @@ QString ctkAbstractJob::log() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::addLog(QString log)
+void ctkAbstractJob::addLog(const QString& log)
 {
   this->Log += log;
 }

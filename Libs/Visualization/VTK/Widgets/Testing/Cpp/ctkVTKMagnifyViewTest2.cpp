@@ -46,8 +46,8 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
-                  QString baselineFilename)
+bool imageCompare(ctkVTKMagnifyView * magnify, const QString& baselineDirectory,
+                  const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(magnify);
   QImage baseline(baselineDirectory + "/" + baselineFilename);
@@ -56,8 +56,8 @@ bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
 
 //-----------------------------------------------------------------------------
 // (Used to create baselines, not during testing).
-void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
-               QString baselineFilename)
+void imageSave(ctkVTKMagnifyView * magnify, const QString& baselineDirectory,
+               const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(magnify);
   output.save(baselineDirectory + "/" + baselineFilename);
@@ -66,8 +66,8 @@ void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
 //-----------------------------------------------------------------------------
 bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyView * magnify,
                      QWidget * underWidget, bool shouldBeUnder,
-                     QString baselineDirectory, QString testName,
-                     QString testNumber, QString errorMessage)
+                     const QString& baselineDirectory, const QString& testName,
+                     const QString& testNumber, const QString& errorMessage)
 {
   QTimer::singleShot(time, &app, SLOT(quit()));
   if (app.exec() == EXIT_FAILURE)

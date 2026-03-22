@@ -154,7 +154,7 @@ struct derivedTestData
   ctkExampleDerivedWorkflowWidgetStep* stepToChangeLineEdit;
   QString lineEditText;
 
-  derivedTestData(QPushButton* newButtonToClick, ctkExampleDerivedWorkflowWidgetStep* newCurrentStep, ctkExampleDerivedWorkflowWidgetStep* newHiddenStep, ctkExampleDerivedWorkflowWidgetStep* newStepToChangeLineEdit=0, QString newLineEditText="")
+  derivedTestData(QPushButton* newButtonToClick, ctkExampleDerivedWorkflowWidgetStep* newCurrentStep, ctkExampleDerivedWorkflowWidgetStep* newHiddenStep, ctkExampleDerivedWorkflowWidgetStep* newStepToChangeLineEdit=0, const QString& newLineEditText="")
   {
     this->buttonToClick = newButtonToClick;
     this->currentStep = newCurrentStep;

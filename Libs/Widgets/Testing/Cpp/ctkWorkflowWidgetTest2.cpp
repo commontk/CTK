@@ -155,7 +155,7 @@ struct signalSlotTestData
   ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* qObjectToChangeLineEdit;
   QString lineEditText;
 
-  signalSlotTestData(QPushButton* newButtonToClick, ctkWorkflowWidgetStep* newCurrentStep, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newCurrentQObject, ctkWorkflowWidgetStep* newHiddenStep, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newHiddenQObject, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newQObjectToChangeLineEdit=0, QString newLineEditText="")
+  signalSlotTestData(QPushButton* newButtonToClick, ctkWorkflowWidgetStep* newCurrentStep, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newCurrentQObject, ctkWorkflowWidgetStep* newHiddenStep, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newHiddenQObject, ctkExampleWorkflowWidgetStepUsingSignalsAndSlots* newQObjectToChangeLineEdit=0, const QString& newLineEditText="")
   {
     this->buttonToClick = newButtonToClick;
     this->currentStep = newCurrentStep;

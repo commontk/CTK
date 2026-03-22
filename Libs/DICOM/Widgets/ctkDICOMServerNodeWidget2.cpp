@@ -271,7 +271,7 @@ public:
                                 const QString& status);
 
   void settingsModified();
-  void restoreFocus(QModelIndexList selectedIndexes,
+  void restoreFocus(const QModelIndexList& selectedIndexes,
                     int horizontalScrollBarValue,
                     int verticalScrollBarValue,
                     bool resetServerStatus = true);
@@ -933,7 +933,7 @@ void ctkDICOMServerNodeWidget2Private::settingsModified()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedIndexes,
+void ctkDICOMServerNodeWidget2Private::restoreFocus(const QModelIndexList& selectedIndexes,
                                                     int horizontalScrollBarValue,
                                                     int verticalScrollBarValue,
                                                     bool resetServerStatus)

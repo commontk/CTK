@@ -45,7 +45,7 @@ void getSpyReport(QSignalSpy& spy, double expectedValue)
 }
 
 //-----------------------------------------------------------------------------
-void getSpyReport(QSignalSpy& spy, QString expectedValue)
+void getSpyReport(QSignalSpy& spy, const QString& expectedValue)
 {
   QCOMPARE(spy.count(), 1);
 

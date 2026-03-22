@@ -53,7 +53,7 @@ private slots:
 
 private:
   void testDecimals(ctkCoordinatesWidget* coordinatesWidget, int decimals);
-  void testDecimals(ctkCoordinatesWidget* coordinatesWidget, QString displayedValues);
+  void testDecimals(ctkCoordinatesWidget* coordinatesWidget, const QString& displayedValues);
 };
 
 // ----------------------------------------------------------------------------
@@ -124,7 +124,7 @@ void ctkCoordinatesWidgetTester
 // ----------------------------------------------------------------------------
 void ctkCoordinatesWidgetTester
 ::testDecimals(ctkCoordinatesWidget* coordinatesWidget,
-               QString expectedDisplayedText)
+               const QString& expectedDisplayedText)
 {
   QStringList displayedText;
   QList<QDoubleSpinBox*> spinBoxes =

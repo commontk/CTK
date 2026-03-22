@@ -453,7 +453,7 @@ double ctkCoordinatesWidget::singleStep() const
 }
 
 //------------------------------------------------------------------------------
-void ctkCoordinatesWidget::setCoordinatesAsString(QString _pos)
+void ctkCoordinatesWidget::setCoordinatesAsString(const QString& _pos)
 {
   Q_D(ctkCoordinatesWidget);
   QStringList posList = _pos.split(',');

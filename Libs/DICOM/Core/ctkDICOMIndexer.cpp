@@ -442,14 +442,14 @@ ctkDICOMDatabase* ctkDICOMIndexer::database()
  }
 
  //------------------------------------------------------------------------------
- void ctkDICOMIndexer::addFile(ctkDICOMDatabase* db, const QString filePath, bool copyFile/*=false*/)
+ void ctkDICOMIndexer::addFile(ctkDICOMDatabase* db, const QString& filePath, bool copyFile/*=false*/)
  {
    this->setDatabase(db);
    this->addFile(filePath, copyFile);
  }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addFile(const QString filePath, bool copyFile/*=false*/)
+void ctkDICOMIndexer::addFile(const QString& filePath, bool copyFile/*=false*/)
 {
   Q_D(ctkDICOMIndexer);
   DICOMIndexingQueue::IndexingRequest request;

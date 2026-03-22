@@ -128,7 +128,7 @@ public:
 
   /// Set/Get the coordinates. Use commas to separate elements, spaces are
   /// allowed: e.g. "0,0.0, 0."
-  void setCoordinatesAsString(QString pos);
+  void setCoordinatesAsString(const QString& pos);
   QString coordinatesAsString()const;
 
   /// Set/Get the coordinates

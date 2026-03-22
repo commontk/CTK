@@ -205,13 +205,13 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMItem
     ///
     /// \brief Set-methods for for all subtypes of DcmByteString
     ///
-    bool SetElementAsString( const DcmTag& tag, QString string );
-    bool SetElementAsStringList( const DcmTag& tag, QStringList stringList ); //> Currently not implemented
-    bool SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName );
-    bool SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList ); //> Currently not implemented
+    bool SetElementAsString( const DcmTag& tag, const QString& string );
+    bool SetElementAsStringList( const DcmTag& tag, const QStringList& stringList ); //> Currently not implemented
+    bool SetElementAsPersonName( const DcmTag& tag, const ctkDICOMPersonName& personName );
+    bool SetElementAsPersonNameList( const DcmTag& tag, const ctkDICOMPersonNameList& personNameList ); //> Currently not implemented
     bool SetElementAsDate( const DcmTag& tag, QDate date );
     bool SetElementAsTime( const DcmTag& tag, QTime time );
-    bool SetElementAsDateTime( const DcmTag& tag, QDateTime dateTime );
+    bool SetElementAsDateTime( const DcmTag& tag, const QDateTime& dateTime );
     bool SetElementAsInteger( const DcmTag& tag, long value, unsigned long pos = 0 ); // type IS
     bool SetElementAsSignedShort( const DcmTag& tag, int value, unsigned long pos = 0 ); // type SS
     bool SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos = 0 ); // type US
@@ -276,7 +276,7 @@ protected:
     /// You can override this method in a subclass to store a serialized
     /// version of the object to some storage mechanism, eg a database
     ///
-    virtual void SetStoredSerialization(QString serializedDataset);
+    virtual void SetStoredSerialization(const QString& serializedDataset);
 
   QScopedPointer<ctkDICOMItemPrivate> d_ptr;
 

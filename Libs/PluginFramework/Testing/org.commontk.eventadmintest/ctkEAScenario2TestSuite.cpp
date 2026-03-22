@@ -129,7 +129,7 @@ void ctkEAScenario2EventConsumer::handleEvent(const ctkEvent& event)
 
 //----------------------------------------------------------------------------
 ctkEAScenario2EventPublisher::ctkEAScenario2EventPublisher(ctkPluginContext* context,
-                             const QString& name, const QStringList topics,
+                             const QString& name, const QStringList& topics,
                              int id, int numOfMessage)
   : eventAdmin(0), context(context),
     messageTosend(numOfMessage), topicsToSend(topics)

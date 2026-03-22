@@ -55,8 +55,8 @@ public:
   void setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler);
 
 public Q_SLOTS:
-  void onJobInitialized(QVariant);
-  void onJobQueued(QVariant);
+  void onJobInitialized(const QVariant&);
+  void onJobQueued(const QVariant&);
   void onJobStarted(QList<QVariant>);
   void onJobAttemptFailed(QList<QVariant>);
   void onJobFailed(QList<QVariant>);
@@ -64,8 +64,8 @@ public Q_SLOTS:
   void onJobFinished(QList<QVariant>);
   void onProgressJobDetail(QList<QVariant>);
 
-  void onFilterTextChanged(QString);
-  void onFilterColumnChanged(QString);
+  void onFilterTextChanged(const QString&);
+  void onFilterColumnChanged(const QString&);
 
   void onJobsViewSelectionChanged();
   void onSelectAllButtonClicked();

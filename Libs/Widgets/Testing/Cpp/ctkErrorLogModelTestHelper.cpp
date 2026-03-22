@@ -131,7 +131,7 @@ QString checkBoolean(int line, const char* valueName, bool current, bool expecte
 }
 
 //-----------------------------------------------------------------------------
-QString checkString(int line, const char* valueName, QString current, QString expected)
+QString checkString(int line, const char* valueName, const QString& current, const QString& expected)
 {
   if (current != expected)
   {

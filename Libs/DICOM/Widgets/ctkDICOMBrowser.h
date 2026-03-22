@@ -105,7 +105,7 @@ public:
   /// delegate to the corresponding routines of the internal
   /// instance of the database.
   /// @see ctkDICOMDatabase
-  void setTagsToPrecache(const QStringList tags);
+  void setTagsToPrecache(const QStringList& tags);
   const QStringList tagsToPrecache();
 
   Q_INVOKABLE ctkDICOMDatabase* database();
@@ -191,14 +191,14 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   ///
   /// \sa importDirectory(QString directory, int mode)
-  void importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void importDirectories(const QStringList& directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \brief Import a directory
   ///
   /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
   ///
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
-  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void importDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \brief Import a list of files
   ///
@@ -214,7 +214,7 @@ public Q_SLOTS:
   void waitForImportFinished();
 
   /// \deprecated importDirectory() should be used
-  void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void onImportDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// slots to capture status updates from the database during an
   /// import operation
@@ -268,7 +268,7 @@ protected:
     /// empty, uses the UID.
     /// Returns true if the user confirms the delete, false otherwise.
     /// Remembers if the user doesn't want to show the confirmation again.
-    bool confirmDeleteSelectedUIDs(QStringList uids);
+    bool confirmDeleteSelectedUIDs(const QStringList& uids);
 
 protected Q_SLOTS:
     /// \brief Import directories
@@ -277,7 +277,7 @@ protected Q_SLOTS:
     /// directories from the Import Dialog.
     ///
     /// \sa importDirectories(QString directory, int mode)
-    void onImportDirectoriesSelected(QStringList directories);
+    void onImportDirectoriesSelected(const QStringList& directories);
 
     void onImportDirectoryComboBoxCurrentIndexChanged(int index);
 
@@ -294,7 +294,7 @@ protected Q_SLOTS:
 
     /// Called to export the series associated with the selected UIDs
     /// \sa exportSelectedStudies, exportSelectedPatients
-    void exportSeries(QString dirPath, QStringList uids);
+    void exportSeries(const QString& dirPath, const QStringList& uids);
 
     /// Called to export the studies associated with the selected UIDs
     /// \sa exportSelectedSeries, exportSelectedPatients

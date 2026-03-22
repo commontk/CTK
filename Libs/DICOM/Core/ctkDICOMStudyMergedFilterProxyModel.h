@@ -52,27 +52,27 @@ public:
   virtual ~ctkDICOMStudyMergedFilterProxyModel();
 
   /// Set the list of source proxy models to merge
-  Q_INVOKABLE void setSourceProxyFilterModels(const QList<ctkDICOMStudyFilterProxyModel*>& models);
+  Q_INVOKABLE void setSourceProxyFilterModels(const QList<ctkDICOMStudyFilterProxyModel *>& models);
 
   /// Clear all source models
   Q_INVOKABLE void clearSourceProxyFilterModels();
 
   /// Refresh studies by rebuilding the merged rows
-  Q_INVOKABLE void refreshStudies(QList<ctkDICOMStudyModel*> models = QList<ctkDICOMStudyModel*>());
+  Q_INVOKABLE void refreshStudies(const QList<ctkDICOMStudyModel *>& models = QList<ctkDICOMStudyModel*>());
 
   /// Get the list of source filter proxy models
-  Q_INVOKABLE QList<ctkDICOMStudyFilterProxyModel*> sourceProxyFilterModels() const;
-  Q_INVOKABLE QList<ctkDICOMStudyModel*> sourceModels() const;
+  Q_INVOKABLE QList<ctkDICOMStudyFilterProxyModel *> sourceProxyFilterModels() const;
+  Q_INVOKABLE QList<ctkDICOMStudyModel *> sourceModels() const;
 
   /// Reimplemented from QAbstractListModel
   Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
   Q_INVOKABLE QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
   /// Map from merged index to source model and source index
-  Q_INVOKABLE QPair<ctkDICOMStudyModel*, QModelIndex> mapToSource(const QModelIndex& proxyIndex) const;
+  Q_INVOKABLE QPair<ctkDICOMStudyModel *, QModelIndex> mapToSource(const QModelIndex& proxyIndex) const;
 
   /// Map from source model and source index to merged index
-  Q_INVOKABLE QModelIndex mapFromSource(const QPair<ctkDICOMStudyModel*, QModelIndex>& sourceInfo) const;
+  Q_INVOKABLE QModelIndex mapFromSource(const QPair<ctkDICOMStudyModel *, QModelIndex>& sourceInfo) const;
 
 protected slots:
   void onSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);

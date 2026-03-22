@@ -165,7 +165,7 @@ QDateTime ctkDateRangeWidget::endDateTime()const
 }
 
 // --------------------------------------------------------------------------
-void ctkDateRangeWidget::setStartDateTime(QDateTime dateTime)
+void ctkDateRangeWidget::setStartDateTime(const QDateTime& dateTime)
 {
   Q_D(ctkDateRangeWidget);
   d->StartDate->setDateTime(dateTime);
@@ -173,7 +173,7 @@ void ctkDateRangeWidget::setStartDateTime(QDateTime dateTime)
 }
 
 // --------------------------------------------------------------------------
-void ctkDateRangeWidget::setEndDateTime(QDateTime dateTime)
+void ctkDateRangeWidget::setEndDateTime(const QDateTime& dateTime)
 {
   Q_D(ctkDateRangeWidget);
   d->EndDate->setDateTime(dateTime);
@@ -181,7 +181,7 @@ void ctkDateRangeWidget::setEndDateTime(QDateTime dateTime)
 }
 
 // --------------------------------------------------------------------------
-void ctkDateRangeWidget::setDateTimeRange(QDateTime startDateTime, QDateTime endDateTime)
+void ctkDateRangeWidget::setDateTimeRange(const QDateTime& startDateTime, const QDateTime& endDateTime)
 {
   Q_D(ctkDateRangeWidget);
   d->StartDate->setDateTime(startDateTime.isValid() ?

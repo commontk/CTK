@@ -37,7 +37,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkLogger::ctkLogger(QString name, QObject* _parent)
+ctkLogger::ctkLogger(const QString& name, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new ctkLoggerPrivate)
 {

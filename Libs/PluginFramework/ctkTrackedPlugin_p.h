@@ -68,7 +68,7 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  T customizerAdding(QSharedPointer<ctkPlugin> item,
+  T customizerAdding(const QSharedPointer<ctkPlugin>& item,
                      const ctkPluginEvent& related);
 
   /**
@@ -79,7 +79,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerModified(QSharedPointer<ctkPlugin> item,
+  void customizerModified(const QSharedPointer<ctkPlugin>& item,
                           const ctkPluginEvent& related, T object);
 
   /**
@@ -90,7 +90,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerRemoved(QSharedPointer<ctkPlugin> item,
+  void customizerRemoved(const QSharedPointer<ctkPlugin>& item,
                          const ctkPluginEvent& related, T object);
 };
 
