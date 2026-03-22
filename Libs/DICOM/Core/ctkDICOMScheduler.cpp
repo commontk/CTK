@@ -61,7 +61,7 @@ public:
     return this->MessagesPerThread;
   }
 
-  QString messageByThreadID(QString threadID)
+  QString messageByThreadID(const QString& threadID)
   {
     if (!this->MessagesPerThread.contains(threadID))
     {
@@ -877,7 +877,7 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
                                                                             const QStringList &studyInstanceUIDs,
                                                                             const QStringList &seriesInstanceUIDs,
                                                                             const QStringList &sopInstanceUIDs,
-                                                                            QList<ctkAbstractJob::JobStatus> statusFilters)
+                                                                            const QList<ctkAbstractJob::JobStatus>& statusFilters)
 {
   Q_D(ctkDICOMScheduler);
 

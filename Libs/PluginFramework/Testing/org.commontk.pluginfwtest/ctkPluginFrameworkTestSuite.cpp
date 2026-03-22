@@ -745,7 +745,7 @@ bool ctkPluginFrameworkTestSuite::checkListenerEvents(
 // reset the events
 bool ctkPluginFrameworkTestSuite::checkSyncListenerEvents(
     bool pexp, ctkPluginEvent::Type ptype, QSharedPointer<ctkPlugin> pX,
-    ctkServiceReference servX)
+    const ctkServiceReference& servX)
 {
   Q_UNUSED(servX)
 

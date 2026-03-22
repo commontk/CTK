@@ -90,7 +90,7 @@ public:
    *            name of the Consumer
    * @param id
    */
-  ctkEAScenario4EventConsumer(ctkPluginContext* pluginContext, const QStringList topics,
+  ctkEAScenario4EventConsumer(ctkPluginContext* pluginContext, const QStringList& topics,
                        int numSyncMsg, int numAsyncMsg, const QString& filter);
 
   void runTest();

@@ -115,7 +115,7 @@ void ctkLayoutFactory::setupLayout()
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkLayoutFactory::viewFromXML(QDomElement viewElement)
+QWidget* ctkLayoutFactory::viewFromXML(const QDomElement& viewElement)
 {
   Q_D(ctkLayoutFactory);
   QWidget* res = 0;
@@ -133,7 +133,7 @@ QWidget* ctkLayoutFactory::viewFromXML(QDomElement viewElement)
 }
 
 //-----------------------------------------------------------------------------
-QList<QWidget*> ctkLayoutFactory::viewsFromXML(QDomElement viewElement)
+QList<QWidget*> ctkLayoutFactory::viewsFromXML(const QDomElement& viewElement)
 {
   QWidgetList res;
   QList<ctkLayoutViewFactory*> factories = this->viewFactories(viewElement);
@@ -153,7 +153,7 @@ QList<QWidget*> ctkLayoutFactory::viewsFromXML(QDomElement viewElement)
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutFactory::setupView(QDomElement viewElement, QWidget* view)
+void ctkLayoutFactory::setupView(const QDomElement& viewElement, QWidget* view)
 {
   Q_D(ctkLayoutFactory);
   ctkLayoutViewFactory* factory = d->ViewFactory[view];
@@ -169,7 +169,7 @@ void ctkLayoutFactory::setupView(QDomElement viewElement, QWidget* view)
 }
 
 //-----------------------------------------------------------------------------
-QList<ctkLayoutViewFactory*> ctkLayoutFactory::viewFactories(QDomElement viewElement)const
+QList<ctkLayoutViewFactory*> ctkLayoutFactory::viewFactories(const QDomElement& viewElement)const
 {
   Q_D(const ctkLayoutFactory);
   QList<ctkLayoutViewFactory*> res;

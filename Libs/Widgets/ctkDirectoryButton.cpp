@@ -255,7 +255,7 @@ namespace {
   {
     Q_OBJECT
   public:
-    ExcludeReadOnlyFilterProxyModel(QPalette palette, QObject *parent)
+    ExcludeReadOnlyFilterProxyModel(const QPalette& palette, QObject *parent)
       : QSortFilterProxyModel(parent)
       , Palette(palette)
     {

@@ -36,8 +36,8 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
-                  QString baselineFilename)
+bool imageCompare(ctkCrosshairLabel& crosshair, const QString& baselineDirectory,
+                  const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(&crosshair);
   QImage baseline(baselineDirectory + "/" + baselineFilename);
@@ -47,8 +47,8 @@ bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
 
 //-----------------------------------------------------------------------------
 // (Used to create baselines, not during testing).
-void imageSave(ctkCrosshairLabel& crosshair, QString baselineDirectory,
-               QString baselineFilename)
+void imageSave(ctkCrosshairLabel& crosshair, const QString& baselineDirectory,
+               const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(&crosshair);
   output.save(baselineDirectory + "/" + baselineFilename);
@@ -56,8 +56,8 @@ void imageSave(ctkCrosshairLabel& crosshair, QString baselineDirectory,
 
 //-----------------------------------------------------------------------------
 bool runBaselineTest(ctkCrosshairLabel& crosshair,
-                     QString baselineDirectory, QString baselineFilename,
-                     QString errorMessage)
+                     const QString& baselineDirectory, const QString& baselineFilename,
+                     const QString& errorMessage)
 {
   QApplication::processEvents();
   if (!imageCompare(crosshair, baselineDirectory, baselineFilename))

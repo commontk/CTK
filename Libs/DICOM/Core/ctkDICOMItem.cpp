@@ -729,7 +729,7 @@ int ctkDICOMItem::GetElementAsUnsignedShort( const DcmTag& tag, unsigned long po
   return i;
 }
 
-bool ctkDICOMItem::SetElementAsString( const DcmTag& tag, QString string )
+bool ctkDICOMItem::SetElementAsString( const DcmTag& tag, const QString& string )
 {
   Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
@@ -737,7 +737,7 @@ bool ctkDICOMItem::SetElementAsString( const DcmTag& tag, QString string )
   return CheckCondition( d->m_DcmItem->putAndInsertString( tag, string.toLatin1().data() ) );
 }
 
-bool ctkDICOMItem::SetElementAsStringList( const DcmTag& /*tag*/, QStringList /*stringList*/ )
+bool ctkDICOMItem::SetElementAsStringList( const DcmTag& /*tag*/, const QStringList& /*stringList*/ )
 {
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Find out how this can be implemented with DcmDataset methods; there is no method for
@@ -745,7 +745,7 @@ bool ctkDICOMItem::SetElementAsStringList( const DcmTag& /*tag*/, QStringList /*
   return false;
 }
 
-bool ctkDICOMItem::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName )
+bool ctkDICOMItem::SetElementAsPersonName( const DcmTag& tag, const ctkDICOMPersonName& personName )
 {
   Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
@@ -764,7 +764,7 @@ bool ctkDICOMItem::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName
   return false;
 }
 
-bool ctkDICOMItem::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList )
+bool ctkDICOMItem::SetElementAsPersonNameList( const DcmTag& tag, const ctkDICOMPersonNameList& personNameList )
 {
   Q_UNUSED(tag);
   Q_UNUSED(personNameList);
@@ -804,7 +804,7 @@ bool ctkDICOMItem::SetElementAsTime( const DcmTag& tag, QTime time )
   return false;
 }
 
-bool ctkDICOMItem::SetElementAsDateTime( const DcmTag& tag, QDateTime dateTime )
+bool ctkDICOMItem::SetElementAsDateTime( const DcmTag& tag, const QDateTime& dateTime )
 {
   Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
@@ -1037,7 +1037,7 @@ QString ctkDICOMItem::GetStoredSerialization()
 
 
 
-void ctkDICOMItem::SetStoredSerialization(QString serializedDataset)
+void ctkDICOMItem::SetStoredSerialization(const QString& serializedDataset)
 {
   Q_UNUSED(serializedDataset);
   throw std::runtime_error("No serialization implemented for this object!");

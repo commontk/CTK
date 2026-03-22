@@ -40,7 +40,7 @@ public:
   typedef QObject Superclass;
 
   /// Default level is ctkErrorLogLevel::LogLevel::Warning
-  explicit ctkLogger(QString name, QObject* parent = 0);
+  explicit ctkLogger(const QString& name, QObject* parent = 0);
   virtual ~ctkLogger();
 
   Q_INVOKABLE void trace(const QString& s);

@@ -82,14 +82,14 @@ QStringList ctkDICOMDisplayedFieldGeneratorDefaultRule::getRequiredDICOMTags()
 
 //------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGeneratorDefaultRule::registerEmptyFieldNames(
-  QMultiMap<QString, QString> emptyFieldsDisplaySeries,
-  QMultiMap<QString, QString> emptyFieldsDisplayStudies,
-  QMultiMap<QString, QString> emptyFieldsDisplayPatients )
+  const QMultiMap<QString, QString>& emptyFieldsDisplaySeries,
+  const QMultiMap<QString, QString>& emptyFieldsDisplayStudies,
+  const QMultiMap<QString, QString>& emptyFieldsDisplayPatients )
 {
-  Q_UNUSED(emptyFieldsDisplaySeries);
   Q_UNUSED(emptyFieldsDisplayStudies);
   Q_UNUSED(emptyFieldsDisplayPatients);
-  emptyFieldsDisplaySeries.insert("SeriesDescription", EMPTY_SERIES_DESCRIPTION);
+  QMultiMap<QString, QString> localSeries = emptyFieldsDisplaySeries;
+  localSeries.insert("SeriesDescription", EMPTY_SERIES_DESCRIPTION);
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void ctkDICOMDisplayedFieldGeneratorDefaultRule::mergeDisplayedFieldsForInstance
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDisplayedFieldGeneratorDefaultRule::humanReadablePatientName(QString dicomPatientName)
+QString ctkDICOMDisplayedFieldGeneratorDefaultRule::humanReadablePatientName(const QString& dicomPatientName)
 {
   OFString dicomName(dicomPatientName.toUtf8().constData());
   OFString formattedName;

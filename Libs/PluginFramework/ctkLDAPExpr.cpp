@@ -98,12 +98,12 @@ class ctkLDAPExprData : public QSharedData
 {
 public:
 
-  ctkLDAPExprData( int op, QList<ctkLDAPExpr> args )
+  ctkLDAPExprData( int op, const QList<ctkLDAPExpr>& args )
     : m_operator(op), m_args(args)
   {
   }
 
-  ctkLDAPExprData( int op, QString attrName, QString attrValue )
+  ctkLDAPExprData( int op, const QString& attrName, const QString& attrValue )
     : m_operator(op), m_attrName(attrName), m_attrValue(attrValue)
   {
   }

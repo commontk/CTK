@@ -97,7 +97,7 @@ void ctkDICOMDatabasePrivate::resetLastInsertedValues()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::init(QString databaseFilename)
+void ctkDICOMDatabasePrivate::init(const QString& databaseFilename)
 {
   Q_Q(ctkDICOMDatabase);
 
@@ -255,7 +255,7 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::executeScript(const QString script)
+bool ctkDICOMDatabasePrivate::executeScript(const QString& script)
 {
   QFile scriptFile(script);
   if  ( !scriptFile.open(QIODevice::ReadOnly) )
@@ -290,7 +290,7 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabasePrivate::filenames(QString table)
+QStringList ctkDICOMDatabasePrivate::filenames(const QString& table)
 {
   /// get all filenames from the database
   QSqlQuery allFilesQuery(this->Database);
@@ -608,7 +608,7 @@ bool ctkDICOMDatabasePrivate::openTagCacheDatabase()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID)
+void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QString& sopInstanceUID)
 {
   Q_Q(ctkDICOMDatabase);
 
@@ -1485,7 +1485,7 @@ CTK_SET_CPP(ctkDICOMDatabase, bool, setUseSystemFileCopy, UseSystemFileCopy);
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
+ctkDICOMDatabase::ctkDICOMDatabase(const QString& databaseFile)
   : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
   Q_D(ctkDICOMDatabase);
@@ -1674,7 +1674,7 @@ QString ctkDICOMDatabase::schemaVersionLoaded()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setSchemaVersion(QString schemaVersion)
+void ctkDICOMDatabase::setSchemaVersion(const QString& schemaVersion)
 {
   Q_D(ctkDICOMDatabase);
   d->SchemaVersion = schemaVersion;
@@ -1817,7 +1817,7 @@ QStringList ctkDICOMDatabase::patients()
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::studiesForPatient(QString dbPatientID)
+QStringList ctkDICOMDatabase::studiesForPatient(const QString& dbPatientID)
 {
   Q_D(ctkDICOMDatabase);
   QStringList result;
@@ -1836,7 +1836,7 @@ QStringList ctkDICOMDatabase::studiesForPatient(QString dbPatientID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::studyForSeries(QString seriesUID)
+QString ctkDICOMDatabase::studyForSeries(const QString& seriesUID)
 {
   Q_D(ctkDICOMDatabase);
   QString result;
@@ -1855,7 +1855,7 @@ QString ctkDICOMDatabase::studyForSeries(QString seriesUID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::patientForStudy(QString studyUID)
+QString ctkDICOMDatabase::patientForStudy(const QString& studyUID)
 {
   Q_D(ctkDICOMDatabase);
   QString result;
@@ -1874,7 +1874,7 @@ QString ctkDICOMDatabase::patientForStudy(QString studyUID)
 }
 
 //------------------------------------------------------------------------------
-QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(QString fileName)
+QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(const QString& fileName)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -1918,7 +1918,7 @@ QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(QString fileName)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::descriptionForSeries(const QString seriesUID)
+QString ctkDICOMDatabase::descriptionForSeries(const QString& seriesUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -1938,7 +1938,7 @@ QString ctkDICOMDatabase::descriptionForSeries(const QString seriesUID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::descriptionForStudy(const QString studyUID)
+QString ctkDICOMDatabase::descriptionForStudy(const QString& studyUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -1958,7 +1958,7 @@ QString ctkDICOMDatabase::descriptionForStudy(const QString studyUID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::nameForPatient(const QString patientUID)
+QString ctkDICOMDatabase::nameForPatient(const QString& patientUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -1978,7 +1978,7 @@ QString ctkDICOMDatabase::nameForPatient(const QString patientUID)
 }
 
 //------------------------------------------------------------------------------
-QMap<QString, QStringList> ctkDICOMDatabase::connectionsInformationForPatient(const QString patientUID)
+QMap<QString, QStringList> ctkDICOMDatabase::connectionsInformationForPatient(const QString& patientUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2010,16 +2010,16 @@ QMap<QString, QStringList> ctkDICOMDatabase::connectionsInformationForPatient(co
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::updateConnectionsForPatient(const QString patientUID,
-                                                   const QStringList allowList,
-                                                   const QStringList denyList)
+bool ctkDICOMDatabase::updateConnectionsForPatient(const QString& patientUID,
+                                                   const QStringList& allowList,
+                                                   const QStringList& denyList)
 {
   Q_D(ctkDICOMDatabase);
   return d->updateConnections(patientUID, allowList, denyList);
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::displayedNameForPatient(const QString patientUID)
+QString ctkDICOMDatabase::displayedNameForPatient(const QString& patientUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2041,7 +2041,7 @@ QString ctkDICOMDatabase::displayedNameForPatient(const QString patientUID)
 }
 
 //------------------------------------------------------------------------------
-QDateTime ctkDICOMDatabase::insertDateTimeForPatient(const QString patientUID)
+QDateTime ctkDICOMDatabase::insertDateTimeForPatient(const QString& patientUID)
 {
   Q_D(ctkDICOMDatabase);
   QDateTime result;
@@ -2060,7 +2060,7 @@ QDateTime ctkDICOMDatabase::insertDateTimeForPatient(const QString patientUID)
 }
 
 //------------------------------------------------------------------------------
-QDateTime ctkDICOMDatabase::insertDateTimeForStudy(const QString studyInstanceUID)
+QDateTime ctkDICOMDatabase::insertDateTimeForStudy(const QString& studyInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QDateTime result;
@@ -2079,7 +2079,7 @@ QDateTime ctkDICOMDatabase::insertDateTimeForStudy(const QString studyInstanceUI
 }
 
 //------------------------------------------------------------------------------
-QDateTime ctkDICOMDatabase::insertDateTimeForSeries(const QString seriesInstanceUID)
+QDateTime ctkDICOMDatabase::insertDateTimeForSeries(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QDateTime result;
@@ -2098,7 +2098,7 @@ QDateTime ctkDICOMDatabase::insertDateTimeForSeries(const QString seriesInstance
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fieldForPatient(const QString field, const QString patientUID)
+QString ctkDICOMDatabase::fieldForPatient(const QString& field, const QString& patientUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2121,7 +2121,7 @@ QString ctkDICOMDatabase::fieldForPatient(const QString field, const QString pat
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fieldForStudy(const QString field, const QString studyInstanceUID)
+QString ctkDICOMDatabase::fieldForStudy(const QString& field, const QString& studyInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2144,7 +2144,7 @@ QString ctkDICOMDatabase::fieldForStudy(const QString field, const QString study
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fieldForSeries(const QString field, const QString seriesInstanceUID)
+QString ctkDICOMDatabase::fieldForSeries(const QString& field, const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2224,7 +2224,7 @@ QStringList ctkDICOMDatabase::seriesFieldNames() const
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
+QStringList ctkDICOMDatabase::seriesForStudy(const QString& studyUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2244,7 +2244,7 @@ QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID, int hits/*=-1*/)
+QStringList ctkDICOMDatabase::instancesForSeries(const QString& seriesUID, int hits/*=-1*/)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2269,7 +2269,7 @@ QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID, int hi
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
+QStringList ctkDICOMDatabase::filesForSeries(const QString& seriesUID, int hits/*=-1*/)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2296,7 +2296,7 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::urlsForSeries(QString seriesUID, int hits/*=-1*/)
+QStringList ctkDICOMDatabase::urlsForSeries(const QString& seriesUID, int hits/*=-1*/)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2322,7 +2322,7 @@ QStringList ctkDICOMDatabase::urlsForSeries(QString seriesUID, int hits/*=-1*/)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
+QString ctkDICOMDatabase::fileForInstance(const QString& sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2342,7 +2342,7 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::urlForInstance(QString sopInstanceUID)
+QString ctkDICOMDatabase::urlForInstance(const QString& sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2362,7 +2362,7 @@ QString ctkDICOMDatabase::urlForInstance(QString sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::seriesForFile(QString fileName)
+QString ctkDICOMDatabase::seriesForFile(const QString& fileName)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2382,7 +2382,7 @@ QString ctkDICOMDatabase::seriesForFile(QString fileName)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::instanceForFile(QString fileName)
+QString ctkDICOMDatabase::instanceForFile(const QString& fileName)
 {
   Q_D(ctkDICOMDatabase);
   QString result;
@@ -2401,7 +2401,7 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::instanceForURL(QString url)
+QString ctkDICOMDatabase::instanceForURL(const QString& url)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2421,7 +2421,7 @@ QString ctkDICOMDatabase::instanceForURL(QString url)
 }
 
 //------------------------------------------------------------------------------
-QDateTime ctkDICOMDatabase::insertDateTimeForInstance(QString sopInstanceUID)
+QDateTime ctkDICOMDatabase::insertDateTimeForInstance(const QString& sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QDateTime result;
@@ -2545,7 +2545,7 @@ QStringList ctkDICOMDatabase::allFiles()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::loadInstanceHeader(QString sopInstanceUID)
+void ctkDICOMDatabase::loadInstanceHeader(const QString& sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
@@ -2563,7 +2563,7 @@ void ctkDICOMDatabase::loadInstanceHeader(QString sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::loadFileHeader(QString fileName)
+void ctkDICOMDatabase::loadFileHeader(const QString& fileName)
 {
   Q_D(ctkDICOMDatabase);
   d->LoadedHeader.clear();
@@ -2597,7 +2597,7 @@ QStringList ctkDICOMDatabase::headerKeys ()
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::headerValue (QString key)
+QString ctkDICOMDatabase::headerValue (const QString& key)
 {
   Q_D(ctkDICOMDatabase);
   return (d->LoadedHeader[key]);
@@ -2608,13 +2608,13 @@ QString ctkDICOMDatabase::headerValue (QString key)
 //
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
+QString ctkDICOMDatabase::instanceValue(const QString& sopInstanceUID, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
-  tag = tag.toUpper();
+  QString upperTag = tag.toUpper();
   // Read from cache, if available
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+  QString value = this->cachedTag(sopInstanceUID, upperTag);
+  if (value == TagNotInInstance() || value == ValueIsEmptyString() || value == ValueIsNotStored())
   {
     return "";
   }
@@ -2629,19 +2629,19 @@ QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
   {
     return "";
   }
-  value = d->readValueFromFile(filePath, sopInstanceUID, tag);
+  value = d->readValueFromFile(filePath, sopInstanceUID, upperTag);
   return value;
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
+QString ctkDICOMDatabase::instanceValue(const QString& sopInstanceUID, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group,element);
   return instanceValue(sopInstanceUID, tag);
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
+QString ctkDICOMDatabase::fileValue(const QString& fileName, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2649,6 +2649,8 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   {
     return "";
   }
+
+  QString upperTag = tag.toUpper();
 
   // Read value from the database, if the instance is found there
 
@@ -2669,9 +2671,8 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   if (!sopInstanceUID.isEmpty())
   {
     // The instance is available in the database, look for the value
-    tag = tag.toUpper();
-    QString value = this->cachedTag(sopInstanceUID, tag);
-    if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+    QString value = this->cachedTag(sopInstanceUID, upperTag);
+    if (value == TagNotInInstance() || value == ValueIsEmptyString() || value == ValueIsNotStored())
     {
       return "";
     }
@@ -2688,12 +2689,12 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
     // local file is not available
     return "";
   }
-  QString value = d->readValueFromFile(fileName, sopInstanceUID, tag);
+  QString value = d->readValueFromFile(fileName, sopInstanceUID, upperTag);
   return value;
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
+QString ctkDICOMDatabase::fileValue(const QString& fileName, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group, element);
   return this->fileValue(fileName, tag);
@@ -2775,7 +2776,7 @@ QMap<QString, QString> ctkDICOMDatabase::instanceValues(const QStringList& sopIn
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const QString tag)
+bool ctkDICOMDatabase::instanceValueExists(const QString& sopInstanceUID, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
   QString upperTag = tag.toUpper();
@@ -2800,14 +2801,14 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const Q
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
+bool ctkDICOMDatabase::instanceValueExists(const QString& sopInstanceUID, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group, element);
   return this->instanceValueExists(sopInstanceUID, tag);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
+bool ctkDICOMDatabase::fileValueExists(const QString& fileName, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -2816,33 +2817,33 @@ bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
     return false;
   }
 
-  tag = tag.toUpper();
+  QString upperTag = tag.toUpper();
 
   QString sopInstanceUID = this->instanceForFile(fileName);
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  QString value = this->cachedTag(sopInstanceUID, upperTag);
+  if (value == TagNotInInstance() || value == ValueIsEmptyString())
   {
     return false;
   }
-  if (value == ValueIsNotStored || !value.isEmpty())
+  if (value == ValueIsNotStored() || !value.isEmpty())
   {
     return true;
   }
 
   // Read value from file
-  value = d->readValueFromFile(fileName, sopInstanceUID, tag);
-  return (value != TagNotInInstance && value != ValueIsEmptyString);
+  value = d->readValueFromFile(fileName, sopInstanceUID, upperTag);
+  return (value != TagNotInInstance() && value != ValueIsEmptyString());
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::fileValueExists(const QString fileName, const unsigned short group, const unsigned short element)
+bool ctkDICOMDatabase::fileValueExists(const QString& fileName, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group, element);
   return this->fileValueExists(fileName, tag);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& group, unsigned short& element)
+bool ctkDICOMDatabase::tagToGroupElement(const QString& tag, unsigned short& group, unsigned short& element)
 {
   QStringList groupElement = tag.split(",");
   bool groupOK, elementOK;
@@ -3363,7 +3364,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setTagsToPrecache(const QStringList tags)
+void ctkDICOMDatabase::setTagsToPrecache(const QStringList& tags)
 {
   Q_D(ctkDICOMDatabase);
   if (d->TagsToPrecache == tags)
@@ -3382,7 +3383,7 @@ const QStringList ctkDICOMDatabase::tagsToPrecache()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setTagsToExcludeFromStorage(const QStringList tags)
+void ctkDICOMDatabase::setTagsToExcludeFromStorage(const QStringList& tags)
 {
   Q_D(ctkDICOMDatabase);
   QStringList upperTags;
@@ -3728,7 +3729,7 @@ bool ctkDICOMDatabase::initializeTagCache()
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString tag)
+QString ctkDICOMDatabase::cachedTag(const QString& sopInstanceUID, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
   if ( !this->tagCacheExists() )
@@ -3756,7 +3757,7 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::getCachedTags(const QString sopInstanceUID, QMap<QString, QString> &cachedTags)
+void ctkDICOMDatabase::getCachedTags(const QString& sopInstanceUID, QMap<QString, QString> &cachedTags)
 {
   Q_D(ctkDICOMDatabase);
   cachedTags.clear();
@@ -3787,7 +3788,7 @@ void ctkDICOMDatabase::getCachedTags(const QString sopInstanceUID, QMap<QString,
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag, const QString value)
+bool ctkDICOMDatabase::cacheTag(const QString& sopInstanceUID, const QString& tag, const QString& value)
 {
   QStringList sopInstanceUIDs, tags, values;
   sopInstanceUIDs << sopInstanceUID;
@@ -3797,7 +3798,7 @@ bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag,
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStringList tags, QStringList values)
+bool ctkDICOMDatabase::cacheTags(const QStringList& sopInstanceUIDs, const QStringList& tags, const QStringList& values)
 {
   Q_D(ctkDICOMDatabase);
   int itemCount = sopInstanceUIDs.size();
@@ -3852,7 +3853,7 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::removeCachedTags(const QString sopInstanceUID)
+void ctkDICOMDatabase::removeCachedTags(const QString& sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   if (!this->tagCacheExists())
@@ -3983,7 +3984,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::displayedNameForField(QString table, QString field) const
+QString ctkDICOMDatabase::displayedNameForField(const QString& table, const QString& field) const
 {
   Q_D(const ctkDICOMDatabase);
 
@@ -4002,7 +4003,7 @@ QString ctkDICOMDatabase::displayedNameForField(QString table, QString field) co
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setDisplayedNameForField(QString table, QString field, QString displayedName)
+void ctkDICOMDatabase::setDisplayedNameForField(const QString& table, const QString& field, const QString& displayedName)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -4027,7 +4028,7 @@ void ctkDICOMDatabase::setDisplayedNameForField(QString table, QString field, QS
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::visibilityForField(QString table, QString field) const
+bool ctkDICOMDatabase::visibilityForField(const QString& table, const QString& field) const
 {
   Q_D(const ctkDICOMDatabase);
 
@@ -4046,7 +4047,7 @@ bool ctkDICOMDatabase::visibilityForField(QString table, QString field) const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setVisibilityForField(QString table, QString field, bool visibility)
+void ctkDICOMDatabase::setVisibilityForField(const QString& table, const QString& field, bool visibility)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -4071,7 +4072,7 @@ void ctkDICOMDatabase::setVisibilityForField(QString table, QString field, bool 
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMDatabase::weightForField(QString table, QString field) const
+int ctkDICOMDatabase::weightForField(const QString& table, const QString& field) const
 {
   Q_D(const ctkDICOMDatabase);
 
@@ -4090,7 +4091,7 @@ int ctkDICOMDatabase::weightForField(QString table, QString field) const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setWeightForField(QString table, QString field, int weight)
+void ctkDICOMDatabase::setWeightForField(const QString& table, const QString& field, int weight)
 {
   Q_D(ctkDICOMDatabase);
 
@@ -4115,7 +4116,7 @@ void ctkDICOMDatabase::setWeightForField(QString table, QString field, int weigh
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::formatForField(QString table, QString field) const
+QString ctkDICOMDatabase::formatForField(const QString& table, const QString& field) const
 {
   Q_D(const ctkDICOMDatabase);
 
@@ -4134,7 +4135,7 @@ QString ctkDICOMDatabase::formatForField(QString table, QString field) const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setFormatForField(QString table, QString field, QString format)
+void ctkDICOMDatabase::setFormatForField(const QString& table, const QString& field, const QString& format)
 {
   Q_D(ctkDICOMDatabase);
 

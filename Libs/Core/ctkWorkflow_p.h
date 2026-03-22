@@ -62,13 +62,13 @@ struct forwardAndBackwardSteps
     return this->BackwardBranchIds;
   }
 
-  void appendForwardStep(ctkWorkflowStep* step, QString id)
+  void appendForwardStep(ctkWorkflowStep* step, const QString& id)
   {
     this->ForwardSteps.append(step);
     this->ForwardBranchIds.append(id);
   }
 
-  void appendBackwardStep(ctkWorkflowStep* step, QString id)
+  void appendBackwardStep(ctkWorkflowStep* step, const QString& id)
   {
     this->BackwardSteps.append(step);
     this->BackwardBranchIds.append(id);
@@ -86,7 +86,7 @@ struct forwardAndBackwardSteps
     }
   }
 
-  ctkWorkflowStep* forwardStep(QString branchId)
+  ctkWorkflowStep* forwardStep(const QString& branchId)
   {
     int index = this->ForwardBranchIds.indexOf(branchId);
     if (index != -1)

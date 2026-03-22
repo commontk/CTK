@@ -101,7 +101,7 @@ public:
   void init();
   void disconnectScheduler();
   void connectScheduler();
-  void importDirectory(QString directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
+  void importDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
   void importFiles(const QStringList& files, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode);
   void importOldSettings();
   void showUpdateSchemaDialog();
@@ -570,7 +570,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::connectScheduler()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::importDirectory(QString directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode)
+void ctkDICOMVisualBrowserWidgetPrivate::importDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode)
 {
   if (!this->DicomDatabase)
   {

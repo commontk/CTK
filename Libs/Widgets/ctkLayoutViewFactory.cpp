@@ -86,7 +86,7 @@ QStringList ctkLayoutViewFactory::supportedElementNames()const
 }
 
 //-----------------------------------------------------------------------------
-bool ctkLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
+bool ctkLayoutViewFactory::isElementSupported(const QDomElement& layoutElement)const
 {
   return this->supportedElementNames().contains(layoutElement.tagName());
 }
@@ -119,7 +119,7 @@ void ctkLayoutViewFactory::endSetupLayout()
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
+void ctkLayoutViewFactory::setupView(const QDomElement& viewElement, QWidget* view)
 {
   Q_ASSERT(view);
   view->setVisible(true);
@@ -142,7 +142,7 @@ void ctkLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
+QWidget* ctkLayoutViewFactory::viewFromXML(const QDomElement& layoutElement)
 {
   Q_D(ctkLayoutViewFactory);
   QWidgetList views = this->registeredViews(layoutElement);
@@ -165,14 +165,14 @@ QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkLayoutViewFactory::createViewFromXML(QDomElement layoutElement)
+QWidget* ctkLayoutViewFactory::createViewFromXML(const QDomElement& layoutElement)
 {
   Q_UNUSED(layoutElement);
   return 0;
 }
 
 //-----------------------------------------------------------------------------
-QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
+QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(const QDomElement& layoutElement)
 {
   Q_D(ctkLayoutViewFactory);
   QWidgetList views = this->registeredViews(layoutElement);
@@ -198,7 +198,7 @@ QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
 }
 
 //-----------------------------------------------------------------------------
-QList<QWidget*> ctkLayoutViewFactory::createViewsFromXML(QDomElement layoutElement)
+QList<QWidget*> ctkLayoutViewFactory::createViewsFromXML(const QDomElement& layoutElement)
 {
   QWidgetList views;
   QWidget* view = this->createViewFromXML(layoutElement);
@@ -238,7 +238,7 @@ QList<QWidget*> ctkLayoutViewFactory
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutViewFactory::registerView(QDomElement layoutElement, QWidget* view)
+void ctkLayoutViewFactory::registerView(const QDomElement& layoutElement, QWidget* view)
 {
   Q_D(ctkLayoutViewFactory);
   QDomElement viewElement = this->layoutElement(view);
@@ -257,7 +257,7 @@ void ctkLayoutViewFactory::registerView(QDomElement layoutElement, QWidget* view
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutViewFactory::unregisterView(QDomElement layoutElement, QWidget* view)
+void ctkLayoutViewFactory::unregisterView(const QDomElement& layoutElement, QWidget* view)
 {
   Q_D(ctkLayoutViewFactory);
   ctkLayoutViewFactoryPrivate::ViewFactory itemToRemove(layoutElement, view);

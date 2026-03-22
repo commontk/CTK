@@ -134,7 +134,7 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowAbstractPagedWidget::associateStepWithLabel(ctkWorkflowStep* step, QString label)
+void ctkWorkflowAbstractPagedWidget::associateStepWithLabel(ctkWorkflowStep* step, const QString& label)
 {
   Q_D(ctkWorkflowAbstractPagedWidget);
 
@@ -145,7 +145,7 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithLabel(ctkWorkflowStep* ste
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step, int index, QString label)
+void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step, int index, const QString& label)
 {
   this->associateStepWithPage(step, index);
   this->associateStepWithLabel(step, label);

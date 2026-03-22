@@ -39,7 +39,7 @@ public:
     AcknowledgedSignals = 0;
   }
 
-  void getSpyReport(QString coordinatesString)
+  void getSpyReport(const QString& coordinatesString)
   {
     QCOMPARE(AcknowledgedSignals, 1);
     AcknowledgedSignals = 0;

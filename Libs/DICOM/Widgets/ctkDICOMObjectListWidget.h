@@ -57,7 +57,7 @@ public:
   QString metadataAsText(bool allFiles = false);
 
   /// Open DICOM tag definition in a web browser
-  void openLookupUrl(QString tag);
+  void openLookupUrl(const QString& tag);
 
   bool isThumbnailVisible()const;
 

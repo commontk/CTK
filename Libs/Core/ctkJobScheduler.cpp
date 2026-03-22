@@ -932,7 +932,7 @@ void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::onProgressJobDetail(QVariant data)
+void ctkJobScheduler::onProgressJobDetail(const QVariant& data)
 {
   Q_D(ctkJobScheduler);
 

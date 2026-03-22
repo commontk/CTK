@@ -68,16 +68,16 @@ protected:
   virtual void setupLayout();
   /// Find the layoutElement factory and call viewFromXML() on it.
   /// \sa viewsFromXML(), setupView()
-  virtual QWidget* viewFromXML(QDomElement layoutElement);
+  virtual QWidget* viewFromXML(const QDomElement& layoutElement);
   /// Find the layoutElement factory and call viewsFromXML() on it.
   /// \sa viewFromXML(), setupView()
-  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> viewsFromXML(const QDomElement& layoutElement);
   /// Find the layoutElement factory and setupView() on it.
   /// \sa viewFromXML(), viewsFromXML()
-  virtual void setupView(QDomElement layoutElement, QWidget* view);
+  virtual void setupView(const QDomElement& layoutElement, QWidget* view);
 
   /// Return all the registered factories that can handle the layoutElement.
-  QList<ctkLayoutViewFactory*> viewFactories(QDomElement viewElement)const;
+  QList<ctkLayoutViewFactory*> viewFactories(const QDomElement& viewElement)const;
 
 private:
   Q_DECLARE_PRIVATE(ctkLayoutFactory);
