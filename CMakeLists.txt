@@ -1231,6 +1231,17 @@ set(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS_INIT} ${CTK_EXE_LINKER_FLAGS}" CACHE STRING "Flags used when linking executables" FORCE)
 
+# On macOS, Apple's linker warns about duplicate -lm entries inherited from
+# external dependencies (notably ITK) via transitive target_link_libraries
+# chains. The duplicates are harmless but produce spurious warnings.
+if(APPLE)
+  foreach(_flag_var CMAKE_SHARED_LINKER_FLAGS CMAKE_EXE_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS)
+    if(NOT "${${_flag_var}}" MATCHES "no_warn_duplicate_libraries")
+      set(${_flag_var} "${${_flag_var}} -Wl,-no_warn_duplicate_libraries" CACHE STRING "" FORCE)
+    endif()
+  endforeach()
+endif()
+
 #-----------------------------------------------------------------------------
 # Set the header template which defines custom export/import macros
 # for shared libraries

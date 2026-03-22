@@ -50,6 +50,19 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
                       GIT_TAG ${revision_tag})
   endif()
 
+  # On macOS, Apple's linker warns about duplicate -lm entries that arise from
+  # ITK's transitive dependency chains. The duplicates are harmless (the linker
+  # deduplicates them) but produce ~70 warnings per build. Suppress them at the
+  # linker level since the fix belongs upstream in ITK's exported targets.
+  set(_itk_extra_linker_flags)
+  if(APPLE)
+    set(_itk_extra_linker_flags
+      -DCMAKE_SHARED_LINKER_FLAGS:STRING=-Wl,-no_warn_duplicate_libraries
+      -DCMAKE_EXE_LINKER_FLAGS:STRING=-Wl,-no_warn_duplicate_libraries
+      -DCMAKE_MODULE_LINKER_FLAGS:STRING=-Wl,-no_warn_duplicate_libraries
+    )
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -59,6 +72,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      ${_itk_extra_linker_flags}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DITK_LEGACY_REMOVE:BOOL=ON
