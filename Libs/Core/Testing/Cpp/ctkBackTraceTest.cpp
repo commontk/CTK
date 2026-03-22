@@ -36,7 +36,7 @@ void Q_DECL_EXPORT bt_func1()
   bool foundBackTrace = false;
   bool foundFunc1 = false;
   bool foundFunc2 = false;
-  for (const QString& frame : trace)
+  for (const QString& frame : std::as_const(trace))
   {
     if (frame.contains("ctkBackTrace"))
     {
