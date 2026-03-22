@@ -29,6 +29,7 @@ class ctkQtResourceTreeItem;
 
 class ctkQtResourcesTreeModel : public QAbstractItemModel
 {
+  Q_OBJECT
 public:
 
   ctkQtResourcesTreeModel(QObject* parent = 0);
