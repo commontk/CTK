@@ -110,7 +110,7 @@ public:
 
 public slots:
   /// Set current item based on user data
-  void setCurrentUserDataAsString(QString userData);
+  void setCurrentUserDataAsString(const QString& userData);
 
 protected:
   /// Reimplemented for internal reasons

@@ -198,7 +198,7 @@ public:
                                                            const QStringList& studyInstanceUIDs = {},
                                                            const QStringList& seriesInstanceUIDs = {},
                                                            const QStringList& sopInstanceUIDs = {},
-                                                           QList<ctkAbstractJob::JobStatus> statusFilters =
+                                                           const QList<ctkAbstractJob::JobStatus>& statusFilters =
                                                            {
                                                              ctkAbstractJob::JobStatus::Initialized,
                                                              ctkAbstractJob::JobStatus::Queued,

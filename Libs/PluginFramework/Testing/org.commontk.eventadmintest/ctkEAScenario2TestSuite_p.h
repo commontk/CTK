@@ -110,7 +110,7 @@ private:
 public:
 
   ctkEAScenario2EventPublisher(ctkPluginContext* context,
-                               const QString& name, const QStringList topics,
+                               const QString& name, const QStringList& topics,
                                int id, int numOfMessage);
 
   void runTest();

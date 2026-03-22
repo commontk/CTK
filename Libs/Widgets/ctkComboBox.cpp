@@ -392,7 +392,7 @@ QString ctkComboBox::currentUserDataAsString()const
 }
 
 // -------------------------------------------------------------------------
-void ctkComboBox::setCurrentUserDataAsString(QString userData)
+void ctkComboBox::setCurrentUserDataAsString(const QString& userData)
 {
   for (int index=0; index<this->count(); ++index)
   {

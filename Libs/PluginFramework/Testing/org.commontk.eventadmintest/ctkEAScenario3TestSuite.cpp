@@ -30,7 +30,7 @@
 
 //----------------------------------------------------------------------------
 ctkEAScenario3EventConsumer::ctkEAScenario3EventConsumer(
-  ctkPluginContext* pluginContext, const QStringList topics,
+  ctkPluginContext* pluginContext, const QStringList& topics,
   int numSyncMsg, int numAsyncMsg)
   : context(pluginContext), topicsToConsume(topics), asynchMessages(0), synchMessages(0),
     numSyncMessages(numSyncMsg), numAsyncMessages(numAsyncMsg), error(false), exc("")

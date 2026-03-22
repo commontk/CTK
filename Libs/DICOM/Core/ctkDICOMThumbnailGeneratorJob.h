@@ -53,19 +53,19 @@ public:
 
   ///@{
   /// Database Filename
-  void setDatabaseFilename(QString databaseFilename);
+  void setDatabaseFilename(const QString& databaseFilename);
   QString databaseFilename() const;
   ///}@
 
   ///@{
   /// Dicom file path
-  void setDicomFilePath(QString dicomFilePath);
+  void setDicomFilePath(const QString& dicomFilePath);
   QString dicomFilePath() const;
   ///@}
 
   ///@{
   /// Modality
-  void setModality(QString modality);
+  void setModality(const QString& modality);
   QString modality() const;
   ///@}
 

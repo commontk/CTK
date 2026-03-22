@@ -131,7 +131,7 @@ public Q_SLOTS:
   virtual void onJobFinished(ctkAbstractJob*);
   virtual void onJobAttemptFailed(ctkAbstractJob*);
   virtual void onJobFailed(ctkAbstractJob*);
-  virtual void onProgressJobDetail(QVariant);
+  virtual void onProgressJobDetail(const QVariant&);
   virtual void emitThrottledSignals();
 
 protected:

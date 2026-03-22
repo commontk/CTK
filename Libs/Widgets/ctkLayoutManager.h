@@ -160,37 +160,37 @@ protected:
   /// Create the QLayoutItem for an XML element (e.g. "layout", "view"...)
   /// and its nested elements.
   /// \sa processLayoutElement()
-  virtual QLayoutItem* processElement(QDomElement element);
+  virtual QLayoutItem* processElement(const QDomElement& element);
   /// Create the QLayoutItem for a "layout" XML element and its nested elements.
   /// \sa processElement(), layoutFromXML(), processItemElement(), addChildItemToLayout()
-  virtual QLayoutItem* processLayoutElement(QDomElement layoutElement);
+  virtual QLayoutItem* processLayoutElement(const QDomElement& layoutElement);
   /// Create the QLayoutItem for a "layout" XML element.
   /// \sa processLayoutElement()
-  virtual QLayoutItem* layoutFromXML(QDomElement layoutElement);
+  virtual QLayoutItem* layoutFromXML(const QDomElement& layoutElement);
   /// Create the QLayoutItem(s) of the "item" XML element.
   /// \sa processItemElement()
-  void                 processItemElement(QDomElement layoutElement, QLayoutItem* layoutItem);
+  void                 processItemElement(const QDomElement& layoutElement, QLayoutItem* layoutItem);
   /// Insert a child item into a layout.
   /// \sa processLayoutElement()
-  virtual void         addChildItemToLayout(QDomElement itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem);
+  virtual void         addChildItemToLayout(const QDomElement& itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem);
   /// Utility method that creates, setups and wraps into a QWidgetItem the widget
   /// of a view XML element.
   /// \sa widgetsItemsFromXML(), viewFromXML()
-  QWidgetItem*         widgetItemFromXML(QDomElement layoutElement);
+  QWidgetItem*         widgetItemFromXML(const QDomElement& layoutElement);
   /// Method is called each time a view is made visible into a layout.
   /// This method can be reimplemented. Sets the widget visibility to true
   /// by default.
   /// \sa viewsFromXML()
-  virtual void         setupView(QDomElement layoutElement, QWidget* view);
+  virtual void         setupView(const QDomElement& layoutElement, QWidget* view);
   /// Create, setup and wrap into QWidgetItems the widgets of a view XML
   /// element.
-  QList<QLayoutItem*>  widgetItemsFromXML(QDomElement layoutElement);
+  QList<QLayoutItem*>  widgetItemsFromXML(const QDomElement& layoutElement);
   /// Virtual method that returns a widget from a "view" layout element.
   /// You are ensured that the tagName of the element is "view".
   /// The XML element can contain an arbitrary number of XML attributes.
   /// Create the widget if needed or reuse it from a previous call.
   /// \sa viewsFromXML(), setupView()
-  virtual QWidget*     viewFromXML(QDomElement layoutElement) = 0;
+  virtual QWidget*     viewFromXML(const QDomElement& layoutElement) = 0;
   /// Virtual method that returns a list of widgets from a "view" layout
   /// element.
   /// If the parent "item" element has a "multiple=true" XML attribute,
@@ -200,7 +200,7 @@ protected:
   /// layout (e.g. boxlayout).
   /// This method can be reimplemented. Returns viewFromXML() by default.
   /// \sa viewFromXML(),
-  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
+  virtual QList<QWidget*> viewsFromXML(const QDomElement& layoutElement);
 
 private:
   Q_DECLARE_PRIVATE(ctkLayoutManager);

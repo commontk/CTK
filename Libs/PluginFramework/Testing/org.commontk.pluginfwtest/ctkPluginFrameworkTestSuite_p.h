@@ -94,7 +94,7 @@ private:
   // reset the events
   bool checkSyncListenerEvents(
       bool pexp, ctkPluginEvent::Type ptype, QSharedPointer<ctkPlugin> pX,
-      ctkServiceReference servX);
+      const ctkServiceReference& servX);
 
   // Check that the expected events have reached the listeners and
   // reset the events

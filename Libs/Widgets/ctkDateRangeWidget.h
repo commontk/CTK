@@ -82,14 +82,14 @@ public Q_SLOTS:
   /// Set the start date.
   /// If the date is null or invalid, it will be automatically converted into
   /// a valid date (14 September 1752)
-  void setStartDateTime(QDateTime start);
+  void setStartDateTime(const QDateTime& start);
   /// Set the end date.
   /// If the date is null or invalid, it will be automatically converted into
   /// a valid date (31 December, 7999 and a time of 23:59:59 and 999 milliseconds)
-  void setEndDateTime(QDateTime end);
+  void setEndDateTime(const QDateTime& end);
   ///
   /// Utility function that set the start and end values at once
-  void setDateTimeRange(QDateTime start, QDateTime end);
+  void setDateTimeRange(const QDateTime& start, const QDateTime& end);
   void setDateRange(QDate start, QDate end);
 
   ///

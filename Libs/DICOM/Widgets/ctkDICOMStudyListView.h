@@ -73,7 +73,7 @@ public:
   Q_INVOKABLE QStringList selectedStudyInstanceUIDs() const;
 
   /// Get selected studies for a patient
-  Q_INVOKABLE QStringList selectedStudiesInstanceUIDsByPatient(QString patientUID) const;
+  Q_INVOKABLE QStringList selectedStudiesInstanceUIDsByPatient(const QString& patientUID) const;
 
   /// Get current study instance UID
   Q_INVOKABLE QString currentStudyInstanceUID() const;
@@ -83,10 +83,10 @@ public:
                                           QItemSelectionModel::SelectionFlag flag = QItemSelectionModel::Select);
 
   /// Return the numer of selected series for a patient
-  Q_INVOKABLE int numberOfStudiesSelectedByPatient(QString patientUID) const;
+  Q_INVOKABLE int numberOfStudiesSelectedByPatient(const QString& patientUID) const;
 
   /// Get selected series for a patient
-  Q_INVOKABLE QStringList selectedSeriesInstanceUIDsByPatient(QString patientUID) const;
+  Q_INVOKABLE QStringList selectedSeriesInstanceUIDsByPatient(const QString& patientUID) const;
 
   /// Get selected series for a study
   Q_INVOKABLE QStringList selectedSeriesInstanceUIDsByStudy(const QModelIndex& studyIndex) const;
@@ -98,7 +98,7 @@ public:
   Q_INVOKABLE void selectAllSeries(QItemSelectionModel::SelectionFlags selectionMode = QItemSelectionModel::Select);
 
   /// Select select all series for a patient
-  Q_INVOKABLE void selectAllSeriesByPatient(QString patientUID,
+  Q_INVOKABLE void selectAllSeriesByPatient(const QString& patientUID,
                                              QItemSelectionModel::SelectionFlags selectionMode = QItemSelectionModel::Select);
 
   /// Toggle select all series for a study
@@ -109,7 +109,7 @@ public:
   Q_INVOKABLE void selectSeriesInstanceUIDs(const QStringList& seriesInstanceUIDs);
 
   /// Return the numer of selected series for a patient
-  Q_INVOKABLE int numberOfSeriesSelectedByPatient(QString patientUID) const;
+  Q_INVOKABLE int numberOfSeriesSelectedByPatient(const QString& patientUID) const;
 
   /// Return the numer of selected series for a study
   Q_INVOKABLE int numberOfSeriesSelectedByStudy(const QModelIndex& studyIndex) const;
@@ -196,7 +196,7 @@ public:
   Q_INVOKABLE void clean();
 
   /// Refresh all studies models
-  Q_INVOKABLE void refreshStudiesModels(QList<ctkDICOMStudyModel*> models = QList<ctkDICOMStudyModel*>());
+  Q_INVOKABLE void refreshStudiesModels(const QList<ctkDICOMStudyModel *>& models = QList<ctkDICOMStudyModel*>());
   ///@}
 
   /// \name Series view management
@@ -205,12 +205,12 @@ public:
   /// The view is owned and managed by this study list view
   Q_INVOKABLE ctkDICOMSeriesTableView* createSeriesViewForStudy(const QModelIndex& studyIndex);
   Q_INVOKABLE ctkDICOMSeriesTableView* createSeriesViewForStudy(const QString& studyInstanceUID);
-  Q_INVOKABLE QMap<QString, ctkDICOMSeriesTableView*> createAllSeriesView();
+  Q_INVOKABLE QMap<QString, ctkDICOMSeriesTableView *> createAllSeriesView();
 
   /// Get a series table view for the given study
   Q_INVOKABLE ctkDICOMSeriesTableView* getSeriesViewForStudy(const QModelIndex& studyIndex);
   Q_INVOKABLE ctkDICOMSeriesTableView* getSeriesViewForStudy(const QString& studyInstanceUID);
-  Q_INVOKABLE QMap<QString, ctkDICOMSeriesTableView*> getAllSeriesView();
+  Q_INVOKABLE QMap<QString, ctkDICOMSeriesTableView *> getAllSeriesView();
 
   /// Remove and cleanup series view for a study
   Q_INVOKABLE void removeSeriesViewForStudy(const QModelIndex& studyIndex);

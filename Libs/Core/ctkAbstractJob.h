@@ -153,13 +153,13 @@ public:
   ///@{
   /// Running ThreadID
   QString runningThreadID() const;
-  void setRunningThreadID(QString runningThreadID);
+  void setRunningThreadID(const QString& runningThreadID);
   ///@}
 
   ///@{
   /// Logged Text
   QString log() const;
-  void addLog(QString log);
+  void addLog(const QString& log);
   ///@}
 
   /// Generate worker for job

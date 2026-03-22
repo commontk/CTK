@@ -54,7 +54,7 @@ public:
   /// delegate to the corresponding routines of the internal
   /// instance of the database.
   /// @see ctkDICOMDatabase
-  void setTagsToPrecache(const QStringList tags);
+  void setTagsToPrecache(const QStringList& tags);
   const QStringList tagsToPrecache();
 
   /// Updates schema of loaded database to match the one
@@ -96,7 +96,7 @@ public Q_SLOTS:
   /// Import a directory - this is used when the user selects a directory
   /// from the Import Dialog, but can also be used externally to trigger
   /// an import (i.e. for testing or to support drag-and-drop)
-  void onImportDirectory(QString directory);
+  void onImportDirectory(const QString& directory);
 
   /// Save number of added patients, studies, series, images
   void setIndexingResult(int, int, int, int);

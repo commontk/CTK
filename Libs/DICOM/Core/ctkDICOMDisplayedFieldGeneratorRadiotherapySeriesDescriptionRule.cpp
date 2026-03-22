@@ -68,16 +68,17 @@ QStringList ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::ge
 
 //------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::registerEmptyFieldNames(
-  QMultiMap<QString, QString> emptyFieldsDisplaySeries,
-  QMultiMap<QString, QString> emptyFieldsDisplayStudies,
-  QMultiMap<QString, QString> emptyFieldsDisplayPatients )
+  const QMultiMap<QString, QString>& emptyFieldsDisplaySeries,
+  const QMultiMap<QString, QString>& emptyFieldsDisplayStudies,
+  const QMultiMap<QString, QString>& emptyFieldsDisplayPatients )
 {
   Q_UNUSED(emptyFieldsDisplayStudies);
   Q_UNUSED(emptyFieldsDisplayPatients);
 
-  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtPlan);
-  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtStruct);
-  emptyFieldsDisplaySeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtImage);
+  QMultiMap<QString, QString> localSeries = emptyFieldsDisplaySeries;
+  localSeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtPlan);
+  localSeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtStruct);
+  localSeries.insert("SeriesDescription", this->EmptySeriesDescriptionRtImage);
 }
 
 //------------------------------------------------------------------------------

@@ -94,7 +94,7 @@ public:
   {
     this->setUseCachedViews(true);
   }
-  virtual QWidget* createViewFromXML(QDomElement layoutElement){
+  virtual QWidget* createViewFromXML(const QDomElement& layoutElement){
     Q_UNUSED(layoutElement);
     return 0;
   }
