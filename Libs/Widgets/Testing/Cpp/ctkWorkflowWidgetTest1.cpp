@@ -196,7 +196,7 @@ int userInteractionSimulator1(QApplication& app, ctkExampleDerivedWorkflowWidget
   Q_ASSERT(nextButton);
 
 #ifndef QT_NO_DEBUG
-  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().first();
+  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().constFirst();
   Q_ASSERT(finishButton);
 #endif
 
@@ -290,7 +290,7 @@ int userInteractionSimulator2(QApplication& app, ctkExampleDerivedWorkflowWidget
 
   QPushButton* backButton = workflowWidget->buttonBoxWidget()->backButton();
   QPushButton* nextButton = workflowWidget->buttonBoxWidget()->nextButton();
-  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().first();
+  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().constFirst();
   Q_ASSERT(backButton);
   Q_ASSERT(nextButton);
   Q_ASSERT(finishButton);

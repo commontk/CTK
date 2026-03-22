@@ -121,7 +121,7 @@ int ctkDICOMServerNodeWidgetTest1( int argc, char * argv [] )
   serverNode["Port"] = 12345;
   widget.addServerNode(serverNode);
   if (widget.serverNodes().count() != 2 ||
-      widget.serverNodes()[1] != "TestName" ||
+      widget.serverNodes().at(1) != "TestName" ||
       widget.selectedServerNodes().count() != 1 ||
       widget.serverNodeParameters("TestName") != serverNode ||
       widget.serverNodeParameters(1) != serverNode)
@@ -129,7 +129,7 @@ int ctkDICOMServerNodeWidgetTest1( int argc, char * argv [] )
      std::cout << "ctkDICOMServerNodeWidget::addServerNode() failed:"
               << widget.serverNodes().count() << " "
               << (widget.serverNodes().count() > 1?
-                    qPrintable(widget.serverNodes()[1]) : "none") << " "
+                    qPrintable(widget.serverNodes().at(1)) : "none") << " "
               << widget.selectedServerNodes().count() << " "
               << (widget.serverNodeParameters("TestName") == serverNode) << " "
               << (widget.serverNodeParameters(1) == serverNode) << std::endl;

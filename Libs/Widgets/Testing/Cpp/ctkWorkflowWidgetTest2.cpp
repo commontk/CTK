@@ -288,7 +288,7 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
 
   QPushButton* backButton = workflowWidget->buttonBoxWidget()->backButton();
   QPushButton* nextButton = workflowWidget->buttonBoxWidget()->nextButton();
-  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().first();
+  QPushButton* finishButton = workflowWidget->buttonBoxWidget()->goToButtons().constFirst();
   Q_ASSERT(backButton);
   Q_ASSERT(nextButton);
   Q_ASSERT(finishButton);
