@@ -131,7 +131,7 @@ void ctkDICOMThumbnailGeneratorWorker::run()
   jobResponseSet->setSOPInstanceUID(thumbnailGeneratorJob->sopInstanceUID());
   jobResponseSet->setJobUID(thumbnailGeneratorJob->jobUID());
 
-  thumbnailGeneratorJob->progressJobDetail(jobResponseSet->toVariant());
+  emit thumbnailGeneratorJob->progressJobDetail(jobResponseSet->toVariant());
   thumbnailGeneratorJob->setStatus(ctkAbstractJob::JobStatus::Finished);
 }
 

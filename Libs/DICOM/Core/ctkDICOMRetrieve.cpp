@@ -53,19 +53,19 @@ dcmtk::log4cplus::Logger rootLogRetrieve = dcmtk::log4cplus::Logger::getRoot();
 #define LOG_AND_EMIT_DEBUG(debugStr, signal) \
 { \
   DCMTK_LOG4CPLUS_DEBUG_STR(rootLogRetrieve, debugStr.toStdString().c_str()); \
-  emit signal(debugStr); \
+  signal(debugStr); \
 } \
 
 #define LOG_AND_EMIT_WARN(warnStr, signal) \
 { \
   DCMTK_LOG4CPLUS_WARN_STR(rootLogRetrieve, warnStr.toStdString().c_str()); \
-  emit signal(warnStr); \
+  signal(warnStr); \
 } \
 
 #define LOG_AND_EMIT_ERROR(errorStr, signal) \
 { \
   DCMTK_LOG4CPLUS_ERROR_STR(rootLogRetrieve, errorStr.toStdString().c_str()); \
-  emit signal(errorStr); \
+  signal(errorStr); \
 } \
 
 //------------------------------------------------------------------------------
@@ -1006,11 +1006,11 @@ bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID,
 
   if (studyInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting moveStudy"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting moveStudy"), emit debug)
   return d->move(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
@@ -1022,11 +1022,11 @@ bool ctkDICOMRetrieve::getStudy(const QString& studyInstanceUID,
 
   if (studyInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive study: Study Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting getStudy"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting getStudy"), emit debug)
   return d->get(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
@@ -1040,11 +1040,11 @@ bool ctkDICOMRetrieve::moveSeries(const QString& studyInstanceUID,
   if (studyInstanceUID.isEmpty() ||
       seriesInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting moveSeries"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting moveSeries"), emit debug)
   return d->move(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
 }
 
@@ -1058,11 +1058,11 @@ bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
   if (studyInstanceUID.isEmpty() ||
       seriesInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive series: Study or Series Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting getSeries"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting getSeries"), emit debug)
   return d->get(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
 }
 
@@ -1078,11 +1078,11 @@ bool ctkDICOMRetrieve::moveSOPInstance(const QString& studyInstanceUID,
       seriesInstanceUID.isEmpty() ||
       SOPInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting moveSOPInstance"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting moveSOPInstance"), emit debug)
   return d->move(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
 }
 
@@ -1098,11 +1098,11 @@ bool ctkDICOMRetrieve::getSOPInstance(const QString& studyInstanceUID,
       seriesInstanceUID.isEmpty() ||
       SOPInstanceUID.isEmpty())
   {
-    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), error)
+    LOG_AND_EMIT_ERROR(QString("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty."), emit error)
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting getSOPInstance"), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting getSOPInstance"), emit debug)
   return d->get(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
 }
 

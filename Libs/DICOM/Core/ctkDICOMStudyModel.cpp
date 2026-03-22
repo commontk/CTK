@@ -580,7 +580,7 @@ void ctkDICOMStudyModelPrivate::updateFilteredSeriesCounts()
     study.isQueryResult = isQueryResult;
   }
 
-  q->emit dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
+  emit q->dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
 }
 
 //------------------------------------------------------------------------------

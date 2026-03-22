@@ -863,7 +863,7 @@ void ctkDICOMBrowser::onRepairAction()
   repairMessageBox->deleteLater();
 
   // Force refresh of table views
-  d->DICOMDatabase->databaseChanged();
+  emit d->DICOMDatabase->databaseChanged();
 }
 
 //----------------------------------------------------------------------------
