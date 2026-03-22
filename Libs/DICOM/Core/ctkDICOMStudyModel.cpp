@@ -263,7 +263,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
 
   // Create a set of existing study instance UIDs for quick lookup
   QSet<QString> existingStudyUIDs;
-  for (const StudyData& study : this->Studies)
+  for (const StudyData& study : std::as_const(this->Studies))
   {
     existingStudyUIDs.insert(study.studyInstanceUID);
   }
@@ -1563,7 +1563,7 @@ void ctkDICOMStudyModel::forceUpdateStudyJobs(const QString &studyInstanceUID)
     // Stop running or waiting jobs
     QStringList jobUIDs;
     // Restart the failed job
-    for (QSharedPointer<ctkAbstractJob> job : runningJobs)
+    for (const QSharedPointer<ctkAbstractJob>& job : std::as_const(runningJobs))
     {
       jobUIDs.append(job->jobUID());
     }
@@ -1573,7 +1573,7 @@ void ctkDICOMStudyModel::forceUpdateStudyJobs(const QString &studyInstanceUID)
   {
     QStringList jobUIDs;
     // Restart the failed job
-    for (QSharedPointer<ctkAbstractJob> job : failedJobs)
+    for (const QSharedPointer<ctkAbstractJob>& job : std::as_const(failedJobs))
     {
       jobUIDs.append(job->jobUID());
     }
@@ -1611,7 +1611,7 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
 
     // Sort study UIDs by date/time (most recent first) using the same logic as proxy models
     QList<QPair<QDateTime, QString>> studyDateTimePairs;
-    for (const QString& studyInstanceUID : td.QueriedStudyInstanceUIDs)
+    for (const QString& studyInstanceUID : std::as_const(td.QueriedStudyInstanceUIDs))
     {
       QModelIndex idx = this->indexFromStudyInstanceUID(studyInstanceUID);
       QString studyDate = this->data(idx, ctkDICOMStudyModel::StudyDateRole).toString();

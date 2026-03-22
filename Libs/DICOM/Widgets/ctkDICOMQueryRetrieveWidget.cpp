@@ -265,7 +265,8 @@ void ctkDICOMQueryRetrieveWidget::query()
 
     d->QueriesByServer[d->CurrentServer] = query;
 
-    for (const auto & StudyAndSeriesInstanceUIDPair : query->studyAndSeriesInstanceUIDQueried() )
+    const auto queriedPairs = query->studyAndSeriesInstanceUIDQueried();
+    for (const auto & StudyAndSeriesInstanceUIDPair : queriedPairs )
     {
       d->QueriesByStudyUID[StudyAndSeriesInstanceUIDPair.first] = query;
       d->StudyAndSeriesInstanceUIDPairList.push_back(qMakePair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));

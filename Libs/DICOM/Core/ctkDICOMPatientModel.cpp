@@ -224,7 +224,7 @@ void ctkDICOMPatientModelPrivate::populatePatients()
 
   // Create a set of existing patient items for quick lookup
   QSet<QString> existingPatientUIDs;
-  for (const PatientData& patient : this->Patients)
+  for (const PatientData& patient : std::as_const(this->Patients))
   {
     existingPatientUIDs.insert(patient.patientUID);
   }
@@ -360,7 +360,7 @@ void ctkDICOMPatientModelPrivate::populatePatients()
   // Update allowed servers from database for newly added patients
   if (!newPatients.isEmpty())
   {
-    for (const PatientData& patientData : newPatients)
+    for (const PatientData& patientData : std::as_const(newPatients))
     {
       q->updateAllowedServersFromDB(patientData.patientUID);
     }
@@ -433,7 +433,7 @@ int ctkDICOMPatientModelPrivate::getSeriesCountForPatient(const QString& patient
   {
     return 0;
   }
-  QStringList studyInstanceUIDs = studyModel->studyInstanceUIDs();
+  const QStringList studyInstanceUIDs = studyModel->studyInstanceUIDs();
   int totalSeriesCount = 0;
   for (const QString& studyInstanceUID : studyInstanceUIDs)
   {
@@ -458,7 +458,7 @@ int ctkDICOMPatientModelPrivate::getFilteredSeriesCountForPatient(const QString&
   {
     return 0;
   }
-  QStringList filteredStudyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
+  const QStringList filteredStudyInstanceUIDs = studyModel->filteredStudyInstanceUIDs();
   int totalFilteredSeriesCount = 0;
   for (const QString& studyInstanceUID : filteredStudyInstanceUIDs)
   {
@@ -1791,7 +1791,7 @@ void ctkDICOMPatientModel::updateAllowedServersFromDB(const QString& patientUID)
   QStringList denyList = connectionsInformation["deny"];
 
   QStringList allowedServers;
-  for (const QString& connectionName : allActiveConnectionNames)
+  for (const QString& connectionName : std::as_const(allActiveConnectionNames))
   {
     if (allowList.contains(connectionName))
     {
@@ -1853,7 +1853,7 @@ void ctkDICOMPatientModel::saveAllowedServersToDB(const QString& patientUID, con
   QStringList databaseAllowList;
   QStringList databaseDenyList;
 
-  for (const QString& connectionName : allActiveConnectionNames)
+  for (const QString& connectionName : std::as_const(allActiveConnectionNames))
   {
     if (allowedServers.contains(connectionName))
     {

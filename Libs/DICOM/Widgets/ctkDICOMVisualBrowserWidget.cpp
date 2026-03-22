@@ -2887,7 +2887,7 @@ void ctkDICOMVisualBrowserWidget::onStudiesSortedByDate(const QStringList& sorte
 
   // Find which patient these studies belong to
   QString patientID;
-  QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
+  const QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
   for (ctkDICOMStudyModel* studyModel : studyModels)
   {
     if (studyModel && studyModel->studyInstanceUIDs().contains(sortedStudyInstanceUIDs.first()))
@@ -2919,7 +2919,7 @@ void ctkDICOMVisualBrowserWidget::onStudyReadyToOpen(const QString& studyInstanc
 
   // Get the patient ID for this study
   QString patientID;
-  QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
+  const QList<ctkDICOMStudyModel*> studyModels = d->PatientModel->allStudyModels();
   for (ctkDICOMStudyModel* studyModel : studyModels)
   {
     if (studyModel && studyModel->studyInstanceUIDs().contains(studyInstanceUID))
@@ -3296,7 +3296,7 @@ void ctkDICOMVisualBrowserWidget::onSeriesDoubleClicked(const QString& seriesIns
   ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
   if (studyListView)
   {
-    QMap<QString, ctkDICOMSeriesTableView*> allSeriesViews = studyListView->getAllSeriesView();
+    const QMap<QString, ctkDICOMSeriesTableView*> allSeriesViews = studyListView->getAllSeriesView();
     for (ctkDICOMSeriesTableView* seriesView : allSeriesViews)
     {
       if (seriesView)
@@ -3383,10 +3383,10 @@ void ctkDICOMVisualBrowserWidget::removePatients(const QStringList& patientUIDs)
   QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
   foreach (const QString& patientUID, patientUIDs)
   {
-    QStringList studyInstanceUIDs = d->DicomDatabase->studiesForPatient(patientUID);
+    const QStringList studyInstanceUIDs = d->DicomDatabase->studiesForPatient(patientUID);
     for (const QString& studyInstanceUID : studyInstanceUIDs)
     {
-      QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
+      const QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
       for (const QString& seriesInstanceUID : seriesInstanceUIDs)
       {
         loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
@@ -3487,7 +3487,7 @@ void ctkDICOMVisualBrowserWidget::removeStudies(const QStringList& studyInstance
   QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
   foreach (const QString& studyInstanceUID, studyInstanceUIDs)
   {
-    QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
+    const QStringList seriesInstanceUIDs = d->DicomDatabase->seriesForStudy(studyInstanceUID);
     for (const QString& seriesInstanceUID : seriesInstanceUIDs)
     {
       loadedSeriesInstanceUIDs.removeAll(seriesInstanceUID);
@@ -3743,7 +3743,7 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
     {
       emit seriesRetrieved(retrievedSeriesInstanceUIDs);
       QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
-      for (const QString& uid : retrievedSeriesInstanceUIDs)
+      for (const QString& uid : std::as_const(retrievedSeriesInstanceUIDs))
       {
         if (!loadedSeriesInstanceUIDs.contains(uid))
         {

@@ -1009,7 +1009,7 @@ void ctkDICOMSeriesModel::forceUpdateSeriesJobs(const QString &seriesInstanceUID
     // Stop running or waiting jobs
     QStringList jobUIDs;
     // Restart the failed job
-    for (QSharedPointer<ctkAbstractJob> job : runningJobs)
+    for (const QSharedPointer<ctkAbstractJob>& job : std::as_const(runningJobs))
     {
       jobUIDs.append(job->jobUID());
     }
@@ -1019,7 +1019,7 @@ void ctkDICOMSeriesModel::forceUpdateSeriesJobs(const QString &seriesInstanceUID
   {
     QStringList jobUIDs;
     // Restart the failed job
-    for (QSharedPointer<ctkAbstractJob> job : failedJobs)
+    for (const QSharedPointer<ctkAbstractJob>& job : std::as_const(failedJobs))
     {
       jobUIDs.append(job->jobUID());
     }
@@ -1542,7 +1542,7 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
 
     this->refresh();
 
-    for (const QString& seriesInstanceUID : td.QueriedSeriesInstanceUIDs)
+    for (const QString& seriesInstanceUID : std::as_const(td.QueriedSeriesInstanceUIDs))
     {
       int linearIndex = d->findSeriesLinearIndex(seriesInstanceUID);
       if (linearIndex < 0)
