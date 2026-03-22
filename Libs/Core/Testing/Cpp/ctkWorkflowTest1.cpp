@@ -305,9 +305,9 @@ int ctkWorkflowTest1(int argc, char * argv [] )
   }
 
   if (workflow->forwardSteps(step1).length() != 1
-      || workflow->forwardSteps(step1).first() != step2
+      || workflow->forwardSteps(step1).constFirst() != step2
       || workflow->forwardSteps(step2).length() != 1
-      || workflow->forwardSteps(step2).first() != step3
+      || workflow->forwardSteps(step2).constFirst() != step3
       || workflow->forwardSteps(step3).length() != 0)
   {
     std::cerr << "error in list of forward steps" << std::endl;
@@ -316,9 +316,9 @@ int ctkWorkflowTest1(int argc, char * argv [] )
 
   if (workflow->backwardSteps(step1).length() != 0
       || workflow->backwardSteps(step2).length() != 1
-      || workflow->backwardSteps(step2).first() != step1
+      || workflow->backwardSteps(step2).constFirst() != step1
       || workflow->backwardSteps(step3).length() != 1
-      || workflow->backwardSteps(step3).first() != step2)
+      || workflow->backwardSteps(step3).constFirst() != step2)
   {
     std::cerr << "error in list of backward steps" << std::endl;
     return EXIT_FAILURE;

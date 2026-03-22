@@ -522,7 +522,7 @@ void ctkPathLineEditPrivate::_q_recomputeCompleterPopupSize()
     QVariant icon = model->data(model->index(i, 0), Qt::DecorationRole);
     if (icon.isValid() && icon.canConvert<QIcon>())
     {
-      iconWidth = qMax(iconWidth, icon.value<QIcon>().availableSizes().front().width() + 4);
+      iconWidth = qMax(iconWidth, icon.value<QIcon>().availableSizes().constFirst().width() + 4);
     }
     textWidth = qMax(textWidth, fm.boundingRect(model->data(model->index(i, 0)).toString()).width());
   }

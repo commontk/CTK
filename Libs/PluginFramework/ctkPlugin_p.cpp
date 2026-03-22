@@ -145,7 +145,7 @@ ctkPluginPrivate::ctkPluginPrivate(
     const QMap<QString, QStringList>& e = i.next();
     const QStringList& res = e.value(ctkPluginConstants::RESOLUTION_DIRECTIVE);
     const QStringList& version = e.value(ctkPluginConstants::PLUGIN_VERSION_ATTRIBUTE);
-    ctkRequirePlugin* rp = new ctkRequirePlugin(this, e.value("$key").front(),
+    ctkRequirePlugin* rp = new ctkRequirePlugin(this, e.value("$key").constFirst(),
                                                 res.empty() ? QString() : res.front(),
                                                 version.empty() ? QString() : version.front());
     require.push_back(rp);
