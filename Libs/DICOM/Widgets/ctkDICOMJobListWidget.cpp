@@ -972,7 +972,7 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
 
     if (count == 0)
     {
-      q->patientSelected(patientID, patientName, patientBirthDate);
+      emit q->patientSelected(patientID, patientName, patientBirthDate);
     }
     count++;
   }

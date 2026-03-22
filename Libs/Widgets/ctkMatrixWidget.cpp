@@ -391,7 +391,7 @@ void ctkMatrixWidget::setDecimals(int decimals)
   }
   d->Decimals = qMax(0, decimals);
   this->update();
-  this->emit decimalsChanged(d->Decimals);
+  emit decimalsChanged(d->Decimals);
 }
 
 // --------------------------------------------------------------------------
@@ -516,7 +516,7 @@ void ctkMatrixWidget::setValues(const QVector<double> & vector)
   this->blockSignals(blocked);
   if (modified)
   {
-    this->emit matrixChanged();
+    emit matrixChanged();
   }
 }
 
