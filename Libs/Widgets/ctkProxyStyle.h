@@ -73,9 +73,7 @@ public:
 protected:
   QScopedPointer<ctkProxyStylePrivate> d_ptr;
   virtual bool event(QEvent *e);
-
-protected Q_SLOTS:
-  virtual QIcon standardIconImplementation(StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const;
+  virtual QIcon standardIconImplementation(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const;
   virtual int layoutSpacingImplementation(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2,
                                   Qt::Orientation orientation, const QStyleOption *option = 0, const QWidget *widget = 0) const;
 private:

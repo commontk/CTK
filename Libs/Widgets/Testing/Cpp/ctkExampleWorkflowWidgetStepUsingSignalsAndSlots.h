@@ -124,10 +124,10 @@ Q_SIGNALS:
 
   /// Signals indicating to the workflow that these processes have
   /// completed
-  void validationComplete(bool validationSucceeded, const QString& branchId="")const;
-  void onEntryComplete()const;
-  void onExitComplete()const;
-  void createUserInterfaceComplete()const;
+  void validationComplete(bool validationSucceeded, const QString& branchId="");
+  void onEntryComplete();
+  void onExitComplete();
+  void createUserInterfaceComplete();
 
 protected:
   QScopedPointer<ctkExampleWorkflowWidgetStepUsingSignalsAndSlotsPrivate> d_ptr;

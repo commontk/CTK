@@ -103,10 +103,6 @@ public Q_SLOTS:
   /// \sa setPauseRender
   virtual int resumeRender();
 
-  /// Returns true if the current pause render count is greater than 0
-  /// \sa setPauseRender
-  virtual bool isRenderPaused()const;
-
   /// Set maximum rate for rendering (in frames per second).
   /// If rendering is requested more frequently than this rate using scheduleRender,
   /// actual rendering will happen at this rate.
@@ -155,6 +151,10 @@ public Q_SLOTS:
   void setUseDepthPeeling(bool use);
 
 public:
+  /// Returns true if the current pause render count is greater than 0
+  /// \sa setPauseRender
+  virtual bool isRenderPaused()const;
+
   /// Get underlying RenderWindow
   Q_INVOKABLE vtkRenderWindow* renderWindow()const;
 
