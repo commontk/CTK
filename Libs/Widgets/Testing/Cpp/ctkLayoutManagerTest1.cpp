@@ -221,18 +221,18 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   app.exec();
 
   if (tabToGridInstanciator->registeredViews().count() != 6 ||
-      tabToGridInstanciator->registeredViews()[0]->isHidden() ||
-      tabToGridInstanciator->registeredViews()[1]->isHidden() ||
-      tabToGridInstanciator->registeredViews()[2]->isHidden() ||
-      tabToGridInstanciator->registeredViews()[3]->isHidden())
+      tabToGridInstanciator->registeredViews().at(0)->isHidden() ||
+      tabToGridInstanciator->registeredViews().at(1)->isHidden() ||
+      tabToGridInstanciator->registeredViews().at(2)->isHidden() ||
+      tabToGridInstanciator->registeredViews().at(3)->isHidden())
   {
     std::cout << __LINE__ << " TabToGrid: "
               << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
               << tabToGridInstanciator->registeredViews().count() << " "
-              << tabToGridInstanciator->registeredViews()[0]->isHidden() << " "
-              << tabToGridInstanciator->registeredViews()[1]->isHidden() << " "
-              << tabToGridInstanciator->registeredViews()[2]->isHidden() << " "
-              << tabToGridInstanciator->registeredViews()[3]->isHidden() << std::endl;
+              << tabToGridInstanciator->registeredViews().at(0)->isHidden() << " "
+              << tabToGridInstanciator->registeredViews().at(1)->isHidden() << " "
+              << tabToGridInstanciator->registeredViews().at(2)->isHidden() << " "
+              << tabToGridInstanciator->registeredViews().at(3)->isHidden() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -256,16 +256,16 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   app.exec();
 
   if (tabToSimpleInstanciator->registeredViews().count() != 3 ||
-      tabToSimpleInstanciator->registeredViews()[0]->isHidden() ||
-      tabToSimpleInstanciator->registeredViews()[1]->isVisible() ||
-      tabToSimpleInstanciator->registeredViews()[2]->isVisible())
+      tabToSimpleInstanciator->registeredViews().at(0)->isHidden() ||
+      tabToSimpleInstanciator->registeredViews().at(1)->isVisible() ||
+      tabToSimpleInstanciator->registeredViews().at(2)->isVisible())
   {
     std::cout << __LINE__ << " TabToSimple: "
               << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
               << tabToSimpleInstanciator->registeredViews().count() << " "
-              << tabToSimpleInstanciator->registeredViews()[0]->isHidden() << " "
-              << tabToSimpleInstanciator->registeredViews()[1]->isVisible() << " "
-              << tabToSimpleInstanciator->registeredViews()[2]->isVisible() << std::endl;
+              << tabToSimpleInstanciator->registeredViews().at(0)->isHidden() << " "
+              << tabToSimpleInstanciator->registeredViews().at(1)->isVisible() << " "
+              << tabToSimpleInstanciator->registeredViews().at(2)->isVisible() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -288,17 +288,17 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   QTimer::singleShot(200, &app, SLOT(quit()));
   app.exec();
 
-  if (nestedToTabInstanciator->registeredViews()[0]->isHidden() ||
-      nestedToTabInstanciator->registeredViews()[1]->isVisible() ||
-      nestedToTabInstanciator->registeredViews()[2]->isVisible() ||
-      nestedToTabInstanciator->registeredViews()[3]->isVisible())
+  if (nestedToTabInstanciator->registeredViews().at(0)->isHidden() ||
+      nestedToTabInstanciator->registeredViews().at(1)->isVisible() ||
+      nestedToTabInstanciator->registeredViews().at(2)->isVisible() ||
+      nestedToTabInstanciator->registeredViews().at(3)->isVisible())
   {
     std::cout << __LINE__ << " NestedToTab: "
               << "ctkLayoutManager::setupLayout() failed to show/hide widgets"
-              << nestedToTabInstanciator->registeredViews()[0]->isHidden() << " "
-              << nestedToTabInstanciator->registeredViews()[1]->isVisible() << " "
-              << nestedToTabInstanciator->registeredViews()[2]->isVisible() << " "
-              << nestedToTabInstanciator->registeredViews()[3]->isVisible() << std::endl;
+              << nestedToTabInstanciator->registeredViews().at(0)->isHidden() << " "
+              << nestedToTabInstanciator->registeredViews().at(1)->isVisible() << " "
+              << nestedToTabInstanciator->registeredViews().at(2)->isVisible() << " "
+              << nestedToTabInstanciator->registeredViews().at(3)->isVisible() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -312,16 +312,16 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   nestedToTabInstanciator->setUseCachedViews(false);
   nestedToTabLayoutManager.setLayout(tabMultipleLayoutDoc);
   if (nestedToTabInstanciator->registeredViews().count() != 2 * 4 ||
-    nestedToTabInstanciator->registeredViews()[0]->isHidden() ||
-    !nestedToTabInstanciator->registeredViews()[1]->isHidden() ||
-    !nestedToTabInstanciator->registeredViews()[2]->isHidden())
+    nestedToTabInstanciator->registeredViews().at(0)->isHidden() ||
+    !nestedToTabInstanciator->registeredViews().at(1)->isHidden() ||
+    !nestedToTabInstanciator->registeredViews().at(2)->isHidden())
   {
     std::cout << __LINE__ << " tabMultiple: "
       << "ctkLayoutManager::setupLayout() failed to show/hide widgets "
       << nestedToTabInstanciator->registeredViews().count();
     for (int i = 0; i < nestedToTabInstanciator->registeredViews().count(); i++)
     {
-      std::cout << " " << nestedToTabInstanciator->registeredViews()[i]->isHidden();
+      std::cout << " " << nestedToTabInstanciator->registeredViews().at(i)->isHidden();
     }
     std::cout << std::endl;
     return EXIT_FAILURE;

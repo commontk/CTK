@@ -98,7 +98,7 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   this->ScalarOpacityWidget->view()->addCompositeFunction(0, 0, true, true);
   vtkCompositeControlPointsItem* composite =
   vtkCompositeControlPointsItem::SafeDownCast(
-    this->ScalarOpacityWidget->view()->opacityFunctionPlots()[1]);
+    this->ScalarOpacityWidget->view()->opacityFunctionPlots().at(1));
   composite->SetColorFill(true);
   composite->SetPointsFunction(vtkCompositeControlPointsItem::OpacityPointsFunction);
   this->ScalarColorWidget->view()->addColorTransferFunction(0);
