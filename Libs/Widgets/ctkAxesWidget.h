@@ -64,6 +64,15 @@ public :
   /// False by default.
   bool autoReset() const;
 
+  /// Get the axes labels
+  QStringList axesLabels() const;
+
+  /// Size hints
+  virtual QSize minimumSizeHint()const;
+  virtual QSize sizeHint()const;
+  virtual bool hasHeightForWidth()const;
+  virtual int heightForWidth(int width)const;
+
 Q_SIGNALS:
   void currentAxisChanged(ctkAxesWidget::Axis axis);
 
@@ -92,15 +101,6 @@ public slots :
   ///
   /// \sa axesLabels()
   bool setAxesLabels(const QStringList& labels);
-
-  /// Get the axes labels
-  QStringList axesLabels() const;
-
-  /// Size hints
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
-  virtual bool hasHeightForWidth()const;
-  virtual int heightForWidth(int width)const;
 
 protected:
   void paintEvent(QPaintEvent *);

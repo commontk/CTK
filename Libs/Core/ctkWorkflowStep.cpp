@@ -82,37 +82,37 @@ ctkWorkflowStepPrivate::~ctkWorkflowStepPrivate()
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::validationCompleteInternal(bool validationResults, const QString& branchId)const
+void ctkWorkflowStepPrivate::validationCompleteInternal(bool validationResults, const QString& branchId)
 {
   emit validationComplete(validationResults, branchId);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::onEntryCompleteInternal()const
+void ctkWorkflowStepPrivate::onEntryCompleteInternal()
 {
   emit onEntryComplete();
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::onExitCompleteInternal()const
+void ctkWorkflowStepPrivate::onExitCompleteInternal()
 {
   emit onExitComplete();
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::invokeValidateCommandInternal(const QString& desiredBranchId)const
+void ctkWorkflowStepPrivate::invokeValidateCommandInternal(const QString& desiredBranchId)
 {
   emit invokeValidateCommand(desiredBranchId);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::invokeOnEntryCommandInternal(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+void ctkWorkflowStepPrivate::invokeOnEntryCommandInternal(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
   emit invokeOnEntryCommand(comingFrom, transitionType);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+void ctkWorkflowStepPrivate::invokeOnExitCommandInternal(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
   emit invokeOnExitCommand(goingTo, transitionType);
 }
@@ -210,44 +210,44 @@ QObject* ctkWorkflowStep::ctkWorkflowStepQObject()
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::validationComplete(bool validationResults, const QString& branchId)const
+void ctkWorkflowStep::validationComplete(bool validationResults, const QString& branchId)
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->validationCompleteInternal(validationResults, branchId);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::onEntryComplete()const
+void ctkWorkflowStep::onEntryComplete()
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->onEntryCompleteInternal();
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::onExitComplete()const
+void ctkWorkflowStep::onExitComplete()
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->onExitCompleteInternal();
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::invokeValidateCommand(const QString& desiredBranchId)const
+void ctkWorkflowStep::invokeValidateCommand(const QString& desiredBranchId)
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->invokeValidateCommandInternal(desiredBranchId);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+void ctkWorkflowStep::invokeOnEntryCommand(const ctkWorkflowStep* comingFrom, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->invokeOnEntryCommandInternal(comingFrom, transitionType);
 }
 
 // --------------------------------------------------------------------------
-void ctkWorkflowStep::invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)const
+void ctkWorkflowStep::invokeOnExitCommand(const ctkWorkflowStep* goingTo, const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  Q_D(const ctkWorkflowStep);
+  Q_D(ctkWorkflowStep);
   d->invokeOnExitCommandInternal(goingTo, transitionType);
 }
 

@@ -294,6 +294,14 @@ public:
   /// \sa sizeHintPolicy
   virtual QSize minimumSizeHint()const;
 
+  /// Return true if the spinbox is in the progress of setting a value.
+  ///
+  /// Setting of value is performed in two steps: first the value is set in the spinbox
+  /// and then the valueChanged and decimalsChanged signals are emitted.
+  /// During this entire time, isSettingValue() returns true, because in some cases
+  /// it is important to know which of the sibling widgets initiated an update.
+  bool isSettingValue()const;
+
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.
   /// \sa setMode(), value(), setValueIfDifferent(), setValueAlways()
@@ -321,14 +329,6 @@ public Q_SLOTS:
   /// spinbox is not displayed.
   /// \sa isReadOnly
   void setReadOnly(bool readOnly);
-
-  /// Return true if the spinbox is in the progress of setting a value.
-  ///
-  /// Setting of value is performed in two steps: first the value is set in the spinbox
-  /// and then the valueChanged and decimalsChanged signals are emitted.
-  /// During this entire time, isSettingValue() returns true, because in some cases
-  /// it is important to know which of the sibling widgets initiated an update.
-  bool isSettingValue()const;
 
 Q_SIGNALS:
   /// Emitted every time the spinbox value is modified
