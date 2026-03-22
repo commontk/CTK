@@ -53,12 +53,12 @@ public:
 
 public Q_SLOTS:
 
-  void on_AddFilesButton_clicked();
-  void on_AddDirButton_clicked();
-  void on_RemoveButton_clicked();
-  void on_EditButton_clicked();
+  void addFilesButtonClicked();
+  void addDirButtonClicked();
+  void removeButtonClicked();
+  void editButtonClicked();
 
-  void on_PathListWidget_selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void pathListWidgetSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 public:
 

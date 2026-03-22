@@ -65,14 +65,14 @@ void ctkPathListButtonsWidgetPrivate::setupUi(QWidget * widget)
 {
   this->Ui_ctkPathListButtonsWidget::setupUi(widget);
 
-  connect(this->AddFilesButton, SIGNAL(clicked()), SLOT(on_AddFilesButton_clicked()));
-  connect(this->AddDirectoryButton, SIGNAL(clicked()), SLOT(on_AddDirButton_clicked()));
-  connect(this->RemoveButton, SIGNAL(clicked()), SLOT(on_RemoveButton_clicked()));
-  connect(this->EditButton, SIGNAL(clicked()), SLOT(on_EditButton_clicked()));
+  connect(this->AddFilesButton, SIGNAL(clicked()), SLOT(addFilesButtonClicked()));
+  connect(this->AddDirectoryButton, SIGNAL(clicked()), SLOT(addDirButtonClicked()));
+  connect(this->RemoveButton, SIGNAL(clicked()), SLOT(removeButtonClicked()));
+  connect(this->EditButton, SIGNAL(clicked()), SLOT(editButtonClicked()));
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathListButtonsWidgetPrivate::on_AddFilesButton_clicked()
+void ctkPathListButtonsWidgetPrivate::addFilesButtonClicked()
 {
   if (!this->PathListWidget) return;
 
@@ -81,7 +81,7 @@ void ctkPathListButtonsWidgetPrivate::on_AddFilesButton_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathListButtonsWidgetPrivate::on_AddDirButton_clicked()
+void ctkPathListButtonsWidgetPrivate::addDirButtonClicked()
 {
   if (!this->PathListWidget) return;
 
@@ -90,7 +90,7 @@ void ctkPathListButtonsWidgetPrivate::on_AddDirButton_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathListButtonsWidgetPrivate::on_RemoveButton_clicked()
+void ctkPathListButtonsWidgetPrivate::removeButtonClicked()
 {
   if (!this->PathListWidget) return;
 
@@ -98,7 +98,7 @@ void ctkPathListButtonsWidgetPrivate::on_RemoveButton_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathListButtonsWidgetPrivate::on_EditButton_clicked()
+void ctkPathListButtonsWidgetPrivate::editButtonClicked()
 {
   Q_Q(ctkPathListButtonsWidget);
 
@@ -128,7 +128,7 @@ void ctkPathListButtonsWidgetPrivate::on_EditButton_clicked()
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathListButtonsWidgetPrivate::on_PathListWidget_selectionChanged(const QItemSelection &selected,
+void ctkPathListButtonsWidgetPrivate::pathListWidgetSelectionChanged(const QItemSelection &selected,
                                                                          const QItemSelection &deselected)
 {
   Q_UNUSED(selected)
@@ -353,8 +353,8 @@ void ctkPathListButtonsWidget::init(ctkPathListWidget *pathListWidget)
   }
 
   connect(d->PathListWidget->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-          d, SLOT(on_PathListWidget_selectionChanged(QItemSelection,QItemSelection)));
-  connect(d->PathListWidget, SIGNAL(pathActivated(QString)), d, SLOT(on_EditButton_clicked()));
+          d, SLOT(pathListWidgetSelectionChanged(QItemSelection,QItemSelection)));
+  connect(d->PathListWidget, SIGNAL(pathActivated(QString)), d, SLOT(editButtonClicked()));
 }
 
 //-----------------------------------------------------------------------------
