@@ -54,11 +54,15 @@ static const QString INSTALL_HASH_PLACEHOLDER = "@install.hash";
 
 static const QString INSTANCE_DATA_AREA_PREFIX = ".metadata/.plugins/";
 
-static QScopedPointer<ctkBasicLocation> installLocation;
-static QScopedPointer<ctkBasicLocation> configurationLocation;
-static QScopedPointer<ctkBasicLocation> userLocation;
-static QScopedPointer<ctkBasicLocation> instanceLocation;
-static QScopedPointer<ctkBasicLocation> ctkHomeLocation;
+struct LocationManagerData
+{
+  QScopedPointer<ctkBasicLocation> installLocation;
+  QScopedPointer<ctkBasicLocation> configurationLocation;
+  QScopedPointer<ctkBasicLocation> userLocation;
+  QScopedPointer<ctkBasicLocation> instanceLocation;
+  QScopedPointer<ctkBasicLocation> ctkHomeLocation;
+};
+Q_GLOBAL_STATIC(LocationManagerData, locationData)
 
 static bool CanWrite(const QUrl& location);
 static bool CanWrite(const QFileInfo& location);
@@ -191,7 +195,7 @@ static QUrl ComputeSharedConfigurationLocation()
     // absolute
     return sharedConfigurationURL;
   }
-  QUrl installURL = installLocation->getUrl();
+  QUrl installURL = locationData()->installLocation->getUrl();
   if (sharedConfigurationURL.scheme() != installURL.scheme())
   {
     // different protocol
@@ -354,7 +358,7 @@ void ctkLocationManager::initializeLocations()
   }
   // do install location initialization first since others may depend on it
   // assumes that the property is already set
-  installLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA, QUrl(), "", true, false, QString()));
+  locationData()->installLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA, QUrl(), "", true, false, QString()));
 
   // TODO not sure what the data area prefix should be here for the user area
   QScopedPointer<ctkBasicLocation> temp(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA_DEFAULT,
@@ -364,7 +368,7 @@ void ctkLocationManager::initializeLocations()
   {
     defaultLocation = BuildUrl(QFileInfo(QDir(ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_USER_HOME).toString()), "user").absoluteFilePath(), true);
   }
-  userLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA, defaultLocation, "", false, false, QString()));
+  locationData()->userLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA, defaultLocation, "", false, false, QString()));
 
   temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA_DEFAULT, QUrl(), "", false, false, INSTANCE_DATA_AREA_PREFIX));
   defaultLocation = temp ? temp->getUrl() : QUrl();
@@ -372,7 +376,7 @@ void ctkLocationManager::initializeLocations()
   {
     defaultLocation = BuildUrl(QFileInfo(QDir(ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_USER_DIR).toString()), "workspace").absoluteFilePath(), true);
   }
-  instanceLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA, defaultLocation, "", false, false, INSTANCE_DATA_AREA_PREFIX));
+  locationData()->instanceLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA, defaultLocation, "", false, false, INSTANCE_DATA_AREA_PREFIX()));
 
   //mungeConfigurationLocation();
 
@@ -384,15 +388,15 @@ void ctkLocationManager::initializeLocations()
     // only compute the default if the configuration area property is not set
     defaultLocation = BuildUrl(ComputeDefaultConfigurationLocation(), true);
   }
-  configurationLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA, defaultLocation, "", false, false, QString()));
+  locationData()->configurationLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA, defaultLocation, "", false, false, QString()));
   // get the parent location based on the system property. This will have been set on the
   // way in either by the caller/user or by main.  There will be no parent location if we are not
   // cascaded.
   QUrl parentLocation = ComputeSharedConfigurationLocation();
-  if (parentLocation.isValid() && parentLocation != configurationLocation->getUrl())
+  if (parentLocation.isValid() && parentLocation != locationData()->configurationLocation->getUrl())
   {
     ctkBasicLocation* parent = new ctkBasicLocation(QString(), parentLocation, true, QString());
-    configurationLocation->setParent(parent);
+    locationData()->configurationLocation->setParent(parent);
   }
   //initializeDerivedConfigurationLocations();
 
@@ -411,7 +415,7 @@ void ctkLocationManager::initializeLocations()
     ctkPluginFrameworkProperties::setProperty(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA,
                                               ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA));
   }
-  ctkHomeLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA, QUrl(), "", true, true, QString()));
+  locationData()->ctkHomeLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA, QUrl(), "", true, true, QString()));
 
   isInitialized = true;
 }
@@ -419,29 +423,29 @@ void ctkLocationManager::initializeLocations()
 //----------------------------------------------------------------------------
 ctkBasicLocation* ctkLocationManager::getUserLocation()
 {
-  return userLocation.data();
+  return locationData()->userLocation.data();
 }
 
 //----------------------------------------------------------------------------
 ctkBasicLocation* ctkLocationManager::getConfigurationLocation()
 {
-  return configurationLocation.data();
+  return locationData()->configurationLocation.data();
 }
 
 //----------------------------------------------------------------------------
 ctkBasicLocation* ctkLocationManager::getInstallLocation()
 {
-  return installLocation.data();
+  return locationData()->installLocation.data();
 }
 
 //----------------------------------------------------------------------------
 ctkBasicLocation* ctkLocationManager::getInstanceLocation()
 {
-  return instanceLocation.data();
+  return locationData()->instanceLocation.data();
 }
 
 //----------------------------------------------------------------------------
 ctkBasicLocation* ctkLocationManager::getCTKHomeLocation()
 {
-  return ctkHomeLocation.data();
+  return locationData()->ctkHomeLocation.data();
 }
