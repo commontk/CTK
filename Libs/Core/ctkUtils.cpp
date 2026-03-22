@@ -99,9 +99,9 @@ QStringList ctk::qSetToQStringList(const QSet<QString>& set)
 }
 
 //-----------------------------------------------------------------------------
-const char *ctkNameFilterRegExp =
+const char *const ctkNameFilterRegExp =
   "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
-const char *ctkValidWildCard =
+const char *const ctkValidWildCard =
   "^[\\w\\s\\.\\*\\_\\~\\$\\[\\]]+$";
 
 //-----------------------------------------------------------------------------
