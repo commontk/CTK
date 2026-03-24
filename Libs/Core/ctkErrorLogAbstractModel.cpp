@@ -507,7 +507,7 @@ QString ctkErrorLogAbstractModel::filePath()const
 void ctkErrorLogAbstractModel::setFilePath(const QString& filePath)
 {
   Q_D(ctkErrorLogAbstractModel);
-  return d->FileLogger.setFilePath(filePath);
+  d->FileLogger.setFilePath(filePath);
 }
 
 // --------------------------------------------------------------------------

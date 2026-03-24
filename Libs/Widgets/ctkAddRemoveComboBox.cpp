@@ -401,7 +401,7 @@ CTK_GET_CPP(ctkAddRemoveComboBox, bool, empty, HasEmptyItem);
 void ctkAddRemoveComboBox::setCurrentIndex(int index)
 {
   Q_D(ctkAddRemoveComboBox);
-  return d->ComboBox->setCurrentIndex(index);
+  d->ComboBox->setCurrentIndex(index);
 }
 
 // --------------------------------------------------------------------------
@@ -484,7 +484,7 @@ void ctkAddRemoveComboBox::setItemText(int index, const QString& text)
   {
     return;
   }
-  return d->ComboBox->setItemText(index, text);
+  d->ComboBox->setItemText(index, text);
 }
 
 // --------------------------------------------------------------------------

@@ -1689,21 +1689,21 @@ int ctkDICOMVisualBrowserWidget::addServer(ctkDICOMServer* server)
 void ctkDICOMVisualBrowserWidget::removeServer(const QString& connectionName)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  return d->ServerNodeWidget->removeServer(connectionName);
+  d->ServerNodeWidget->removeServer(connectionName);
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::removeServer(int id)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  return d->ServerNodeWidget->removeServer(id);
+  d->ServerNodeWidget->removeServer(id);
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::removeAllServers()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  return d->ServerNodeWidget->removeAllServers();
+  d->ServerNodeWidget->removeAllServers();
 }
 
 //----------------------------------------------------------------------------

@@ -349,7 +349,7 @@ bool ctkCheckableComboBox::noneChecked()const
 void ctkCheckableComboBox::setCheckState(const QModelIndex& index, Qt::CheckState check)
 {
   Q_D(ctkCheckableComboBox);
-  return d->CheckableModelHelper->setCheckState(index, check);
+  d->CheckableModelHelper->setCheckState(index, check);
 }
 
 //-----------------------------------------------------------------------------
