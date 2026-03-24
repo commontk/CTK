@@ -203,7 +203,7 @@ const QString& ctkDirectoryButton::text()const
 void ctkDirectoryButton::setIcon(const QIcon& newIcon)
 {
   Q_D(const ctkDirectoryButton);
-  return d->PushButton->setIcon(newIcon);
+  d->PushButton->setIcon(newIcon);
 }
 
 //-----------------------------------------------------------------------------

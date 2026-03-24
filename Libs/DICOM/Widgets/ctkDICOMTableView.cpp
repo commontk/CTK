@@ -979,7 +979,7 @@ bool ctkDICOMTableView::isHeaderVisible()const
 void ctkDICOMTableView::setHeaderVisible(bool visible)
 {
   Q_D(ctkDICOMTableView);
-  return d->headerWidget->setVisible(visible);
+  d->headerWidget->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------

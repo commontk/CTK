@@ -542,7 +542,7 @@ void ctkSliderWidget::reset()
 void ctkSliderWidget::setSpinBoxAlignment(Qt::Alignment alignment)
 {
   Q_D(ctkSliderWidget);
-  return d->SpinBox->setAlignment(alignment);
+  d->SpinBox->setAlignment(alignment);
 }
 
 // -------------------------------------------------------------------------
