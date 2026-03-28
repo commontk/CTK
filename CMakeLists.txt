@@ -344,14 +344,6 @@ endif()
 #
 option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
 mark_as_advanced(CTK_USE_QTTESTING)
-if(NOT CTK_QT_VERSION VERSION_EQUAL "5")
-  # Forcing to OFF as "QtTesting" depends on XmlPatterns Qt component not available with Qt 6
-  if(DEFINED CTK_USE_QTTESTING AND CTK_USE_QTTESTING)
-    unset(CTK_USE_QTTESTING CACHE)
-    set(CTK_USE_QTTESTING OFF)
-    message(WARNING "Forcing option [CTK_USE_QTTESTING] to OFF as QtTesting depends on XmlPatterns Qt component not available with Qt ${CTK_QT_VERSION}")
-  endif()
-endif()
 mark_as_superbuild(CTK_USE_QTTESTING)
 
 #-----------------------------------------------------------------------------
