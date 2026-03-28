@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
+#include <QRegularExpression>
 #include <QTemporaryFile>
 
 // CTK includes
@@ -152,11 +153,12 @@ int ctkErrorLogModelFileLoggingTest1(int argc, char * argv [])
   for(int entryIndex = 0; entryIndex < expectedLogEntries.size(); ++entryIndex)
   {
     QStringList entry = expectedLogEntries.at(entryIndex);
-    QRegExp regexp(expectedLogEntryPatternTemplate.arg(entry.at(0)).arg(entry.at(1)).arg(entry.at(2)));
-    if (!regexp.exactMatch(currentLogEntries.at(entryIndex)))
+    QRegularExpression regexp(QRegularExpression::anchoredPattern(
+      expectedLogEntryPatternTemplate.arg(entry.at(0)).arg(entry.at(1)).arg(entry.at(2))));
+    if (!regexp.match(currentLogEntries.at(entryIndex)).hasMatch())
     {
       printErrorMessage(
-            QString("Line %1 - Log entry %2 does NOT math expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
+            QString("Line %1 - Log entry %2 does NOT match expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
                 arg(__LINE__).arg(entryIndex).arg(currentLogEntries.at(entryIndex)).arg(regexp.pattern()));
       return EXIT_FAILURE;
     }

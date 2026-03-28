@@ -28,7 +28,6 @@
 #include <QFileSystemModel>
 #include <QHBoxLayout>
 #include <QLineEdit>
-#include <QRegExp>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QSettings>
