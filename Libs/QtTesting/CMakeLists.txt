@@ -147,8 +147,11 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 list(APPEND KIT_target_libraries
   Qt${CTK_QT_VERSION}::Xml
-  Qt${CTK_QT_VERSION}::XmlPatterns
   )
+if(CTK_QT_VERSION VERSION_LESS "6")
+  # QtXmlPatterns is Qt 5 only; ctkXMLEventSource guards its usage accordingly
+  list(APPEND KIT_target_libraries Qt5::XmlPatterns)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
