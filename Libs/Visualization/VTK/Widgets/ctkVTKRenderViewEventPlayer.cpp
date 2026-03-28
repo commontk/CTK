@@ -24,7 +24,7 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTimer>
 #include <QWidget>
 
@@ -48,18 +48,19 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
   {
     if (Command == "3DViewSize")
     {
-      QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
-      if (mouseRegExp.indexIn(Arguments)!= -1)
+      static const QRegularExpression mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
+      QRegularExpressionMatch mouseMatch = mouseRegExp.match(Arguments);
+      if (mouseMatch.hasMatch())
       {
-        QVariant v = mouseRegExp.cap(1);
+        QVariant v = mouseMatch.captured(1);
         int w = v.toInt();
-        v = mouseRegExp.cap(2);
+        v = mouseMatch.captured(2);
         int h = v.toInt();
-        v = mouseRegExp.cap(3);
+        v = mouseMatch.captured(3);
 //        int app_w = v.toInt();
-        v = mouseRegExp.cap(4);
+        v = mouseMatch.captured(4);
 //        int app_h = v.toInt();
-        v = mouseRegExp.cap(5);
+        v = mouseMatch.captured(5);
         bool rescale = v.toBool();
 
         if ( (w != widget->width() || h != widget->height()) && rescale == true)
@@ -91,27 +92,28 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
     if (Command == "mousePress" || Command == "mouseRelease" ||
         Command == "mouseMove" || Command == "mouseWheel")
     {
-      QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
-      if (mouseRegExp.indexIn(Arguments)!= -1)
+      static const QRegularExpression mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
+      QRegularExpressionMatch mouseMatch = mouseRegExp.match(Arguments);
+      if (mouseMatch.hasMatch())
       {
         double x_center = widget->size().width() / 2.0;
         double y_center = widget->size().height() / 2.0;
 
-        QVariant v = mouseRegExp.cap(1);
+        QVariant v = mouseMatch.captured(1);
         double x = x_center - (v.toDouble() * x_center);
         x = static_cast<int>(x + 0.5);
 
-        v = mouseRegExp.cap(2);
+        v = mouseMatch.captured(2);
         double y = y_center - (v.toDouble() * y_center);
         y = static_cast<int>(y + 0.5);
 
-        v = mouseRegExp.cap(4);
+        v = mouseMatch.captured(4);
         Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(v.toInt());
 
-        v = mouseRegExp.cap(5);
+        v = mouseMatch.captured(5);
         Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(v.toInt());
 
-        v = mouseRegExp.cap(3);
+        v = mouseMatch.captured(3);
         if (Command == "mouseWheel")
         {
            int delta = ( v.toInt() == 0 ) ? -1 : 1;
