@@ -67,30 +67,6 @@ private:
   bool filterAcceptsIndex(const QModelIndex index) const
   {
     // Accept item if its tag, attribute, or value text matches
-    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      QRegExp rx = filterRegExp();
-      if (!rx.isEmpty() &&
-        ((sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::TagColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(rx))
-        || (sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::AttributeColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(rx))
-        || (sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::ValueColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(rx))))
-      {
-        return true;
-      }
-
-      QRegularExpression re = filterRegularExpression();
-      if (!re.pattern().isEmpty() && ((sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::TagColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(re))
-        || (sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::AttributeColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(re))
-        || (sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::ValueColumn,
-        index.parent()), Qt::DisplayRole).toString().contains(re))))
-      {
-        return true;
-      }
-    #else
       QRegularExpression re = filterRegularExpression();
       if ((sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::TagColumn,
         index.parent()), Qt::DisplayRole).toString().contains(re))
@@ -101,7 +77,6 @@ private:
       {
         return true;
       }
-    #endif
     // Accept item if any child matches
     for (int row = 0; row < sourceModel()->rowCount(index); row++)
     {
