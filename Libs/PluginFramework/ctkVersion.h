@@ -22,8 +22,8 @@
 #ifndef CTKVERSION_H
 #define CTKVERSION_H
 
+#include <QRegularExpression>
 #include <QString>
-#include <QRegExp>
 
 #include "ctkPluginFrameworkExport.h"
 
@@ -59,7 +59,7 @@ private:
   QString      qualifier;
 
   static const QString SEPARATOR; //  = "."
-  static const QRegExp RegExp;
+  static const QRegularExpression RegExp;
 
   bool undefined;
 

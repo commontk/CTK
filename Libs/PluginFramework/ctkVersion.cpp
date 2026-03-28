@@ -23,12 +23,14 @@
 
 #include "ctkException.h"
 
-#include <QStringList>
 #include <QDebug>
+#include <QRegularExpression>
+#include <QStringList>
 
 
 const QString ctkVersion::SEPARATOR = ".";
-const QRegExp ctkVersion::RegExp = QRegExp("[a-zA-Z0-9_\\-]*");
+const QRegularExpression ctkVersion::RegExp =
+  QRegularExpression(QRegularExpression::anchoredPattern("[a-zA-Z0-9_\\-]*"));
 
 //----------------------------------------------------------------------------
 ctkVersion ctkVersion::emptyVersion()
@@ -65,7 +67,7 @@ ctkVersion::ctkVersion(bool undefined)
 //----------------------------------------------------------------------------
 void ctkVersion::validate()
 {
-  if (!RegExp.exactMatch(qualifier))
+  if (!RegExp.match(qualifier).hasMatch())
     throw ctkInvalidArgumentException(QString("invalid qualifier: ") + qualifier);
 
   undefined = false;
