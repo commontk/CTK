@@ -56,6 +56,12 @@ set(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 #
 if(CTK_USE_QTTESTING)
   find_package(QtTesting REQUIRED)
+  # Target name changed from "QtTesting" (old) to "qttesting" (new upstream)
+  if(TARGET qttesting)
+    set(QtTesting_LINK_TARGET qttesting)
+  else()
+    set(QtTesting_LINK_TARGET QtTesting)
+  endif()
   include_directories(
     ${QtTesting_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR} # For ctkConfig.h
@@ -211,7 +217,7 @@ if(CTK_USE_QTTESTING)
     ctkVTKRenderViewEventPlayer.h
     ctkVTKRenderViewEventTranslator.h
 )
-  list(APPEND KIT_target_libraries QtTesting)
+  list(APPEND KIT_target_libraries ${QtTesting_LINK_TARGET})
 endif()
 
 # Prefer QVTKOpenGLWidget to QVTKWidget when using Qt5
