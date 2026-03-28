@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QRegularExpression>
 #include <QStringList>
 
 // CTK includes
@@ -39,33 +40,33 @@ int ctkUtilsTest3(int argc, char * argv [] )
 
   QString dummy;
   QStringList dummyList;
-  QRegExp defaultDummyRegExp(".+");
+  QString defaultDummyPattern(".+");
 
   if (!ctk::extensionToRegExp(dummy).isEmpty())
   {
     qWarning() << "Line" << __LINE__ << "ctk::extensionToRegExp() failed: ";
     return EXIT_FAILURE;
   }
-  QRegExp dummyRegExp = ctk::nameFiltersToRegExp(dummyList);
-  if(dummyRegExp != defaultDummyRegExp )
+  QRegularExpression dummyRegExp = ctk::nameFiltersToRegularExpression(dummyList);
+  if(dummyRegExp.pattern() != defaultDummyPattern )
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: ";
     return EXIT_FAILURE;
   }
   //add test if it take all the extension, test with examples
-  if (!dummyRegExp.exactMatch("c:/foo.jpg"))
+  if (!dummyRegExp.match("c:/foo.jpg").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: ";
     return EXIT_FAILURE;
   }
-  if (!dummyRegExp.exactMatch("c:/foo.jpga"))
+  if (!dummyRegExp.match("c:/foo.jpga").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: ";
     return EXIT_FAILURE;
   }
-  if (!dummyRegExp.exactMatch("c:/foo.png"))
+  if (!dummyRegExp.match("c:/foo.png").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: ";
     return EXIT_FAILURE;
   }
 
@@ -94,47 +95,46 @@ int ctkUtilsTest3(int argc, char * argv [] )
   standardNameFilters << standardNameFilter << simpleStandardNameFilter;
 
   QString nameFiltersExtensions("(.*\\.jpg?$|.*\\.txt?$)");
-  QRegExp defaultRegExp(nameFiltersExtensions);
 
-  if(ctk::nameFiltersToRegExp(standardNameFilters).isEmpty())
+  QRegularExpression regExp = ctk::nameFiltersToRegularExpression(standardNameFilters);
+  if(regExp.pattern().isEmpty())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: input "
-               << nameFiltersExtensions << "output:"
-               << ctk::nameFiltersToRegExp(standardNameFilters).pattern();
-    return EXIT_FAILURE;
-  }
-
-  QRegExp regExp = ctk::nameFiltersToRegExp(standardNameFilters);
-  if (regExp != defaultRegExp)
-  {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: input "
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: input "
                << nameFiltersExtensions << "output:"
                << regExp.pattern();
     return EXIT_FAILURE;
   }
-  if (!regExp.exactMatch("c:/foo.jpg"))
+
+  if (regExp.pattern() != nameFiltersExtensions)
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed:";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed: input "
+               << nameFiltersExtensions << "output:"
+               << regExp.pattern();
     return EXIT_FAILURE;
   }
-  if (!regExp.exactMatch("c:/foo.txt"))
+  if (!regExp.match("c:/foo.jpg").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed:";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed:";
     return EXIT_FAILURE;
   }
-  if (regExp.exactMatch("c:/foo.txta"))
+  if (!regExp.match("c:/foo.txt").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed:";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed:";
     return EXIT_FAILURE;
   }
-  if (regExp.exactMatch("c:/foo.jpga"))
+  if (regExp.match("c:/foo.txta").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed:";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed:";
     return EXIT_FAILURE;
   }
-  if (regExp.exactMatch("c:/foo.png"))
+  if (regExp.match("c:/foo.jpga").hasMatch())
   {
-    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed:";
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed:";
+    return EXIT_FAILURE;
+  }
+  if (regExp.match("c:/foo.png").hasMatch())
+  {
+    qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegularExpression() failed:";
     return EXIT_FAILURE;
   }
 
