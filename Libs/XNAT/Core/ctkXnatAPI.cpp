@@ -27,7 +27,7 @@
 #include "qRestResult.h"
 
 #include <QNetworkReply>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QUrl>
 #include <QUrlQuery>
 
@@ -60,7 +60,8 @@ QUuid ctkXnatAPI::get(const QString& resource, const Parameters& parameters, con
 // --------------------------------------------------------------------------
 void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& response)
 {
-  static QRegExp identifierPattern("[a-zA-Z][a-zA-Z0-9_]*");
+  static const QRegularExpression identifierPattern(
+    QRegularExpression::anchoredPattern("[a-zA-Z][a-zA-Z0-9_]*"));
 
   QList<QVariantMap> result;
 
@@ -86,7 +87,7 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
     // E.g. GET query of the list of subjects
     result = this->parseJsonResponse(restResult, response);
   }
-  else if (identifierPattern.exactMatch(response))
+  else if (identifierPattern.match(response).hasMatch())
   {
     // Some operations return the identifier of the newly created object.
     // E.g. creating a subject.
