@@ -18,6 +18,12 @@ endif()
 #
 if(CTK_USE_QTTESTING)
   find_package(QtTesting REQUIRED)
+  # Target name changed from "QtTesting" (old) to "qttesting" (new upstream)
+  if(TARGET qttesting)
+    set(QtTesting_LINK_TARGET qttesting)
+  else()
+    set(QtTesting_LINK_TARGET QtTesting)
+  endif()
   include_directories(
     ${QtTesting_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR} # For ctkConfig.h
@@ -311,7 +317,7 @@ if(CTK_USE_QTTESTING)
     ctkTreeComboBoxEventTranslator.cpp
     ctkTreeComboBoxEventTranslator.h
     )
-  list(APPEND KIT_target_libraries QtTesting)
+  list(APPEND KIT_target_libraries ${QtTesting_LINK_TARGET})
 endif()
 
 ctkMacroBuildLib(

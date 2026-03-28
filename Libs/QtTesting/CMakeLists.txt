@@ -4,7 +4,13 @@ project(CTKQtTesting)
 # 3rd party dependencies
 #
 find_package(QtTesting REQUIRED)
-set(QtTesting_LIBRARIES QtTesting)
+# The upstream target name changed from "QtTesting" (pre-2024) to "qttesting"
+# (lowercase) in newer revisions. Use whichever target the package provides.
+if(TARGET qttesting)
+  set(QtTesting_LIBRARIES qttesting)
+else()
+  set(QtTesting_LIBRARIES QtTesting)
+endif()
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -134,9 +140,6 @@ set(KIT_UI_FORMS
 set(KIT_resources
   Resources/ctkQtTesting.qrc
 )
-
-# Set QtTesting_LIBRARIES variable
-set(QtTesting_LIBRARIES QtTesting)
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
