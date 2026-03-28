@@ -60,7 +60,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMimeData>
 #include <QPointer>
 #include <QPushButton>
-#include <QRegExp>
 #include <QRegularExpression>
 #include <QTextBlock>
 #include <QTextCursor>
@@ -848,10 +847,11 @@ void ctkConsolePrivate::internalExecuteCommand()
   QString indent;
   if (this->EditorHints & ctkConsole::AutomaticIndentation)
   {
-    QRegExp regExp("^(\\s+)");
-    if (regExp.indexIn(command) != -1)
+    static const QRegularExpression regExp("^(\\s+)");
+    QRegularExpressionMatch regExpMatch = regExp.match(command);
+    if (regExpMatch.hasMatch())
     {
-      indent = regExp.cap(1);
+      indent = regExpMatch.captured(1);
     }
   }
 

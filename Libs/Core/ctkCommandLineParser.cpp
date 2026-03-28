@@ -23,11 +23,7 @@
 
 // Qt includes
 #include <QHash>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 #include <QRegularExpression>
-#else
-#include <QRegExp>
-#endif
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>
@@ -162,13 +158,8 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
   if (!RegularExpression.isEmpty())
   {
     // Validate value
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QRegularExpression regexp(QRegularExpression::anchoredPattern(this->RegularExpression));
     if (!regexp.match(value).hasMatch())
-#else
-    QRegExp regexp(this->RegularExpression);
-    if (!regexp.exactMatch(value))
-#endif
     {
       return false;
     }

@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QRegularExpression>
 #include <QThread>
 
 // CTK includes
@@ -138,13 +139,16 @@ void ctkVTKOutputWindow::DisplayDebugText(const char* text)
 QString ctkVTKOutputWindow::parseText(const QString& text, ctkErrorLogContext& context)
 {
   context.Message = text;
-  QRegExp contextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)");
-  if (contextRegExp.exactMatch(text))
+  static const QRegularExpression contextRegExp(
+    QRegularExpression::anchoredPattern(
+      "[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)"));
+  QRegularExpressionMatch contextMatch = contextRegExp.match(text);
+  if (contextMatch.hasMatch())
   {
-    context.File = contextRegExp.cap(1);
-    context.Category = contextRegExp.cap(3);
-    context.Line = contextRegExp.cap(2).toInt();
-    context.Message = contextRegExp.cap(4);
+    context.File = contextMatch.captured(1);
+    context.Category = contextMatch.captured(3);
+    context.Line = contextMatch.captured(2).toInt();
+    context.Message = contextMatch.captured(4);
   }
   return context.Message;
 }

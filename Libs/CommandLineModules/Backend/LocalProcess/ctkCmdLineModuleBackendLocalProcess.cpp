@@ -34,6 +34,7 @@
 #include "ctkUtils.h"
 #include <iostream>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QUrl>
 
 //----------------------------------------------------------------------------
@@ -49,7 +50,8 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
 
   QString normalizeFlag(const QString& flag) const
   {
-    return flag.trimmed().remove(QRegExp("^-*"));
+    static const QRegularExpression reLeadingDashes("^-*");
+    return flag.trimmed().remove(reLeadingDashes);
   }
 
   QStringList commandLineArguments(const QHash<QString,QVariant>& currentValues,
