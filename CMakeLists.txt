@@ -50,6 +50,21 @@ if(APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
+# Setting C++ Standard
+#-----------------------------------------------------------------------------
+set(_msg "Setting C++ standard")
+message(STATUS "${_msg}")
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
+if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
+  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
+endif()
+
+#-----------------------------------------------------------------------------
 project(CTK)
 #-----------------------------------------------------------------------------
 
