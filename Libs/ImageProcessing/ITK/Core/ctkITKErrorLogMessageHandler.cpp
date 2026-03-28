@@ -144,8 +144,7 @@ QString ctkITKOutputWindow::parseText(const QString& text, ctkErrorLogContext& c
   context.Message = text;
 
   static const QRegularExpression contextRegExp(
-    QRegularExpression::anchoredPattern(
-      "[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)"));
+    "^[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)");
   QRegularExpressionMatch contextMatch = contextRegExp.match(text);
   if (contextMatch.hasMatch())
   {

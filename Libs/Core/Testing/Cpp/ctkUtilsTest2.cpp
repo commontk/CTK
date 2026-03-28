@@ -106,6 +106,6 @@ int ctkUtilsTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
   //QString extensionToRegExp(const QString& extension);
-  //QRegExp nameFiltersToRegExp(const QStringList& nameFilters);
+  //QRegularExpression nameFiltersToRegularExpression(const QStringList& nameFilters);
   return EXIT_SUCCESS;
 }
