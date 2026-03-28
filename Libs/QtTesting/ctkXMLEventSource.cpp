@@ -25,8 +25,10 @@
 #include <QFile>
 #include <QMap>
 #include <QMessageBox>
-#include <QtXmlPatterns/QXmlSchema>
-#include <QtXmlPatterns/QXmlSchemaValidator>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+# include <QtXmlPatterns/QXmlSchema>
+# include <QtXmlPatterns/QXmlSchemaValidator>
+#endif
 #include <QVariant>
 
 // CTKQtTesting includes
@@ -78,7 +80,9 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
     return;
   }
 
-  // Check if the xml file is valid
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  // Check if the xml file is valid (Qt5 only — QXmlSchema/QXmlSchemaValidator
+  // are from QtXmlPatterns which is not available in Qt 6)
   QXmlSchema xmlSchema;
   if (!xmlSchema.load(QUrl::fromLocalFile(":/XML/XMLDescription.xsd")) ||
       !xmlSchema.isValid())
@@ -93,6 +97,7 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
     qCritical() << xmlfilename << "invalid xml file for qtTesting !";
     return;
   }
+#endif
 
   xml.reset();
   QByteArray data = xml.readAll();
