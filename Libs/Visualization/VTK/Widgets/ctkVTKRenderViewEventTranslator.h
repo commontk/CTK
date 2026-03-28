@@ -24,6 +24,9 @@
 // QT includes
 #include <QMouseEvent>
 
+// STD includes
+#include <optional>
+
 // QtTesting includes
 #include <pqWidgetEventTranslator.h>
 
@@ -46,9 +49,11 @@ public:
 
 protected:
   QByteArray   mClassType;
-  QMouseEvent  lastMoveEvent;
-  QMouseEvent  oldMoveEvent;
-  QMouseEvent  lastMouseEvent;
+  // Qt6: QMouseEvent::operator= is protected (inherited from QInputEvent).
+  // Use std::optional so .emplace() can construct in-place without copy/assign.
+  std::optional<QMouseEvent> lastMoveEvent;
+  std::optional<QMouseEvent> oldMoveEvent;
+  std::optional<QMouseEvent> lastMouseEvent;
 
 private:
   Q_DISABLE_COPY(ctkVTKRenderViewEventTranslator);

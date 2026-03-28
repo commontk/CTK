@@ -33,12 +33,12 @@
 ctkVTKRenderViewEventTranslator::ctkVTKRenderViewEventTranslator(const QByteArray& Classname, QObject* Parent)
   : pqWidgetEventTranslator(Parent),
     mClassType(Classname),
-    lastMoveEvent(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
-                                             Qt::MouseButtons(), Qt::KeyboardModifiers()),
-    oldMoveEvent(QEvent::MouseMove, QPoint(), Qt::MouseButton(),
-                                             Qt::MouseButtons(), Qt::KeyboardModifiers()),
-    lastMouseEvent(QEvent::MouseButtonRelease, QPoint(), Qt::MouseButton(),
-                                             Qt::MouseButtons(), Qt::KeyboardModifiers())
+    lastMoveEvent(std::in_place, QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
+                                Qt::MouseButtons(), Qt::KeyboardModifiers()),
+    oldMoveEvent(std::in_place, QEvent::MouseMove, QPoint(), Qt::MouseButton(),
+                                Qt::MouseButtons(), Qt::KeyboardModifiers()),
+    lastMouseEvent(std::in_place, QEvent::MouseButtonRelease, QPoint(), Qt::MouseButton(),
+                                  Qt::MouseButtons(), Qt::KeyboardModifiers())
 {
 }
 
@@ -129,12 +129,11 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             .arg(modifiers));
         }
 
-        // reset lastMoveEvent
-        QMouseEvent e(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
-                      Qt::MouseButtons(), Qt::KeyboardModifiers());
-
-        lastMoveEvent = e;
-        lastMouseEvent = e;
+        // reset lastMoveEvent / lastMouseEvent
+        lastMoveEvent.emplace(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
+                              Qt::MouseButtons(), Qt::KeyboardModifiers());
+        lastMouseEvent.emplace(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
+                               Qt::MouseButtons(), Qt::KeyboardModifiers());
     }
       handled = true;
       break;
@@ -144,15 +143,14 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
           QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
           if (mouseEvent)
           {
-            QMouseEvent e(QEvent::MouseMove, QPoint(mouseEvent->x(), mouseEvent->y()),
-                          mouseEvent->button(), mouseEvent->buttons(),
-                          mouseEvent->modifiers());
-
-            lastMoveEvent = e;
+            lastMoveEvent.emplace(QEvent::MouseMove,
+                                  QPoint(mouseEvent->x(), mouseEvent->y()),
+                                  mouseEvent->button(), mouseEvent->buttons(),
+                                  mouseEvent->modifiers());
 
             QSize size = widget->size();
 
-            if(lastMouseEvent.type() == QEvent::MouseButtonPress )
+            if(lastMouseEvent->type() == QEvent::MouseButtonPress )
             {
               int x = mouseEvent->x();
               int y = mouseEvent->y();
@@ -185,7 +183,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
           QSize size = widget->size();
 
           // record last move event if it is valid
-          if(lastMoveEvent.type() == QEvent::MouseMove)
+          if(lastMoveEvent->type() == QEvent::MouseMove)
           {
             int x = mouseEvent->x();
             int y = mouseEvent->y();
@@ -195,9 +193,9 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             double x_norm = (x_center - x)/static_cast<double>(size.width()/2.0);
             double y_norm = (y_center - y)/static_cast<double>(size.height()/2.0);
 
-            int button = lastMoveEvent.button();
-            int buttons = lastMoveEvent.buttons();
-            int modifiers = lastMoveEvent.modifiers();
+            int button = lastMoveEvent->button();
+            int buttons = lastMoveEvent->buttons();
+            int modifiers = lastMoveEvent->modifiers();
 
             emit recordEvent(Object, "mouseMove", QString("(%1,%2,%3,%4,%5)")
               .arg(x_norm)
@@ -226,11 +224,9 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             .arg(buttons)
             .arg(modifiers));
         }
-        // reset lastMoveEvent
-        QMouseEvent e(QEvent::MouseButtonRelease, QPoint(), Qt::MouseButton(),
-                      Qt::MouseButtons(), Qt::KeyboardModifiers());
-
-        lastMouseEvent = e;
+        // reset lastMouseEvent
+        lastMouseEvent.emplace(QEvent::MouseButtonRelease, QPoint(), Qt::MouseButton(),
+                               Qt::MouseButtons(), Qt::KeyboardModifiers());
     }
 
       handled = true;
