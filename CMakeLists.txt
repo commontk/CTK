@@ -944,17 +944,11 @@ endif()
 
 # Check if dependencies are satisfied
 if(CTK_LIB_Scripting/Python/Core)
-  if(NOT PYTHONINTERP_FOUND)
-    find_package(PythonInterp)
-    if(NOT PYTHONINTERP_FOUND)
-      message(FATAL_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
-    endif()
-  endif()
-  if(NOT PYTHONLIBS_FOUND)
-    find_package(PythonLibs)
-    if(NOT PYTHONLIBS_FOUND)
-      message(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
-    endif()
+  if(NOT Python3_Interpreter_FOUND OR NOT Python3_Development_FOUND)
+    # Use LOCATION strategy to respect PATH order and virtual environments
+    # rather than VERSION which picks the newest Python found anywhere.
+    set(Python3_FIND_STRATEGY LOCATION)
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
   endif()
 endif()
 

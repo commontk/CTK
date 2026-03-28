@@ -67,29 +67,23 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
-    set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
-    set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-    set(Python3_LIBRARY ${PYTHON_LIBRARY})
-    set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
-    set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
-    find_package(Python3 COMPONENTS Interpreter Development)
+    if(NOT Python3_Development_FOUND)
+      find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    endif()
 
-    ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+    ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
+
+    # VTK8 and earlier use the old FindPythonInterp/FindPythonLibs variable names
     list(APPEND additional_vtk_cmakevars
-      # FindPythonInterp, FindPythonLibs
-      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
-      -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+      -DPYTHON_EXECUTABLE:PATH=${Python3_EXECUTABLE}
+      -DPYTHON_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIRS}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
-      -DPYTHON_DEBUG_LIBRARIES:FILEPATH=${PYTHON_DEBUG_LIBRARIES}
       )
-    # VTK9
+    # VTK9+ uses FindPython3 hint variables
     list(APPEND additional_vtk9_cmakevars
-      # FindPython3
-      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
-      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
-      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY}
-      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY}
       -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIRS}
+      -DPython3_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       )
   endif()
 
