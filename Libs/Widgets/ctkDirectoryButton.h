@@ -145,7 +145,7 @@ public:
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
 #else
-  void setOptions(const Options& options);
+  void setOptions(Options options);
   const Options& options()const;
 #endif
 

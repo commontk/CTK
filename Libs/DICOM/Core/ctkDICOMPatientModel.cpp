@@ -1073,7 +1073,7 @@ void ctkDICOMPatientModel::setDateFilter(DateType dateType)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientModel::setCustomDateRange(const QDate& startDate, const QDate& endDate)
+void ctkDICOMPatientModel::setCustomDateRange(QDate startDate, QDate endDate)
 {
   Q_D(ctkDICOMPatientModel);
   if (d->CustomStartDate == startDate && d->CustomEndDate == endDate)

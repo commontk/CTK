@@ -2402,7 +2402,7 @@ void ctkDICOMVisualBrowserWidget::onFilteringDateComboBoxChanged(int index)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onFilteringStartDateChanged(const QDate& date)
+void ctkDICOMVisualBrowserWidget::onFilteringStartDateChanged(QDate date)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringStartDate = date;
@@ -2424,7 +2424,7 @@ void ctkDICOMVisualBrowserWidget::onFilteringStartDateChanged(const QDate& date)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onFilteringEndDateChanged(const QDate& date)
+void ctkDICOMVisualBrowserWidget::onFilteringEndDateChanged(QDate date)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringEndDate = date;
@@ -2951,7 +2951,7 @@ void ctkDICOMVisualBrowserWidget::onStudyReadyToOpen(const QString& studyInstanc
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos, const QStringList& selectedPatientUIDs)
+void ctkDICOMVisualBrowserWidget::showPatientContextMenu(QPoint globalPos, const QStringList& selectedPatientUIDs)
 {
   if (selectedPatientUIDs.isEmpty())
   {
@@ -3056,7 +3056,7 @@ void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& globalPos, const QStringList& selectedStudyInstanceUIDs)
+void ctkDICOMVisualBrowserWidget::showStudyContextMenu(QPoint globalPos, const QStringList& selectedStudyInstanceUIDs)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 
@@ -3170,7 +3170,7 @@ void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& globalPos, 
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs)
+void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(QPoint globalPos, const QStringList& selectedSeriesInstanceUIDs)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
 

@@ -345,7 +345,7 @@ void ctkWorkflowPrivate::validateInternal(ctkWorkflowStep* step)
 void ctkWorkflowPrivate::onEntryInternal(
     ctkWorkflowStep* step,
     ctkWorkflowStep* comingFrom,
-    const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType)
+    ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
   Q_ASSERT(step);
 
@@ -433,7 +433,7 @@ void ctkWorkflowPrivate::processingAfterOnEntry()
 void ctkWorkflowPrivate::onExitInternal(
     ctkWorkflowStep* step,
     ctkWorkflowStep* goingTo,
-    const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType)
+    ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
   Q_ASSERT(step);
 

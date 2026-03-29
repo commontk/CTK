@@ -66,9 +66,9 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setPort, Port);
+CTK_SET_CPP(ctkDICOMStorageListenerJob, int, setPort, Port);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, int, port, Port)
-CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setConnectionTimeout, ConnectionTimeout);
+CTK_SET_CPP(ctkDICOMStorageListenerJob, int, setConnectionTimeout, ConnectionTimeout);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, int, connectionTimeout, ConnectionTimeout)
 CTK_SET_CPP(ctkDICOMStorageListenerJob, const QString&, setAETitle, AETitle);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, QString, AETitle, AETitle)

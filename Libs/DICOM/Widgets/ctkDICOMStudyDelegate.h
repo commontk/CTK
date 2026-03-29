@@ -88,37 +88,37 @@ public:
   Q_INVOKABLE bool isStudyCollapsed(const QModelIndex& index) const;
 
   /// Get the series area rect within the item rect (when expanded)
-  Q_INVOKABLE QRect seriesAreaRect(const QRect& itemRect, const QModelIndex& index) const;
+  Q_INVOKABLE QRect seriesAreaRect(QRect itemRect, const QModelIndex& index) const;
 
   /// Calculate the required height for the series area based on series count, grid columns, and thumbnail size
   Q_INVOKABLE int calculateSeriesAreaHeight(const QModelIndex& studyIndex) const;
 
   /// Get the study header rect within the item rect
-  Q_INVOKABLE QRect studyCardRect(const QRect& itemRect) const;
+  Q_INVOKABLE QRect studyCardRect(QRect itemRect) const;
 
   /// Get the study header rect within the item rect
-  Q_INVOKABLE QRect studyHeaderRect(const QRect& itemRect) const;
+  Q_INVOKABLE QRect studyHeaderRect(QRect itemRect) const;
 
   /// Get the study info rect within the header rect
-  Q_INVOKABLE QRect studyInfoRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect studyInfoRect(QRect headerRect) const;
 
   /// Get the collapse indicator rect within the header rect
-  Q_INVOKABLE QRect collapseIndicatorRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect collapseIndicatorRect(QRect headerRect) const;
 
   /// Get the series info rect within the header rect
-  Q_INVOKABLE QRect seriesInfoRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect seriesInfoRect(QRect headerRect) const;
 
   /// Get the select all icon rect within the header rect
-  Q_INVOKABLE QRect selectAllIconRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect selectAllIconRect(QRect headerRect) const;
 
   /// Get the context menu button rect within the header rect
-  Q_INVOKABLE QRect contextMenuButtonRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect contextMenuButtonRect(QRect headerRect) const;
 
   /// Get the operation status button rect within the header rect
-  Q_INVOKABLE QRect operationStatusButtonRect(const QRect& headerRect) const;
+  Q_INVOKABLE QRect operationStatusButtonRect(QRect headerRect) const;
 
   /// Check if a point is within the context menu button area
-  Q_INVOKABLE bool isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect) const;
+  Q_INVOKABLE bool isContextMenuButtonAt(QPoint pos, QRect itemRect) const;
 
 Q_SIGNALS:
   /// Emitted when spacing changes
@@ -136,41 +136,41 @@ Q_SIGNALS:
 protected:
   /// Paint the study header area
   void paintStudyHeader(QPainter* painter,
-                        const QRect& rect,
+                        QRect rect,
                         const QModelIndex& index,
                         const QStyleOptionViewItem& option,
                         int numberOfSeriesSelected) const;
 
   /// Paint the collapse/expand indicator
-  void paintCollapseIndicator(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintCollapseIndicator(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint the study information (description, date, modalities)
-  void paintStudyInfo(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintStudyInfo(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint the series count and status
-  void paintSeriesInfo(QPainter* painter, const QRect& rect, const QModelIndex& index, int numberOfSeriesSelected) const;
+  void paintSeriesInfo(QPainter* painter, QRect rect, const QModelIndex& index, int numberOfSeriesSelected) const;
 
   /// Paint the series count and status
   void paintSelectAllIcon(QPainter* painter,
-                          const QRect& rect,
+                          QRect rect,
                           const QModelIndex& index,
                           const QStyleOptionViewItem& option) const;
 
   /// Paint the context menu button (3 dots) when hovering
   void paintContextMenuButton(QPainter* painter,
-                              const QRect& rect,
+                              QRect rect,
                               const QModelIndex& index,
                               const QStyleOptionViewItem& option) const;
 
   /// Paint the operation status button (progress, error, etc.)
   void paintOperationStatusButton(QPainter* painter,
-                                  const QRect& rect,
+                                  QRect rect,
                                   const QModelIndex& index,
                                   const QStyleOptionViewItem& option) const;
 
   /// Paint the card background container
   void paintCardBackground(QPainter* painter,
-                           const QRect& rect,
+                           QRect rect,
                            const QModelIndex& index,
                            const QStyleOptionViewItem& option) const;
 

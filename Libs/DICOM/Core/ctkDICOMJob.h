@@ -64,7 +64,7 @@ public:
 
   ///@{
   /// DICOM Level
-  void setDICOMLevel(const DICOMLevels& dicomLevel);
+  void setDICOMLevel(DICOMLevels dicomLevel);
   DICOMLevels dicomLevel() const;
   ///@}
 

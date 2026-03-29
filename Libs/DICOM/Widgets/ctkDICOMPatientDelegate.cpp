@@ -155,7 +155,7 @@ void ctkDICOMPatientDelegate::paintTabMode(QPainter* painter, const QStyleOption
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientDelegate::paintPatientsTabs(QPainter *painter, const QRect &rect,
+void ctkDICOMPatientDelegate::paintPatientsTabs(QPainter *painter, QRect rect,
                                                 const QStyleOptionViewItem &option,
                                                 const QModelIndex &index) const
 {
@@ -265,7 +265,7 @@ void ctkDICOMPatientDelegate::paintPatientsTabs(QPainter *painter, const QRect &
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect &rect,
+void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, QRect rect,
                                                  const QStyleOptionViewItem &option,
                                                  const QModelIndex &index) const
 {
@@ -631,7 +631,7 @@ ctkDICOMPatientView::DisplayMode ctkDICOMPatientDelegate::getDisplayMode(const Q
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMPatientDelegate::patientsRect(const QRect &itemRect,
+QRect ctkDICOMPatientDelegate::patientsRect(QRect itemRect,
                                             const QStyleOptionViewItem& option,
                                             const QModelIndex& index) const
 {
@@ -667,7 +667,7 @@ QRect ctkDICOMPatientDelegate::patientsRect(const QRect &itemRect,
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMPatientDelegate::patientHeaderRect(const QRect& patientsRect,
+QRect ctkDICOMPatientDelegate::patientHeaderRect(QRect patientsRect,
                                                  const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMPatientDelegate);
@@ -761,7 +761,7 @@ int ctkDICOMPatientDelegate::patientHeaderHeight() const
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMPatientDelegate::contextMenuButtonRect(const QRect& itemRect, const QStyleOptionViewItem& option) const
+QRect ctkDICOMPatientDelegate::contextMenuButtonRect(QRect itemRect, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMPatientDelegate);
 
@@ -789,14 +789,14 @@ QRect ctkDICOMPatientDelegate::contextMenuButtonRect(const QRect& itemRect, cons
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMPatientDelegate::isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect, const QStyleOptionViewItem& option) const
+bool ctkDICOMPatientDelegate::isContextMenuButtonAt(QPoint pos, QRect itemRect, const QStyleOptionViewItem& option) const
 {
   QRect buttonRect = this->contextMenuButtonRect(itemRect, option);
   return buttonRect.contains(pos);
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMPatientDelegate::selectAllIconRect(const QRect& itemRect, const QStyleOptionViewItem& option) const
+QRect ctkDICOMPatientDelegate::selectAllIconRect(QRect itemRect, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMPatientDelegate);
 
@@ -810,7 +810,7 @@ QRect ctkDICOMPatientDelegate::selectAllIconRect(const QRect& itemRect, const QS
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMPatientDelegate::isSelectAllIconAt(const QPoint& pos, const QRect& itemRect, const QStyleOptionViewItem& option) const
+bool ctkDICOMPatientDelegate::isSelectAllIconAt(QPoint pos, QRect itemRect, const QStyleOptionViewItem& option) const
 {
   QRect iconRect = this->selectAllIconRect(itemRect, option);
   return iconRect.contains(pos);
@@ -818,7 +818,7 @@ bool ctkDICOMPatientDelegate::isSelectAllIconAt(const QPoint& pos, const QRect& 
 
 //------------------------------------------------------------------------------
 void ctkDICOMPatientDelegate::paintContextMenuButton(QPainter* painter,
-                                                     const QRect& itemRect,
+                                                     QRect itemRect,
                                                      const QModelIndex& index,
                                                      const QStyleOptionViewItem& option) const
 {
@@ -898,7 +898,7 @@ void ctkDICOMPatientDelegate::paintContextMenuButton(QPainter* painter,
 
 //------------------------------------------------------------------------------
 void ctkDICOMPatientDelegate::paintSelectAllIcon(QPainter* painter,
-                                                 const QRect& itemRect,
+                                                 QRect itemRect,
                                                  const QModelIndex& index,
                                                  const QStyleOptionViewItem& option) const
 {

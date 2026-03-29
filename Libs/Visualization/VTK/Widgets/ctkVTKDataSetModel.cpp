@@ -43,7 +43,7 @@ public:
   void init();
   //void listenAbstractArrayModifiedEvent();
 
-  static QList<vtkAbstractArray*> attributeArrayToInsert(const ctkVTKDataSetModel::AttributeTypes& attributeType,
+  static QList<vtkAbstractArray*> attributeArrayToInsert(ctkVTKDataSetModel::AttributeTypes attributeType,
                                                      vtkDataSetAttributes * dataSetAttributes);
 
   vtkSmartPointer<vtkDataSet> DataSet;
@@ -100,7 +100,7 @@ void ctkVTKDataSetModelPrivate::listenAbstractArrayModifiedEvent()
 
 //------------------------------------------------------------------------------
 QList<vtkAbstractArray*> ctkVTKDataSetModelPrivate::attributeArrayToInsert(
-    const ctkVTKDataSetModel::AttributeTypes& attributeType,
+    ctkVTKDataSetModel::AttributeTypes attributeType,
     vtkDataSetAttributes * dataSetAttributes)
 {
   QList<vtkAbstractArray*> attributeArraysToInsert;
@@ -192,7 +192,7 @@ ctkVTKDataSetModel::AttributeTypes ctkVTKDataSetModel::attributeTypes()const
 }
 
 //------------------------------------------------------------------------------
-void ctkVTKDataSetModel::setAttributeTypes(const AttributeTypes& attributeTypes)
+void ctkVTKDataSetModel::setAttributeTypes(AttributeTypes attributeTypes)
 {
   Q_D(ctkVTKDataSetModel);
   if (d->AttributeType == attributeTypes)

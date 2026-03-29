@@ -1505,7 +1505,7 @@ QHash<int, QByteArray> ctkDICOMSeriesModel::roleNames() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const bool& studyIsCollapsed)
+void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, bool studyIsCollapsed)
 {
   Q_D(ctkDICOMSeriesModel);
   if (d->IsUpdating)

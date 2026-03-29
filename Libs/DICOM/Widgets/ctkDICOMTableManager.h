@@ -74,7 +74,7 @@ public:
    */
   Q_INVOKABLE void setDICOMDatabase(ctkDICOMDatabase* db);
 
-  void setTableOrientation(const Qt::Orientation&);
+  void setTableOrientation(Qt::Orientation);
   Qt::Orientation tableOrientation();
 
   /**

@@ -507,7 +507,7 @@ const QStringList& ctkPathLineEdit::nameFilters()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkPathLineEdit::setFilters(const Filters &filters)
+void ctkPathLineEdit::setFilters(Filters filters)
 {
   Q_D(ctkPathLineEdit);
   d->Filters = QFlags<QDir::Filter>(static_cast<int>(filters));
@@ -525,7 +525,7 @@ ctkPathLineEdit::Filters ctkPathLineEdit::filters()const
 #ifdef USE_QFILEDIALOG_OPTIONS
 void ctkPathLineEdit::setOptions(const QFileDialog::Options& dialogOptions)
 #else
-void ctkPathLineEdit::setOptions(const Options& dialogOptions)
+void ctkPathLineEdit::setOptions(Options dialogOptions)
 #endif
 {
   Q_D(ctkPathLineEdit);

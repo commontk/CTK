@@ -1151,7 +1151,7 @@ void ctkDICOMStudyModel::setDateFilter(DateType dateType)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyModel::setCustomDateRange(const QDate& startDate, const QDate& endDate)
+void ctkDICOMStudyModel::setCustomDateRange(QDate startDate, QDate endDate)
 {
   Q_D(ctkDICOMStudyModel);
 

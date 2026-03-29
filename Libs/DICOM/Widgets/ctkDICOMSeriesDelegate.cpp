@@ -183,7 +183,7 @@ QSize ctkDICOMSeriesDelegate::sizeHint(const QStyleOptionViewItem& option, const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index) const
+void ctkDICOMSeriesDelegate::paintThumbnail(QPainter* painter, QRect rect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 
@@ -279,7 +279,7 @@ void ctkDICOMSeriesDelegate::paintThumbnail(QPainter* painter, const QRect& rect
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintText(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
+void ctkDICOMSeriesDelegate::paintText(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 
@@ -470,7 +470,7 @@ void ctkDICOMSeriesDelegate::paintText(QPainter* painter, const QRect& rect, con
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index) const
+void ctkDICOMSeriesDelegate::paintThumbnailOverlay(QPainter* painter, QRect rect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   // Only paint modality overlay on thumbnail if thumbnail has been generated
@@ -522,7 +522,7 @@ void ctkDICOMSeriesDelegate::paintThumbnailOverlay(QPainter* painter, const QRec
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintSelection(QPainter* painter, const QRect& rect, const QStyleOptionViewItem& option) const
+void ctkDICOMSeriesDelegate::paintSelection(QPainter* painter, QRect rect, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 
@@ -571,14 +571,14 @@ void ctkDICOMSeriesDelegate::paintSelection(QPainter* painter, const QRect& rect
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::selectionRect(const QRect& itemRect) const
+QRect ctkDICOMSeriesDelegate::selectionRect(QRect itemRect) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   return itemRect.marginsRemoved(QMargins(d->Spacing, d->Spacing, d->Spacing, d->Spacing));
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::thumbnailRect(const QRect& itemRect, const QModelIndex& index) const
+QRect ctkDICOMSeriesDelegate::thumbnailRect(QRect itemRect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   // Query the model for thumbnail size using the role
@@ -606,7 +606,7 @@ QRect ctkDICOMSeriesDelegate::thumbnailRect(const QRect& itemRect, const QModelI
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::progressBarRect(const QRect& itemRect, const QModelIndex& index) const
+QRect ctkDICOMSeriesDelegate::progressBarRect(QRect itemRect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   QRect thumbRect = this->thumbnailRect(itemRect, index);
@@ -622,7 +622,7 @@ QRect ctkDICOMSeriesDelegate::progressBarRect(const QRect& itemRect, const QMode
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::textRect(const QRect& itemRect, const QModelIndex& index) const
+QRect ctkDICOMSeriesDelegate::textRect(QRect itemRect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   QRect progressBarRect = this->progressBarRect(itemRect, index);
@@ -676,7 +676,7 @@ int ctkDICOMSeriesDelegate::cornerRadius() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintContextMenuButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
+void ctkDICOMSeriesDelegate::paintContextMenuButton(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 
@@ -752,7 +752,7 @@ void ctkDICOMSeriesDelegate::paintContextMenuButton(QPainter* painter, const QRe
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::contextMenuButtonRect(const QRect& itemRect, const QModelIndex& index) const
+QRect ctkDICOMSeriesDelegate::contextMenuButtonRect(QRect itemRect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   QRect thumbRect = this->thumbnailRect(itemRect, index);
@@ -763,14 +763,14 @@ QRect ctkDICOMSeriesDelegate::contextMenuButtonRect(const QRect& itemRect, const
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMSeriesDelegate::isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect, const QModelIndex& index) const
+bool ctkDICOMSeriesDelegate::isContextMenuButtonAt(QPoint pos, QRect itemRect, const QModelIndex& index) const
 {
   QRect buttonRect = this->contextMenuButtonRect(itemRect, index);
   return buttonRect.contains(pos);
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMSeriesDelegate::statusButtonRect(const QRect &itemRect, const QModelIndex &index) const
+QRect ctkDICOMSeriesDelegate::statusButtonRect(QRect itemRect, const QModelIndex &index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
   QRect thumbRect = this->thumbnailRect(itemRect, index);
@@ -781,14 +781,14 @@ QRect ctkDICOMSeriesDelegate::statusButtonRect(const QRect &itemRect, const QMod
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMSeriesDelegate::isStatusButtonAt(const QPoint &pos, const QRect &itemRect, const QModelIndex &index) const
+bool ctkDICOMSeriesDelegate::isStatusButtonAt(QPoint pos, QRect itemRect, const QModelIndex &index) const
 {
   QRect buttonRect = this->statusButtonRect(itemRect, index);
   return buttonRect.contains(pos);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
+void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 
@@ -909,7 +909,7 @@ void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& r
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesDelegate::paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index) const
+void ctkDICOMSeriesDelegate::paintProgressBar(QPainter* painter, QRect rect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMSeriesDelegate);
 

@@ -163,7 +163,7 @@ ctkVTKDataSetModel::AttributeTypes ctkVTKDataSetArrayComboBox::attributeTypes()c
 }
 
 // --------------------------------------------------------------------------
-void ctkVTKDataSetArrayComboBox::setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes)
+void ctkVTKDataSetArrayComboBox::setAttributeTypes(ctkVTKDataSetModel::AttributeTypes attributeTypes)
 {
   this->dataSetModel()->setAttributeTypes(attributeTypes);
 }

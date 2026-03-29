@@ -199,7 +199,7 @@ bool ctkColorPickerButton::displayColorName()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkColorPickerButton::setDialogOptions(const ColorDialogOptions& options)
+void ctkColorPickerButton::setDialogOptions(ColorDialogOptions options)
 {
   Q_D(ctkColorPickerButton);
   d->DialogOptions = options;

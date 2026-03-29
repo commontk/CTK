@@ -228,7 +228,7 @@ int ctkDICOMStudyDelegate::expandedHeight() const
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyDelegate::paintStudyHeader(QPainter* painter,
-                                             const QRect& rect,
+                                             QRect rect,
                                              const QModelIndex& index,
                                              const QStyleOptionViewItem& option,
                                              int numberOfSeriesSelected) const
@@ -259,7 +259,7 @@ void ctkDICOMStudyDelegate::paintStudyHeader(QPainter* painter,
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyDelegate::paintCollapseIndicator(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
+void ctkDICOMStudyDelegate::paintCollapseIndicator(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMStudyDelegate);
 
@@ -320,7 +320,7 @@ void ctkDICOMStudyDelegate::paintCollapseIndicator(QPainter* painter, const QRec
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyDelegate::paintStudyInfo(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
+void ctkDICOMStudyDelegate::paintStudyInfo(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   painter->save();
@@ -424,7 +424,7 @@ void ctkDICOMStudyDelegate::paintStudyInfo(QPainter* painter, const QRect& rect,
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyDelegate::paintSeriesInfo(QPainter* painter, const QRect& rect, const QModelIndex& index, int numberOfSeriesSelected) const
+void ctkDICOMStudyDelegate::paintSeriesInfo(QPainter* painter, QRect rect, const QModelIndex& index, int numberOfSeriesSelected) const
 {
   painter->save();
 
@@ -470,7 +470,7 @@ void ctkDICOMStudyDelegate::paintSeriesInfo(QPainter* painter, const QRect& rect
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyDelegate::paintSelectAllIcon(QPainter* painter,
-                                               const QRect& rect,
+                                               QRect rect,
                                                const QModelIndex& index,
                                                const QStyleOptionViewItem& option) const
 {
@@ -540,7 +540,7 @@ void ctkDICOMStudyDelegate::paintSelectAllIcon(QPainter* painter,
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyDelegate::paintCardBackground(QPainter* painter,
-                                                const QRect& rect,
+                                                QRect rect,
                                                 const QModelIndex& index,
                                                 const QStyleOptionViewItem& option) const
 {
@@ -600,21 +600,21 @@ void ctkDICOMStudyDelegate::paintCardBackground(QPainter* painter,
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::studyCardRect(const QRect& itemRect) const
+QRect ctkDICOMStudyDelegate::studyCardRect(QRect itemRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(itemRect.left() + d->Spacing * 0.5, itemRect.top() + d->Spacing * 0.5, itemRect.width() - d->Spacing * 2, itemRect.height() - d->Spacing);
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::studyHeaderRect(const QRect& itemRect) const
+QRect ctkDICOMStudyDelegate::studyHeaderRect(QRect itemRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(itemRect.left() + d->Spacing * 0.5, itemRect.top() + d->Spacing * 0.5, itemRect.width() - d->Spacing, d->CollapsedHeight);
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::collapseIndicatorRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::collapseIndicatorRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(headerRect.left() + d->Spacing,
@@ -623,7 +623,7 @@ QRect ctkDICOMStudyDelegate::collapseIndicatorRect(const QRect& headerRect) cons
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::studyInfoRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::studyInfoRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   QRect collapseRect = this->collapseIndicatorRect(headerRect);
@@ -637,7 +637,7 @@ QRect ctkDICOMStudyDelegate::studyInfoRect(const QRect& headerRect) const
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::seriesInfoRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::seriesInfoRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(headerRect.right() - d->seriesInfoWidth - d->Spacing - d->IconSize * 2,
@@ -646,7 +646,7 @@ QRect ctkDICOMStudyDelegate::seriesInfoRect(const QRect& headerRect) const
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::seriesAreaRect(const QRect& itemRect, const QModelIndex& index) const
+QRect ctkDICOMStudyDelegate::seriesAreaRect(QRect itemRect, const QModelIndex& index) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   if (this->isStudyCollapsed(index))
@@ -669,7 +669,7 @@ QRect ctkDICOMStudyDelegate::seriesAreaRect(const QRect& itemRect, const QModelI
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::selectAllIconRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::selectAllIconRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(headerRect.right() - d->Spacing * 10 - d->IconSize * 2,
@@ -825,7 +825,7 @@ QString ctkDICOMStudyDelegate::formatStudyTime(const QString& time) const
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::contextMenuButtonRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::contextMenuButtonRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(headerRect.right() - d->Spacing * 9 - d->IconSize,
@@ -835,7 +835,7 @@ QRect ctkDICOMStudyDelegate::contextMenuButtonRect(const QRect& headerRect) cons
 }
 
 //------------------------------------------------------------------------------
-QRect ctkDICOMStudyDelegate::operationStatusButtonRect(const QRect& headerRect) const
+QRect ctkDICOMStudyDelegate::operationStatusButtonRect(QRect headerRect) const
 {
   Q_D(const ctkDICOMStudyDelegate);
   return QRect(headerRect.right() - d->Spacing * 8,
@@ -845,7 +845,7 @@ QRect ctkDICOMStudyDelegate::operationStatusButtonRect(const QRect& headerRect) 
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMStudyDelegate::isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect) const
+bool ctkDICOMStudyDelegate::isContextMenuButtonAt(QPoint pos, QRect itemRect) const
 {
   QRect headerRect = this->studyHeaderRect(itemRect);
   QRect buttonRect = this->contextMenuButtonRect(headerRect);
@@ -854,7 +854,7 @@ bool ctkDICOMStudyDelegate::isContextMenuButtonAt(const QPoint& pos, const QRect
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyDelegate::paintContextMenuButton(QPainter* painter,
-                                                   const QRect& rect,
+                                                   QRect rect,
                                                    const QModelIndex& index,
                                                    const QStyleOptionViewItem& option) const
 {
@@ -924,7 +924,7 @@ void ctkDICOMStudyDelegate::paintContextMenuButton(QPainter* painter,
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyDelegate::paintOperationStatusButton(QPainter* painter,
-                                                       const QRect& rect,
+                                                       QRect rect,
                                                        const QModelIndex& index,
                                                        const QStyleOptionViewItem& option) const
 {

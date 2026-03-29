@@ -84,7 +84,7 @@ public:
   void setText(const QString& text);
   QString text()const;
 
-  void setTextPosition(const Qt::Alignment& alignment);
+  void setTextPosition(Qt::Alignment alignment);
   Qt::Alignment textPosition()const;
 
   enum OperationStatus{
@@ -95,13 +95,13 @@ public:
   };
   Q_ENUM(OperationStatus)
 
-  void setOperationStatus(const OperationStatus& status);
+  void setOperationStatus(OperationStatus status);
   OperationStatus operationStatus()const;
 
   void setStatusIcon(const QIcon& icon);
   QIcon statusIcon()const;
 
-  void setOperationProgress(const int& progress);
+  void setOperationProgress(int progress);
   int operationProgress()const;
 
   void setPixmap(const QPixmap& pixmap);

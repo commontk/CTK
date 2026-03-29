@@ -284,13 +284,13 @@ protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
 
     /// Called when a right mouse click is made in the patients table
-    void onPatientsRightClicked(const QPoint &point);
+    void onPatientsRightClicked(QPoint point);
 
     /// Called when a right mouse click is made in the studies table
-    void onStudiesRightClicked(const QPoint &point);
+    void onStudiesRightClicked(QPoint point);
 
     /// Called when a right mouse click is made in the series table
-    void onSeriesRightClicked(const QPoint &point);
+    void onSeriesRightClicked(QPoint point);
 
     /// Called to export the series associated with the selected UIDs
     /// \sa exportSelectedStudies, exportSelectedPatients

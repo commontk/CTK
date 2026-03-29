@@ -77,13 +77,13 @@ public:
   /// Specify a port for the packet headers.
   /// \a port ranges from 0 to 65535.
   /// 80 by default.
-  void setPort(const int& port);
+  void setPort(int port);
   int port() const;
   ///@}
 
   ///@{
   /// Connection timeout, default 3 sec.
-  void setConnectionTimeout(const int& timeout);
+  void setConnectionTimeout(int timeout);
   int connectionTimeout() const;
   ///@}
 

@@ -240,7 +240,7 @@ void ctkComboBox::forceDefault(bool newForceDefault)
 }
 
 // -------------------------------------------------------------------------
-void ctkComboBox::setElideMode(const Qt::TextElideMode& newMode)
+void ctkComboBox::setElideMode(Qt::TextElideMode newMode)
 {
   Q_D(ctkComboBox);
   d->ElideMode = newMode;

@@ -94,7 +94,7 @@ public:
 
   /// Set/get the crosshair type.  Default SimpleCrosshair.
   CrosshairTypes crosshairType() const;
-  void setCrosshairType(const CrosshairTypes& newType);
+  void setCrosshairType(CrosshairTypes newType);
 
   /// Set/get color to set the widget to when not magnifying or when label
   /// size is larger than pixmap size.  Default is the color from the widget's

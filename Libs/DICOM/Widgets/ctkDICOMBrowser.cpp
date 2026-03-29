@@ -1120,7 +1120,7 @@ bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(const QStringList& uids)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onPatientsRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1194,7 +1194,7 @@ void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onStudiesRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1272,7 +1272,7 @@ void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onSeriesRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 

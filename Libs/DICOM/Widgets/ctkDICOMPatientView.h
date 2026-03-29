@@ -184,7 +184,7 @@ public:
 
 public slots:
   /// Called when context menu is requested from the delegate
-  void onPatientContextMenuRequested(const QPoint& globalPos, const QModelIndex& clickedPatientIndex);
+  void onPatientContextMenuRequested(QPoint globalPos, const QModelIndex& clickedPatientIndex);
 
   /// Called when select all icon is clicked from the delegate
   void onSelectAllIconClicked(const QModelIndex& patientIndex);

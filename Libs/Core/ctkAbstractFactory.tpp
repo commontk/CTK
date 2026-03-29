@@ -291,7 +291,7 @@ QStringList ctkAbstractFactory<BaseClassType>::itemKeys() const
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 void ctkAbstractFactory<BaseClassType>::displayStatusMessage(
-    const QtMsgType& type, const QString& description, const QString& status, bool display)
+    QtMsgType type, const QString& description, const QString& status, bool display)
 {
   QString msg = QString("%1 [%2]").arg(description + " ", -70, QChar('.')).arg(status);
   if (display)

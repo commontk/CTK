@@ -561,14 +561,14 @@ QStandardItem *ctkPathListWidget::item(const QString &absolutePath) const
 }
 
 // --------------------------------------------------------------------------
-QString ctkPathListWidget::pathAt(const QPoint& point) const
+QString ctkPathListWidget::pathAt(QPoint point) const
 {
   Q_D(const ctkPathListWidget);
   return d->PathListModel.data(indexAt(point), AbsolutePathRole).toString();
 }
 
 // --------------------------------------------------------------------------
-QStandardItem* ctkPathListWidget::itemAt(const QPoint &point) const
+QStandardItem* ctkPathListWidget::itemAt(QPoint point) const
 {
   Q_D(const ctkPathListWidget);
   QModelIndex index = this->indexAt(point);

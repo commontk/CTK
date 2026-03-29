@@ -90,7 +90,7 @@ public:
   vtkDataSet* dataSet()const;
 
   AttributeTypes attributeTypes()const;
-  void setAttributeTypes(const AttributeTypes& attributeTypes);
+  void setAttributeTypes(AttributeTypes attributeTypes);
 
   bool includeNullItem()const;
   void setIncludeNullItem(bool includeNullItem);

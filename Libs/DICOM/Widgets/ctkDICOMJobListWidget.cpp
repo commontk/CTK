@@ -117,7 +117,7 @@ public:
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
   QString getJobTypeAsString(const QString& jobClass, ctkDICOMJob::DICOMLevels dicomLevel);
   void addJob(const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
-  void updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status);
+  void updateJobStatus(const ctkDICOMJobDetail &td, JobStatus status);
   void updateProgressBar(const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
   void setProgressBar(int row, const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
   QStringList clearJobsByType(const QString& type);
@@ -288,7 +288,7 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 }
 
 //----------------------------------------------------------------------------
-void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status)
+void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, JobStatus status)
 {
   QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
   if (list.empty())
