@@ -32,8 +32,10 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
+namespace {
 class QAbstractItemModelHelper : public QAbstractItemModel
 {
+  Q_OBJECT
 public:
   virtual QModelIndex index(int, int, const QModelIndex&) const { return QModelIndex(); }
   virtual QModelIndex parent(const QModelIndex&) const { return QModelIndex(); }
@@ -43,6 +45,7 @@ public:
   void emitInvalidHeaderDataChanged()
   { emit this->headerDataChanged(Qt::Vertical, 10, 10);}
 };
+} // namespace
 
 //-----------------------------------------------------------------------------
 int ctkModelTesterTest2(int argc, char * argv [] )
@@ -117,3 +120,5 @@ int ctkModelTesterTest2(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkModelTesterTest2.moc"

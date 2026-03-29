@@ -34,8 +34,10 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
+namespace {
 class QAbstractItemModelHelper : public QAbstractItemModel
 {
+  Q_OBJECT
 public:
   virtual QModelIndex index(int, int, const QModelIndex&) const { return QModelIndex(); }
   virtual QModelIndex parent(const QModelIndex&) const { return QModelIndex(); }
@@ -43,6 +45,7 @@ public:
   virtual int columnCount(const QModelIndex&) const { return 0; }
   virtual QVariant data(const QModelIndex&, int) const { return QVariant(); }
 };
+} // namespace
 
 //-----------------------------------------------------------------------------
 int ctkModelTesterTest1(int argc, char * argv [] )
@@ -140,3 +143,5 @@ int ctkModelTesterTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkModelTesterTest1.moc"

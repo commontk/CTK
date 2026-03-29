@@ -30,6 +30,7 @@
 
 class ctkDummyTransferFunction: public ctkTransferFunction
 {
+  Q_OBJECT
 public:
   ctkDummyTransferFunction(QObject* parent = 0):ctkTransferFunction(parent){}
   virtual ~ctkDummyTransferFunction(){}
@@ -195,3 +196,5 @@ int ctkTransferFunctionTest1(int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkTransferFunctionTest1.moc"

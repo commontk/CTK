@@ -224,6 +224,7 @@ namespace
 //-----------------------------------------------------------------------------
 class ctkSettingsPanelForTest : public ctkSettingsPanel
 {
+  Q_OBJECT
 public:
   QVariant myDefaultPropertyValue(const QString& key) const
   {

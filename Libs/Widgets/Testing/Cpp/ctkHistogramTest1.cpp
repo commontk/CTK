@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 class ctkDummyHistogram: public ctkHistogram
 {
+  Q_OBJECT
 public:
   ctkDummyHistogram(QObject* parent = 0):ctkHistogram(parent){}
   virtual ~ctkDummyHistogram(){}
@@ -169,3 +170,5 @@ int ctkHistogramTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkHistogramTest1.moc"
