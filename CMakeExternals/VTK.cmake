@@ -32,16 +32,12 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   if(NOT DEFINED CTK_VTK_VERSION_MAJOR)
       set(CTK_VTK_VERSION_MAJOR "9")
   endif()
-  if(NOT CTK_VTK_VERSION_MAJOR MATCHES "^(8|9)$")
-    message(FATAL_ERROR "Expected value for CTK_VTK_VERSION_MAJOR is either '8' or '9'")
+  if(NOT CTK_VTK_VERSION_MAJOR MATCHES "^(9)$")
+    message(FATAL_ERROR "Expected value for CTK_VTK_VERSION_MAJOR is '9'")
   endif()
   ExternalProject_Message(${proj} "VTK[CTK_VTK_VERSION_MAJOR:${CTK_VTK_VERSION_MAJOR}]")
 
-  if(CTK_VTK_VERSION_MAJOR VERSION_EQUAL "8")
-    set(revision_tag v8.0.1)
-  elseif(CTK_VTK_VERSION_MAJOR VERSION_EQUAL "9")
-    set(revision_tag v9.5.2)
-  endif()
+  set(revision_tag v9.5.2)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -59,7 +55,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(additional_vtk_cmakevars )
-  set(additional_vtk8_cmakevars )
   set(additional_vtk9_cmakevars )
   if(MINGW)
     list(APPEND additional_vtk_cmakevars -DCMAKE_USE_PTHREADS:BOOL=OFF)
@@ -107,16 +102,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
-  # VTK 8
-  list(APPEND additional_vtk8_cmakevars
-    -DModule_vtkChartsCore:BOOL=ON
-    -DModule_vtkRenderingContext2D:BOOL=ON
-    -DModule_vtkRenderingContextOpenGL2:BOOL=ON
-    -DModule_vtkGUISupportQt:BOOL=ON
-    -DModule_vtkGUISupportQtOpenGL:BOOL=ON # OpenGL2 rendering backend
-    -DModule_vtkTestingRendering:BOOL=ON
-    )
-
   # VTK 9
   list(APPEND additional_vtk9_cmakevars
     -DVTK_MODULE_ENABLE_VTK_ChartsCore:STRING=YES
@@ -137,10 +122,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   if(UNIX AND NOT APPLE)
     find_package(FontConfig QUIET)
     if(FONTCONFIG_FOUND)
-      # VTK8
-      list(APPEND additional_vtk8_cmakevars
-        -DModule_vtkRenderingFreeTypeFontConfig:BOOL=ON
-        )
       # VTK9
       list(APPEND additional_vtk9_cmakevars
         -DVTK_MODULE_ENABLE_VTK_RenderingFreeTypeFontConfig:BOOL=ON
@@ -176,8 +157,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DVTK_WRAP_PYTHON:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK}
       -DVTK_WRAP_JAVA:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DVTK_Group_Qt:BOOL=ON
-      -DVTK_QT_VERSION:STRING=${CTK_QT_VERSION}
       -DVTK_LEGACY_REMOVE:BOOL=ON
     DEPENDS
       ${${proj}_DEPENDENCIES}
