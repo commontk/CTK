@@ -4,53 +4,49 @@ project(CTKVisualizationVTKCore)
 # 3rd party dependencies
 #
 
-if(${VTK_VERSION} VERSION_LESS "8.90")
-  include(${VTK_USE_FILE})
-else()
-  # VTK >= 8.90 defines VTK_MAJOR_VERSION
-  set(VTK_VERSION_MAJOR ${VTK_MAJOR_VERSION})
+# VTK >= 8.90 defines VTK_MAJOR_VERSION
+set(VTK_VERSION_MAJOR ${VTK_MAJOR_VERSION})
 
-  set(_test_components)
-  if(BUILD_TESTING)
-    list(APPEND _test_components
-      TestingRendering
-      CommonSystem
-      )
-  endif()
-
-  set(_python_components)
-  if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-    list(APPEND _python_components
-      WrappingPythonCore
-      )
-  endif()
-
-  find_package(VTK
-    COMPONENTS
-      ChartsCore
-      CommonCore
-      CommonDataModel
-      FiltersCore
-      FiltersGeneral
-      FiltersModeling
-      FiltersSources
-      FiltersStatistics
-      IOLegacy
-      IOXML
-      InfovisCore
-      InfovisLayout
-      InteractionStyle
-      RenderingAnnotation
-      RenderingCore
-      RenderingFreeType
-      RenderingOpenGL2
-      ViewsCore
-      ViewsInfovis
-      ViewsContext2D
-      ${_python_components}
-      ${_test_components}
+set(_test_components)
+if(BUILD_TESTING)
+  list(APPEND _test_components
+    TestingRendering
+    CommonSystem
     )
 endif()
+
+set(_python_components)
+if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  list(APPEND _python_components
+    WrappingPythonCore
+    )
+endif()
+
+find_package(VTK
+  COMPONENTS
+    ChartsCore
+    CommonCore
+    CommonDataModel
+    FiltersCore
+    FiltersGeneral
+    FiltersModeling
+    FiltersSources
+    FiltersStatistics
+    IOLegacy
+    IOXML
+    InfovisCore
+    InfovisLayout
+    InteractionStyle
+    RenderingAnnotation
+    RenderingCore
+    RenderingFreeType
+    RenderingOpenGL2
+    ViewsCore
+    ViewsInfovis
+    ViewsContext2D
+    ${_python_components}
+    ${_test_components}
+  )
 
 if(NOT DEFINED VTK_RENDERING_BACKEND)
   set(VTK_RENDERING_BACKEND "OpenGL")
@@ -104,54 +100,7 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
 endif()
 
 # Set VTK_LIBRARIES variable
-if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
-  # VTK_LIBRARIES is automatically set based on selected components
-elseif(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    # a few of these have to be specified explicitly to workaround
-    # underlinked libraries from the debian VTK package
-    # see Debian bug #747436
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkCommonSystem
-    vtkFiltersStatistics
-    vtkIOImage
-    vtkInteractionStyle
-    vtkRenderingAnnotation
-    vtkRenderingCore
-    )
-  if(TARGET vtkRendering${VTK_RENDERING_BACKEND})
-    list(APPEND VTK_LIBRARIES vtkRendering${VTK_RENDERING_BACKEND})
-  endif()
-  if(TARGET vtkIOMPIImage)
-    list(APPEND VTK_LIBRARIES vtkIOMPIImage )
-  endif()
-  if(TARGET vtkRenderingMatplotlib)
-    list(APPEND VTK_LIBRARIES vtkRenderingMatplotlib )
-  endif()
-  if(TARGET vtkTestingRendering)
-    list(APPEND VTK_LIBRARIES vtkTestingRendering )
-  endif()
-  # With VTK > 6.2.0 (commit 4f7460a5), vtkRenderingFreeTypeOpenGL has been removed.
-  if(TARGET vtkRenderingFreeTypeOpenGL)
-    list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
-  endif()
-  if(TARGET vtkRenderingFreeType )
-    list(APPEND VTK_LIBRARIES vtkRenderingFreeType)
-  endif()
-  if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
-      list(APPEND VTK_LIBRARIES
-        vtkRenderingFreeTypeFontConfig
-        )
-  endif()
-else()
-  set(VTK_LIBRARIES
-    vtkCommon
-    vtkFiltering
-    vtkRendering
-    vtkHybrid
-    )
-endif()
+# VTK_LIBRARIES is automatically set based on selected components
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(KIT_SRCS
@@ -166,61 +115,15 @@ if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
     vtkScalarsToColorsPreviewChart.cpp
     vtkScalarsToColorsPreviewChart.h
     ${KIT_SRCS})
-  if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
-    # VTK_LIBRARIES is automatically set based on selected components
-  elseif(${VTK_VERSION_MAJOR} GREATER 5)
-    set(VTK_LIBRARIES
-      vtkChartsCore
-      ${VTK_LIBRARIES})
-  else()
-    set(VTK_LIBRARIES
-      vtkCharts
-      ${VTK_LIBRARIES})
-  endif()
-
-  if(${VTK_VERSION} VERSION_LESS "8.90")
-  set(VTK_LIBRARIES
-    vtkViewsContext2D
-    ${VTK_LIBRARIES})
-  if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
-    list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
-  endif()
-  endif()
-
-endif()
-
-if(${VTK_VERSION} VERSION_LESS "8.90")
-
-if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
-  list(APPEND VTK_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
-  if(${VTK_VERSION_MAJOR} GREATER 5)
-    list(APPEND VTK_LIBRARIES vtkWrappingPythonCore)
-  elseif(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_GREATER 5.6)
-    list(APPEND VTK_LIBRARIES vtkPythonCore)
-  else()
-    list(APPEND VTK_LIBRARIES vtkCommonPythonD)
-  endif()
-endif()
-
-if(Q_WS_X11)
-  # If the faster 'gold' linker is used, to avoid complaints about undefined symbol
-  # 'XGetWindowAttributes', 'XCreateWindow', ..., let's link against X11 libraries.
-  find_package(X11)
-  list(APPEND VTK_LIBRARIES ${X11_LIBRARIES})
-endif()
+  # VTK_LIBRARIES is automatically set based on selected components
 
 endif()
 
 # Custom export content
-if(${VTK_VERSION} VERSION_LESS "8.90")
-  set(CTK_VTK_EXPORT_CUSTOM_CONTENT "")
-else()
-  set(CTK_VTK_EXPORT_CUSTOM_CONTENT "#ifndef VTK_OVERRIDE
+set(CTK_VTK_EXPORT_CUSTOM_CONTENT "#ifndef VTK_OVERRIDE
 #define VTK_OVERRIDE override;
 #endif
 ")
-endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
@@ -250,12 +153,10 @@ if(CTK_WRAP_PYTHONQT_LIGHT)
     )
 endif()
 
-  if (NOT VTK_VERSION VERSION_LESS "8.90.0")
-    vtk_module_autoinit(
-      TARGETS ${PROJECT_NAME}
-      MODULES ${VTK_LIBRARIES}
-      )
-  endif()
+  vtk_module_autoinit(
+    TARGETS ${PROJECT_NAME}
+    MODULES ${VTK_LIBRARIES}
+    )
 
 # Plugins
 #if(CTK_BUILD_QTDESIGNER_PLUGINS)
