@@ -119,7 +119,7 @@ void ctkDICOMDisplayedFieldGeneratorDefaultRule::getDisplayedFieldsForInstance(
   {
     QString rows = cachedTagsForInstance[dicomTagToString(DCM_Rows)];
     QString columns = cachedTagsForInstance[dicomTagToString(DCM_Columns)];
-    displayedFieldsForCurrentSeries["DisplayedSize"] = QString("%1x%2").arg(columns).arg(rows);
+    displayedFieldsForCurrentSeries["DisplayedSize"] = QString("%1x%2").arg(columns, rows);
   }
 }
 

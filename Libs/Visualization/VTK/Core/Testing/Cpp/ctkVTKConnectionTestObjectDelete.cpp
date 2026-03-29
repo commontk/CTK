@@ -121,8 +121,7 @@ bool computeTimingAfterObjectDelete(bool observeDeletion,
     }
     timerLog->StopTimer();
 
-    QString measurementName = QString("time_%1-%2-%3-%4").arg(
-          "connection-object-modified").arg(attribute).arg(connectionCount).arg(objectCount);
+    QString measurementName = QString("time_%1-%2-%3-%4").arg("connection-object-modified", attribute).arg(connectionCount).arg(objectCount);
     displayDartMeasurement(qPrintable(measurementName), timerLog->GetElapsedTime());
 
     if (!check<int>(__LINE__, "total_event_count",
@@ -141,8 +140,7 @@ bool computeTimingAfterObjectDelete(bool observeDeletion,
     objects.clear();
     timerLog->StopTimer();
 
-    QString measurementName = QString("time_%1-%2-%3-%4").arg(
-          "connection-vtkobject-deleted").arg(attribute).arg(connectionCount).arg(objectCount);
+    QString measurementName = QString("time_%1-%2-%3-%4").arg("connection-vtkobject-deleted", attribute).arg(connectionCount).arg(objectCount);
     displayDartMeasurement(qPrintable(measurementName), timerLog->GetElapsedTime());
 
     if (!check<int>(__LINE__, "total_event_count",
@@ -177,8 +175,7 @@ bool computeTimingAfterObjectDelete(bool observeDeletion,
     QCoreApplication::processEvents();
     timerLog->StopTimer();
 
-    QString measurementName = QString("time_%1-%2-%3-%4").arg(
-          "connection-qtobject-deleted").arg(attribute).arg(connectionCount).arg(objectCount);
+    QString measurementName = QString("time_%1-%2-%3-%4").arg("connection-qtobject-deleted", attribute).arg(connectionCount).arg(objectCount);
     displayDartMeasurement(qPrintable(measurementName), timerLog->GetElapsedTime());
 
     if (!check<int>(__LINE__, "total_event_count",

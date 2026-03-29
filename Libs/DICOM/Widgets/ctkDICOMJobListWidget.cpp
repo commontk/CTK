@@ -1325,11 +1325,7 @@ void ctkDICOMJobListWidget::onShowCompletedButtonToggled(bool toggled)
   if (!toggled)
   {
     filterText = QString("^%1$|^%2$|^%3$|^%4$|^%5$")
-      .arg(tr("initialized"))
-      .arg(tr("queued"))
-      .arg(tr("in-progress"))
-      .arg(tr("user-stopped"))
-      .arg(tr("failed"));
+      .arg(tr("initialized"), tr("queued"), tr("in-progress"), tr("user-stopped"), tr("failed"));
   }
   d->showCompletedProxyModel->setFilterRegularExpression(filterText);
 }

@@ -46,7 +46,7 @@ QSharedPointer<ctkPlugin> ctkPluginFrameworkTestUtil::installPlugin(
     QFileInfo testDirInfo(testPluginDir);
     if (!testDirInfo.exists() || !testDirInfo.isDir())
     {
-      throw ctkPluginException(QString("No plugin %1 in %2").arg(plugin).arg(testPluginDir));
+      throw ctkPluginException(QString("No plugin %1 in %2").arg(plugin, testPluginDir));
     }
 
     QStringList libFilter;
@@ -61,6 +61,6 @@ QSharedPointer<ctkPlugin> ctkPluginFrameworkTestUtil::installPlugin(
       }
     }
 
-    throw ctkPluginException(QString("No plugin %1 in %2").arg(plugin).arg(testPluginDir));
+    throw ctkPluginException(QString("No plugin %1 in %2").arg(plugin, testPluginDir));
   }
 }

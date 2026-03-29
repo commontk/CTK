@@ -237,7 +237,7 @@ QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const cha
   QString shortAndLongArg;
   if (!this->ShortArg.isEmpty())
   {
-    shortAndLongArg += QString("  %1%2").arg(this->ShortArgPrefix).arg(this->ShortArg);
+    shortAndLongArg += QString("  %1%2").arg(this->ShortArgPrefix, this->ShortArg);
   }
 
   if (!this->LongArg.isEmpty())
@@ -251,7 +251,7 @@ QString CommandLineParserArgumentDescription::helpText(int fieldWidth, const cha
       shortAndLongArg.append(", ");
     }
 
-    shortAndLongArg += QString("%1%2").arg(this->LongArgPrefix).arg(this->LongArg);
+    shortAndLongArg += QString("%1%2").arg(this->LongArgPrefix, this->LongArg);
   }
 
   if(!this->ArgHelp.isEmpty())
@@ -516,7 +516,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
           {
             this->Internal->ErrorString = QString(
                 "Value(s) associated with argument %1 are incorrect. %2").
-                arg(argument).arg(currentArgDesc->ExactMatchFailedMessage);
+                arg(argument, currentArgDesc->ExactMatchFailedMessage);
 
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
             if (ok) { *ok = false; }
@@ -555,7 +555,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
           {
             this->Internal->ErrorString = QString(
                 "Value(s) associated with argument %1 are incorrect. %2").
-                arg(argument).arg(currentArgDesc->ExactMatchFailedMessage);
+                arg(argument, currentArgDesc->ExactMatchFailedMessage);
 
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
             if (ok) { *ok = false; }

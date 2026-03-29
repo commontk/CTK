@@ -167,7 +167,7 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
     QString sqlError = query.lastError().text();
     QString lastQuery = query.lastQuery();
     logger.error(QString("SQL failed: \n%1 \nError: \n%2")
-      .arg(lastQuery).arg(sqlError));
+      .arg(lastQuery, sqlError));
   }
 
   return (success);
@@ -183,7 +183,7 @@ bool ctkDICOMDatabasePrivate::loggedExecBatch(QSqlQuery& query)
     QString sqlError = query.lastError().text();
     QString lastQuery = query.lastQuery();
     logger.error(QString("SQL failed: \n%1 \nError: \n%2")
-      .arg(lastQuery).arg(sqlError));
+      .arg(lastQuery, sqlError));
   }
   return (success);
 }
@@ -4161,7 +4161,7 @@ void ctkDICOMDatabase::setFormatForField(QString table, QString field, QString f
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::compositePatientID(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate)
 {
-  return QString("%1~%2~%3").arg(patientID).arg(patientsBirthDate).arg(patientsName);
+  return QString("%1~%2~%3").arg(patientID, patientsBirthDate, patientsName);
 }
 
 //------------------------------------------------------------------------------

@@ -90,7 +90,7 @@ int ctkVTKErrorLogModelFileLoggingTest1(int argc, char * argv [])
     {
       printErrorMessage(
             QString("Line %1 - Log entry %2 does NOT match expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
-                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex)).arg(regexp.pattern()));
+                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex), regexp.pattern()));
       return EXIT_FAILURE;
     }
   }
@@ -102,7 +102,7 @@ int ctkVTKErrorLogModelFileLoggingTest1(int argc, char * argv [])
     {
       printErrorMessage(
             QString("Line %1 - Log entry %2 does NOT match expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
-                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex)).arg(regexp.pattern()));
+                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex), regexp.pattern()));
       return EXIT_FAILURE;
     }
   }

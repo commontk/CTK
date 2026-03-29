@@ -1988,7 +1988,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
     if (d->DicomDatabase->schemaVersionLoaded() != d->DicomDatabase->schemaVersion())
     {
       logger.warn(QString("Database version mismatch: version of selected database = %1, version required = %2 \n")
-        .arg(d->DicomDatabase->schemaVersionLoaded()).arg(d->DicomDatabase->schemaVersion()));
+        .arg(d->DicomDatabase->schemaVersionLoaded(), d->DicomDatabase->schemaVersion()));
       d->DicomDatabase->closeDatabase();
       d->DatabaseDirectoryProblemFrame->show();
       d->DatabaseDirectoryProblemLabel->setText(
@@ -4082,8 +4082,7 @@ void ctkDICOMVisualBrowserWidget::exportSeriesToDirectory(const QString& dirPath
         //: %1 and %2 refers to source and destination file paths
         QString errorString = tr("Failed to copy\n\n%1\n\nto\n\n%2"
           "\n\nHalting export.")
-          .arg(filePath)
-          .arg(destinationFileName);
+          .arg(filePath, destinationFileName);
         ctkMessageBox copyErrorMessageBox(this);
         copyErrorMessageBox.setText(errorString);
         copyErrorMessageBox.setIcon(QMessageBox::Warning);
