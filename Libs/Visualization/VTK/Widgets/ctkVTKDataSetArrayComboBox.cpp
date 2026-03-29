@@ -177,7 +177,7 @@ bool ctkVTKDataSetArrayComboBox::noneEnabled()const
 // ----------------------------------------------------------------------------
 void ctkVTKDataSetArrayComboBox::setNoneEnabled(bool noneEnabled)
 {
-  return this->dataSetModel()->setIncludeNullItem(noneEnabled);
+  this->dataSetModel()->setIncludeNullItem(noneEnabled);
 }
 
 // --------------------------------------------------------------------------

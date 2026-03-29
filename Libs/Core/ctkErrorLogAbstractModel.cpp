@@ -519,7 +519,7 @@ int ctkErrorLogAbstractModel::numberOfFilesToKeep()const
 void ctkErrorLogAbstractModel::setNumberOfFilesToKeep(int value)
 {
   Q_D(ctkErrorLogAbstractModel);
-  return d->FileLogger.setNumberOfFilesToKeep(value);
+  d->FileLogger.setNumberOfFilesToKeep(value);
 }
 
 // --------------------------------------------------------------------------
