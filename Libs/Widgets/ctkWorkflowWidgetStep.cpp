@@ -202,7 +202,7 @@ void ctkWorkflowWidgetStep::showUserInterface()
     d->created = true;
   }
 
-  emit showUserInterfaceComplete();
+  showUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
