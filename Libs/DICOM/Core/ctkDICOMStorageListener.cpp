@@ -275,7 +275,7 @@ ctkDICOMStorageListener::~ctkDICOMStorageListener()
 //------------------------------------------------------------------------------
 CTK_SET_CPP(ctkDICOMStorageListener, const QString&, setAETitle, AETitle);
 CTK_GET_CPP(ctkDICOMStorageListener, QString, AETitle, AETitle)
-CTK_SET_CPP(ctkDICOMStorageListener, const int&, setPort, Port);
+CTK_SET_CPP(ctkDICOMStorageListener, int, setPort, Port);
 CTK_GET_CPP(ctkDICOMStorageListener, int, port, Port)
 CTK_SET_CPP(ctkDICOMStorageListener, const QString&, setJobUID, JobUID);
 CTK_GET_CPP(ctkDICOMStorageListener, QString, jobUID, JobUID)
@@ -336,7 +336,7 @@ bool ctkDICOMStorageListener::initializeSCU()
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMStorageListener::setConnectionTimeout(const int& timeout)
+void ctkDICOMStorageListener::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMStorageListener);
   d->SCU.setACSETimeout(timeout);

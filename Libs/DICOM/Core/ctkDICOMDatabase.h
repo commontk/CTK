@@ -381,7 +381,7 @@ public:
 
   /// Convert between string and (unsigned short int, unsigned short int) representation of a DICOM tag.
   Q_INVOKABLE bool tagToGroupElement (const QString& tag, unsigned short& group, unsigned short& element);
-  Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
+  Q_INVOKABLE QString groupElementToTag (unsigned short group, unsigned short element);
 
   /// \brief Check if an element with the given attribute tag exists in the dataset and has a non-empty value.
   /// @param sopInstanceUID A string with the uid for a given instance

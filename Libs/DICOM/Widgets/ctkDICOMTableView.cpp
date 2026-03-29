@@ -918,7 +918,7 @@ bool ctkDICOMTableView::filterActive()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
+void ctkDICOMTableView::onCustomContextMenuRequested(QPoint point)
 {
   Q_D(ctkDICOMTableView);
 

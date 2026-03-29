@@ -110,7 +110,7 @@ void ctkAbstractWorker::startNextJob()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractWorker::onJobCanceled(const bool& wasCanceled)
+void ctkAbstractWorker::onJobCanceled(bool wasCanceled)
 {
   if (!this->Job)
   {

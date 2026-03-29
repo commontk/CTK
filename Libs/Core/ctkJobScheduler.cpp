@@ -405,11 +405,11 @@ ctkJobScheduler::~ctkJobScheduler()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkJobScheduler, const bool&, setFreezeJobsScheduling, FreezeJobsScheduling);
+CTK_SET_CPP(ctkJobScheduler, bool, setFreezeJobsScheduling, FreezeJobsScheduling);
 CTK_GET_CPP(ctkJobScheduler, bool, freezeJobsScheduling, FreezeJobsScheduling)
-CTK_SET_CPP(ctkJobScheduler, const int&, setMaximumNumberOfRetry, MaximumNumberOfRetry);
+CTK_SET_CPP(ctkJobScheduler, int, setMaximumNumberOfRetry, MaximumNumberOfRetry);
 CTK_GET_CPP(ctkJobScheduler, int, maximumNumberOfRetry, MaximumNumberOfRetry)
-CTK_SET_CPP(ctkJobScheduler, const int&, setRetryDelay, RetryDelay);
+CTK_SET_CPP(ctkJobScheduler, int, setRetryDelay, RetryDelay);
 CTK_GET_CPP(ctkJobScheduler, int, retryDelay, RetryDelay)
 
 //----------------------------------------------------------------------------
@@ -777,7 +777,7 @@ int ctkJobScheduler::maximumThreadCount() const
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::setMaximumThreadCount(const int& maximumThreadCount)
+void ctkJobScheduler::setMaximumThreadCount(int maximumThreadCount)
 {
   Q_D(ctkJobScheduler);
   d->ThreadPool->setMaxThreadCount(maximumThreadCount);

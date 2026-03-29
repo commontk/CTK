@@ -72,7 +72,7 @@ public:
 public slots:
   /// These slots are thread safe
   virtual void startNextJob();
-  virtual void onJobCanceled(const bool& wasCanceled);
+  virtual void onJobCanceled(bool wasCanceled);
 
 protected:
   QSharedPointer<ctkAbstractJob> Job;

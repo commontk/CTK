@@ -95,24 +95,24 @@ public:
   Q_INVOKABLE ctkDICOMPatientView::DisplayMode getDisplayMode(const QStyleOptionViewItem& option) const;
 
   /// Get the study area rect within the item rect
-  Q_INVOKABLE QRect patientsRect(const QRect& itemRect, const QStyleOptionViewItem& option,
+  Q_INVOKABLE QRect patientsRect(QRect itemRect, const QStyleOptionViewItem& option,
                                      const QModelIndex& index) const;
 
   /// Get the patient header rect within the item rect
-  Q_INVOKABLE QRect patientHeaderRect(const QRect& patientsRect,
+  Q_INVOKABLE QRect patientHeaderRect(QRect patientsRect,
                                       const QStyleOptionViewItem& option) const;
 
   /// Get the context menu button rect (3-dots) within the patient item
-  Q_INVOKABLE QRect contextMenuButtonRect(const QRect& itemRect, const QStyleOptionViewItem& option) const;
+  Q_INVOKABLE QRect contextMenuButtonRect(QRect itemRect, const QStyleOptionViewItem& option) const;
 
   /// Check if a point is within the context menu button area
-  Q_INVOKABLE bool isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect, const QStyleOptionViewItem& option) const;
+  Q_INVOKABLE bool isContextMenuButtonAt(QPoint pos, QRect itemRect, const QStyleOptionViewItem& option) const;
 
   /// Get the select all icon rect within the patient item
-  Q_INVOKABLE QRect selectAllIconRect(const QRect& itemRect, const QStyleOptionViewItem& option) const;
+  Q_INVOKABLE QRect selectAllIconRect(QRect itemRect, const QStyleOptionViewItem& option) const;
 
   /// Check if a point is within the select all icon area
-  Q_INVOKABLE bool isSelectAllIconAt(const QPoint& pos, const QRect& itemRect, const QStyleOptionViewItem& option) const;
+  Q_INVOKABLE bool isSelectAllIconAt(QPoint pos, QRect itemRect, const QStyleOptionViewItem& option) const;
 
 Q_SIGNALS:
   /// Emitted when spacing changes
@@ -136,19 +136,19 @@ protected:
 
   /// Paint for TabMode
   void paintTabMode(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  void paintPatientsTabs(QPainter* painter, const QRect& rect, const QStyleOptionViewItem& option,
+  void paintPatientsTabs(QPainter* painter, QRect rect, const QStyleOptionViewItem& option,
                          const QModelIndex& index) const;
-  void paintPatientHeader(QPainter* painter, const QRect &rect,
+  void paintPatientHeader(QPainter* painter, QRect rect,
                           const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
   /// Paint for ListMode
   void paintListMode(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
   /// Paint the context menu button (3 dots)
-  void paintContextMenuButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintContextMenuButton(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint the select all icon
-  void paintSelectAllIcon(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintSelectAllIcon(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMPatientDelegate);

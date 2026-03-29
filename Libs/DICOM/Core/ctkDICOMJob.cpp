@@ -44,7 +44,7 @@ ctkDICOMJob::ctkDICOMJob(QObject* parent)
 ctkDICOMJob::~ctkDICOMJob() = default;
 
 //------------------------------------------------------------------------------
-void ctkDICOMJob::setDICOMLevel(const DICOMLevels& dicomLevel)
+void ctkDICOMJob::setDICOMLevel(DICOMLevels dicomLevel)
 {
   this->DICOMLevel = dicomLevel;
 }

@@ -168,12 +168,12 @@ public:
   EditorHints editorHints()const;
 
   /// \sa editorHints()
-  void setEditorHints(const EditorHints& newEditorHints);
+  void setEditorHints(EditorHints newEditorHints);
 
   Qt::ScrollBarPolicy scrollBarPolicy()const;
 
   /// \sa scrollBarPolicy()
-  void setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolicy);
+  void setScrollBarPolicy(Qt::ScrollBarPolicy newScrollBarPolicy);
 
   /// Returns the string used as primary prompt
   virtual QString ps1() const;
@@ -226,7 +226,7 @@ public:
   /// Set which options to run file are enabled.
   /// Default is RunFileShortcut.
   /// \sa runFileOptions()
-  void setRunFileOptions(const RunFileOptions& newOptions);
+  void setRunFileOptions(RunFileOptions newOptions);
 
   /// Get the current command buffer (text on current input line, not yet executed)
   /// \sa setCommandBuffer()

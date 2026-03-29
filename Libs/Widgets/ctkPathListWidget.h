@@ -192,11 +192,11 @@ public:
 
   /// \return The absolute path for the entry located at the point \a point (in the
   ///         widget coordinate system) or a null QString if no entry could be found for \a point.
-  QString pathAt(const QPoint& point) const;
+  QString pathAt(QPoint point) const;
 
   /// \return The item for the entry located at the point \a point (in the widget
   ///         coordinate system) or NULL if no ite could be found for \a point.
-  QStandardItem* itemAt(const QPoint& point) const;
+  QStandardItem* itemAt(QPoint point) const;
 
   /// \see pathAt(const QPoint&)
   QString pathAt(int x, int y) const { return pathAt(QPoint(x, y)); }

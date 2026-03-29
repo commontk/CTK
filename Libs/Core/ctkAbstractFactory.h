@@ -141,7 +141,7 @@ public:
 
 protected:
 
-  void displayStatusMessage(const QtMsgType& type, const QString& description,
+  void displayStatusMessage(QtMsgType type, const QString& description,
                             const QString& status, bool display);
 
   /// \brief Call the load method associated with the item.

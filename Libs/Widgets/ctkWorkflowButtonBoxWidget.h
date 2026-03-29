@@ -131,7 +131,7 @@ public:
   /// Sets the direction of the QBoxLayout that manages this widget (default is
   /// QBoxLayout::LeftToRight)
   QBoxLayout::Direction direction()const;
-  void setDirection(const QBoxLayout::Direction& newDirection);
+  void setDirection(QBoxLayout::Direction newDirection);
 
   /// Return the hideGoToButtons property value.
   /// \sa hideGoToButtons

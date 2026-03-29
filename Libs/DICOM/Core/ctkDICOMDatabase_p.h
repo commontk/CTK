@@ -185,10 +185,10 @@ public:
     const QString& patientID,
     const QString& patientsName,
     int& databasePatientID);
-  ctkDICOMDatabase::InsertResult insertConnectionName(const int& dbPatientID,
+  ctkDICOMDatabase::InsertResult insertConnectionName(int dbPatientID,
     const QString& connectionName);
   ctkDICOMDatabase::InsertResult insertStudy(const ctkDICOMItem& dataset,
-    const int& dbPatientID);
+    int dbPatientID);
   ctkDICOMDatabase::InsertResult insertSeries(const ctkDICOMItem& dataset,
     const QString& studyInstanceUID);
 

@@ -178,7 +178,7 @@ QThread::Priority ctkAbstractJob::priority() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setPriority(const QThread::Priority &priority)
+void ctkAbstractJob::setPriority(QThread::Priority priority)
 {
   this->Priority = priority;
 }

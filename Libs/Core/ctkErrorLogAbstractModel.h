@@ -99,11 +99,11 @@ public:
   /// Set terminal output mode
   /// \sa terminalOutputs()
   /// \sa TerminalOutput
-  void setTerminalOutputs(const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutput);
+  void setTerminalOutputs(ctkErrorLogTerminalOutput::TerminalOutputs terminalOutput);
 
   ctkErrorLogLevel::LogLevels logLevelFilter()const;
 
-  void filterEntry(const ctkErrorLogLevel::LogLevels& logLevel = ctkErrorLogLevel::Unknown, bool disableFilter = false);
+  void filterEntry(ctkErrorLogLevel::LogLevels logLevel = ctkErrorLogLevel::Unknown, bool disableFilter = false);
 
   bool logEntryGrouping()const;
   void setLogEntryGrouping(bool value);

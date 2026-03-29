@@ -285,7 +285,7 @@ public Q_SLOTS:
    * @param point the local point to translate to global
    * Emits customContextMenuRequested with the global point
    */
-  void onCustomContextMenuRequested(const QPoint &point);
+  void onCustomContextMenuRequested(QPoint point);
 
   /**
    * @brief Select all items in the view

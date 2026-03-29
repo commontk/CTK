@@ -373,7 +373,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertPatient(
 
 //------------------------------------------------------------------------------
 ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertConnectionName(
-  const int& dbPatientID, const QString& connectionName)
+  int dbPatientID, const QString& connectionName)
 {
   Q_Q(ctkDICOMDatabase);
   // check if connection name is already stored
@@ -442,7 +442,7 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::updateConnections(
 
 //------------------------------------------------------------------------------
 ctkDICOMDatabase::InsertResult ctkDICOMDatabasePrivate::insertStudy(
-  const ctkDICOMItem& dataset, const int& dbPatientID)
+  const ctkDICOMItem& dataset, int dbPatientID)
 {
   QString studyInstanceUID(dataset.GetElementAsString(DCM_StudyInstanceUID) );
   QSqlQuery checkStudyExistsQuery(this->Database);
@@ -2858,7 +2858,7 @@ bool ctkDICOMDatabase::tagToGroupElement(const QString& tag, unsigned short& gro
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const unsigned short& element)
+QString ctkDICOMDatabase::groupElementToTag(unsigned short group, unsigned short element)
 {
   QString groupElement = QString("%1,%2").arg(group,4,16,QLatin1Char('0')).arg(element,4,16,QLatin1Char('0'));
   return groupElement.toUpper();

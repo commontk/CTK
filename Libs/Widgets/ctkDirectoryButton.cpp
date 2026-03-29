@@ -217,7 +217,7 @@ QIcon ctkDirectoryButton::icon()const
 #ifdef USE_QFILEDIALOG_OPTIONS
 void ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
 #else
-void ctkDirectoryButton::setOptions(const Options& dialogOptions)
+void ctkDirectoryButton::setOptions(Options dialogOptions)
 #endif
 {
   Q_D(ctkDirectoryButton);

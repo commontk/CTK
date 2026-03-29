@@ -120,14 +120,14 @@ public Q_SLOTS:
 
   /// \brief Change camera to look from a given axis to the focal point
   /// Translate/Rotate the camera to look from a given axis
-  void lookFromAxis(const ctkAxesWidget::Axis& axis);
+  void lookFromAxis(ctkAxesWidget::Axis axis);
 
   /// \deprecated
   /// \brief Change camera to look from a given axis to the focal point.
   /// Translate/Rotate the camera to look from a given axis.
   /// \param fov is not used (it is kept for backward compatibility of the API)
-  /// \sa lookFromAxis(const ctkAxesWidget::Axis&)
-  void lookFromAxis(const ctkAxesWidget::Axis& axis, double fov);
+  /// \sa lookFromAxis(ctkAxesWidget::Axis)
+  void lookFromAxis(ctkAxesWidget::Axis axis, double fov);
 
 public:
 

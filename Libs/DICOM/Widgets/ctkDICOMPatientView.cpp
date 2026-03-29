@@ -2160,7 +2160,7 @@ void ctkDICOMPatientView::onStudiesSelectionChanged(const QStringList &selectedS
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientView::onPatientContextMenuRequested(const QPoint& globalPos, const QModelIndex& clickedPatientIndex)
+void ctkDICOMPatientView::onPatientContextMenuRequested(QPoint globalPos, const QModelIndex& clickedPatientIndex)
 {
   Q_D(ctkDICOMPatientView);
 

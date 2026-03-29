@@ -211,14 +211,14 @@ public:
   /// Does some sanity checks and then either calls onEntry() or emits the invokeOnEntryCommand(),
   /// depending on whether the user indicates that there is an onEntryCommand.
   void onEntryInternal(ctkWorkflowStep* step, ctkWorkflowStep* comingFrom,
-                       const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
+                       ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// \brief Performs computation required when exiting this step.
   ///
   /// Does some sanity checks and then either calls onExit() or emits the invokeOnExitCommand(),
   /// depending on whether the user indicates that there is an onExitCommand.
   void onExitInternal(ctkWorkflowStep* step, ctkWorkflowStep* goingTo,
-                      const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
+                      ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// Get the step in the workflow with a given id.
   ctkWorkflowStep* stepFromId(const QString& id)const;

@@ -1253,7 +1253,7 @@ CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, ctkConsole::EditorHints, editorHints, EditorHints);
-CTK_SET_CPP(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints);
+CTK_SET_CPP(ctkConsole, ctkConsole::EditorHints, setEditorHints, EditorHints);
 
 //-----------------------------------------------------------------------------
 int ctkConsole::cursorPosition() const
@@ -1295,7 +1295,7 @@ Qt::ScrollBarPolicy ctkConsole::scrollBarPolicy()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolicy)
+void ctkConsole::setScrollBarPolicy(Qt::ScrollBarPolicy newScrollBarPolicy)
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
@@ -1325,7 +1325,7 @@ void ctkConsole::addCompleterShortcut(const QKeySequence& key)
 CTK_GET_CPP(ctkConsole, ctkConsole::RunFileOptions, runFileOptions, RunFileOptions);
 
 //-----------------------------------------------------------------------------
-void ctkConsole::setRunFileOptions(const RunFileOptions& newOptions)
+void ctkConsole::setRunFileOptions(RunFileOptions newOptions)
 {
   Q_D(ctkConsole);
   d->RunFileButton->setVisible(newOptions.testFlag(ctkConsole::RunFileButton));

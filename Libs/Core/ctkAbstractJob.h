@@ -132,7 +132,7 @@ public:
   ///@{
   /// Priority
   QThread::Priority priority() const;
-  void setPriority(const QThread::Priority& priority);
+  void setPriority(QThread::Priority priority);
   ///@}
 
   ///@{

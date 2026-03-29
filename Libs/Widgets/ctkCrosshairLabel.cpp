@@ -256,7 +256,7 @@ CTK_GET_CPP(ctkCrosshairLabel, ctkCrosshairLabel::CrosshairTypes,
             crosshairType, CrosshairType)
 
 // --------------------------------------------------------------------------
-void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
+void ctkCrosshairLabel::setCrosshairType(CrosshairTypes newType)
 {
   Q_D(ctkCrosshairLabel);
   if (newType == d->CrosshairType)

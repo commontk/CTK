@@ -84,28 +84,28 @@ public:
   /// if set to true, new jobs will not be queued
   /// default: false
   bool freezeJobsScheduling() const;
-  void setFreezeJobsScheduling(const bool& freezeJobsScheduling);
+  void setFreezeJobsScheduling(bool freezeJobsScheduling);
   ///@}
 
   ///@{
   /// Maximum number of concurrent QThreads spawned by the threadPool in the Job pool
   /// default: 20
   int maximumThreadCount() const;
-  void setMaximumThreadCount(const int& maximumThreadCount);
+  void setMaximumThreadCount(int maximumThreadCount);
   ///@}
 
   ///@{
   /// Maximum number of retries that the Job pool will try on each failed Job
   /// default: 3
   int maximumNumberOfRetry() const;
-  void setMaximumNumberOfRetry(const int& maximumNumberOfRetry);
+  void setMaximumNumberOfRetry(int maximumNumberOfRetry);
   ///@}
 
   ///@{
   /// Retry delay in millisec
   /// default: 100 msec
   int retryDelay() const;
-  void setRetryDelay(const int& retryDelay);
+  void setRetryDelay(int retryDelay);
   ///@}
 
   /// Return the threadPool.

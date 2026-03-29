@@ -61,21 +61,21 @@ public:
   ///@{
   /// Query/Retrieve operations
   /// true as default
-  void setQueryRetrieveEnabled(const bool& queryRetrieveEnabled);
+  void setQueryRetrieveEnabled(bool queryRetrieveEnabled);
   bool queryRetrieveEnabled() const;
   ///}@
 
   ///@{
   /// Storage operations
   /// true as default
-  void setStorageEnabled(const bool& storageEnabled);
+  void setStorageEnabled(bool storageEnabled);
   bool storageEnabled() const;
   ///}@
 
   ///@{
   /// Trusted server
   /// true as default
-  void setTrustedEnabled(const bool& trustedEnabled);
+  void setTrustedEnabled(bool trustedEnabled);
   bool trustedEnabled() const;
   ///}@
 
@@ -102,7 +102,7 @@ public:
   ///@{
   /// [0, 65365] port on peer host
   /// 80 as default
-  void setPort(const int& port);
+  void setPort(int port);
   int port() const;
   ///}@
 
@@ -133,13 +133,13 @@ public:
   ///@{
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
-  void setKeepAssociationOpen(const bool& keepOpen);
+  void setKeepAssociationOpen(bool keepOpen);
   bool keepAssociationOpen() const;
   ///}@
 
   ///@{
   /// connection timeout in seconds, default 10 s.
-  void setConnectionTimeout(const int& timeout);
+  void setConnectionTimeout(int timeout);
   int connectionTimeout() const;
   ///}@
 

@@ -191,7 +191,7 @@ public:
   void setNameFilters(const QStringList &nameFilters);
   const QStringList& nameFilters()const;
 
-  void setFilters(const Filters& filters);
+  void setFilters(Filters filters);
   Filters filters()const;
 
   /// Options of the file dialog pop up.
@@ -200,7 +200,7 @@ public:
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
 #else
-  void setOptions(const Options& options);
+  void setOptions(Options options);
   const Options& options()const;
 #endif
 

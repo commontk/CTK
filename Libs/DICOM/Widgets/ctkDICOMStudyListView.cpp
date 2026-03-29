@@ -1737,7 +1737,7 @@ void ctkDICOMStudyListView::onSeriesSelectionChanged(const QString& studyInstanc
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::onSeriesContextMenuRequested(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs)
+void ctkDICOMStudyListView::onSeriesContextMenuRequested(QPoint globalPos, const QStringList& selectedSeriesInstanceUIDs)
 {
   Q_D(ctkDICOMStudyListView);
   Q_UNUSED(selectedSeriesInstanceUIDs);
@@ -1765,7 +1765,7 @@ void ctkDICOMStudyListView::onSeriesContextMenuRequested(const QPoint& globalPos
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::onStudyContextMenuRequested(const QPoint& globalPos, const QModelIndex& studyIndex)
+void ctkDICOMStudyListView::onStudyContextMenuRequested(QPoint globalPos, const QModelIndex& studyIndex)
 {
   Q_D(ctkDICOMStudyListView);
 

@@ -76,7 +76,7 @@ public:
   QRect desiredOpenGeometry()const;
   QRect desiredOpenGeometry(QRect baseGeometry)const;
   QRect baseGeometry()const;
-  QPoint mapToGlobal(const QPoint& baseWidgetPoint)const;
+  QPoint mapToGlobal(QPoint baseWidgetPoint)const;
 
   QPropertyAnimation* currentAnimation()const;
 
