@@ -213,7 +213,13 @@ ctkLayoutManager::ctkLayoutManager(QWidget* viewport, QObject* parentObject)
 {
   Q_D(ctkLayoutManager);
   d->init();
-  this->setViewport(viewport);
+  // Store viewport directly to avoid calling virtual setViewport() in constructor,
+  // which would indirectly reach the pure virtual viewFromXML() through the
+  // onViewportChanged() -> refresh() -> setupLayout() chain.
+  if (viewport)
+  {
+    d->Viewports[QString()] = viewport;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -224,7 +230,13 @@ ctkLayoutManager::ctkLayoutManager(ctkLayoutManagerPrivate* ptr,
 {
   Q_D(ctkLayoutManager);
   d->init();
-  this->setViewport(viewport);
+  // Store viewport directly to avoid calling virtual setViewport() in constructor,
+  // which would indirectly reach the pure virtual viewFromXML() through the
+  // onViewportChanged() -> refresh() -> setupLayout() chain.
+  if (viewport)
+  {
+    d->Viewports[QString()] = viewport;
+  }
 }
 
 //-----------------------------------------------------------------------------
