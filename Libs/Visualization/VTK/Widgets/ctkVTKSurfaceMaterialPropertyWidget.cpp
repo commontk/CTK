@@ -119,9 +119,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::updateFromProperty()
     case VTK_FLAT: this->setInterpolationMode(InterpolationFlat); break;
     case VTK_GOURAUD: this->setInterpolationMode(InterpolationGouraud); break;
     case VTK_PHONG: this->setInterpolationMode(InterpolationPhong); break;
-#if VTK_MAJOR_VERSION >= 9
     case VTK_PBR: this->setInterpolationMode(InterpolationPBR); break;
-#endif
   }
 
   this->setAmbient(d->Property->GetAmbient());
@@ -129,10 +127,8 @@ void ctkVTKSurfaceMaterialPropertyWidget::updateFromProperty()
   this->setSpecular(d->Property->GetSpecular());
   this->setSpecularPower(d->Property->GetSpecularPower());
 
-#if VTK_MAJOR_VERSION >= 9
   this->setMetallic(d->Property->GetMetallic());
   this->setRoughness(d->Property->GetRoughness());
-#endif
   d->IsUpdatingGUI = false;
 }
 
@@ -188,11 +184,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::onInterpolationModeChanged(
       case InterpolationFlat: d->Property->SetInterpolationToFlat(); break;
       case InterpolationGouraud: d->Property->SetInterpolationToGouraud(); break;
       case InterpolationPhong: d->Property->SetInterpolationToPhong(); break;
-#if VTK_MAJOR_VERSION >= 9
       case InterpolationPBR: d->Property->SetInterpolationToPBR(); break;
-#else
-      case InterpolationPBR: break;
-#endif
     }
   }
 }
@@ -252,7 +244,6 @@ void ctkVTKSurfaceMaterialPropertyWidget::onSpecularPowerChanged(double newSpecu
 // --------------------------------------------------------------------------
 void ctkVTKSurfaceMaterialPropertyWidget::onMetallicChanged(double newMetallic)
 {
-#if VTK_MAJOR_VERSION >= 9
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onMetallicChanged(newMetallic);
   if (d->Property.GetPointer() != 0)
@@ -261,16 +252,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onMetallicChanged(double newMetallic)
     // up-to-date value then.
     d->Property->SetMetallic(this->metallic());
   }
-#else
-  Q_UNUSED(newMetallic);
-  qWarning() << Q_FUNC_INFO << " failed: metallic property is not supported with VTK < 9";
-#endif
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKSurfaceMaterialPropertyWidget::onRoughnessChanged(double newRoughness)
 {
-#if VTK_MAJOR_VERSION >= 9
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onRoughnessChanged(newRoughness);
   if (d->Property.GetPointer() != 0)
@@ -279,10 +265,6 @@ void ctkVTKSurfaceMaterialPropertyWidget::onRoughnessChanged(double newRoughness
     // up-to-date value then.
     d->Property->SetRoughness(this->roughness());
   }
-#else
-  Q_UNUSED(newRoughness);
-  qWarning() << Q_FUNC_INFO << " failed: roughness property is not supported with VTK < 9";
-#endif
 }
 
 // --------------------------------------------------------------------------
