@@ -34,6 +34,8 @@
 class ctkDICOMBrowserTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkDICOMBrowserTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void initTestCase();

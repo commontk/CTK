@@ -49,7 +49,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMJob : public ctkAbstractJob
 
 public:
   typedef ctkAbstractJob Superclass;
-  explicit ctkDICOMJob();
+  explicit ctkDICOMJob(QObject* parent = nullptr);
   virtual ~ctkDICOMJob();
 
   enum DICOMLevels

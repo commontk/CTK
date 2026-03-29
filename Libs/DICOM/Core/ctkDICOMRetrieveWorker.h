@@ -41,7 +41,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieveWorker : public ctkAbstractWorker
 
 public:
   typedef ctkAbstractWorker Superclass;
-  explicit ctkDICOMRetrieveWorker();
+  explicit ctkDICOMRetrieveWorker(QObject* parent = nullptr);
   virtual ~ctkDICOMRetrieveWorker();
 
   /// Execute worker. This method is run by the QThreadPool and is thread safe

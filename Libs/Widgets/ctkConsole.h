@@ -322,6 +322,8 @@ class CTK_WIDGETS_EXPORT ctkConsoleCompleter : public QCompleter {
   Q_OBJECT
 public:
 
+  explicit ctkConsoleCompleter(QObject* parent = nullptr) : QCompleter(parent) {}
+
   /// Update the completion model given a string.  The given string
   /// is the current console text between the cursor and the start of
   /// the line.

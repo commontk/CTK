@@ -49,6 +49,8 @@ void getSpyReport(QSignalSpy& spy, double expectedValue)
 class ctkDoubleSliderValueProxyTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkDoubleSliderValueProxyTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testSetValueProxy();

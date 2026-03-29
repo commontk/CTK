@@ -56,8 +56,8 @@ ctkDICOMRetrieveJobPrivate::~ctkDICOMRetrieveJobPrivate()
 // ctkDICOMRetrieveJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveJob::ctkDICOMRetrieveJob()
-  : d_ptr(new ctkDICOMRetrieveJobPrivate(this))
+ctkDICOMRetrieveJob::ctkDICOMRetrieveJob(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMRetrieveJobPrivate(this))
 {
 }
 

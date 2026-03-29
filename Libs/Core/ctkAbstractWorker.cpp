@@ -31,7 +31,8 @@
 #include "ctkAbstractWorker.h"
 
 // --------------------------------------------------------------------------
-ctkAbstractWorker::ctkAbstractWorker()
+ctkAbstractWorker::ctkAbstractWorker(QObject* parent)
+  : QObject(parent)
 {
   this->setAutoDelete(false);
 }

@@ -41,7 +41,7 @@ class ctkQtMessageHandler : public QObject
   Q_OBJECT
 public:
   typedef ctkQtMessageHandler Self ;
-  explicit ctkQtMessageHandler()
+  explicit ctkQtMessageHandler(QObject* parent = nullptr) : QObject(parent)
   {
     qInstallMessageHandler(ctkQtMessageHandler::messageHandler);
     Self::Handlers.push(this);

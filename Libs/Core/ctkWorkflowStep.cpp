@@ -36,8 +36,9 @@
 // ctkWorkflowStepPrivate methods
 
 // --------------------------------------------------------------------------
-ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object)
-  :q_ptr(&object)
+ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object, QObject* parent)
+  : QObject(parent)
+  , q_ptr(&object)
 {
   qRegisterMetaType<ctkWorkflowStep*>("ctkWorkflowStep*");
   this->Workflow = 0;

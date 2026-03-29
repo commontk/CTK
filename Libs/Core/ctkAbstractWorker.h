@@ -42,7 +42,7 @@ class CTK_CORE_EXPORT ctkAbstractWorker : public QObject, public QRunnable
   Q_OBJECT
 
 public:
-  explicit ctkAbstractWorker();
+  explicit ctkAbstractWorker(QObject* parent = nullptr);
   virtual ~ctkAbstractWorker();
 
   /// Execute worker. This method is run by the QThreadPool and is thread safe

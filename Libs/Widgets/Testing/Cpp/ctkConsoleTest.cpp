@@ -32,6 +32,8 @@
 class ctkConsoleTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkConsoleTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testShow();
 

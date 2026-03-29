@@ -39,7 +39,7 @@ namespace
 class LogStreamMessageThread : public LogMessageThread
 {
 public:
-  LogStreamMessageThread(int id, int maxIteration) : LogMessageThread(id, maxIteration){}
+  LogStreamMessageThread(int id, int maxIteration, QObject* parent = nullptr) : LogMessageThread(id, maxIteration, parent){}
 
   virtual void logMessage(const QDateTime& dateTime, int threadId, int counterIdx)
   {

@@ -80,8 +80,8 @@ void ctkDICOMQueryWorkerPrivate::setQueryParameters()
 // ctkDICOMQueryWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryWorker::ctkDICOMQueryWorker()
-  : d_ptr(new ctkDICOMQueryWorkerPrivate(this))
+ctkDICOMQueryWorker::ctkDICOMQueryWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMQueryWorkerPrivate(this))
 {
 }
 

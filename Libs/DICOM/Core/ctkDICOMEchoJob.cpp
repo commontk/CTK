@@ -56,8 +56,8 @@ ctkDICOMEchoJobPrivate::~ctkDICOMEchoJobPrivate()
 // ctkDICOMEchoJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMEchoJob::ctkDICOMEchoJob()
-  : d_ptr(new ctkDICOMEchoJobPrivate(this))
+ctkDICOMEchoJob::ctkDICOMEchoJob(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMEchoJobPrivate(this))
 {
 }
 

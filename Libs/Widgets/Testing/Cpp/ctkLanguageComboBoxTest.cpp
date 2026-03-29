@@ -36,6 +36,8 @@
 class ctkLanguageComboBoxTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkLanguageComboBoxTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testDefaults();

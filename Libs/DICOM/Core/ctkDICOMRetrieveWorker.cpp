@@ -100,8 +100,8 @@ void ctkDICOMRetrieveWorkerPrivate::setRetrieveParameters()
 // ctkDICOMRetrieveWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker()
-  : d_ptr(new ctkDICOMRetrieveWorkerPrivate(this))
+ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMRetrieveWorkerPrivate(this))
 {
 }
 

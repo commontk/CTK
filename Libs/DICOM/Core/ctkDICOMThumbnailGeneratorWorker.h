@@ -41,7 +41,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGeneratorWorker : public ctkAbstrac
 
 public:
   typedef ctkAbstractWorker Superclass;
-  explicit ctkDICOMThumbnailGeneratorWorker();
+  explicit ctkDICOMThumbnailGeneratorWorker(QObject* parent = nullptr);
   virtual ~ctkDICOMThumbnailGeneratorWorker();
 
   /// Execute worker. This method is run by the QThreadPool and is thread safe

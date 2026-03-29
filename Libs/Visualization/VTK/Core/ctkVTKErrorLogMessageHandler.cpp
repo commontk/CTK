@@ -202,8 +202,8 @@ ctkVTKErrorLogMessageHandlerPrivate::~ctkVTKErrorLogMessageHandlerPrivate()
 QString ctkVTKErrorLogMessageHandler::HandlerName = QLatin1String("VTK");
 
 //----------------------------------------------------------------------------
-ctkVTKErrorLogMessageHandler::ctkVTKErrorLogMessageHandler() :
-  Superclass(), d_ptr(new ctkVTKErrorLogMessageHandlerPrivate(*this))
+ctkVTKErrorLogMessageHandler::ctkVTKErrorLogMessageHandler(QObject* parent) :
+  Superclass(parent), d_ptr(new ctkVTKErrorLogMessageHandlerPrivate(*this))
 {
 }
 

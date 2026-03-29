@@ -33,6 +33,8 @@
 class ctkRangeSliderTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkRangeSliderTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testGUIEvents();
   void testTooltips();

@@ -42,7 +42,7 @@ class ctkExampleDerivedWorkflowWidgetStep : public ctkWorkflowWidgetStep
   Q_OBJECT
 public:
   typedef ctkWorkflowWidgetStep Superclass;
-  explicit ctkExampleDerivedWorkflowWidgetStep(const QString& newId);
+  explicit ctkExampleDerivedWorkflowWidgetStep(const QString& newId, QWidget* parent = nullptr);
   virtual ~ctkExampleDerivedWorkflowWidgetStep();
 
   ///

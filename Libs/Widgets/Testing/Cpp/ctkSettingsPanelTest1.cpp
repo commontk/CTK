@@ -44,6 +44,7 @@ class ctkSettingsPanelForTest : public ctkSettingsPanel
 {
   Q_OBJECT
 public:
+  explicit ctkSettingsPanelForTest(QWidget* parent = nullptr) : ctkSettingsPanel(parent) {}
   QVariant myDefaultPropertyValue(const QString& key) const
   {
     return this->defaultPropertyValue(key);

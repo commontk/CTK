@@ -35,7 +35,7 @@ class CTK_CORE_EXPORT ctkErrorLogFDMessageHandler : public ctkErrorLogAbstractMe
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
-  ctkErrorLogFDMessageHandler();
+  ctkErrorLogFDMessageHandler(QObject* parent = nullptr);
   virtual ~ctkErrorLogFDMessageHandler();
 
   static QString HandlerName;

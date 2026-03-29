@@ -146,8 +146,9 @@ namespace {
   {
     Q_OBJECT
   public:
-    FileFilterProxyModel(ctkPathListWidget::PathOptions fileOptions)
-      : FileOptions(fileOptions)
+    FileFilterProxyModel(ctkPathListWidget::PathOptions fileOptions,
+                         QObject* parent = nullptr)
+      : QSortFilterProxyModel(parent), FileOptions(fileOptions)
     {}
 
   protected:
@@ -241,8 +242,9 @@ namespace {
   {
     Q_OBJECT
   public:
-    DirFilterProxyModel(ctkPathListWidget::PathOptions dirOptions)
-      : DirOptions(dirOptions)
+    DirFilterProxyModel(ctkPathListWidget::PathOptions dirOptions,
+                        QObject* parent = nullptr)
+      : QSortFilterProxyModel(parent), DirOptions(dirOptions)
     {}
 
   protected:

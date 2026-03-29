@@ -92,8 +92,8 @@ void ctkDICOMStorageListenerWorkerPrivate::init()
 // ctkDICOMStorageListenerWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerWorker::ctkDICOMStorageListenerWorker()
-  : d_ptr(new ctkDICOMStorageListenerWorkerPrivate(this))
+ctkDICOMStorageListenerWorker::ctkDICOMStorageListenerWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMStorageListenerWorkerPrivate(this))
 {
   Q_D(ctkDICOMStorageListenerWorker);
   d->init();

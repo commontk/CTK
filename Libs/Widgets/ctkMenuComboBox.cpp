@@ -36,7 +36,8 @@
 #include "ctkMenuComboBox_p.h"
 
 // -------------------------------------------------------------------------
-ctkMenuComboBoxInternal::ctkMenuComboBoxInternal()
+ctkMenuComboBoxInternal::ctkMenuComboBoxInternal(QWidget* parent)
+  : Superclass(parent)
 {
 }
 // -------------------------------------------------------------------------

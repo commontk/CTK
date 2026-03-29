@@ -41,7 +41,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMEchoWorker : public ctkAbstractWorker
 
 public:
   typedef ctkAbstractWorker Superclass;
-  explicit ctkDICOMEchoWorker();
+  explicit ctkDICOMEchoWorker(QObject* parent = nullptr);
   virtual ~ctkDICOMEchoWorker();
 
   /// Execute worker. This method is run by the QThreadPool and is thread safe

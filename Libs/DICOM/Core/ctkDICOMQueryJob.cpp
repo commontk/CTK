@@ -57,8 +57,8 @@ ctkDICOMQueryJobPrivate::~ctkDICOMQueryJobPrivate()
 // ctkDICOMQueryJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryJob::ctkDICOMQueryJob()
-  : d_ptr(new ctkDICOMQueryJobPrivate(this))
+ctkDICOMQueryJob::ctkDICOMQueryJob(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMQueryJobPrivate(this))
 {
 }
 

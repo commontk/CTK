@@ -68,8 +68,8 @@ ctkExampleDerivedWorkflowWidgetStepPrivate::ctkExampleDerivedWorkflowWidgetStepP
 // ctkExampleDerivedWorkflowWidgetStep methods
 
 //-----------------------------------------------------------------------------
-ctkExampleDerivedWorkflowWidgetStep::ctkExampleDerivedWorkflowWidgetStep(const QString& newId) :
-  Superclass(newId)
+ctkExampleDerivedWorkflowWidgetStep::ctkExampleDerivedWorkflowWidgetStep(const QString& newId, QWidget* parent) :
+  Superclass(newId, parent)
   , d_ptr(new ctkExampleDerivedWorkflowWidgetStepPrivate)
 {
 }

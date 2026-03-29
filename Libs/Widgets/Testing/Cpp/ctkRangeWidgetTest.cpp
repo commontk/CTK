@@ -33,6 +33,8 @@
 class ctkRangeWidgetTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkRangeWidgetTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testUI();
 

@@ -48,7 +48,7 @@ class CTK_CORE_EXPORT ctkWorkflowStepPrivate: public QObject
 
 public:
   ctkWorkflowStep* q_ptr;
-  ctkWorkflowStepPrivate(ctkWorkflowStep& object);
+  ctkWorkflowStepPrivate(ctkWorkflowStep& object, QObject* parent = nullptr);
   ~ctkWorkflowStepPrivate();
 
 protected:

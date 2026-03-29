@@ -71,8 +71,8 @@ void ctkDICOMInserterWorkerPrivate::setInserterParameters()
 // ctkDICOMInserterWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterWorker::ctkDICOMInserterWorker()
-  : d_ptr(new ctkDICOMInserterWorkerPrivate(this))
+ctkDICOMInserterWorker::ctkDICOMInserterWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMInserterWorkerPrivate(this))
 {
 }
 

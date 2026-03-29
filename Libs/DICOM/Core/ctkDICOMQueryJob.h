@@ -47,7 +47,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQueryJob : public ctkDICOMJob
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMQueryJob();
+  explicit ctkDICOMQueryJob(QObject* parent = nullptr);
   virtual ~ctkDICOMQueryJob();
 
   ///@{

@@ -52,6 +52,9 @@ class ctkSliderWidgetValueProxyTester: public QObject
 {
   Q_OBJECT
 
+public:
+  explicit ctkSliderWidgetValueProxyTester(QObject* parent = nullptr) : QObject(parent) {}
+
 private slots:
   void testSetValue();
   void testSetValue_data();

@@ -42,7 +42,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListenerWorker : public ctkAbstractWo
 
 public:
   typedef ctkAbstractWorker Superclass;
-  explicit ctkDICOMStorageListenerWorker();
+  explicit ctkDICOMStorageListenerWorker(QObject* parent = nullptr);
   virtual ~ctkDICOMStorageListenerWorker();
 
   /// Execute worker. This method is run by the QThreadPool and is thread safe

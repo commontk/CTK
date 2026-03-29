@@ -213,8 +213,8 @@ ctkErrorLogStreamMessageHandlerPrivate::~ctkErrorLogStreamMessageHandlerPrivate(
 QString ctkErrorLogStreamMessageHandler::HandlerName = QLatin1String("Stream");
 
 // --------------------------------------------------------------------------
-ctkErrorLogStreamMessageHandler::ctkErrorLogStreamMessageHandler() :
-  Superclass(), d_ptr(new ctkErrorLogStreamMessageHandlerPrivate())
+ctkErrorLogStreamMessageHandler::ctkErrorLogStreamMessageHandler(QObject* parent) :
+  Superclass(parent), d_ptr(new ctkErrorLogStreamMessageHandlerPrivate())
 {
   Q_D(ctkErrorLogStreamMessageHandler);
   d->CoutStreamHandler = new ctkStreamHandler(this, ctkErrorLogLevel::Info, std::cout);

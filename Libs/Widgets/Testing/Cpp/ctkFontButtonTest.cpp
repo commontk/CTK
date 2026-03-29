@@ -36,6 +36,8 @@
 class ctkFontButtonTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkFontButtonTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testDefaults();

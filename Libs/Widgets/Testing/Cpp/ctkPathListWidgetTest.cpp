@@ -37,6 +37,9 @@ class ctkPathListWidgetTester : public QObject
 {
   Q_OBJECT
 
+public:
+  explicit ctkPathListWidgetTester(QObject* parent = nullptr) : QObject(parent) {}
+
 private slots:
 
   void testDefaults();

@@ -7,6 +7,8 @@
 class ctkFileLoggerTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkFileLoggerTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void initTestCase();
 

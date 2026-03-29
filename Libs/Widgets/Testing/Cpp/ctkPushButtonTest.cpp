@@ -34,6 +34,9 @@ class ctkPushButtonTester : public QObject
 {
   Q_OBJECT
 
+public:
+  explicit ctkPushButtonTester(QObject* parent = nullptr) : QObject(parent) {}
+
 private slots:
 
   void testDefaults();

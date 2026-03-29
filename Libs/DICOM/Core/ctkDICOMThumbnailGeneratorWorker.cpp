@@ -49,8 +49,8 @@ ctkDICOMThumbnailGeneratorWorkerPrivate::~ctkDICOMThumbnailGeneratorWorkerPrivat
 // ctkDICOMThumbnailGeneratorWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMThumbnailGeneratorWorker::ctkDICOMThumbnailGeneratorWorker()
-  : d_ptr(new ctkDICOMThumbnailGeneratorWorkerPrivate(this))
+ctkDICOMThumbnailGeneratorWorker::ctkDICOMThumbnailGeneratorWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMThumbnailGeneratorWorkerPrivate(this))
 {
 }
 

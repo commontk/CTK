@@ -38,6 +38,8 @@
 class ctkDoubleSpinBoxTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkDoubleSpinBoxTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testUI();
 

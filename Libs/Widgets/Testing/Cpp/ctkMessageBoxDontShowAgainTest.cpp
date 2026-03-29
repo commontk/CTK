@@ -40,6 +40,8 @@ Q_DECLARE_METATYPE(QMessageBox::ButtonRole);
 class ctkMessageBoxDontShowAgainTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkMessageBoxDontShowAgainTester(QObject* parent = nullptr) : QObject(parent) {}
   void testExecMessageBox(ctkMessageBox& messageBox);
 
 private Q_SLOTS:

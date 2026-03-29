@@ -68,8 +68,9 @@ static int REQUEST_RESULTS_CACHE_MAXIMUM_SIZE = 5000;
 
 
 //------------------------------------------------------------------------------
-ctkDICOMIndexerPrivateWorker::ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue)
-: RequestQueue(queue)
+ctkDICOMIndexerPrivateWorker::ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue, QObject* parent)
+: QObject(parent)
+, RequestQueue(queue)
 , TimePercentageIndexing(95.0)
 , RemainingRequestCount(0)
 , CompletedRequestCount(0)

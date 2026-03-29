@@ -37,6 +37,8 @@
 class ctkSliderWidgetTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkSliderWidgetTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testUI();
 

@@ -36,6 +36,8 @@
 class ctkFlatProxyModelTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkFlatProxyModelTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testModel();
   void testModel_data();

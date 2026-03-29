@@ -46,7 +46,7 @@ class CustomSpy : public QObject
 {
   Q_OBJECT
 public:
-  CustomSpy()
+  explicit CustomSpy(QObject* parent = nullptr) : QObject(parent)
   {
     this->AcknowledgedSignals = 0;
   }
@@ -86,6 +86,8 @@ public:
 class ctkRangeWidgetValueProxyTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkRangeWidgetValueProxyTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testSetValues();
