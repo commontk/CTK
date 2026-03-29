@@ -175,11 +175,7 @@ void ctkVTKMagnifyViewPrivate::connectRenderWindow(ctkVTKOpenGLNativeWidget * wi
   Q_ASSERT(widget);
   Q_ASSERT(this->ObserveRenderWindowEvents);
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkRenderWindow * renderWindow = widget->renderWindow();
-#else
-  vtkRenderWindow * renderWindow = widget->GetRenderWindow();
-#endif
   if (renderWindow)
   {
     this->qvtkConnect(renderWindow, vtkCommand::EndEvent,
@@ -192,11 +188,7 @@ void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(ctkVTKOpenGLNativeWidget *
 {
   Q_ASSERT(widget);
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkRenderWindow * renderWindow = widget->renderWindow();
-#else
-  vtkRenderWindow * renderWindow = widget->GetRenderWindow();
-#endif
   if (renderWindow)
   {
     this->qvtkDisconnect(renderWindow, vtkCommand::EndEvent,
@@ -262,11 +254,7 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   Q_Q(ctkVTKMagnifyView);
 
   // Retrieve buffer of given QVTKWidget from its render window
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->renderWindow();
-#else
-  vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->GetRenderWindow();
-#endif
   if (!renderWindow)
   {
     return;
