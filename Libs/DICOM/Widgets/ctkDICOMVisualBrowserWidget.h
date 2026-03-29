@@ -76,7 +76,6 @@ class ctkFileDialog;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
 {
   Q_OBJECT;
-  Q_ENUMS(ImportDirectoryMode DateType ThumbnailSizePresetOption)
 
 public:
   /// Date filtering options
@@ -90,6 +89,7 @@ public:
     LastYear,
     CustomRange
   };
+  Q_ENUM(DateType)
 
   /// Thumbnail size options
   enum ThumbnailSizePresetOption
@@ -99,12 +99,14 @@ public:
     Medium,
     Large
   };
+  Q_ENUM(ThumbnailSizePresetOption)
 
   enum ImportDirectoryMode
   {
     ImportDirectoryCopy = 0,
     ImportDirectoryAddLink
   };
+  Q_ENUM(ImportDirectoryMode)
 
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
