@@ -47,7 +47,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListenerJob : public ctkDICOMJob
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMStorageListenerJob();
+  explicit ctkDICOMStorageListenerJob(QObject* parent = nullptr);
   virtual ~ctkDICOMStorageListenerJob();
 
   ///@{

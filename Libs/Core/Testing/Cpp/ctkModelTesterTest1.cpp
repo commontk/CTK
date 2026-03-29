@@ -39,6 +39,7 @@ class QAbstractItemModelHelper : public QAbstractItemModel
 {
   Q_OBJECT
 public:
+  explicit QAbstractItemModelHelper(QObject* parent = nullptr) : QAbstractItemModel(parent) {}
   virtual QModelIndex index(int, int, const QModelIndex&) const { return QModelIndex(); }
   virtual QModelIndex parent(const QModelIndex&) const { return QModelIndex(); }
   virtual int rowCount(const QModelIndex&) const { return 0; }

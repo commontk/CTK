@@ -36,6 +36,8 @@
 class ctkVTKPropertyWidgetTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkVTKPropertyWidgetTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testGUIEvents();
   void testVTKProperty();

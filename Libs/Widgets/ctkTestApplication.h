@@ -85,7 +85,7 @@ class CTK_WIDGETS_EXPORT ctkTestApplication : public QObject
   Q_OBJECT
 
 public:
-  ctkTestApplication(int _argc, char** _argv);
+  ctkTestApplication(int _argc, char** _argv, QObject* parent = nullptr);
   ~ctkTestApplication();
 
   /// This function could be overloaded to implement test that required

@@ -44,7 +44,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMEchoJob : public ctkDICOMJob
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMEchoJob();
+  explicit ctkDICOMEchoJob(QObject* parent = nullptr);
   virtual ~ctkDICOMEchoJob();
 
   ///@{

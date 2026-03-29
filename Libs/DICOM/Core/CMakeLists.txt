@@ -121,6 +121,7 @@ set(KIT_SRCS
 set_source_files_properties(
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDisplayedFieldGeneratorAbstractRule.h
+  ctkDICOMJob.h
   WRAP_EXCLUDE
   )
 

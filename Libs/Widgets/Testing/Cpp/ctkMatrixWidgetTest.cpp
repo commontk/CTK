@@ -31,6 +31,8 @@
 class ctkMatrixWidgetTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkMatrixWidgetTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testUI();
 

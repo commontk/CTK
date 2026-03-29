@@ -79,8 +79,8 @@ void ctkDICOMEchoWorkerPrivate::setRetrieveParameters()
 // ctkDICOMEchoWorker methods
 
 //------------------------------------------------------------------------------
-ctkDICOMEchoWorker::ctkDICOMEchoWorker()
-  : d_ptr(new ctkDICOMEchoWorkerPrivate(this))
+ctkDICOMEchoWorker::ctkDICOMEchoWorker(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMEchoWorkerPrivate(this))
 {
 }
 

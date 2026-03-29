@@ -74,8 +74,9 @@ public:
     ValidationFailedTransition
   };
 
-  ctkWorkflowIntrastepTransition(IntrastepTransitionType newTransitionType)
-    : TransitionType(newTransitionType){}
+  ctkWorkflowIntrastepTransition(IntrastepTransitionType newTransitionType,
+                                  QState* sourceState = nullptr)
+    : QAbstractTransition(sourceState), TransitionType(newTransitionType){}
 
   IntrastepTransitionType transitionType() {return this->TransitionType;}
 
@@ -143,10 +144,12 @@ public:
     TransitionToPreviousStartingStepAfterSuccessfulGoToFinishStep
   };
   Q_ENUM(InterstepTransitionType)
-  ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType)
-    : TransitionType(newTransitionType){}
-  ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType, const QString& newId)
-    : TransitionType(newTransitionType),
+  ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType,
+                                  QState* sourceState = nullptr)
+    : QAbstractTransition(sourceState), TransitionType(newTransitionType){}
+  ctkWorkflowInterstepTransition(InterstepTransitionType newTransitionType, const QString& newId,
+                                  QState* sourceState = nullptr)
+    : QAbstractTransition(sourceState), TransitionType(newTransitionType),
     Id(newId) {}
 
   InterstepTransitionType transitionType() {return this->TransitionType;}

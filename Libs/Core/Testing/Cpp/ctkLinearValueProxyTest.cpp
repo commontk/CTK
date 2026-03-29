@@ -29,6 +29,8 @@
 class ctkLinearValueProxyTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkLinearValueProxyTester(QObject* parent = nullptr) : QObject(parent) {}
 private Q_SLOTS:
   void testSimpleSetValue();
   void testSimpleSetValue_data();

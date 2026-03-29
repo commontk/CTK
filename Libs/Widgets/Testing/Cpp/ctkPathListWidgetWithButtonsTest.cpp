@@ -41,6 +41,9 @@ class ctkPathListWidgetWithButtonsTester : public QObject
 {
   Q_OBJECT
 
+public:
+  explicit ctkPathListWidgetWithButtonsTester(QObject* parent = nullptr) : QObject(parent) {}
+
 private slots:
 
   void testButtons();

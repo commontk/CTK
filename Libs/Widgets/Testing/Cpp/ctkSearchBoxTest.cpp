@@ -31,6 +31,9 @@ class ctkSearchBoxTester : public QObject
 {
   Q_OBJECT
 
+public:
+  explicit ctkSearchBoxTester(QObject* parent = nullptr) : QObject(parent) {}
+
 private slots:
 
   void testSignals();

@@ -58,7 +58,7 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(bool destroyAfterUse READ destroyAfterUse WRITE setDestroyAfterUse);
 
 public:
-  explicit ctkAbstractJob();
+  explicit ctkAbstractJob(QObject* parent = nullptr);
   virtual ~ctkAbstractJob();
 
   ///@{

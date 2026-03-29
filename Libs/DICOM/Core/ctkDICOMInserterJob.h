@@ -46,7 +46,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMInserterJob : public ctkDICOMJob
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMInserterJob();
+  explicit ctkDICOMInserterJob(QObject* parent = nullptr);
   virtual ~ctkDICOMInserterJob();
 
   /// Logger report string formatting for specific task

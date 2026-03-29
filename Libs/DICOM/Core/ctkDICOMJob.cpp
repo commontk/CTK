@@ -34,7 +34,8 @@ static ctkLogger logger ("org.commontk.dicom.DICOMJob");
 // ctkDICOMJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMJob::ctkDICOMJob()
+ctkDICOMJob::ctkDICOMJob(QObject* parent)
+  : Superclass(parent)
 {
   this->DICOMLevel = DICOMLevels::None;
 }

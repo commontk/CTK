@@ -37,6 +37,8 @@
 class ctkUtilsTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkUtilsTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void initTestCase();
 

@@ -27,7 +27,8 @@
 #include <QUuid>
 
 // --------------------------------------------------------------------------
-ctkAbstractJob::ctkAbstractJob()
+ctkAbstractJob::ctkAbstractJob(QObject* parent)
+  : QObject(parent)
 {
   this->Status = JobStatus::Initialized;
   this->Persistent = false;

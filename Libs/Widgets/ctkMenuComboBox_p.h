@@ -38,7 +38,7 @@ public:
   /// Superclass typedef
   typedef QComboBox Superclass;
 
-  ctkMenuComboBoxInternal();
+  ctkMenuComboBoxInternal(QWidget* parent = nullptr);
   virtual ~ctkMenuComboBoxInternal();
   virtual void showPopup();
 

@@ -52,7 +52,8 @@
 int ctkTestApplication::Error = 0;
 
 //-----------------------------------------------------------------------------
-ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
+ctkTestApplication::ctkTestApplication(int _argc, char** _argv, QObject* parent)
+  : QObject(parent)
 {
   qInstallMessageHandler(ctkTestApplication::messageHandler);
   // CMake generated driver removes argv[0],

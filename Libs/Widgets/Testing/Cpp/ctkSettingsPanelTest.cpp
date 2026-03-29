@@ -38,6 +38,8 @@
 class ctkSettingsPanelTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkSettingsPanelTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testChangeProperty();
@@ -226,6 +228,7 @@ class ctkSettingsPanelForTest : public ctkSettingsPanel
 {
   Q_OBJECT
 public:
+  explicit ctkSettingsPanelForTest(QWidget* parent = nullptr) : ctkSettingsPanel(parent) {}
   QVariant myDefaultPropertyValue(const QString& key) const
   {
     return this->defaultPropertyValue(key);

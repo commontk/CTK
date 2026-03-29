@@ -194,8 +194,8 @@ QStringList readFile(const QString& filePath)
 class LogMessageThread : public QThread
 {
 public:
-  LogMessageThread(int id, int maxIteration) :
-    Id(id), MaxIteration(maxIteration), Counter(0){}
+  LogMessageThread(int id, int maxIteration, QObject* parent = nullptr) :
+    QThread(parent), Id(id), MaxIteration(maxIteration), Counter(0){}
 
 protected:
   void run();

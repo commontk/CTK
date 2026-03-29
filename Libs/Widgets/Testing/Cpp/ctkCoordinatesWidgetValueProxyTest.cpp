@@ -34,7 +34,7 @@ class Spy : public QObject
   Q_OBJECT
 
 public:
-  explicit Spy()
+  explicit Spy(QObject* parent = nullptr) : QObject(parent)
   {
     AcknowledgedSignals = 0;
   }
@@ -77,6 +77,8 @@ public:
 class ctkCoordinatesWidgetValueProxyTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkCoordinatesWidgetValueProxyTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
 
   void testSetValue();

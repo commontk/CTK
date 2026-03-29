@@ -48,7 +48,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMThumbnailGeneratorJob : public ctkDICOMJob
 
 public:
   typedef ctkDICOMJob Superclass;
-  explicit ctkDICOMThumbnailGeneratorJob();
+  explicit ctkDICOMThumbnailGeneratorJob(QObject* parent = nullptr);
   virtual ~ctkDICOMThumbnailGeneratorJob();
 
   ///@{

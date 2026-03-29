@@ -32,7 +32,8 @@ static ctkLogger logger ("org.commontk.dicom.DICOMInserterJob");
 // ctkDICOMInserterJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterJob::ctkDICOMInserterJob()
+ctkDICOMInserterJob::ctkDICOMInserterJob(QObject* parent)
+  : Superclass(parent)
 {
   this->MaximumConcurrentJobsPerType = 1;
 }

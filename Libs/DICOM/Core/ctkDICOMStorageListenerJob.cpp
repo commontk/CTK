@@ -49,8 +49,8 @@ ctkDICOMStorageListenerJobPrivate::~ctkDICOMStorageListenerJobPrivate() = defaul
 // ctkDICOMStorageListenerJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob()
-  : d_ptr(new ctkDICOMStorageListenerJobPrivate(this))
+ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMStorageListenerJobPrivate(this))
 {
   this->Persistent = true;
 }

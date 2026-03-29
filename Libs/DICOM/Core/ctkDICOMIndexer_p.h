@@ -215,7 +215,7 @@ class ctkDICOMIndexerPrivateWorker : public QObject
   Q_OBJECT
 
 public:
-  ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue);
+  ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue, QObject* parent = nullptr);
   virtual ~ctkDICOMIndexerPrivateWorker();
 
 public Q_SLOTS:

@@ -39,7 +39,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKErrorLogMessageHandler :
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
-  ctkVTKErrorLogMessageHandler();
+  ctkVTKErrorLogMessageHandler(QObject* parent = nullptr);
   virtual ~ctkVTKErrorLogMessageHandler();
 
   static QString HandlerName;

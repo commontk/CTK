@@ -30,6 +30,8 @@
 class ctkDoubleRangeSliderTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkDoubleRangeSliderTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void testUI();
 

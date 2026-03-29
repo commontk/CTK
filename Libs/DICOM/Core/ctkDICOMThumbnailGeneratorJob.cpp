@@ -60,8 +60,8 @@ CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QColor, setBackgroundColor, Backgroun
 // ctkDICOMThumbnailGeneratorJob methods
 
 //------------------------------------------------------------------------------
-ctkDICOMThumbnailGeneratorJob::ctkDICOMThumbnailGeneratorJob()
-  : d_ptr(new ctkDICOMThumbnailGeneratorJobPrivate(this))
+ctkDICOMThumbnailGeneratorJob::ctkDICOMThumbnailGeneratorJob(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkDICOMThumbnailGeneratorJobPrivate(this))
 {
 }
 

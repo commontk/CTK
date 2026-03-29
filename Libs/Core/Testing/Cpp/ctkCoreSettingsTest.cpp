@@ -33,6 +33,8 @@
 class ctkCoreSettingsTester: public QObject
 {
   Q_OBJECT
+public:
+  explicit ctkCoreSettingsTester(QObject* parent = nullptr) : QObject(parent) {}
 private slots:
   void initTestCase();
 

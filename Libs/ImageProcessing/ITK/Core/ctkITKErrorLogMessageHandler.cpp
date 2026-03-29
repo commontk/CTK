@@ -203,8 +203,8 @@ ctkITKErrorLogMessageHandlerPrivate::~ctkITKErrorLogMessageHandlerPrivate()
 QString ctkITKErrorLogMessageHandler::HandlerName = QLatin1String("ITK");
 
 //----------------------------------------------------------------------------
-ctkITKErrorLogMessageHandler::ctkITKErrorLogMessageHandler() :
-  Superclass(), d_ptr(new ctkITKErrorLogMessageHandlerPrivate(*this))
+ctkITKErrorLogMessageHandler::ctkITKErrorLogMessageHandler(QObject* parent) :
+  Superclass(parent), d_ptr(new ctkITKErrorLogMessageHandlerPrivate(*this))
 {
 }
 

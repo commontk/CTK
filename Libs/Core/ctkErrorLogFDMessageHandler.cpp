@@ -254,8 +254,8 @@ ctkErrorLogFDMessageHandlerPrivate::~ctkErrorLogFDMessageHandlerPrivate()
 QString ctkErrorLogFDMessageHandler::HandlerName = QLatin1String("FD");
 
 // --------------------------------------------------------------------------
-ctkErrorLogFDMessageHandler::ctkErrorLogFDMessageHandler() :
-  Superclass(), d_ptr(new ctkErrorLogFDMessageHandlerPrivate())
+ctkErrorLogFDMessageHandler::ctkErrorLogFDMessageHandler(QObject* parent) :
+  Superclass(parent), d_ptr(new ctkErrorLogFDMessageHandlerPrivate())
 {
   Q_D(ctkErrorLogFDMessageHandler);
   d->StdOutFDHandler = new ctkFDHandler(this, ctkErrorLogLevel::Info, ctkErrorLogTerminalOutput::StandardOutput);
