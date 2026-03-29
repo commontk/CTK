@@ -160,7 +160,7 @@ void ctkWorkflowStep::setId(const QString& newId)
   if (d->Workflow && d->Workflow->hasStep(newId) && !this->id().isEmpty())
   {
     qWarning() << QString("ctkWorkflowStep - Failed to change id from '%1' to '%2' - "
-                          "Step already added to a workflow !").arg(this->id()).arg(newId);
+                          "Step already added to a workflow !").arg(this->id(), newId);
     return;
   }
   d->Id = newId;

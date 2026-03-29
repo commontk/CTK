@@ -1119,7 +1119,7 @@ QVariant ctkDICOMSeriesModel::data(const QModelIndex& index, int role) const
   switch (role)
   {
     case Qt::DisplayRole:
-      return QString("Series %1: %2").arg(series.seriesNumber).arg(series.seriesDescription);
+      return QString("Series %1: %2").arg(series.seriesNumber, series.seriesDescription);
 
     case Qt::ToolTipRole:
     {

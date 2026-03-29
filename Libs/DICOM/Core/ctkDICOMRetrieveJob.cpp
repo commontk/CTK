@@ -100,10 +100,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status)
                            "JobUID: %2\n"
                            "Server: %3\n"
                            "PatientID: %4\n")
-                          .arg(status)
-                          .arg(this->jobUID())
-                          .arg(this->server()->connectionName())
-                          .arg(this->patientID());
+                          .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID());
       logMsg = QString("Retrieve task at patients level %1.\n")
                       .arg(status);
       break;
@@ -113,11 +110,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status)
                            "Server: %3\n"
                            "PatientID: %4\n"
                            "StudyInstanceUID: %5\n")
-                          .arg(status)
-                          .arg(this->jobUID())
-                          .arg(this->server()->connectionName())
-                          .arg(this->patientID())
-                          .arg(this->studyInstanceUID());
+                          .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID(), this->studyInstanceUID());
       logMsg = QString("Retrieve task at studies level %1.\n")
                       .arg(status);
       break;
@@ -128,12 +121,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status)
                            "PatientID: %4\n"
                            "StudyInstanceUID: %5\n"
                            "SeriesInstanceUID: %6\n")
-                          .arg(status)
-                          .arg(this->jobUID())
-                          .arg(this->server()->connectionName())
-                          .arg(this->patientID())
-                          .arg(this->studyInstanceUID())
-                          .arg(this->seriesInstanceUID());
+                          .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID(), this->studyInstanceUID(), this->seriesInstanceUID());
       logMsg = QString("Retrieve task at series level %1.\n")
                       .arg(status);
       break;
@@ -145,13 +133,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status)
                            "StudyInstanceUID: %5\n"
                            "SeriesInstanceUID: %6\n"
                            "SOPInstanceUID: %7\n")
-                          .arg(status)
-                          .arg(this->jobUID())
-                          .arg(this->server()->connectionName())
-                          .arg(this->patientID())
-                          .arg(this->studyInstanceUID())
-                          .arg(this->seriesInstanceUID())
-                          .arg(this->sopInstanceUID());
+                          .arg(status, this->jobUID(), this->server()->connectionName(), this->patientID(), this->studyInstanceUID(), this->seriesInstanceUID(), this->sopInstanceUID());
       logMsg = QString("Retrieve task at instances level %1.\n")
                       .arg(status);
       break;

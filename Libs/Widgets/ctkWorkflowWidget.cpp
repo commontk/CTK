@@ -338,9 +338,7 @@ QMap<QString, QVariant> ctkWorkflowWidget
   //QRegularExpression splitBrackets("\\{([^}]+)\\}");
   //QRegularExpression splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");
   static const QRegularExpression splitBrackets(QString("(%1|%2|%3|%4)")
-                        .arg(textRegExp).arg(simpleTextRegExp)
-                        .arg(toolTipRegExp)
-                        .arg(iconRegExp));
+                        .arg(textRegExp, simpleTextRegExp, toolTipRegExp, iconRegExp));
 
   QStringList brackets;
   QRegularExpressionMatchIterator matchIter = splitBrackets.globalMatch(format);

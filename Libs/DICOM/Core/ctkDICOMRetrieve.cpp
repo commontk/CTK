@@ -580,10 +580,7 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
       "%2 images transferred, and\n"
       "%3 images transferred with warning, and\n"
       "%4 images transfers failed")
-    .arg(studyInstanceUID)
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
+    .arg(studyInstanceUID, QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)), QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)), QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
     q->debug)
 
   if (this->Canceled)
@@ -772,10 +769,7 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
       "%2 images transferred, and\n"
       "%3 images transferred with warning, and\n"
       "%4 images transfers failed")
-    .arg(studyInstanceUID)
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
-    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
+    .arg(studyInstanceUID, QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)), QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)), QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))),
     q->debug)
 
   emit q->progress(100);

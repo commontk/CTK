@@ -122,7 +122,7 @@ void ctkPathListButtonsWidgetPrivate::on_EditButton_clicked()
     {
       QMessageBox::information(q, tr("Editing the path failed"),
                                QString(tr("Failed to change path:\n\n%1\n\nto path\n\n%2\n\nPlease check your permissions."))
-                               .arg(currentPath).arg(paths.front()));
+                               .arg(currentPath, paths.front()));
     }
   }
 }
