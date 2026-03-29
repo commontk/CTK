@@ -107,13 +107,7 @@ if(CTK_USE_QTTESTING)
 endif()
 
 ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_RESOURCES})
-if(${VTK_VERSION} VERSION_EQUAL 8.90 OR ${VTK_VERSION} VERSION_GREATER 8.90 )
-  set(VTK_CHARTS_LIB)
-elseif(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_CHARTS_LIB vtkChartsCore)
-else()
-  set(VTK_CHARTS_LIB vtkCharts)
-endif()
+set(VTK_CHARTS_LIB)
 
 # Configure CMake Qt automatic code generation
 set(uic_search_paths)
