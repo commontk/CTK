@@ -88,6 +88,7 @@ namespace
 {
 class ctkNullViewFactory: public ctkLayoutViewFactory
 {
+  Q_OBJECT
 public:
   ctkNullViewFactory(QObject* parent = 0) : ctkLayoutViewFactory(parent)
   {
@@ -347,3 +348,5 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
 
   return app.exec();
 }
+
+#include "ctkLayoutManagerTest1.moc"

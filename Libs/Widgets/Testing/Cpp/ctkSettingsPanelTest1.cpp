@@ -42,6 +42,7 @@ namespace
 //-----------------------------------------------------------------------------
 class ctkSettingsPanelForTest : public ctkSettingsPanel
 {
+  Q_OBJECT
 public:
   QVariant myDefaultPropertyValue(const QString& key) const
   {
@@ -445,3 +446,5 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkSettingsPanelTest1.moc"

@@ -38,6 +38,7 @@ namespace
 // ----------------------------------------------------------------------------
 class ctkQtMessageHandler : public QObject
 {
+  Q_OBJECT
 public:
   typedef ctkQtMessageHandler Self ;
   explicit ctkQtMessageHandler()
@@ -194,3 +195,5 @@ int TestSoftAssert()
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkLoggerTest1.moc"

@@ -33,6 +33,7 @@
 
 class ctkForcedTransferFunction: public ctkTransferFunction
 {
+  Q_OBJECT
 public:
   typedef ctkTransferFunction Superclass;
   ctkForcedTransferFunction(QObject* parent = 0) : Superclass(parent)
@@ -105,3 +106,5 @@ int ctkTransferFunctionRepresentationTest2( int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
+
+#include "ctkTransferFunctionRepresentationTest2.moc"
