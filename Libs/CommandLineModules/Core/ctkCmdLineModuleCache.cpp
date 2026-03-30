@@ -182,8 +182,11 @@ void ctkCmdLineModuleCache::removeCacheEntry(const QUrl& moduleLocation)
 
 void ctkCmdLineModuleCache::clearCache()
 {
-  for (auto it = d->LocationToXmlDescription.constBegin(); it != d->LocationToXmlDescription.constEnd(); ++it)
+  // Copy keys first because removeCacheEntry() modifies the map,
+  // which would invalidate iterators if we iterated the map directly.
+  const auto keys = d->LocationToXmlDescription.keys();
+  for (const QUrl& url : keys)
   {
-    removeCacheEntry(it.key());
+    removeCacheEntry(url);
   }
 }
