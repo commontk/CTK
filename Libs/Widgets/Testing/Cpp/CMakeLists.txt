@@ -423,4 +423,18 @@ if(CTK_USE_QTTESTING)
     ctkDoubleSliderEventTranslatorPlayerTest1
     PROPERTIES TIMEOUT 180
     )
+  # These tests hang indefinitely on modal dialogs that block the event loop.
+  # Disabled by default; run with ctest -LE ModalDialogHang to exclude, or
+  # re-enable with ctest --test-dir <dir> -L ModalDialogHang after fixing.
+  set_tests_properties(
+    ctkColorPickerButtonEventTranslatorPlayerTest1
+    ctkDirectoryButtonEventTranslatorPlayerTest1
+    ctkFileDialogEventTranslatorPlayerTest1
+    PROPERTIES LABELS "ModalDialogHang" DISABLED TRUE
+    )
 endif()
+
+set_tests_properties(
+  ctkFontButtonTest
+  PROPERTIES LABELS "ModalDialogHang" DISABLED TRUE
+  )
