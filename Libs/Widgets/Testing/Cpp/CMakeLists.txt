@@ -419,4 +419,8 @@ if(CTK_USE_QTTESTING)
     ctkPathLineEditEventTranslatorPlayerTest1
     PROPERTIES RUN_SERIAL TRUE
     )
+  set_tests_properties(
+    ctkDoubleSliderEventTranslatorPlayerTest1
+    PROPERTIES TIMEOUT 180
+    )
 endif()
