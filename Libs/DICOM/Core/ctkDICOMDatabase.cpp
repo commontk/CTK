@@ -1333,12 +1333,12 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
         if (!tagName.compare("PatientCompositeID"))
         {
           displayStudiesFieldUpdateString.append( "PatientsUID = ? , " );
-          boundValues << QString::number(patientCompositeIdToPatientUidMap[currentStudy["PatientCompositeID"]]);
+          boundValues << QString::number(patientCompositeIdToPatientUidMap[tagIt.value()]);
         }
         else
         {
           displayStudiesFieldUpdateString.append( tagName + " = ? , " );
-          boundValues << currentStudy[tagName];
+          boundValues << tagIt.value();
         }
       }
       // Trim the separators from the end
@@ -1350,12 +1350,12 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
       {
         updateDisplayStudyStatement.addBindValue(boundValue);
       }
-      updateDisplayStudyStatement.addBindValue(currentStudy["StudyInstanceUID"]);
+      updateDisplayStudyStatement.addBindValue(currentStudy.value("StudyInstanceUID"));
       this->loggedExec(updateDisplayStudyStatement);
 
       QSqlQuery updateDisplayedFieldsUpdatedTimestampStatement(this->Database);
       updateDisplayedFieldsUpdatedTimestampStatement.prepare("UPDATE Studies SET DisplayedFieldsUpdatedTimestamp=CURRENT_TIMESTAMP WHERE StudyInstanceUID = ? ;");
-      updateDisplayedFieldsUpdatedTimestampStatement.addBindValue(currentStudy["StudyInstanceUID"]);
+      updateDisplayedFieldsUpdatedTimestampStatement.addBindValue(currentStudy.value("StudyInstanceUID"));
       this->loggedExec(updateDisplayedFieldsUpdatedTimestampStatement);
     }
     else
@@ -1401,12 +1401,12 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
       {
         updateDisplaySeriesStatement.addBindValue(boundValue);
       }
-      updateDisplaySeriesStatement.addBindValue(currentSeries["SeriesInstanceUID"]);
+      updateDisplaySeriesStatement.addBindValue(currentSeries.value("SeriesInstanceUID"));
       this->loggedExec(updateDisplaySeriesStatement);
 
       QSqlQuery updateDisplayedFieldsUpdatedTimestampStatement(this->Database);
       updateDisplayedFieldsUpdatedTimestampStatement.prepare("UPDATE Series SET DisplayedFieldsUpdatedTimestamp=CURRENT_TIMESTAMP WHERE SeriesInstanceUID = ? ;");
-      updateDisplayedFieldsUpdatedTimestampStatement.addBindValue(currentSeries["SeriesInstanceUID"]);
+      updateDisplayedFieldsUpdatedTimestampStatement.addBindValue(currentSeries.value("SeriesInstanceUID"));
       this->loggedExec(updateDisplayedFieldsUpdatedTimestampStatement);
     }
     else
