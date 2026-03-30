@@ -81,7 +81,7 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
   }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  // Check if the xml file is valid (Qt5 only — QXmlSchema/QXmlSchemaValidator
+  // Check if the xml file is valid (Qt5 only -- QXmlSchema/QXmlSchemaValidator
   // are from QtXmlPatterns which is not available in Qt 6)
   QXmlSchema xmlSchema;
   if (!xmlSchema.load(QUrl::fromLocalFile(":/XML/XMLDescription.xsd")) ||
