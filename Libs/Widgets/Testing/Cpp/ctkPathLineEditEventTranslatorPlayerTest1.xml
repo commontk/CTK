@@ -9,13 +9,13 @@
     </settings>
     <events>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit1" command="set_edit_string" arguments="/tm"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777219,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777219,0,,0,1"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit1" command="set_edit_string" arguments="/t"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777219,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="6,16777219,0,,0,1"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit1" command="set_edit_string" arguments="/"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
+        <event widget="1QListView0" command="keyEvent" arguments="7,16777219,0,,0,1"/>
         <event widget="1QListView0" command="mousePress" arguments="1,1,0,60,14,/2:0"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/PathLineEdit1" command="set_edit_string" arguments="/cdrom"/>
         <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,60,14,/2:0"/>
