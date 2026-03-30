@@ -475,6 +475,10 @@ void ctkVTKThresholdWidget::setRange(double min, double max)
   Q_D(ctkVTKThresholdWidget);
   d->UserRange = true;
   d->setRange(min, max);
+  if (d->PiecewiseFunction)
+  {
+    d->setThreshold(min, max, d->OpacitySliderWidget->value());
+  }
 }
 
 // ----------------------------------------------------------------------------
