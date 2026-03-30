@@ -38,9 +38,9 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseMove" arguments="1,0,0,2,26"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QColorLuminancePicker0" command="mouseRelease" arguments="1,0,0,2,26"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ColorPickerButton/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments=""/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="9"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="8"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1QSlider0" command="set_int" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1ctkSlider0" command="set_int" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1ctkSlider0" command="set_int" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/OpacitySlider/1ctkSlider0" command="set_int" arguments="7"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/FontComboBox" command="set_string" arguments="Courier"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/ItalicCheckBox" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkVTKTextPropertyWidget/BoldCheckBox" command="set_boolean" arguments="true"/>
