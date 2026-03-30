@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<QtTesting>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKScalarBarWidget0/TitleGroupBox/TitleTextPropertyWidget/TextLineEdit" command="set_string" arguments="Test QtTesting"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKScalarBarWidget0/LabelsGroupBox/LabelsTextPropertyWidget/TextLineEdit" command="set_string" arguments="%-#6.3g..ghtkd"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKScalarBarWidget0/MaxNumberOfColorsSpinBox" command="set_int" arguments="25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkVTKScalarBarWidget0/NumberOfLabelsSpinBox" command="set_int" arguments="2"/>
+    </events>
+</QtTesting>
