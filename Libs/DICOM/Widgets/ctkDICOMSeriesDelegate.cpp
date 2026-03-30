@@ -449,7 +449,7 @@ void ctkDICOMSeriesDelegate::paintText(QPainter* painter, const QRect& rect, con
     int dimIconY = dimRect.top() + (dimRect.height() - iconSize) / 2;
 
     // Calculate total width for third line content
-    QString dimText = QString("%1×%2").arg(cols).arg(rows);
+    QString dimText = QString("%1\xc3\x97%2").arg(cols).arg(rows); // U+00D7 multiplication sign
     int line3Width = iconSize + d->Spacing * 0.5 + infoMetrics.horizontalAdvance(dimText);
 
     // Center the third line content
