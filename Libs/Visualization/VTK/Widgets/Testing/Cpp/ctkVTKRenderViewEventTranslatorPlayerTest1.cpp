@@ -63,6 +63,7 @@
 namespace
 {
 QString xmlDirectory = CTK_SOURCE_DIR "/Libs/Visualization/VTK/Widgets/Testing/Cpp/";
+QString outputDirectory;
 ctkCallback* Callback1;
 ctkCallback* Callback2;
 
@@ -73,7 +74,7 @@ void checkFinalWidgetState(void* data)
   ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
 
   QImage actualImage = ctk::grabWidget(widget, widget->rect());
-  actualImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png");
+  actualImage.save(outputDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png");
   CTKCOMPARE(actualImage,
              QImage(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png"));
 }
@@ -84,7 +85,7 @@ void screenshot(void* data)
   {
     ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
     QImage expectedImage = ctk::grabWidget(widget, widget->rect());
-    expectedImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png");
+    expectedImage.save(outputDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png");
     save = false;
   }
 }
@@ -102,7 +103,15 @@ int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   QApplication app(argc, argv);
 
-//  QString xmlDirectory = CTK_SOURCE_DIR "/Libs/Visualization/VTK/Widgets/Testing/Cpp/";
+  // First non-flag argument is the output directory for screenshots
+  for (int i = 1; i < argc; ++i)
+  {
+    if (QString(argv[i]) != "-I")
+    {
+      outputDirectory = QString(argv[i]) + "/";
+      break;
+    }
+  }
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
