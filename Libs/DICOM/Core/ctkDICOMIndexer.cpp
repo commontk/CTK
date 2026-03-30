@@ -331,6 +331,12 @@ void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::Index
     // Start background indexing
     this->RequestQueue.setIndexing(true);
     QMap<QString, QDateTime> modifiedTimeForFilepath;
+    if (!this->Database)
+    {
+      qWarning() << "ctkDICOMIndexer: Database is not set, cannot start indexing";
+      this->RequestQueue.setIndexing(false);
+      return;
+    }
     this->Database->allFilesModifiedTimes(modifiedTimeForFilepath);
     this->RequestQueue.setModifiedTimeForFilepath(modifiedTimeForFilepath);
     emit startWorker();
