@@ -20,13 +20,15 @@
 
 // QT includes
 #include <QApplication>
-#include <QTimer>
-#include <QPushButton>
+#include <QDebug>
+#include <QEventLoop>
 #include <QLabel>
 #include <QLineEdit>
 #include <QList>
+#include <QPushButton>
 #include <QStyle>
-#include <QDebug>
+#include <QTest>
+#include <QTimer>
 
 // CTK includes
 #include "ctkPushButton.h"
@@ -46,8 +48,9 @@
 //-----------------------------------------------------------------------------
 bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowWidgetStep* currentStep, QWidget* shownStepArea, QLineEdit* shownLineEdit, QLabel* shownLabel, QWidget* hiddenStepArea, QLineEdit* hiddenLineEdit, QLabel* hiddenLabel, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
 {
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  QEventLoop loop;
+  QTimer::singleShot(defaultTime, &loop, SLOT(quit()));
+  loop.exec();
 
   // // ensure we are in the correct step
   if (workflow->currentStep() != currentStep)
@@ -642,6 +645,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   // start the workflow
   workflow->start();
   workflowWidget->show();
+  QTest::qWaitForWindowExposed(workflowWidget);
 
   // first user interaction test
   if (userInteractionSimulator1(app, step1, qObject1, step2, qObject2, workflow, workflowWidget, defaultTime) == EXIT_FAILURE)
@@ -651,8 +655,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // stop the workflow
   workflow->stop();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  { QEventLoop loop; QTimer::singleShot(defaultTime, &loop, SLOT(quit())); loop.exec(); }
 
   // create and add a third workflow step (depends on workflowWidget
   // type)
@@ -704,6 +707,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // restart the workflow
   workflow->start();
+  QTest::qWaitForWindowExposed(workflowWidget);
 
   // second user interaction test
   if (userInteractionSimulator2(app, step1, qObject1, step2, qObject2, step3, qObject3, workflow, workflowWidget, defaultTime) == EXIT_FAILURE)
@@ -713,8 +717,7 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // stop the workflow
   workflow->stop();
-  QTimer::singleShot(defaultTime, &app, SLOT(quit()));
-  app.exec();
+  { QEventLoop loop; QTimer::singleShot(defaultTime, &loop, SLOT(quit())); loop.exec(); }
 
   // make the second workflow step a finish step as well
   // TODO put this back once we can add multiple finish steps
