@@ -46,6 +46,7 @@ bool ctkMenuComboBoxEventPlayer::playEvent(QObject *Object,
                                            bool &Error)
 {
   if (Command != "set_edit_string_menu" &&
+      Command != "set_edit_string" &&
       Command != "set_edit" &&
       Command != "show_popup" &&
       Command != "triggered" &&
@@ -69,7 +70,7 @@ bool ctkMenuComboBoxEventPlayer::playEvent(QObject *Object,
       }
       return true;
     }
-    if (Command == "set_edit_string_menu")
+    if (Command == "set_edit_string_menu" || Command == "set_edit_string")
     {
       object->menuComboBoxInternal()->setEditText(Arguments);
 //      object->menuComboBoxInternal()->completer()->popup()->show();
