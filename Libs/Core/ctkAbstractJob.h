@@ -132,7 +132,7 @@ public:
   ///@{
   /// Priority
   QThread::Priority priority() const;
-  void setPriority(const QThread::Priority& priority);
+  void setPriority(QThread::Priority priority);
   ///@}
 
   ///@{
@@ -153,13 +153,13 @@ public:
   ///@{
   /// Running ThreadID
   QString runningThreadID() const;
-  void setRunningThreadID(QString runningThreadID);
+  void setRunningThreadID(const QString& runningThreadID);
   ///@}
 
   ///@{
   /// Logged Text
   QString log() const;
-  void addLog(QString log);
+  void addLog(const QString& log);
   ///@}
 
   /// Generate worker for job

@@ -53,7 +53,7 @@ public:
   /// If a handle is selected, handleRect is set to the handle rect.
   /// otherwise return NoHandle and handleRect is set to the combined rect of
   /// the min and max handles
-  Handle handleAtPos(const QPoint& pos, QRect& handleRect)const;
+  Handle handleAtPos(QPoint pos, QRect& handleRect)const;
 
   /// Copied verbatim from QSliderPrivate class (see QSlider.cpp)
   int pixelPosToRangeValue(int pos) const;
@@ -127,7 +127,7 @@ void ctkRangeSliderPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-ctkRangeSliderPrivate::Handle ctkRangeSliderPrivate::handleAtPos(const QPoint& pos, QRect& handleRect)const
+ctkRangeSliderPrivate::Handle ctkRangeSliderPrivate::handleAtPos(QPoint pos, QRect& handleRect)const
 {
   Q_Q(const ctkRangeSlider);
 

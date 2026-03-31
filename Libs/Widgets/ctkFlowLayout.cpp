@@ -30,7 +30,7 @@
 // STD includes
 #include <cmath>
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkFlowLayout");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkFlowLayout"))
 
 //-----------------------------------------------------------------------------
 class ctkFlowLayoutPrivate
@@ -43,7 +43,7 @@ public:
   void init();
   void deleteAll();
 
-  int doLayout(const QRect &rect, bool testOnly) const;
+  int doLayout(QRect rect, bool testOnly) const;
   int smartSpacing(QStyle::PixelMetric pm) const;
   QSize maxSizeHint(int* visibleItemsCount = 0)const;
 
@@ -109,7 +109,7 @@ QSize ctkFlowLayoutPrivate::maxSizeHint(int *visibleItemsCount)const
 }
 
 // --------------------------------------------------------------------------
-int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
+int ctkFlowLayoutPrivate::doLayout(QRect rect, bool testOnly)const
 {
   Q_Q(const ctkFlowLayout);
   QMargins margins = q->contentsMargins();

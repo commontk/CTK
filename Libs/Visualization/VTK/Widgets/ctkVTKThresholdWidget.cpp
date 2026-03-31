@@ -34,7 +34,7 @@
 #include <cmath> // for pow
 
 //----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKThresholdWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKThresholdWidget"))
 //----------------------------------------------------------------------------
 
 class ctkVTKThresholdWidgetPrivate:
@@ -475,6 +475,10 @@ void ctkVTKThresholdWidget::setRange(double min, double max)
   Q_D(ctkVTKThresholdWidget);
   d->UserRange = true;
   d->setRange(min, max);
+  if (d->PiecewiseFunction)
+  {
+    d->setThreshold(min, max, d->OpacitySliderWidget->value());
+  }
 }
 
 // ----------------------------------------------------------------------------

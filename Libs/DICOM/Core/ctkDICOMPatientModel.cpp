@@ -28,6 +28,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMPatientModel.h"
@@ -41,7 +42,7 @@
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMJob.h"
 
-static ctkLogger logger("org.commontk.DICOM.Core.ctkDICOMPatientModel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Core.ctkDICOMPatientModel"))
 
 //------------------------------------------------------------------------------
 // Helper function for setDicomDatabase/setScheduler
@@ -143,7 +144,7 @@ ctkDICOMPatientModelPrivate::ctkDICOMPatientModelPrivate(ctkDICOMPatientModel& o
   this->IsUpdating = false;
   this->QueryInProgress = false;
 
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->ModalityFilter = ctkDICOMModalities::AllModalities();
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +194,7 @@ void ctkDICOMPatientModelPrivate::populatePatients()
 
   if (!this->DicomDatabase)
   {
-    logger.error("populatePatients: No database set");
+    logger->error("populatePatients: No database set");
     return;
   }
 
@@ -500,7 +501,7 @@ ctkDICOMStudyModel* ctkDICOMPatientModelPrivate::createStudyModel(const QString&
 
   if (!this->DicomDatabase)
   {
-    logger.warn("createStudyModel: No database set");
+    logger->warn("createStudyModel: No database set");
     return nullptr;
   }
 
@@ -1072,7 +1073,7 @@ void ctkDICOMPatientModel::setDateFilter(DateType dateType)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientModel::setCustomDateRange(const QDate& startDate, const QDate& endDate)
+void ctkDICOMPatientModel::setCustomDateRange(QDate startDate, QDate endDate)
 {
   Q_D(ctkDICOMPatientModel);
   if (d->CustomStartDate == startDate && d->CustomEndDate == endDate)
@@ -1540,7 +1541,7 @@ bool ctkDICOMPatientModel::queryStudies(const QString &patientID)
   Q_D(ctkDICOMPatientModel);
   if (!d->Scheduler)
   {
-    logger.warn("queryStudies: No scheduler set");
+    logger->warn("queryStudies: No scheduler set");
     return false;
   }
   QString patientUID;
@@ -1760,20 +1761,20 @@ void ctkDICOMPatientModel::updateAllowedServersFromDB(const QString& patientUID)
 
   if (!d->DicomDatabase)
   {
-    logger.error("updateAllowedServersFromDB: No database set");
+    logger->error("updateAllowedServersFromDB: No database set");
     return;
   }
 
   if (!d->Scheduler)
   {
-    logger.error("updateAllowedServersFromDB: No scheduler set");
+    logger->error("updateAllowedServersFromDB: No scheduler set");
     return;
   }
 
   int patientIndex = d->PatientUIDToIndex.value(patientUID, -1);
   if (patientIndex < 0 || patientIndex >= d->Patients.count())
   {
-    logger.error("updateAllowedServersFromDB: Invalid patient item");
+    logger->error("updateAllowedServersFromDB: Invalid patient item");
     return;
   }
 
@@ -1829,20 +1830,20 @@ void ctkDICOMPatientModel::saveAllowedServersToDB(const QString& patientUID, con
 
   if (!d->DicomDatabase)
   {
-    logger.error("saveAllowedServersToDB: No database set");
+    logger->error("saveAllowedServersToDB: No database set");
     return;
   }
 
   if (!d->Scheduler)
   {
-    logger.error("saveAllowedServersToDB: No scheduler set");
+    logger->error("saveAllowedServersToDB: No scheduler set");
     return;
   }
 
   int patientIndex = d->PatientUIDToIndex.value(patientUID, -1);
   if (patientIndex < 0 || patientIndex >= d->Patients.count())
   {
-    logger.error("saveAllowedServersToDB: Invalid patient item");
+    logger->error("saveAllowedServersToDB: Invalid patient item");
     return;
   }
 

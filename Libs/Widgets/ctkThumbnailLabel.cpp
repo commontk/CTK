@@ -25,7 +25,7 @@
 
 // ctkCore includes
 #include "ctkLogger.h"
-static ctkLogger logger("org.commontk.Widgets.ctkThumbnailLabel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.Widgets.ctkThumbnailLabel"))
 
 // ctkWidgets includes
 #include "ctkThumbnailLabel.h"
@@ -203,7 +203,7 @@ QString ctkThumbnailLabel::text()const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
+void ctkThumbnailLabel::setTextPosition(Qt::Alignment position)
 {
   Q_D(ctkThumbnailLabel);
   d->TextPosition = position;
@@ -264,7 +264,7 @@ Qt::Alignment ctkThumbnailLabel::textPosition()const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailLabel::setOperationStatus(const OperationStatus &status)
+void ctkThumbnailLabel::setOperationStatus(OperationStatus status)
 {
   Q_D(ctkThumbnailLabel);
   d->Status = status;
@@ -301,7 +301,7 @@ int ctkThumbnailLabel::operationProgress() const
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailLabel::setOperationProgress(const int &progress)
+void ctkThumbnailLabel::setOperationProgress(int progress)
 {
   Q_D(ctkThumbnailLabel);
   d->OperationProgressBar->setValue(progress);

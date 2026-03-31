@@ -376,7 +376,7 @@ QList<ctkPushButton*> ctkWorkflowButtonBoxWidget::goToButtons()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkWorkflowButtonBoxWidget::setDirection(const QBoxLayout::Direction& newDirection)
+void ctkWorkflowButtonBoxWidget::setDirection(QBoxLayout::Direction newDirection)
 {
   if (QBoxLayout* layout = qobject_cast<QBoxLayout*>(this->layout()))
   {

@@ -148,13 +148,13 @@ CTK_SET_CPP(ctkDICOMEcho, const QString&, setCalledAETitle, CalledAETitle);
 CTK_GET_CPP(ctkDICOMEcho, QString, calledAETitle, CalledAETitle)
 CTK_SET_CPP(ctkDICOMEcho, const QString&, setHost, Host);
 CTK_GET_CPP(ctkDICOMEcho, QString, host, Host)
-CTK_SET_CPP(ctkDICOMEcho, const int&, setPort, Port);
+CTK_SET_CPP(ctkDICOMEcho, int, setPort, Port);
 CTK_GET_CPP(ctkDICOMEcho, int, port, Port)
 CTK_SET_CPP(ctkDICOMEcho, const QString&, setJobUID, JobUID);
 CTK_GET_CPP(ctkDICOMEcho, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
-void ctkDICOMEcho::setConnectionTimeout(const int& timeout)
+void ctkDICOMEcho::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMEcho);
   d->SCU->setACSETimeout(timeout);

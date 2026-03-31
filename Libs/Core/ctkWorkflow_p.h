@@ -62,13 +62,13 @@ struct forwardAndBackwardSteps
     return this->BackwardBranchIds;
   }
 
-  void appendForwardStep(ctkWorkflowStep* step, QString id)
+  void appendForwardStep(ctkWorkflowStep* step, const QString& id)
   {
     this->ForwardSteps.append(step);
     this->ForwardBranchIds.append(id);
   }
 
-  void appendBackwardStep(ctkWorkflowStep* step, QString id)
+  void appendBackwardStep(ctkWorkflowStep* step, const QString& id)
   {
     this->BackwardSteps.append(step);
     this->BackwardBranchIds.append(id);
@@ -86,7 +86,7 @@ struct forwardAndBackwardSteps
     }
   }
 
-  ctkWorkflowStep* forwardStep(QString branchId)
+  ctkWorkflowStep* forwardStep(const QString& branchId)
   {
     int index = this->ForwardBranchIds.indexOf(branchId);
     if (index != -1)
@@ -211,14 +211,14 @@ public:
   /// Does some sanity checks and then either calls onEntry() or emits the invokeOnEntryCommand(),
   /// depending on whether the user indicates that there is an onEntryCommand.
   void onEntryInternal(ctkWorkflowStep* step, ctkWorkflowStep* comingFrom,
-                       const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
+                       ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// \brief Performs computation required when exiting this step.
   ///
   /// Does some sanity checks and then either calls onExit() or emits the invokeOnExitCommand(),
   /// depending on whether the user indicates that there is an onExitCommand.
   void onExitInternal(ctkWorkflowStep* step, ctkWorkflowStep* goingTo,
-                      const ctkWorkflowInterstepTransition::InterstepTransitionType& transitionType);
+                      ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   /// Get the step in the workflow with a given id.
   ctkWorkflowStep* stepFromId(const QString& id)const;

@@ -177,7 +177,7 @@ protected slots:
   void onModelReset();
 
   /// Called when delegate requests context menu
-  void onDelegateContextMenuRequested(const QPoint& globalPos, const QModelIndex& index);
+  void onDelegateContextMenuRequested(QPoint globalPos, const QModelIndex& index);
 
 signals:
   /// Emitted when the mouse enters the study list view

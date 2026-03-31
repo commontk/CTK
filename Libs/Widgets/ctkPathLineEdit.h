@@ -48,16 +48,22 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Qt includes
 #include <QDir>
 #include <QWidget>
-class QComboBox;
+#include <QComboBox>
+#include <QCompleter>
+#include <QDebug>
+#include <QFileSystemModel>
+#include <QToolButton>
+
+class QRegularExpressionValidator;
+
 
 // CTK includes
 #include "ctkWidgetsExport.h"
-class ctkPathLineEditPrivate;
 
 /// \ingroup Widgets
 /// \brief Advanced line edit to select a file or directory.
 /// \sa ctkDirectoryButton, ctkPathListWidget
-///
+class ctkPathLineEditPrivate; //Forward declaration needed within file
 class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {
   Q_OBJECT
@@ -191,7 +197,7 @@ public:
   void setNameFilters(const QStringList &nameFilters);
   const QStringList& nameFilters()const;
 
-  void setFilters(const Filters& filters);
+  void setFilters(Filters filters);
   Filters filters()const;
 
   /// Options of the file dialog pop up.
@@ -200,7 +206,7 @@ public:
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
 #else
-  void setOptions(const Options& options);
+  void setOptions(Options options);
   const Options& options()const;
 #endif
 
@@ -284,6 +290,92 @@ private:
 
   Q_PRIVATE_SLOT(d_ptr, void _q_recomputeCompleterPopupSize())
 };
+
+//-----------------------------------------------------------------------------
+/// Completer class with built-in file system model
+class ctkFileCompleter : public QCompleter {
+  Q_OBJECT
+public:
+  ctkFileCompleter(QObject* o, bool showFiles);
+
+  // Ensure auto-completed file always uses forward-slash as separator
+  QString pathFromIndex(const QModelIndex& idx) const override;
+
+  // Helper function for getting the current model casted to QFileSystemModel
+  QFileSystemModel* fileSystemModel() const;
+
+  // Adds path to the file system model.
+  // This also automatically adds all children to the model.
+  void addPathToIndex(const QString& path);
+
+  // Switch between showing files or folders only
+  void setShowFiles(bool show);
+  bool showFiles();
+
+  // Set name filter. If filters is empty then all folder/file names are displayed
+  // and the global shared file system models are used. If name filters are set then
+  // a custom custom file system is created for the widget.
+  void setNameFilters(const QStringList& filters);
+
+  // Since nameFilters() function may be relevant when more work will be done,
+  // it is commented to quiet the "-Wunused-function" warning.
+  //
+  // QStringList nameFilters() const;
+
+protected:
+  QFileSystemModel* CustomFileSystemModel;
+};
+
+//-----------------------------------------------------------------------------
+class ctkPathLineEditPrivate
+{
+  Q_DECLARE_PUBLIC(ctkPathLineEdit);
+
+protected:
+  ctkPathLineEdit* const q_ptr;
+
+public:
+  ctkPathLineEditPrivate(ctkPathLineEdit& object);
+  void init();
+  QSize recomputeSizeHint(QSize& sh)const;
+  void updateFilter();
+
+  void adjustPathLineEditSize();
+
+  void _q_recomputeCompleterPopupSize();
+
+  void createPathLineEditWidget(bool useComboBox);
+  QString settingKey()const;
+
+  QLineEdit*            LineEdit;
+  QComboBox*            ComboBox;
+  QToolButton*          BrowseButton;       //!< "..." button
+
+  int                   MinimumContentsLength;
+  ctkPathLineEdit::SizeAdjustPolicy SizeAdjustPolicy;
+
+  QString               Label;              //!< used in file dialogs
+  QStringList           NameFilters;        //!< Regular expression (in wildcard mode) used to help the user to complete the line
+  QDir::Filters         Filters;            //!< Type of path (file, dir...)
+#ifdef USE_QFILEDIALOG_OPTIONS
+  QFileDialog::Options DialogOptions;
+#else
+  ctkPathLineEdit::Options DialogOptions;
+#endif
+
+  bool                  HasValidInput;      //!< boolean that stores the old state of valid input
+  QString               SettingKey;
+
+  static QString        sCurrentDirectory;   //!< Content the last value of the current directory
+  static int            sMaxHistory;     //!< Size of the history, if the history is full and a new value is added, the oldest value is dropped
+
+  mutable QSize SizeHint;
+  mutable QSize MinimumSizeHint;
+
+  ctkFileCompleter* Completer;
+  QRegularExpressionValidator* Validator;
+};
+
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathLineEdit::Filters)
 #ifndef USE_QFILEDIALOG_OPTIONS

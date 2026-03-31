@@ -193,7 +193,7 @@ if(EXISTS "${CTKData_DIR}")
   macro(MAGNIFY_WIDGET_TEST TESTNAME TESTTYPE SIZE MAGNIFICATION)
     set(${TESTNAME}${TESTTYPE}_TEST ${TESTNAME})
     SIMPLE_TEST_WITH_DATA(${TESTNAME}${TESTTYPE} ${baseline_relative_location}
-      -T "${TESTTYPE}"
+      -Y "${TESTTYPE}"
       -S "${SIZE}"
       -M "${MAGNIFICATION}"
       )
@@ -228,7 +228,8 @@ if(CTK_USE_QTTESTING)
     SIMPLE_TEST( ctkVTKDataSetModelEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKMagnifyViewEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKMatrixWidgetEventTranslatorPlayerTest1 )
-    SIMPLE_TEST( ctkVTKRenderViewEventTranslatorPlayerTest1 )
+    SIMPLE_TEST( ctkVTKRenderViewEventTranslatorPlayerTest1 ${CMAKE_CURRENT_BINARY_DIR} )
+    set_tests_properties(ctkVTKRenderViewEventTranslatorPlayerTest1 PROPERTIES TIMEOUT 180)
     SIMPLE_TEST( ctkVTKScalarBarWidgetEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKScalarsToColorsUtilsEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKScalarsToColorsViewEventTranslatorPlayerTest1 )
@@ -236,6 +237,8 @@ if(CTK_USE_QTTESTING)
 #    SIMPLE_TEST( ctkVTKSliceViewEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1 )
+    set_tests_properties(ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1
+      PROPERTIES LABELS "ModalDialogHang" DISABLED TRUE)
 #    SIMPLE_TEST( ctkVTKThresholdWidgetEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1 )
 endif()

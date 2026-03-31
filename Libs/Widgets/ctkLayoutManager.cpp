@@ -490,7 +490,7 @@ const QDomDocument ctkLayoutManager::layout()const
 }
 
 //-----------------------------------------------------------------------------
-QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
+QLayoutItem* ctkLayoutManager::processElement(const QDomElement& element)
 {
   Q_ASSERT(!element.isNull());
   if (element.tagName() == "layout")
@@ -505,7 +505,7 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
 }
 
 //-----------------------------------------------------------------------------
-QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
+QLayoutItem* ctkLayoutManager::processLayoutElement(const QDomElement& layoutElement)
 {
   Q_D(ctkLayoutManager);
   Q_ASSERT(layoutElement.tagName() == "layout");
@@ -563,7 +563,7 @@ QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
 }
 
 //-----------------------------------------------------------------------------
-QLayoutItem* ctkLayoutManager::layoutFromXML(QDomElement layoutElement)
+QLayoutItem* ctkLayoutManager::layoutFromXML(const QDomElement& layoutElement)
 {
   Q_ASSERT(layoutElement.tagName() == "layout");
   QString type = layoutElement.attribute("type", "horizontal");
@@ -596,7 +596,7 @@ QLayoutItem* ctkLayoutManager::layoutFromXML(QDomElement layoutElement)
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* layoutItem)
+void ctkLayoutManager::processItemElement(const QDomElement& itemElement, QLayoutItem* layoutItem)
 {
   Q_ASSERT(itemElement.tagName() == "item");
   Q_ASSERT(itemElement.childNodes().count() == 1);
@@ -621,7 +621,7 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutManager::addChildItemToLayout(QDomElement itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem)
+void ctkLayoutManager::addChildItemToLayout(const QDomElement& itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem)
 {
   Q_D(ctkLayoutManager);
   Q_ASSERT(childItem);
@@ -668,7 +668,7 @@ void ctkLayoutManager::addChildItemToLayout(QDomElement itemElement, QLayoutItem
 }
 
 //-----------------------------------------------------------------------------
-QWidgetItem* ctkLayoutManager::widgetItemFromXML(QDomElement viewElement)
+QWidgetItem* ctkLayoutManager::widgetItemFromXML(const QDomElement& viewElement)
 {
   //Q_ASSERT(viewElement.tagName() == "view");
   QWidget* view = this->viewFromXML(viewElement);
@@ -681,7 +681,7 @@ QWidgetItem* ctkLayoutManager::widgetItemFromXML(QDomElement viewElement)
 }
 
 //-----------------------------------------------------------------------------
-void ctkLayoutManager::setupView(QDomElement viewElement, QWidget* view)
+void ctkLayoutManager::setupView(const QDomElement& viewElement, QWidget* view)
 {
   Q_UNUSED(viewElement);
   Q_D(ctkLayoutManager);
@@ -694,7 +694,7 @@ void ctkLayoutManager::setupView(QDomElement viewElement, QWidget* view)
 }
 
 //-----------------------------------------------------------------------------
-QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(QDomElement viewElement)
+QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(const QDomElement& viewElement)
 {
   ///Q_ASSERT(viewElement.tagName() == "view");
   QList<QLayoutItem*> res;
@@ -709,7 +709,7 @@ QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(QDomElement viewElement
 }
 
 //-----------------------------------------------------------------------------
-QList<QWidget*> ctkLayoutManager::viewsFromXML(QDomElement viewElement)
+QList<QWidget*> ctkLayoutManager::viewsFromXML(const QDomElement& viewElement)
 {
   QList<QWidget*> res;
   res << this->viewFromXML(viewElement);

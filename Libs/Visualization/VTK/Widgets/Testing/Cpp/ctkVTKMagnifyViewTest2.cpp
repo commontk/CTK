@@ -25,6 +25,7 @@
 #include <QIcon>
 #include <QSignalSpy>
 #include <QStyle>
+#include <QEventLoop>
 #include <QTimer>
 
 // CTK includes
@@ -46,18 +47,65 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
-                  QString baselineFilename)
+bool imageCompare(ctkVTKMagnifyView * magnify, const QString& baselineDirectory,
+                  const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(magnify);
   QImage baseline(baselineDirectory + "/" + baselineFilename);
-  return output == baseline;
+
+  if (baseline.isNull())
+  {
+    std::cerr << "Failed to load baseline image: "
+              << qPrintable(baselineDirectory + "/" + baselineFilename) << std::endl;
+    return false;
+  }
+  if (output.size() != baseline.size())
+  {
+    std::cerr << "Image size mismatch: output=" << output.width() << "x" << output.height()
+              << " baseline=" << baseline.width() << "x" << baseline.height() << std::endl;
+    return false;
+  }
+
+  // Allow per-channel tolerance and a small percentage of mismatched pixels
+  // for software renderers (e.g. llvmpipe) that produce slightly different
+  // pixel values and crosshair positions than hardware GPUs.
+  const int tolerance = 2;
+  const double maxMismatchPercent = 1.5;
+  int mismatchCount = 0;
+  int totalPixels = output.width() * output.height();
+  for (int y = 0; y < output.height(); ++y)
+  {
+    for (int x = 0; x < output.width(); ++x)
+    {
+      QColor out(output.pixel(x, y));
+      QColor base(baseline.pixel(x, y));
+      if (std::abs(out.red() - base.red()) > tolerance ||
+          std::abs(out.green() - base.green()) > tolerance ||
+          std::abs(out.blue() - base.blue()) > tolerance)
+      {
+        mismatchCount++;
+        if (mismatchCount <= 5)
+        {
+          std::cerr << "Pixel mismatch at (" << x << "," << y << "): output="
+                    << out.name().toStdString() << " baseline=" << base.name().toStdString()
+                    << std::endl;
+        }
+      }
+    }
+  }
+  double mismatchPercent = 100.0 * mismatchCount / totalPixels;
+  if (mismatchCount > 0)
+  {
+    std::cerr << "Total mismatched pixels: " << mismatchCount << " / " << totalPixels
+              << " (" << mismatchPercent << "%)" << std::endl;
+  }
+  return mismatchPercent <= maxMismatchPercent;
 }
 
 //-----------------------------------------------------------------------------
 // (Used to create baselines, not during testing).
-void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
-               QString baselineFilename)
+void imageSave(ctkVTKMagnifyView * magnify, const QString& baselineDirectory,
+               const QString& baselineFilename)
 {
   QImage output = ctk::grabWidget(magnify);
   output.save(baselineDirectory + "/" + baselineFilename);
@@ -66,16 +114,15 @@ void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
 //-----------------------------------------------------------------------------
 bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyView * magnify,
                      QWidget * underWidget, bool shouldBeUnder,
-                     QString baselineDirectory, QString testName,
-                     QString testNumber, QString errorMessage)
+                     const QString& baselineDirectory, const QString& testName,
+                     const QString& testNumber, const QString& errorMessage)
 {
-  QTimer::singleShot(time, &app, SLOT(quit()));
-  if (app.exec() == EXIT_FAILURE)
-  {
-    std::cerr << "ctkVTKMagnifyView exec failed when "
-        << qPrintable(errorMessage) << std::endl;
-    return false;
-  }
+  Q_UNUSED(app);
+  // Use a local event loop instead of QApplication::quit() which
+  // closes all top-level windows in Qt6.
+  QEventLoop loop;
+  QTimer::singleShot(time, &loop, SLOT(quit()));
+  loop.exec();
   if (underWidget->underMouse() != shouldBeUnder)
   {
     std::cerr << "ctkMagnifyView mouse position failed when "
@@ -105,6 +152,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   parser.addArgument("", "-V", QMetaType::QString);
   parser.addArgument("", "-I", QMetaType::QString);
   parser.addArgument("", "-T", QMetaType::QString);
+  parser.addArgument("", "-Y", QMetaType::QString);
   parser.addArgument("", "-S", QMetaType::QString);
   parser.addArgument("", "-M", QMetaType::QString);
 #else
@@ -112,6 +160,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   parser.addArgument("", "-V", QVariant::String);
   parser.addArgument("", "-I", QVariant::String);
   parser.addArgument("", "-T", QVariant::String);
+  parser.addArgument("", "-Y", QVariant::String);
   parser.addArgument("", "-S", QVariant::String);
   parser.addArgument("", "-M", QVariant::String);
 #endif
@@ -124,7 +173,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   }
   QString dataDirectory = parsedArgs["-D"].toString();
   QString baselineDirectory = parsedArgs["-V"].toString();
-  QString testType = parsedArgs["-T"].toString();
+  QString testType = parsedArgs["-Y"].toString();
   bool interactive = parsedArgs["-I"].toBool();
   int size = parsedArgs["-S"].toInt();
   double magnification = parsedArgs["-M"].toDouble();
@@ -271,12 +320,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   // Get crosshair points of interest, used in the following tests
   parentWidget.move(0,0);
   parentWidget.show();
-  QTimer::singleShot(time, &app, SLOT(quit()));
-  if (app.exec() == EXIT_FAILURE)
-  {
-    std::cerr << "ctkVTKMagnifyView:show failed the first time." << std::endl;
-    return EXIT_FAILURE;
-  }
+  { QEventLoop loop; QTimer::singleShot(time, &loop, SLOT(quit())); loop.exec(); }
   QPoint insideSlice0 = allSliceViews[0]->mapToGlobal(
         QPoint(allSliceViews[0]->width()/2 + 100, allSliceViews[0]->height()/2 + 100));
   QPoint outside = parentWidget.mapToGlobal(

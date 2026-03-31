@@ -101,7 +101,7 @@ public:
   ///
   /// Set the color dialog options to configure the color dialog.
   /// \sa QColorDialog::setOptions QColorDialog::ColorDialogOption
-  void setDialogOptions(const ColorDialogOptions& options);
+  void setDialogOptions(ColorDialogOptions options);
   const ColorDialogOptions& dialogOptions() const;
 
   ///

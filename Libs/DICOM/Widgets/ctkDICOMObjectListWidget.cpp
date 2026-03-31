@@ -36,7 +36,7 @@
 //CTK includes
 #include <ctkDICOMObjectModel.h>
 #include <ctkLogger.h>
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget"))
 
 class qRecursiveTreeProxyFilter : public QSortFilterProxyModel {
   Q_OBJECT
@@ -64,7 +64,7 @@ public:
   }
 
 private:
-  bool filterAcceptsIndex(const QModelIndex index) const
+  bool filterAcceptsIndex(const QModelIndex& index) const
   {
     // Accept item if its tag, attribute, or value text matches
       QRegularExpression re = filterRegularExpression();
@@ -102,7 +102,7 @@ public:
   ~ctkDICOMObjectListWidgetPrivate();
   void populateDICOMObjectTreeView(const QString& fileName);
   void setPathLabel(const QString& currentFile);
-  QString dicomObjectModelAsString(QAbstractItemModel* dicomObjectModel, QModelIndex parent = QModelIndex(), int indent = 0, QString rowPrefix = QString());
+  QString dicomObjectModelAsString(QAbstractItemModel* dicomObjectModel, const QModelIndex& parent = QModelIndex(), int indent = 0, const QString& rowPrefix = QString());
   void setFilterExpressionInModel(qRecursiveTreeProxyFilter* filterModel, const QString& expr);
 
   QString endOfLine;
@@ -167,7 +167,7 @@ void ctkDICOMObjectListWidgetPrivate::setPathLabel(const QString& currentFile)
 }
 
 // --------------------------------------------------------------------------
-QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QAbstractItemModel* aDicomObjectModel, QModelIndex parent /*=QModelIndex()*/, int indent /*=0*/, QString rowPrefix /*=QString()*/)
+QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QAbstractItemModel* aDicomObjectModel, const QModelIndex& parent /*=QModelIndex()*/, int indent /*=0*/, const QString& rowPrefix /*=QString()*/)
 {
   QString dump;
   QString indentString(indent, '\t'); // add tab characters, (indent) number of times
@@ -300,7 +300,7 @@ QStringList ctkDICOMObjectListWidget::fileList()
 }
 
 // --------------------------------------------------------------------------
-void ctkDICOMObjectListWidget::openLookupUrl(QString tag)
+void ctkDICOMObjectListWidget::openLookupUrl(const QString& tag)
 {
   QString lookupUrl = "http://dicomlookup.com/lookup.asp?sw=Tnumber&q=" + tag;
   QUrl url(lookupUrl);

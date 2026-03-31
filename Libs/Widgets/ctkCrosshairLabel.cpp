@@ -33,7 +33,7 @@
 #include <math.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkCrosshairLabel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkCrosshairLabel"))
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -256,7 +256,7 @@ CTK_GET_CPP(ctkCrosshairLabel, ctkCrosshairLabel::CrosshairTypes,
             crosshairType, CrosshairType)
 
 // --------------------------------------------------------------------------
-void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
+void ctkCrosshairLabel::setCrosshairType(CrosshairTypes newType)
 {
   Q_D(ctkCrosshairLabel);
   if (newType == d->CrosshairType)

@@ -387,7 +387,7 @@ ctkDICOMTableView::ctkDICOMTableView(QWidget *parent)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMTableView::ctkDICOMTableView(QString queryTableName, QWidget *parent)
+ctkDICOMTableView::ctkDICOMTableView(const QString& queryTableName, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
@@ -397,7 +397,7 @@ ctkDICOMTableView::ctkDICOMTableView(QString queryTableName, QWidget *parent)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName, QWidget* parent)
+ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, const QString& queryTableName, QWidget* parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
@@ -777,7 +777,7 @@ bool ctkDICOMTableView::removeSqlEqualWhereCondition(const QString& column)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::addSqlGreaterWhereCondition(const QString& column, const QVariant value)
+void ctkDICOMTableView::addSqlGreaterWhereCondition(const QString& column, const QVariant& value)
 {
   Q_D(ctkDICOMTableView);
   d->sqlGreaterWhereConditions[column] = value;
@@ -791,7 +791,7 @@ bool ctkDICOMTableView::removeSqlGreaterWhereCondition(const QString& column)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::addSqlLessWhereCondition(const QString& column, const QVariant value)
+void ctkDICOMTableView::addSqlLessWhereCondition(const QString& column, const QVariant& value)
 {
   Q_D(ctkDICOMTableView);
   d->sqlLessWhereConditions[column] = value;
@@ -805,7 +805,7 @@ bool ctkDICOMTableView::removeSqlLessWhereCondition(const QString& column)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::addSqlGreaterEqualWhereCondition(const QString& column, const QVariant value)
+void ctkDICOMTableView::addSqlGreaterEqualWhereCondition(const QString& column, const QVariant& value)
 {
   Q_D(ctkDICOMTableView);
   d->sqlGreaterEqualWhereConditions[column] = value;
@@ -819,7 +819,7 @@ bool ctkDICOMTableView::removeSqlGreaterEqualWhereCondition(const QString& colum
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::addSqlLessEqualWhereCondition(const QString& column, const QVariant value)
+void ctkDICOMTableView::addSqlLessEqualWhereCondition(const QString& column, const QVariant& value)
 {
   Q_D(ctkDICOMTableView);
   d->sqlLessEqualWhereConditions[column] = value;
@@ -918,7 +918,7 @@ bool ctkDICOMTableView::filterActive()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
+void ctkDICOMTableView::onCustomContextMenuRequested(QPoint point)
 {
   Q_D(ctkDICOMTableView);
 

@@ -451,7 +451,7 @@ qreal ctkTransferFunctionRepresentation::computeRangeYOffset(const QVariant rang
 }
 
 //-----------------------------------------------------------------------------
-qreal ctkTransferFunctionRepresentation::posX(const qreal& x)const
+qreal ctkTransferFunctionRepresentation::posX(qreal x)const
 {
   return x;
 }

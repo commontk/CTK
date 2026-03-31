@@ -105,7 +105,7 @@ void ctkTrackedService<S,T>::modified()
 
 //----------------------------------------------------------------------------
 template<class S, class T>
-T ctkTrackedService<S,T>::customizerAdding(ctkServiceReference item,
+T ctkTrackedService<S,T>::customizerAdding(const ctkServiceReference& item,
                                            const ctkServiceEvent& related)
 {
   Q_UNUSED(related)
@@ -114,7 +114,7 @@ T ctkTrackedService<S,T>::customizerAdding(ctkServiceReference item,
 
 //----------------------------------------------------------------------------
 template<class S, class T>
-void ctkTrackedService<S,T>::customizerModified(ctkServiceReference item,
+void ctkTrackedService<S,T>::customizerModified(const ctkServiceReference& item,
                                                 const ctkServiceEvent& related,
                                                 T object)
 {
@@ -124,7 +124,7 @@ void ctkTrackedService<S,T>::customizerModified(ctkServiceReference item,
 
 //----------------------------------------------------------------------------
 template<class S, class T>
-void ctkTrackedService<S,T>::customizerRemoved(ctkServiceReference item,
+void ctkTrackedService<S,T>::customizerRemoved(const ctkServiceReference& item,
                                                const ctkServiceEvent& related,
                                                T object)
 {

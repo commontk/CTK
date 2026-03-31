@@ -60,7 +60,7 @@ public:
   int currentArrayLocation()const;
 
   ctkVTKDataSetModel::AttributeTypes attributeTypes()const;
-  void setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes);
+  void setAttributeTypes(ctkVTKDataSetModel::AttributeTypes attributeTypes);
 
   /// Set/Get NoneEnabled flags
   /// An additional empty item is added into the list, where the user can select.

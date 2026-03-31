@@ -193,7 +193,7 @@ bool ctk::qImageToVTKImageData(const QImage& inputQImage, vtkImageData* outputVT
 
 //----------------------------------------------------------------------------
 QImage ctk::scalarsToColorsImage(vtkScalarsToColors* scalarsToColors,
-  const QSize& size)
+  QSize size)
 {
   if (!scalarsToColors ||
     scalarsToColors->GetNumberOfAvailableColors() <= 0)

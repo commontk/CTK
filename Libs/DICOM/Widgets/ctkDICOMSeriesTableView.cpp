@@ -831,7 +831,7 @@ void ctkDICOMSeriesTableView::onSeriesSelectionChanged()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesTableView::onDelegateContextMenuRequested(const QPoint& globalPos, const QModelIndex& index)
+void ctkDICOMSeriesTableView::onDelegateContextMenuRequested(QPoint globalPos, const QModelIndex& index)
 {
   Q_D(ctkDICOMSeriesTableView);
 

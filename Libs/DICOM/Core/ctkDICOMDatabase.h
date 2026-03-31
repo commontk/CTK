@@ -83,7 +83,7 @@ public:
   };
 
   explicit ctkDICOMDatabase(QObject *parent = 0);
-  explicit ctkDICOMDatabase(QString databaseFile);
+  explicit ctkDICOMDatabase(const QString& databaseFile);
   virtual ~ctkDICOMDatabase();
 
   const QSqlDatabase& database() const;
@@ -164,55 +164,55 @@ public:
   Q_INVOKABLE QString schemaVersionLoaded();
 
   /// Set schema version externally in case a non-standard schema is used
-  Q_INVOKABLE void setSchemaVersion(QString schemaVersion);
+  Q_INVOKABLE void setSchemaVersion(const QString& schemaVersion);
 
   /// \brief database accessors
   Q_INVOKABLE QStringList patients();
-  Q_INVOKABLE QStringList studiesForPatient(const QString patientUID);
-  Q_INVOKABLE QStringList seriesForStudy(const QString studyUID);
+  Q_INVOKABLE QStringList studiesForPatient(const QString& patientUID);
+  Q_INVOKABLE QStringList seriesForStudy(const QString& studyUID);
   /// Since a series may consists of many hundreds of instances, this method may be slow.
   /// If hits > 0 is specified then returned instances will be limited to that number.
   /// This is useful for retrieving first file, for example for getting access to fields within that file
   /// using instanceValue() method.
-  Q_INVOKABLE QStringList instancesForSeries(const QString seriesUID, int hits = -1);
-  Q_INVOKABLE QString studyForSeries(QString seriesUID);
-  Q_INVOKABLE QString patientForStudy(QString studyUID);
+  Q_INVOKABLE QStringList instancesForSeries(const QString& seriesUID, int hits = -1);
+  Q_INVOKABLE QString studyForSeries(const QString& seriesUID);
+  Q_INVOKABLE QString patientForStudy(const QString& studyUID);
   /// Since a series may consists of many hundreds of files, this method may be slow.
   /// If hits > 0 is specified then returned filenames will be limited to that number.
   /// This is useful for retrieving first file, for example for getting access to fields within that file
   /// using fileValue() method.
-  Q_INVOKABLE QStringList filesForSeries(const QString seriesUID, int hits=-1);
-  Q_INVOKABLE QStringList urlsForSeries(const QString seriesUID, int hits=-1);
+  Q_INVOKABLE QStringList filesForSeries(const QString& seriesUID, int hits=-1);
+  Q_INVOKABLE QStringList urlsForSeries(const QString& seriesUID, int hits=-1);
 
-  Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
-  Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
-  Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
-  Q_INVOKABLE QString nameForPatient(const QString patientUID);
-  Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
-  Q_INVOKABLE QDateTime insertDateTimeForPatient(const QString patientUID);
-  Q_INVOKABLE QDateTime insertDateTimeForStudy(const QString studyInstanceUID);
-  Q_INVOKABLE QDateTime insertDateTimeForSeries(const QString seriesInstanceUID);
-  Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
-  Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
-  Q_INVOKABLE QString fieldForSeries(const QString field, const QString seriesInstanceUID);
+  Q_INVOKABLE QHash<QString,QString> descriptionsForFile(const QString& fileName);
+  Q_INVOKABLE QString descriptionForSeries(const QString& seriesUID);
+  Q_INVOKABLE QString descriptionForStudy(const QString& studyUID);
+  Q_INVOKABLE QString nameForPatient(const QString& patientUID);
+  Q_INVOKABLE QString displayedNameForPatient(const QString& patientUID);
+  Q_INVOKABLE QDateTime insertDateTimeForPatient(const QString& patientUID);
+  Q_INVOKABLE QDateTime insertDateTimeForStudy(const QString& studyInstanceUID);
+  Q_INVOKABLE QDateTime insertDateTimeForSeries(const QString& seriesInstanceUID);
+  Q_INVOKABLE QString fieldForPatient(const QString& field, const QString& patientUID);
+  Q_INVOKABLE QString fieldForStudy(const QString& field, const QString& studyInstanceUID);
+  Q_INVOKABLE QString fieldForSeries(const QString& field, const QString& seriesInstanceUID);
 
   /// Provide lists of allow and deny servers associated with the patient.
-  Q_INVOKABLE QMap<QString, QStringList> connectionsInformationForPatient(const QString patientUID);
+  Q_INVOKABLE QMap<QString, QStringList> connectionsInformationForPatient(const QString& patientUID);
   /// Set the allow and deny servers for the patient
-  Q_INVOKABLE bool updateConnectionsForPatient(const QString patientUID,
-                                               const QStringList allowList,
-                                               const QStringList denyList);
+  Q_INVOKABLE bool updateConnectionsForPatient(const QString& patientUID,
+                                               const QStringList& allowList,
+                                               const QStringList& denyList);
 
   QStringList patientFieldNames() const;
   QStringList studyFieldNames() const;
   QStringList seriesFieldNames() const;
 
-  Q_INVOKABLE QString fileForInstance(const QString sopInstanceUID);
-  Q_INVOKABLE QString urlForInstance(const QString sopInstanceUID);
-  Q_INVOKABLE QString instanceForURL(const QString url);
-  Q_INVOKABLE QString seriesForFile(QString fileName);
-  Q_INVOKABLE QString instanceForFile(const QString fileName);
-  Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString fileName);
+  Q_INVOKABLE QString fileForInstance(const QString& sopInstanceUID);
+  Q_INVOKABLE QString urlForInstance(const QString& sopInstanceUID);
+  Q_INVOKABLE QString instanceForURL(const QString& url);
+  Q_INVOKABLE QString seriesForFile(const QString& fileName);
+  Q_INVOKABLE QString instanceForFile(const QString& fileName);
+  Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString& fileName);
   Q_INVOKABLE QString thumbnailPathForInstance(const QString& studyInstanceUID,
                                                const QString& seriesInstanceUID,
                                                const QString& sopInstanceUID);
@@ -236,10 +236,10 @@ public:
   ///                       (corresponding file will be found via the database)
   /// @param fileName Full path to a dicom file to load.
   /// @param key A group,element tag in zero-filled hex
-  Q_INVOKABLE void loadInstanceHeader(const QString sopInstanceUID);
-  Q_INVOKABLE void loadFileHeader(const QString fileName);
+  Q_INVOKABLE void loadInstanceHeader(const QString& sopInstanceUID);
+  Q_INVOKABLE void loadFileHeader(const QString& fileName);
   Q_INVOKABLE QStringList headerKeys();
-  Q_INVOKABLE QString headerValue(const QString key);
+  Q_INVOKABLE QString headerValue(const QString& key);
 
   /// \brief Application-defined tags of interest
   /// This list of tags is added to the internal tag cache during import
@@ -250,7 +250,7 @@ public:
   /// be able to use the cache rather than re-reading the file.
   /// @param tags should be a list of ascii hex group/element tags
   ///  like "0008,0008" as in the instanceValue and fileValue calls
-  void setTagsToPrecache(const QStringList tags);
+  void setTagsToPrecache(const QStringList& tags);
   const QStringList tagsToPrecache();
 
   /// \brief Tags that must not be stored in the tag cache.
@@ -258,7 +258,7 @@ public:
   /// or if content of this field is usually very large.
   /// Presence of non-empty tag can still be checked using instanceValueExists or fileValueExists.
   /// By default, only PixelData tag is excluded from storage.
-  void setTagsToExcludeFromStorage(const QStringList tags);
+  void setTagsToExcludeFromStorage(const QStringList& tags);
   const QStringList tagsToExcludeFromStorage();
 
   /// Insert into the database if not already existing.
@@ -368,10 +368,10 @@ public:
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
   /// @Returns empty string if element is missing or excluded from storage.
-  Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const QString tag);
-  Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
-  Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
-  Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE QString instanceValue (const QString& sopInstanceUID, const QString& tag);
+  Q_INVOKABLE QString instanceValue (const QString& sopInstanceUID, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE QString fileValue (const QString& fileName, const QString& tag);
+  Q_INVOKABLE QString fileValue (const QString& fileName, const unsigned short group, const unsigned short element);
 
   /// \brief Efficiently retrieve tag values for multiple instances in a single query
   /// @param sopInstanceUIDs List of instance UIDs to query
@@ -380,8 +380,8 @@ public:
   Q_INVOKABLE QMap<QString, QString> instanceValues(const QStringList& sopInstanceUIDs, const QString& tag);
 
   /// Convert between string and (unsigned short int, unsigned short int) representation of a DICOM tag.
-  Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
-  Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
+  Q_INVOKABLE bool tagToGroupElement (const QString& tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE QString groupElementToTag (unsigned short group, unsigned short element);
 
   /// \brief Check if an element with the given attribute tag exists in the dataset and has a non-empty value.
   /// @param sopInstanceUID A string with the uid for a given instance
@@ -390,10 +390,10 @@ public:
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
   /// @Returns true if tag exists and has non-empty value. Returns true even if the value is excluded from storage in the database.
-  Q_INVOKABLE bool instanceValueExists(const QString sopInstanceUID, const QString tag);
-  Q_INVOKABLE bool instanceValueExists(const QString sopInstanceUID, const unsigned short group, const unsigned short element);
-  Q_INVOKABLE bool fileValueExists(const QString fileName, const QString tag);
-  Q_INVOKABLE bool fileValueExists(const QString fileName, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE bool instanceValueExists(const QString& sopInstanceUID, const QString& tag);
+  Q_INVOKABLE bool instanceValueExists(const QString& sopInstanceUID, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE bool fileValueExists(const QString& fileName, const QString& tag);
+  Q_INVOKABLE bool fileValueExists(const QString& fileName, const unsigned short group, const unsigned short element);
 
   /// \brief Store values of previously requested instance elements
   /// These are meant to be internal methods used by the instanceValue and fileValue
@@ -409,38 +409,38 @@ public:
   /// Create a tagCache in the current database.  Delete the existing one if it exists.
   Q_INVOKABLE bool initializeTagCache ();
   /// Return the value of a cached tag
-  Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
+  Q_INVOKABLE QString cachedTag (const QString& sopInstanceUID, const QString& tag);
   /// Return the list of all cached tags and values for the specified sopInstanceUID. Returns with empty string if the tag is not present in the cache.
-  Q_INVOKABLE void getCachedTags(const QString sopInstanceUID, QMap<QString, QString> &cachedTags);
+  Q_INVOKABLE void getCachedTags(const QString& sopInstanceUID, QMap<QString, QString> &cachedTags);
   /// Insert an instance tag's value into to the cache
-  Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
+  Q_INVOKABLE bool cacheTag (const QString& sopInstanceUID, const QString& tag, const QString& value);
   /// Insert lists of tags into the cache as a batch query operation
-  Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
+  Q_INVOKABLE bool cacheTags (const QStringList& sopInstanceUIDs, const QStringList& tags, const QStringList& values);
   /// Remove all tags corresponding to a SOP instance UID
-  Q_INVOKABLE void removeCachedTags(const QString sopInstanceUID);
+  Q_INVOKABLE void removeCachedTags(const QString& sopInstanceUID);
 
   /// Get displayed name of a given field
-  Q_INVOKABLE QString displayedNameForField(QString table, QString field) const;
+  Q_INVOKABLE QString displayedNameForField(const QString& table, const QString& field) const;
   /// Set displayed name of a given field
-  Q_INVOKABLE void setDisplayedNameForField(QString table, QString field, QString displayedName);
+  Q_INVOKABLE void setDisplayedNameForField(const QString& table, const QString& field, const QString& displayedName);
   /// Get visibility of a given field
-  Q_INVOKABLE bool visibilityForField(QString table, QString field) const;
+  Q_INVOKABLE bool visibilityForField(const QString& table, const QString& field) const;
   /// Set visibility of a given field
-  Q_INVOKABLE void setVisibilityForField(QString table, QString field, bool visibility);
+  Q_INVOKABLE void setVisibilityForField(const QString& table, const QString& field, bool visibility);
   /// Get weight of a given field.
   /// Weight specifies the order of the field columns in the table. Smaller values are positioned towards the left ("heaviest sinks down")
-  Q_INVOKABLE int weightForField(QString table, QString field) const;
+  Q_INVOKABLE int weightForField(const QString& table, const QString& field) const;
   /// Set weight of a given field
   /// Weight specifies the order of the field columns in the table. Smaller values are positioned towards the left ("heaviest sinks down")
-  Q_INVOKABLE void setWeightForField(QString table, QString field, int weight);
+  Q_INVOKABLE void setWeightForField(const QString& table, const QString& field, int weight);
   /// Get format of a given field
   /// It contains a json document with the following fields:
   /// - resizeMode: column resize mode. Accepted values are: "interactive" (default), "stretch", or "resizeToContents".
   /// - sort: default sort order. Accepted values are: empty (default), "ascending" or "descending".
   ///   Only one column (or none) should have non-empty sort order in each table.
-  Q_INVOKABLE QString formatForField(QString table, QString field) const;
+  Q_INVOKABLE QString formatForField(const QString& table, const QString& field) const;
   /// Set format of a given field
-  Q_INVOKABLE void setFormatForField(QString table, QString field, QString format);
+  Q_INVOKABLE void setFormatForField(const QString& table, const QString& field, const QString& format);
 
   /// There is no patient UID in DICOM, so we need to use use this composite ID to uniquely identify a patient with a string.
   /// Used when inserting a patient (InsertedPatientsCompositeIDCache) and in the display field update process.

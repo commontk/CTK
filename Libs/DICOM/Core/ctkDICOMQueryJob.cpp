@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h" // For ctkDICOMJobDetail
@@ -30,7 +31,7 @@
 #include "ctkDICOMQueryWorker.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMQueryJob" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMQueryJob"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryJobPrivate methods
@@ -72,7 +73,7 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMQueryJob, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP(ctkDICOMQueryJob, int, setMaximumPatientsQuery, MaximumPatientsQuery);
 CTK_GET_CPP(ctkDICOMQueryJob, int, maximumPatientsQuery, MaximumPatientsQuery)
 
 //----------------------------------------------------------------------------

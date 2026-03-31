@@ -27,11 +27,12 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger("org.commontk.dicom.DICOMServer");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMServer"))
 
 //------------------------------------------------------------------------------
 class ctkDICOMServerPrivate : public QObject
@@ -124,7 +125,7 @@ void ctkDICOMServer::setConnectionName(const QString& connectionName)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setQueryRetrieveEnabled(const bool& queryRetrieveEnabled)
+void ctkDICOMServer::setQueryRetrieveEnabled(bool queryRetrieveEnabled)
 {
   Q_D(ctkDICOMServer);
   d->QueryRetrieveEnabled = queryRetrieveEnabled;
@@ -132,7 +133,7 @@ void ctkDICOMServer::setQueryRetrieveEnabled(const bool& queryRetrieveEnabled)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setStorageEnabled(const bool& storageEnabled)
+void ctkDICOMServer::setStorageEnabled(bool storageEnabled)
 {
   Q_D(ctkDICOMServer);
   d->StorageEnabled = storageEnabled;
@@ -140,7 +141,7 @@ void ctkDICOMServer::setStorageEnabled(const bool& storageEnabled)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setTrustedEnabled(const bool& trustedEnabled)
+void ctkDICOMServer::setTrustedEnabled(bool trustedEnabled)
 {
   Q_D(ctkDICOMServer);
   d->TrustedEnabled = trustedEnabled;
@@ -172,7 +173,7 @@ void ctkDICOMServer::setHost(const QString& host)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setPort(const int& port)
+void ctkDICOMServer::setPort(int port)
 {
   Q_D(ctkDICOMServer);
   d->Port = port;
@@ -239,7 +240,7 @@ void ctkDICOMServer::setMoveDestinationAETitle(const QString& moveDestinationAET
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setKeepAssociationOpen(const bool& keepAssociationOpen)
+void ctkDICOMServer::setKeepAssociationOpen(bool keepAssociationOpen)
 {
   Q_D(ctkDICOMServer);
   d->KeepAssociationOpen = keepAssociationOpen;
@@ -247,7 +248,7 @@ void ctkDICOMServer::setKeepAssociationOpen(const bool& keepAssociationOpen)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setConnectionTimeout(const int& timeout)
+void ctkDICOMServer::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionTimeout = timeout;

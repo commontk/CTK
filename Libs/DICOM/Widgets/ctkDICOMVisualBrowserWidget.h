@@ -397,8 +397,8 @@ public Q_SLOTS:
   void onFilteringSeriesDescriptionChanged();
   void onFilteringModalityCheckableComboBoxChanged();
   void onFilteringDateComboBoxChanged(int);
-  void onFilteringStartDateChanged(const QDate& date);
-  void onFilteringEndDateChanged(const QDate& date);
+  void onFilteringStartDateChanged(QDate date);
+  void onFilteringEndDateChanged(QDate date);
   ///@}
 
   /// start query/retrieve and show patients
@@ -489,11 +489,11 @@ protected Q_SLOTS:
   ///@}
 
   /// Called when context menu is requested for patient(s)
-  void showPatientContextMenu(const QPoint& globalPos, const QStringList& selectedPatientUIDs);
+  void showPatientContextMenu(QPoint globalPos, const QStringList& selectedPatientUIDs);
   /// Called when a right mouse click is made in the studies table
-  void showStudyContextMenu(const QPoint& globalPos, const QStringList& selectedStudyInstanceUIDs);
+  void showStudyContextMenu(QPoint globalPos, const QStringList& selectedStudyInstanceUIDs);
   /// Called when a right mouse click is made in the series table
-  void showSeriesContextMenu(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs);
+  void showSeriesContextMenu(QPoint globalPos, const QStringList& selectedSeriesInstanceUIDs);
 
   /// Called when a series is double-clicked
   void onSeriesDoubleClicked(const QString& seriesInstanceUID);

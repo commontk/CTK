@@ -220,7 +220,7 @@ void ctkDICOMStudyMergedFilterProxyModel::clearSourceProxyFilterModels()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyMergedFilterProxyModel::refreshStudies(QList<ctkDICOMStudyModel*> models)
+void ctkDICOMStudyMergedFilterProxyModel::refreshStudies(const QList<ctkDICOMStudyModel*>& models)
 {
   this->beginResetModel();
 

@@ -37,7 +37,7 @@
 #include "ctkDICOMJobListWidget.h"
 #include "ui_ctkDICOMJobListWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMJobListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.DICOMJobListWidget"))
 
 //----------------------------------------------------------------------------
 class ProgressBarDelegate : public QStyledItemDelegate {
@@ -115,18 +115,18 @@ public:
   }; Q_ENUM(Columns);
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-  QString getJobTypeAsString(QString jobClass, ctkDICOMJob::DICOMLevels dicomLevel);
+  QString getJobTypeAsString(const QString& jobClass, ctkDICOMJob::DICOMLevels dicomLevel);
   void addJob(const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
-  void updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status);
+  void updateJobStatus(const ctkDICOMJobDetail &td, JobStatus status);
   void updateProgressBar(const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
   void setProgressBar(int row, const ctkDICOMJobDetail &td, ctkDICOMDatabase* database);
-  QStringList clearJobsByType(QString type);
+  QStringList clearJobsByType(const QString& type);
   QStringList clearCompletedJobs();
   QStringList clearFailedJobs();
   QStringList clearUserStoppedJobs();
   QStringList clearQueuedJobs();
   void removeRowsByJobUIDs(QStringList jobUIDs);
-  static Columns getColumnIndexFromString(QString columnString);
+  static Columns getColumnIndexFromString(const QString& columnString);
   static QString getColumnStringFromIndex(Columns columnIndex);
 };
 
@@ -144,14 +144,14 @@ QVariant QCenteredItemModel::data(const QModelIndex &index, int role) const
 }
 
 //----------------------------------------------------------------------------
-QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DICOMLevels dicomLevel)
+QString QCenteredItemModel::getJobTypeAsString(const QString& jobClass, ctkDICOMJob::DICOMLevels dicomLevel)
 {
   if (jobClass == "ctkDICOMQueryJob")
   {
     switch (dicomLevel)
     {
       case ctkDICOMJob::DICOMLevels::None:
-        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        logger->warn("ctkDICOMScheduler : DICOMLevels was not set.");
         return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return ctkDICOMJobListWidget::tr("Query patients");
@@ -168,7 +168,7 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
     switch (dicomLevel)
     {
       case ctkDICOMJob::DICOMLevels::None:
-        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        logger->warn("ctkDICOMScheduler : DICOMLevels was not set.");
         return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return ctkDICOMJobListWidget::tr("Retrieve patients");
@@ -288,7 +288,7 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 }
 
 //----------------------------------------------------------------------------
-void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobStatus &status)
+void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, JobStatus status)
 {
   QList<QStandardItem*> list = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
   if (list.empty())
@@ -437,7 +437,7 @@ void QCenteredItemModel::setProgressBar(int row, const ctkDICOMJobDetail &td, ct
 }
 
 //----------------------------------------------------------------------------
-QStringList QCenteredItemModel::clearJobsByType(QString type)
+QStringList QCenteredItemModel::clearJobsByType(const QString& type)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
   QList<QStandardItem*> list = this->findItems(type, Qt::MatchRegularExpression, Columns::Status);
@@ -502,7 +502,7 @@ void QCenteredItemModel::removeRowsByJobUIDs(QStringList jobUIDs)
 }
 
 //----------------------------------------------------------------------------
-QCenteredItemModel::Columns QCenteredItemModel::getColumnIndexFromString(QString columnString)
+QCenteredItemModel::Columns QCenteredItemModel::getColumnIndexFromString(const QString& columnString)
 {
   if (columnString == ctkDICOMJobListWidget::tr("Type"))
   {
@@ -643,7 +643,7 @@ public:
   void init();
   void disconnectScheduler();
   void connectScheduler();
-  void setFilterKeyColumn(QString);
+  void setFilterKeyColumn(const QString&);
   void updateJobsDetailsWidget();
   void retryJobs();
 
@@ -819,7 +819,7 @@ void ctkDICOMJobListWidgetPrivate::connectScheduler()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidgetPrivate::setFilterKeyColumn(QString text)
+void ctkDICOMJobListWidgetPrivate::setFilterKeyColumn(const QString& text)
 {
   int columnIndex = QCenteredItemModel::getColumnIndexFromString(text);
   this->proxyModel->setFilterKeyColumn(columnIndex);
@@ -972,7 +972,7 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
 
     if (count == 0)
     {
-      q->patientSelected(patientID, patientName, patientBirthDate);
+      emit q->patientSelected(patientID, patientName, patientBirthDate);
     }
     count++;
   }
@@ -1070,7 +1070,7 @@ void ctkDICOMJobListWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> sched
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobInitialized(QVariant data)
+void ctkDICOMJobListWidget::onJobInitialized(const QVariant& data)
 {
   Q_D(ctkDICOMJobListWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -1092,7 +1092,7 @@ void ctkDICOMJobListWidget::onJobInitialized(QVariant data)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobQueued(QVariant data)
+void ctkDICOMJobListWidget::onJobQueued(const QVariant& data)
 {
   Q_D(ctkDICOMJobListWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -1208,14 +1208,14 @@ void ctkDICOMJobListWidget::onJobUserStopped(QList<QVariant> datas)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onFilterTextChanged(QString text)
+void ctkDICOMJobListWidget::onFilterTextChanged(const QString& text)
 {
   Q_D(ctkDICOMJobListWidget);
   d->proxyModel->setFilterRegularExpression(text);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onFilterColumnChanged(QString text)
+void ctkDICOMJobListWidget::onFilterColumnChanged(const QString& text)
 {
   Q_D(ctkDICOMJobListWidget);
   d->setFilterKeyColumn(text);

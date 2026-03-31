@@ -26,13 +26,10 @@
 
 // Qt includes
 #include <QListView>
+#include <QStandardItem>
 
 // QtGUI includes
 #include "ctkWidgetsExport.h"
-
-class ctkPathListWidgetPrivate;
-
-class QStandardItem;
 
 /// \ingroup Widgets
 ///
@@ -44,6 +41,7 @@ class QStandardItem;
 /// by setting file and directory options.
 /// \sa ctkPathLineEdit, ctkDirectoryButton
 ///
+class ctkPathListWidgetPrivate; // Forward declaration within this file
 class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
 {
   Q_OBJECT
@@ -192,11 +190,11 @@ public:
 
   /// \return The absolute path for the entry located at the point \a point (in the
   ///         widget coordinate system) or a null QString if no entry could be found for \a point.
-  QString pathAt(const QPoint& point) const;
+  QString pathAt(QPoint point) const;
 
   /// \return The item for the entry located at the point \a point (in the widget
   ///         coordinate system) or NULL if no ite could be found for \a point.
-  QStandardItem* itemAt(const QPoint& point) const;
+  QStandardItem* itemAt(QPoint point) const;
 
   /// \see pathAt(const QPoint&)
   QString pathAt(int x, int y) const { return pathAt(QPoint(x, y)); }
@@ -315,6 +313,53 @@ private:
   Q_PRIVATE_SLOT(d_func(), void _q_emitPathDoubleClicked(const QModelIndex& index))
   Q_PRIVATE_SLOT(d_func(), void _q_emitPathActivated(const QModelIndex& index))
   Q_PRIVATE_SLOT(d_func(), void _q_emitCurrentPathChanged(const QModelIndex &previous, const QModelIndex &current))
+};
+
+
+// --------------------------------------------------------------------------
+// ctkPathListWidgetPrivate
+
+//-----------------------------------------------------------------------------
+class ctkPathListWidgetPrivate
+{
+  Q_DECLARE_PUBLIC(ctkPathListWidget)
+
+protected:
+  ctkPathListWidget* const q_ptr;
+
+public:
+
+  enum PathType {
+    Unknown,
+    File,
+    Directory
+  };
+
+  ctkPathListWidgetPrivate(ctkPathListWidget& object);
+
+  void _q_emitPathClicked(const QModelIndex &index);
+  void _q_emitPathDoubleClicked(const QModelIndex &index);
+  void _q_emitPathActivated(const QModelIndex &index);
+  void _q_emitCurrentPathChanged(const QModelIndex &current, const QModelIndex &previous);
+
+  bool addPath(const QString& path);
+  bool removePath(const QString& path);
+
+  void fileOptionsChanged();
+  void directoryOptionsChanged();
+
+  PathType pathType(const QString& absolutePath) const;
+
+  bool isValidPath(const QString& absoluteFilePath, PathType pathType) const;
+  bool isValidFile(const QString& absoluteFilePath) const;
+  bool isValidDir(const QString& absoluteDirPath) const;
+
+  QStandardItemModel PathListModel;
+  ctkPathListWidget::Mode Mode;
+  ctkPathListWidget::PathOptions FileOptions;
+  ctkPathListWidget::PathOptions DirectoryOptions;
+  QIcon FileIcon;
+  QIcon DirectoryIcon;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathListWidget::PathOptions)

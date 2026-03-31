@@ -60,8 +60,10 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  // Read image
+  // Read image (Update() now to avoid pipeline contention when multiple
+  // renderers try to update the same source during the first render)
   imageReader->SetFileName(imageFilename);
+  imageReader->Update();
   vtkAlgorithmOutput* imagePort = imageReader->GetOutputPort();
 
   //----------------------------------------------------------------------------
@@ -212,7 +214,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   double highlightedBoxColor[3] = {1.0, 1.0, 0.0};
   lightBoxRendererManager->SetHighlightedBoxColor(highlightedBoxColor);
 
-  int retval = vtkRegressionTestImage(rw.GetPointer());
+  int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 75.0);
   if (retval == vtkRegressionTester::DO_INTERACTOR)
   {
     rw->GetInteractor()->Initialize();

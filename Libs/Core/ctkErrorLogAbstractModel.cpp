@@ -264,7 +264,7 @@ ctkErrorLogTerminalOutput::TerminalOutputs ctkErrorLogAbstractModel::terminalOut
 
 //------------------------------------------------------------------------------
 void ctkErrorLogAbstractModel::setTerminalOutputs(
-    const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutput)
+    ctkErrorLogTerminalOutput::TerminalOutputs terminalOutput)
 {
   Q_D(ctkErrorLogAbstractModel);
   d->StdErrTerminalOutput.setEnabled(terminalOutput & ctkErrorLogTerminalOutput::StandardOutput);
@@ -370,7 +370,7 @@ void ctkErrorLogAbstractModel::clear()
 }
 
 //------------------------------------------------------------------------------
-void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& logLevel,
+void ctkErrorLogAbstractModel::filterEntry(ctkErrorLogLevel::LogLevels logLevel,
                                            bool disableFilter)
 {
   Q_D(ctkErrorLogAbstractModel);

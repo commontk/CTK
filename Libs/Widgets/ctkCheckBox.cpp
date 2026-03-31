@@ -184,7 +184,7 @@ QIcon ctkCheckBox::indicatorIcon() const
 }
 
 // ----------------------------------------------------------------------------
-void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
+void ctkCheckBox::setIndicatorIconSize(QSize newSize)
 {
   Q_D(ctkCheckBox);
   d->IconStyle->IndicatorSize = newSize;

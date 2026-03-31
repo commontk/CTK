@@ -240,15 +240,15 @@ CTK_SET_CPP(ctkDICOMQuery, const QString&, setCalledAETitle, CalledAETitle);
 CTK_GET_CPP(ctkDICOMQuery, QString, calledAETitle, CalledAETitle)
 CTK_SET_CPP(ctkDICOMQuery, const QString&, setHost, Host);
 CTK_GET_CPP(ctkDICOMQuery, QString, host, Host)
-CTK_SET_CPP(ctkDICOMQuery, const int&, setPort, Port);
+CTK_SET_CPP(ctkDICOMQuery, int, setPort, Port);
 CTK_GET_CPP(ctkDICOMQuery, int, port, Port)
-CTK_SET_CPP(ctkDICOMQuery, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP(ctkDICOMQuery, int, setMaximumPatientsQuery, MaximumPatientsQuery);
 CTK_GET_CPP(ctkDICOMQuery, int, maximumPatientsQuery, MaximumPatientsQuery);
 CTK_SET_CPP(ctkDICOMQuery, const QString&, setJobUID, JobUID);
 CTK_GET_CPP(ctkDICOMQuery, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionTimeout(const int& timeout)
+void ctkDICOMQuery::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMQuery);
   d->SCU->setACSETimeout(timeout);

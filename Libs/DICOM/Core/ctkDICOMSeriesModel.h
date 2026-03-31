@@ -210,7 +210,7 @@ public:
 
 public slots:
   /// Update GUI from scheduler progress
-  void updateGUIFromScheduler(const QVariant&, const bool&);
+  void updateGUIFromScheduler(const QVariant&, bool);
   void onJobStarted(const QVariant& data);
   void onJobFinished(const QVariant& data);
   void onJobFailed(const QVariant& data);

@@ -951,7 +951,7 @@ void ctkDICOMStudyListView::clean()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::refreshStudiesModels(QList<ctkDICOMStudyModel*> models)
+void ctkDICOMStudyListView::refreshStudiesModels(const QList<ctkDICOMStudyModel*>& models)
 {
   Q_D(ctkDICOMStudyListView);
   QAbstractItemModel* model = this->model();
@@ -1737,7 +1737,7 @@ void ctkDICOMStudyListView::onSeriesSelectionChanged(const QString& studyInstanc
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::onSeriesContextMenuRequested(const QPoint& globalPos, const QStringList& selectedSeriesInstanceUIDs)
+void ctkDICOMStudyListView::onSeriesContextMenuRequested(QPoint globalPos, const QStringList& selectedSeriesInstanceUIDs)
 {
   Q_D(ctkDICOMStudyListView);
   Q_UNUSED(selectedSeriesInstanceUIDs);
@@ -1765,7 +1765,7 @@ void ctkDICOMStudyListView::onSeriesContextMenuRequested(const QPoint& globalPos
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::onStudyContextMenuRequested(const QPoint& globalPos, const QModelIndex& studyIndex)
+void ctkDICOMStudyListView::onStudyContextMenuRequested(QPoint globalPos, const QModelIndex& studyIndex)
 {
   Q_D(ctkDICOMStudyListView);
 
@@ -2027,7 +2027,7 @@ void ctkDICOMStudyListView::selectAllSeries(QItemSelectionModel::SelectionFlags 
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyListView::selectAllSeriesByPatient(QString patientUID,
+void ctkDICOMStudyListView::selectAllSeriesByPatient(const QString& patientUID,
                                                      QItemSelectionModel::SelectionFlags selectionMode)
 {
   Q_D(ctkDICOMStudyListView);
@@ -2073,7 +2073,7 @@ void ctkDICOMStudyListView::selectSeriesInstanceUIDs(const QStringList &seriesIn
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMStudyListView::selectedStudiesInstanceUIDsByPatient(QString patientUID) const
+QStringList ctkDICOMStudyListView::selectedStudiesInstanceUIDsByPatient(const QString& patientUID) const
 {
   if (!this->model())
   {
@@ -2108,7 +2108,7 @@ QStringList ctkDICOMStudyListView::selectedStudiesInstanceUIDsByPatient(QString 
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMStudyListView::selectedSeriesInstanceUIDsByPatient(QString patientUID) const
+QStringList ctkDICOMStudyListView::selectedSeriesInstanceUIDsByPatient(const QString& patientUID) const
 {
   if (!this->model())
   {
@@ -2179,13 +2179,13 @@ QStringList ctkDICOMStudyListView::selectedSeriesInstanceUIDs() const
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMStudyListView::numberOfStudiesSelectedByPatient(QString patientUID) const
+int ctkDICOMStudyListView::numberOfStudiesSelectedByPatient(const QString& patientUID) const
 {
   return this->selectedStudiesInstanceUIDsByPatient(patientUID).count();
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMStudyListView::numberOfSeriesSelectedByPatient(QString patientUID) const
+int ctkDICOMStudyListView::numberOfSeriesSelectedByPatient(const QString& patientUID) const
 {
   return this->selectedSeriesInstanceUIDsByPatient(patientUID).count();
 }

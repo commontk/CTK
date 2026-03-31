@@ -78,7 +78,7 @@ public:
 
   void init();
 
-  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode);
+  void importDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode);
 
   void importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode);
 
@@ -691,7 +691,7 @@ void ctkDICOMBrowser::setDatabaseDirectorySettingsKey(const QString& key)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMBrowser::setTagsToPrecache( const QStringList tags)
+void ctkDICOMBrowser::setTagsToPrecache( const QStringList& tags)
 {
   Q_D(ctkDICOMBrowser);
   d->DICOMDatabase->setTagsToPrecache(tags);
@@ -863,11 +863,11 @@ void ctkDICOMBrowser::onRepairAction()
   repairMessageBox->deleteLater();
 
   // Force refresh of table views
-  d->DICOMDatabase->databaseChanged();
+  emit d->DICOMDatabase->databaseChanged();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectoriesSelected(QStringList directories)
+void ctkDICOMBrowser::onImportDirectoriesSelected(const QStringList& directories)
 {
   Q_D(ctkDICOMBrowser);
   this->importDirectories(directories, this->importDirectoryMode());
@@ -904,7 +904,7 @@ void ctkDICOMBrowser::importFiles(const QStringList& files, ctkDICOMBrowser::Imp
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode)
+void ctkDICOMBrowser::importDirectories(const QStringList& directories, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
   if (!d->DICOMDatabase || !d->DICOMIndexer)
@@ -919,14 +919,14 @@ void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
+void ctkDICOMBrowser::importDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
   d->importDirectory(directory, mode);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
+void ctkDICOMBrowser::onImportDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   this->importDirectory(directory, mode);
 }
@@ -939,7 +939,7 @@ void ctkDICOMBrowser::waitForImportFinished()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowserPrivate::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
+void ctkDICOMBrowserPrivate::importDirectory(const QString& directory, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   if (!QDir(directory).exists())
   {
@@ -1040,7 +1040,7 @@ void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSe
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(QStringList uids)
+bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(const QStringList& uids)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1120,7 +1120,7 @@ bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(QStringList uids)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onPatientsRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1194,7 +1194,7 @@ void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onStudiesRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1272,7 +1272,7 @@ void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
+void ctkDICOMBrowser::onSeriesRightClicked(QPoint point)
 {
   Q_D(ctkDICOMBrowser);
 
@@ -1351,7 +1351,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
+void ctkDICOMBrowser::exportSeries(const QString& dirPath, const QStringList& uids)
 {
   Q_D(ctkDICOMBrowser);
 

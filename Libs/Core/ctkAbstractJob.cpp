@@ -178,7 +178,7 @@ QThread::Priority ctkAbstractJob::priority() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setPriority(const QThread::Priority &priority)
+void ctkAbstractJob::setPriority(QThread::Priority priority)
 {
   this->Priority = priority;
 }
@@ -208,7 +208,7 @@ QString ctkAbstractJob::runningThreadID() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setRunningThreadID(QString runningThreadID)
+void ctkAbstractJob::setRunningThreadID(const QString& runningThreadID)
 {
   this->RunningThreadID = runningThreadID;
 }
@@ -220,7 +220,7 @@ QString ctkAbstractJob::log() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::addLog(QString log)
+void ctkAbstractJob::addLog(const QString& log)
 {
   this->Log += log;
 }

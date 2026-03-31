@@ -37,7 +37,7 @@ struct ctkPixmapIconEngineEntry
     ctkPixmapIconEngineEntry():mode(QIcon::Normal), state(QIcon::Off){}
     ctkPixmapIconEngineEntry(const QPixmap &pm, QIcon::Mode m = QIcon::Normal, QIcon::State s = QIcon::Off)
         :pixmap(pm), size(pm.size()), mode(m), state(s){}
-    ctkPixmapIconEngineEntry(const QString &file, const QSize &sz = QSize(), QIcon::Mode m = QIcon::Normal, QIcon::State s = QIcon::Off)
+    ctkPixmapIconEngineEntry(const QString &file, QSize sz = QSize(), QIcon::Mode m = QIcon::Normal, QIcon::State s = QIcon::Off)
         :fileName(file), size(sz), mode(m), state(s){}
     QPixmap pixmap;
     QString fileName;
@@ -57,7 +57,7 @@ public:
     ~ctkPixmapIconEngine();
     void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
-    ctkPixmapIconEngineEntry *bestMatch(const QSize &size, QIcon::Mode mode, QIcon::State state, bool sizeOnly);
+    ctkPixmapIconEngineEntry *bestMatch(QSize size, QIcon::Mode mode, QIcon::State state, bool sizeOnly);
     QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state);
     void addPixmap(const QPixmap &pixmap, QIcon::Mode mode, QIcon::State state);
     void addFile(const QString &fileName, const QSize &size, QIcon::Mode mode, QIcon::State state);
@@ -70,7 +70,7 @@ public:
     void virtual_hook(int id, void *data);
 
 private:
-    ctkPixmapIconEngineEntry *tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state);
+    ctkPixmapIconEngineEntry *tryMatch(QSize size, QIcon::Mode mode, QIcon::State state);
     QVector<ctkPixmapIconEngineEntry> pixmaps;
 
     friend class QIconThemeEngine;

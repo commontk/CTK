@@ -30,7 +30,7 @@
 
 //----------------------------------------------------------------------------
 ctkEAScenario4EventConsumer::ctkEAScenario4EventConsumer(
-  ctkPluginContext* pluginContext, const QStringList topics,
+  ctkPluginContext* pluginContext, const QStringList& topics,
   int numSyncMsg, int numAsyncMsg, const QString& filter)
   : context(pluginContext), topicsToConsume(topics), filterToConsume(filter),
     asynchMessages(0), synchMessages(0), numSyncMessages(numSyncMsg),

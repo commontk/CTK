@@ -312,7 +312,7 @@ QRect ctkBasePopupWidgetPrivate::baseGeometry()const
 }
 
 // -------------------------------------------------------------------------
-QPoint ctkBasePopupWidgetPrivate::mapToGlobal(const QPoint& baseWidgetPoint)const
+QPoint ctkBasePopupWidgetPrivate::mapToGlobal(QPoint baseWidgetPoint)const
 {
   QPoint mappedPoint = baseWidgetPoint;
   if (!this->BaseWidget.isNull() && this->BaseWidget->parentWidget())

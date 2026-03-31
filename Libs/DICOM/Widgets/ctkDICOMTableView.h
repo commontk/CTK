@@ -64,7 +64,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView(QString queryTableName, QWidget* parent = 0);
+  explicit ctkDICOMTableView(const QString& queryTableName, QWidget* parent = 0);
 
   /**
    * ctor with tablename and database as parameter
@@ -72,7 +72,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName, QWidget* parent = 0);
+  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, const QString& queryTableName, QWidget* parent = 0);
 
   virtual ~ctkDICOMTableView();
 
@@ -159,7 +159,7 @@ public:
    * @param column Name of the column which is filtered using the operator
    * @param value Value that the filtered values must be greater than
    */
-  Q_INVOKABLE void addSqlGreaterWhereCondition(const QString& column, const QVariant value);
+  Q_INVOKABLE void addSqlGreaterWhereCondition(const QString& column, const QVariant& value);
 
   /**
    * @brief Remove all 'greater' WHERE conditions from a given column. \sa removeSqlGreaterWhereCondition
@@ -172,7 +172,7 @@ public:
    * @param column Name of the column which is filtered using the operator
    * @param value Value that the filtered values must be less than
    */
-  Q_INVOKABLE void addSqlLessWhereCondition(const QString& column, const QVariant value);
+  Q_INVOKABLE void addSqlLessWhereCondition(const QString& column, const QVariant& value);
 
   /**
    * @brief Remove all 'less' WHERE conditions from a given column. \sa removeSqlLessWhereCondition
@@ -185,7 +185,7 @@ public:
    * @param column Name of the column which is filtered using the operator
    * @param value Value that the filtered values must be greater than or equal to
    */
-  Q_INVOKABLE void addSqlGreaterEqualWhereCondition(const QString& column, const QVariant value);
+  Q_INVOKABLE void addSqlGreaterEqualWhereCondition(const QString& column, const QVariant& value);
 
   /**
    * @brief Remove all 'greater or equal' WHERE conditions from a given column. \sa removeSqlGreaterEqualWhereCondition
@@ -198,7 +198,7 @@ public:
    * @param column Name of the column which is filtered using the operator
    * @param value Value that the filtered values must be less than or equal to
    */
-  Q_INVOKABLE void addSqlLessEqualWhereCondition(const QString& column, const QVariant value);
+  Q_INVOKABLE void addSqlLessEqualWhereCondition(const QString& column, const QVariant& value);
 
   /**
    * @brief Remove all 'less or equal' WHERE conditions from a given column. \sa removeSqlLessEqualWhereCondition
@@ -285,7 +285,7 @@ public Q_SLOTS:
    * @param point the local point to translate to global
    * Emits customContextMenuRequested with the global point
    */
-  void onCustomContextMenuRequested(const QPoint &point);
+  void onCustomContextMenuRequested(QPoint point);
 
   /**
    * @brief Select all items in the view

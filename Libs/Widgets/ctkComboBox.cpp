@@ -240,7 +240,7 @@ void ctkComboBox::forceDefault(bool newForceDefault)
 }
 
 // -------------------------------------------------------------------------
-void ctkComboBox::setElideMode(const Qt::TextElideMode& newMode)
+void ctkComboBox::setElideMode(Qt::TextElideMode newMode)
 {
   Q_D(ctkComboBox);
   d->ElideMode = newMode;
@@ -392,7 +392,7 @@ QString ctkComboBox::currentUserDataAsString()const
 }
 
 // -------------------------------------------------------------------------
-void ctkComboBox::setCurrentUserDataAsString(QString userData)
+void ctkComboBox::setCurrentUserDataAsString(const QString& userData)
 {
   for (int index=0; index<this->count(); ++index)
   {

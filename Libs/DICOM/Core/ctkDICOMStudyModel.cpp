@@ -28,6 +28,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMStudyModel.h"
@@ -39,7 +40,7 @@
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMJob.h"
 
-static ctkLogger logger("org.commontk.DICOM.Core.ctkDICOMStudyModel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Core.ctkDICOMStudyModel"))
 
 //------------------------------------------------------------------------------
 // Helper function for setDicomDatabase/setScheduler
@@ -141,7 +142,7 @@ ctkDICOMStudyModelPrivate::ctkDICOMStudyModelPrivate(ctkDICOMStudyModel& obj)
   this->NumberOfOpenedStudies = 2;
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->ModalityFilter = ctkDICOMModalities::AllModalities();
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
 
   if (!this->DicomDatabase)
   {
-    logger.error("populateStudies: No database set");
+    logger->error("populateStudies: No database set");
     return;
   }
 
@@ -579,7 +580,7 @@ void ctkDICOMStudyModelPrivate::updateFilteredSeriesCounts()
     study.isQueryResult = isQueryResult;
   }
 
-  q->emit dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
+  emit q->dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
 }
 
 //------------------------------------------------------------------------------
@@ -604,7 +605,7 @@ ctkDICOMSeriesModel* ctkDICOMStudyModelPrivate::createSeriesModel(const QString&
 
   if (!this->DicomDatabase)
   {
-    logger.warn("createSeriesModel: No database set");
+    logger->warn("createSeriesModel: No database set");
     return nullptr;
   }
 
@@ -1150,7 +1151,7 @@ void ctkDICOMStudyModel::setDateFilter(DateType dateType)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyModel::setCustomDateRange(const QDate& startDate, const QDate& endDate)
+void ctkDICOMStudyModel::setCustomDateRange(QDate startDate, QDate endDate)
 {
   Q_D(ctkDICOMStudyModel);
 

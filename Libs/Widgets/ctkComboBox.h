@@ -75,7 +75,7 @@ public:
 
   /// setElideMode can elide the text displayed on the combobox.
   /// Qt::ElideNone by default (same behavior as QComboBox)
-  void setElideMode(const Qt::TextElideMode& newMode);
+  void setElideMode(Qt::TextElideMode newMode);
   Qt::TextElideMode elideMode()const;
 
   /// \tbd turn into flags ?
@@ -110,7 +110,7 @@ public:
 
 public slots:
   /// Set current item based on user data
-  void setCurrentUserDataAsString(QString userData);
+  void setCurrentUserDataAsString(const QString& userData);
 
 protected:
   /// Reimplemented for internal reasons

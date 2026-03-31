@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMThumbnailGenerator.h"
@@ -30,7 +31,7 @@
 #include "ctkDICOMThumbnailGeneratorJob.h"
 #include "ctkDICOMScheduler.h"
 
-static ctkLogger logger ("org.commontk.dicom.DICOMRetrieveWorker");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMRetrieveWorker"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMThumbnailGeneratorWorkerPrivate methods
@@ -97,7 +98,7 @@ void ctkDICOMThumbnailGeneratorWorker::run()
 
   thumbnailGeneratorJob->setStatus(ctkAbstractJob::JobStatus::Running);
 
-  logger.debug(QString("ctkDICOMThumbnailGeneratorWorker : running job %1 in thread %2.\n")
+  logger->debug(QString("ctkDICOMThumbnailGeneratorWorker : running job %1 in thread %2.\n")
                        .arg(thumbnailGeneratorJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
@@ -130,7 +131,7 @@ void ctkDICOMThumbnailGeneratorWorker::run()
   jobResponseSet->setSOPInstanceUID(thumbnailGeneratorJob->sopInstanceUID());
   jobResponseSet->setJobUID(thumbnailGeneratorJob->jobUID());
 
-  thumbnailGeneratorJob->progressJobDetail(jobResponseSet->toVariant());
+  emit thumbnailGeneratorJob->progressJobDetail(jobResponseSet->toVariant());
   thumbnailGeneratorJob->setStatus(ctkAbstractJob::JobStatus::Finished);
 }
 

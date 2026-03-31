@@ -23,12 +23,13 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMStorageListenerJob_p.h"
 #include "ctkDICOMStorageListenerWorker.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMStorageListenerJob" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMStorageListenerJob"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerJobPrivate methods
@@ -65,9 +66,9 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
 //------------------------------------------------------------------------------
-CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setPort, Port);
+CTK_SET_CPP(ctkDICOMStorageListenerJob, int, setPort, Port);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, int, port, Port)
-CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setConnectionTimeout, ConnectionTimeout);
+CTK_SET_CPP(ctkDICOMStorageListenerJob, int, setConnectionTimeout, ConnectionTimeout);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, int, connectionTimeout, ConnectionTimeout)
 CTK_SET_CPP(ctkDICOMStorageListenerJob, const QString&, setAETitle, AETitle);
 CTK_GET_CPP(ctkDICOMStorageListenerJob, QString, AETitle, AETitle)

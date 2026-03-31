@@ -71,16 +71,16 @@ public:
   int cornerRadius() const;
 
   /// Check if a point is within the context menu button area
-  bool isContextMenuButtonAt(const QPoint& pos, const QRect& itemRect, const QModelIndex& index) const;
+  bool isContextMenuButtonAt(QPoint pos, QRect itemRect, const QModelIndex& index) const;
 
   /// Get the context menu button rect
-  QRect contextMenuButtonRect(const QRect& itemRect, const QModelIndex& index) const;
+  QRect contextMenuButtonRect(QRect itemRect, const QModelIndex& index) const;
 
   /// Check if a point is within the status button area
-  bool isStatusButtonAt(const QPoint& pos, const QRect& itemRect, const QModelIndex& index) const;
+  bool isStatusButtonAt(QPoint pos, QRect itemRect, const QModelIndex& index) const;
 
   /// Get the status button rect
-  QRect statusButtonRect(const QRect& itemRect, const QModelIndex& index) const;
+  QRect statusButtonRect(QRect itemRect, const QModelIndex& index) const;
 
 Q_SIGNALS:
   /// Emitted when spacing changes
@@ -91,37 +91,37 @@ Q_SIGNALS:
 
 protected:
   /// Paint the thumbnail area
-  void paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnail(QPainter* painter, QRect rect, const QModelIndex& index) const;
 
   /// Paint the text information
-  void paintText(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintText(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint overlay information on thumbnail
-  void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnailOverlay(QPainter* painter, QRect rect, const QModelIndex& index) const;
 
   /// Paint cloud/downloading status button in top-right corner of thumbnail
-  void paintStatusButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintStatusButton(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint progress bar below thumbnail when downloading
-  void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintProgressBar(QPainter* painter, QRect rect, const QModelIndex& index) const;
 
   /// Paint the selection state
-  void paintSelection(QPainter* painter, const QRect& rect, const QStyleOptionViewItem& option) const;
+  void paintSelection(QPainter* painter, QRect rect, const QStyleOptionViewItem& option) const;
 
   /// Paint the context menu button (3 dots) when hovering or when context menu is active
-  void paintContextMenuButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+  void paintContextMenuButton(QPainter* painter, QRect rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Get the selection highlight rect (contentRect minus selection margins)
-  QRect selectionRect(const QRect& itemRect) const;
+  QRect selectionRect(QRect itemRect) const;
 
   /// Get the thumbnail rect within the item rect
-  QRect thumbnailRect(const QRect& itemRect, const QModelIndex& index) const;
+  QRect thumbnailRect(QRect itemRect, const QModelIndex& index) const;
 
   /// Get the progress bar rect within the item rect
-  QRect progressBarRect(const QRect& itemRect, const QModelIndex& index) const;
+  QRect progressBarRect(QRect itemRect, const QModelIndex& index) const;
 
   /// Get the text rect within the item rect
-  QRect textRect(const QRect& itemRect, const QModelIndex& index) const;
+  QRect textRect(QRect itemRect, const QModelIndex& index) const;
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMSeriesDelegate);

@@ -23,13 +23,14 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h" // For ctkDICOMJobDetail
 #include "ctkDICOMThumbnailGeneratorJob_p.h"
 #include "ctkDICOMThumbnailGeneratorWorker.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGeneratorJob" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMThumbnailGeneratorJob"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMThumbnailGeneratorJobPrivate methods
@@ -48,11 +49,11 @@ ctkDICOMThumbnailGeneratorJobPrivate::~ctkDICOMThumbnailGeneratorJobPrivate()
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, databaseFilename, DatabaseFilename);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setDatabaseFilename, DatabaseFilename);
+CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, const QString&, setDatabaseFilename, DatabaseFilename);
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, dicomFilePath, DicomFilePath);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setDicomFilePath, DicomFilePath);
+CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, const QString&, setDicomFilePath, DicomFilePath);
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QString, modality, Modality);
-CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QString, setModality, Modality);
+CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, const QString&, setModality, Modality);
 CTK_GET_CPP(ctkDICOMThumbnailGeneratorJob, QColor, backgroundColor, BackgroundColor);
 CTK_SET_CPP(ctkDICOMThumbnailGeneratorJob, QColor, setBackgroundColor, BackgroundColor);
 

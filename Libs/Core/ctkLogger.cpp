@@ -37,7 +37,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkLogger::ctkLogger(QString name, QObject* _parent)
+ctkLogger::ctkLogger(const QString& name, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new ctkLoggerPrivate)
 {
@@ -108,7 +108,7 @@ void ctkLogger::fatal(const QString& s)
 }
 
 //-----------------------------------------------------------------------------
-void ctkLogger::setLogLevel(const ctkErrorLogLevel::LogLevel& level)
+void ctkLogger::setLogLevel(ctkErrorLogLevel::LogLevel level)
 {
   Q_D(ctkLogger);
   d->LogLevel = level;

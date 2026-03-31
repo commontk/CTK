@@ -53,7 +53,7 @@ public:
   /// Resize the indicator icon to Qsize.
   /// If newSize is bigger than the indicator icon's maximum size,
   /// The icon will get the icon's maximum size and not newSize.
-  void setIndicatorIconSize(const QSize& newSize);
+  void setIndicatorIconSize(QSize newSize);
   QSize indicatorIconSize() const;
 
 protected:

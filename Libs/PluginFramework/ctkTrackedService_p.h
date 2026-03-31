@@ -72,7 +72,7 @@ private:
    * @return Customized object for the tracked item or <code>null</code>
    *         if the item is not to be tracked.
    */
-  T customizerAdding(ctkServiceReference item, const ctkServiceEvent& related);
+  T customizerAdding(const ctkServiceReference& item, const ctkServiceEvent& related);
 
   /**
    * Call the specific customizer modified method. This method must not be
@@ -82,7 +82,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerModified(ctkServiceReference item,
+  void customizerModified(const ctkServiceReference& item,
                           const ctkServiceEvent& related, T object) ;
 
   /**
@@ -93,7 +93,7 @@ private:
    * @param related Action related object.
    * @param object Customized object for the tracked item.
    */
-  void customizerRemoved(ctkServiceReference item,
+  void customizerRemoved(const ctkServiceReference& item,
                          const ctkServiceEvent& related, T object) ;
 };
 

@@ -161,7 +161,7 @@ public:
   void setDateFilter(DateType dateType);
 
   /// Set custom date range filter (when dateFilter is CustomRange)
-  void setCustomDateRange(const QDate& startDate, const QDate& endDate);
+  void setCustomDateRange(QDate startDate, QDate endDate);
   QDate customStartDate() const;
   QDate customEndDate() const;
 

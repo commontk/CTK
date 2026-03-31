@@ -51,10 +51,10 @@ void ctkPixmapIconEngine::paint(QPainter *painter, const QRect &rect, QIcon::Mod
     painter->drawPixmap(rect, pixmap(pixmapSize, mode, state));
 }
 
-static inline int area(const QSize &s) { return s.width() * s.height(); }
+static inline int area(QSize s) { return s.width() * s.height(); }
 
 // returns the smallest of the two that is still larger than or equal to size.
-static ctkPixmapIconEngineEntry *bestSizeMatch( const QSize &size, ctkPixmapIconEngineEntry *pa, ctkPixmapIconEngineEntry *pb)
+static ctkPixmapIconEngineEntry *bestSizeMatch( QSize size, ctkPixmapIconEngineEntry *pa, ctkPixmapIconEngineEntry *pb)
 {
     int s = area(size);
     if (pa->size == QSize() && pa->pixmap.isNull()) {
@@ -77,7 +77,7 @@ static ctkPixmapIconEngineEntry *bestSizeMatch( const QSize &size, ctkPixmapIcon
     return pb;
 }
 
-ctkPixmapIconEngineEntry *ctkPixmapIconEngine::tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state)
+ctkPixmapIconEngineEntry *ctkPixmapIconEngine::tryMatch(QSize size, QIcon::Mode mode, QIcon::State state)
 {
     ctkPixmapIconEngineEntry *pe = 0;
     for (int i = 0; i < pixmaps.count(); ++i)
@@ -91,7 +91,7 @@ ctkPixmapIconEngineEntry *ctkPixmapIconEngine::tryMatch(const QSize &size, QIcon
 }
 
 
-ctkPixmapIconEngineEntry *ctkPixmapIconEngine::bestMatch(const QSize &size, QIcon::Mode mode, QIcon::State state, bool sizeOnly)
+ctkPixmapIconEngineEntry *ctkPixmapIconEngine::bestMatch(QSize size, QIcon::Mode mode, QIcon::State state, bool sizeOnly)
 {
     ctkPixmapIconEngineEntry *pe = tryMatch(size, mode, state);
     while (!pe){
