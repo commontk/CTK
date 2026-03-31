@@ -237,6 +237,8 @@ if(CTK_USE_QTTESTING)
 #    SIMPLE_TEST( ctkVTKSliceViewEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1 )
+    set_tests_properties(ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1
+      PROPERTIES LABELS "ModalDialogHang" DISABLED TRUE)
 #    SIMPLE_TEST( ctkVTKThresholdWidgetEventTranslatorPlayerTest1 )
 #    SIMPLE_TEST( ctkVTKVolumePropertyWidgetEventTranslatorPlayerTest1 )
 endif()
