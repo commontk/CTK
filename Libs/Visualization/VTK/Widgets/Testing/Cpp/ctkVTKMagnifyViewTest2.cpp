@@ -25,6 +25,7 @@
 #include <QIcon>
 #include <QSignalSpy>
 #include <QStyle>
+#include <QEventLoop>
 #include <QTimer>
 
 // CTK includes
@@ -116,13 +117,12 @@ bool runBaselineTest(int time, QApplication& app, ctkVTKMagnifyView * magnify,
                      const QString& baselineDirectory, const QString& testName,
                      const QString& testNumber, const QString& errorMessage)
 {
-  QTimer::singleShot(time, &app, SLOT(quit()));
-  if (app.exec() == EXIT_FAILURE)
-  {
-    std::cerr << "ctkVTKMagnifyView exec failed when "
-        << qPrintable(errorMessage) << std::endl;
-    return false;
-  }
+  Q_UNUSED(app);
+  // Use a local event loop instead of QApplication::quit() which
+  // closes all top-level windows in Qt6.
+  QEventLoop loop;
+  QTimer::singleShot(time, &loop, SLOT(quit()));
+  loop.exec();
   if (underWidget->underMouse() != shouldBeUnder)
   {
     std::cerr << "ctkMagnifyView mouse position failed when "
@@ -320,12 +320,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   // Get crosshair points of interest, used in the following tests
   parentWidget.move(0,0);
   parentWidget.show();
-  QTimer::singleShot(time, &app, SLOT(quit()));
-  if (app.exec() == EXIT_FAILURE)
-  {
-    std::cerr << "ctkVTKMagnifyView:show failed the first time." << std::endl;
-    return EXIT_FAILURE;
-  }
+  { QEventLoop loop; QTimer::singleShot(time, &loop, SLOT(quit())); loop.exec(); }
   QPoint insideSlice0 = allSliceViews[0]->mapToGlobal(
         QPoint(allSliceViews[0]->width()/2 + 100, allSliceViews[0]->height()/2 + 100));
   QPoint outside = parentWidget.mapToGlobal(
