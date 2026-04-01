@@ -56,6 +56,10 @@
 #include <dcmtk/dcmjpeg/djencode.h>  /* for dcmjpeg encoders */
 #include <dcmtk/dcmdata/dcrledrg.h>  /* for DcmRLEDecoderRegistration */
 #include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
+#ifdef DCMTK_WITH_DCMJP2KCS
+#include <dcmtk/dcmjp2kcs/dj2kdecode.h>  /* for DJ2KDecoderRegistration */
+#include <dcmtk/dcmjp2kcs/dj2kencode.h>  /* for DJ2KEncoderRegistration */
+#endif
 
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
@@ -117,6 +121,12 @@ void ctkDICOMDatabasePrivate::registerCompressionLibraries()
   DcmRLEEncoderRegistration::registerCodecs();
   // register RLE decompression codec
   DcmRLEDecoderRegistration::registerCodecs();
+#ifdef DCMTK_WITH_DCMJP2KCS
+  // register JPEG 2000 decompression codec
+  DJ2KDecoderRegistration::registerCodecs();
+  // register JPEG 2000 compression codec
+  DJ2KEncoderRegistration::registerCodecs();
+#endif
 }
 
 //------------------------------------------------------------------------------
