@@ -37,22 +37,22 @@
 namespace {
 
 // Constants for configuration location discovery
-static const QString CTK = "commontk";
-static const QString PRODUCT_SITE_MARKER = ".commontkproduct";
-static const QString PRODUCT_SITE_ID = "id";
-static const QString PRODUCT_SITE_VERSION = "version";
+static constexpr QLatin1String CTK{"commontk", static_cast<int>(sizeof("commontk") - 1)};
+static constexpr QLatin1String PRODUCT_SITE_MARKER{".commontkproduct", static_cast<int>(sizeof(".commontkproduct") - 1)};
+static constexpr QLatin1String PRODUCT_SITE_ID{"id", static_cast<int>(sizeof("id") - 1)};
+static constexpr QLatin1String PRODUCT_SITE_VERSION{"version", static_cast<int>(sizeof("version") - 1)};
 
-static const QString CONFIG_DIR = "configuration";
+static constexpr QLatin1String CONFIG_DIR{"configuration", static_cast<int>(sizeof("configuration") - 1)};
 
 // Data mode constants for user, configuration and data locations.
-static const QString NONE = "@none";
-static const QString NO_DEFAULT = "@noDefault";
-static const QString USER_HOME = "@user.home";
-static const QString USER_DIR = "@user.dir";
+static constexpr QLatin1String NONE{"@none", static_cast<int>(sizeof("@none") - 1)};
+static constexpr QLatin1String NO_DEFAULT{"@noDefault", static_cast<int>(sizeof("@noDefault") - 1)};
+static constexpr QLatin1String USER_HOME{"@user.home", static_cast<int>(sizeof("@user.home") - 1)};
+static constexpr QLatin1String USER_DIR{"@user.dir", static_cast<int>(sizeof("@user.dir") - 1)};
 // Placeholder for hashcode of installation directory
-static const QString INSTALL_HASH_PLACEHOLDER = "@install.hash";
+static constexpr QLatin1String INSTALL_HASH_PLACEHOLDER{"@install.hash", static_cast<int>(sizeof("@install.hash") - 1)};
 
-static const QString INSTANCE_DATA_AREA_PREFIX = ".metadata/.plugins/";
+static constexpr QLatin1String INSTANCE_DATA_AREA_PREFIX{".metadata/.plugins/", static_cast<int>(sizeof(".metadata/.plugins/") - 1)};
 
 static QScopedPointer<ctkBasicLocation> installLocation;
 static QScopedPointer<ctkBasicLocation> configurationLocation;
@@ -138,7 +138,7 @@ ctkBasicLocation* BuildLocation(const QString& property, const QUrl& defaultLoca
   int idx = location.indexOf(INSTALL_HASH_PLACEHOLDER);
   if (idx == 0)
   {
-    throw ctkRuntimeException("The location cannot start with '" + INSTALL_HASH_PLACEHOLDER + "': " + location);
+    throw ctkRuntimeException(QString("The location cannot start with '") + INSTALL_HASH_PLACEHOLDER + "': " + location);
   }
   else if (idx > 0)
   {
@@ -280,7 +280,7 @@ static QString ComputeDefaultUserAreaLocation(const QString& pathAppendage)
   QFileInfo installDir(installURL.toLocalFile());
   QString installDirHash = GetInstallDirHash();
 
-  QString appName = "." + CTK;
+  QString appName = QString(".") + CTK;
   QFileInfo ctkProduct(QDir(installDir.absoluteFilePath()), PRODUCT_SITE_MARKER);
   if (ctkProduct.exists())
   {
