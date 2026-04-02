@@ -24,7 +24,6 @@
 // ctkCore includes
 #include <ctkLogger.h>
 #include <QGlobalStatic>
-#include <ctkJobScheduler_p.h>
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
