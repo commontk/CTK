@@ -142,6 +142,37 @@ void ctkXMLEventObserver::setStream(QTextStream* stream)
 }
 
 //-----------------------------------------------------------------------------
+/// Return a copy of \a str with characters that are illegal in XML 1.0
+/// attribute values removed.
+///
+/// XML 1.0 only allows: #x9 (tab), #xA (LF), #xD (CR), and #x20 and above.
+/// Characters in the range #x1–#x8, #xB–#xC, #xE–#x1F are prohibited even
+/// as numeric character references (e.g. &#8; is invalid).  QXmlStreamWriter
+/// passes them through as raw bytes, producing malformed XML that fails
+/// validation (QtXmlPatterns FODC0002).
+///
+/// Carriage return (#xD) is legal and QXmlStreamWriter encodes it as &#13;
+/// so it round-trips correctly through the XML reader.
+static QString xmlSafeArguments(const QString& str)
+{
+  QString safe;
+  safe.reserve(str.size());
+  for (const QChar& ch : str)
+  {
+    const ushort code = ch.unicode();
+    // Keep: tab (#x9), LF (#xA), CR (#xD), and everything >= space (#x20)
+    if (code == 0x09 || code == 0x0A || code == 0x0D || code >= 0x20)
+    {
+      safe.append(ch);
+    }
+    // All other control characters (0x01–0x08, 0x0B–0x0C, 0x0E–0x1F) are
+    // dropped.  For key events, the key() code field already identifies the
+    // key; the text() field is only meaningful for printable characters.
+  }
+  return safe;
+}
+
+//-----------------------------------------------------------------------------
 void ctkXMLEventObserver::onRecordEvent(const QString& widget,
                                         const QString& command,
                                         const QString& arguments,
@@ -152,7 +183,7 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
     this->XMLStream->writeStartElement("event");
     this->XMLStream->writeAttribute("widget", widget);
     this->XMLStream->writeAttribute("command", command);
-    this->XMLStream->writeAttribute("arguments", arguments);
+    this->XMLStream->writeAttribute("arguments", xmlSafeArguments(arguments));
     this->XMLStream->writeAttribute("type", ctkQtTestingUtility::eventTypeToString(eventType));
     this->XMLStream->writeEndElement();
     if (this->Stream)
