@@ -41,6 +41,7 @@
 #include "ctkDICOMIndexer.h"
 #include "ctkDICOMIndexer_p.h"
 #include "ctkDICOMDatabase.h"
+#include <QGlobalStatic>
 
 // STD includes
 #include <atomic>
@@ -61,7 +62,7 @@
 
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMIndexer" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMIndexer"))
 
 /// How many files to parse before inserting results into the database.
 /// Increasing cache size increases maximum memory usage, very low cache size
@@ -147,7 +148,7 @@ void ctkDICOMIndexerPrivateWorker::start()
     imagesCountAfter = database.imagesCount();
 
     double elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    logger.info(QString("DICOM indexer has updated display fields for %1 files [%2s]")
+    logger->info(QString("DICOM indexer has updated display fields for %1 files [%2s]")
                 .arg(imagesCountAfter-imagesCountBefore).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
   // restart if new requests has been queued during displayed fields update
@@ -284,7 +285,7 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
       }
       else
       {
-        logger.warn(QString("Could not read DICOM file:") + filePath);
+        logger->warn(QString("Could not read DICOM file:") + filePath);
       }
     }
 
@@ -296,7 +297,7 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
 
   if (alreadyAddedFileCount > 0)
   {
-    logger.debug(
+    logger->debug(
       QString("Skipped %1 files that were already in the database: %2...")
       .arg(alreadyAddedFileCount)
       .arg(alreadyAddedFiles.join(", "))
@@ -311,7 +312,7 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   }
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  logger.info(QString("DICOM indexer has successfully processed %1 files [%2s]")
+  logger->info(QString("DICOM indexer has successfully processed %1 files [%2s]")
               .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 }
 
@@ -344,7 +345,7 @@ void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDataba
   std::thread([](QList<ctkDICOMDatabase::IndexingResult> results) { results.clear(); }, std::move(indexingResults)).detach();
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  logger.info(QString("DICOM indexer has successfully inserted %1 files [%2s]")
+  logger->info(QString("DICOM indexer has successfully inserted %1 files [%2s]")
               .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
 }
@@ -632,10 +633,10 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
   {
     while ((patientRecord = rootRecord->nextSub(patientRecord)) != NULL)
     {
-      logger.debug( "Reading new Patient:" );
+      logger->debug( "Reading new Patient:" );
       if (patientRecord->findAndGetOFString(DCM_PatientName, patientsName).bad())
       {
-        logger.warn(
+        logger->warn(
           QString("DICOMDIR file at %1 is invalid: patient name not found. "
              "All records belonging to this patient will be ignored.")
           .arg(directoryName)
@@ -643,13 +644,13 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
         success = false;
         continue;
       }
-      logger.debug( "Patient's Name: " + QString(patientsName.c_str()) );
+      logger->debug( "Patient's Name: " + QString(patientsName.c_str()) );
       while ((studyRecord = patientRecord->nextSub(studyRecord)) != NULL)
       {
-        logger.debug( "Reading new Study:" );
+        logger->debug( "Reading new Study:" );
         if (studyRecord->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).bad())
         {
-          logger.warn(
+          logger->warn(
             QString("DICOMDIR file at %1 is invalid: study instance UID not found for patient %2. "
                "All records belonging to this study will be ignored.")
             .arg(directoryName)
@@ -658,14 +659,14 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
           success = false;
           continue;
         }
-        logger.debug( "Study instance UID: " + QString(studyInstanceUID.c_str()) );
+        logger->debug( "Study instance UID: " + QString(studyInstanceUID.c_str()) );
 
         while ((seriesRecord = studyRecord->nextSub(seriesRecord)) != NULL)
         {
-          logger.debug( "Reading new Series:" );
+          logger->debug( "Reading new Series:" );
           if (seriesRecord->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).bad())
           {
-            logger.warn(
+            logger->warn(
               QString("DICOMDIR file at %1 is invalid: series instance UID not found for patient %2, study %3. "
                  "All records belonging to this series will be ignored.")
               .arg(directoryName)
@@ -675,14 +676,14 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
             success = false;
             continue;
           }
-          logger.debug( "Series instance UID: " + QString(seriesInstanceUID.c_str()) );
+          logger->debug( "Series instance UID: " + QString(seriesInstanceUID.c_str()) );
 
           while ((fileRecord = seriesRecord->nextSub(fileRecord)) != NULL)
           {
             if (fileRecord->findAndGetOFStringArray(DCM_ReferencedSOPInstanceUIDInFile, sopInstanceUID).bad()
               || fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).bad())
             {
-              logger.warn(
+              logger->warn(
                 QString("DICOMDIR file at %1 is invalid: "
                    "referenced SOP instance UID or file name is invalid for patient %2, study %3, series %4. "
                    "This file will be ignored.")
@@ -706,8 +707,9 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
       }
     }
     float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    logger.info(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
-                .arg(directoryName, QString::number(elapsedTimeInSeconds,'f', 2)));
+    logger->info(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
+                .arg(directoryName)
+                .arg(QString::number(elapsedTimeInSeconds,'f', 2)));
     this->addListOfFiles(listOfInstances, copyFile);
   }
   return success;

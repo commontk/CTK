@@ -45,7 +45,7 @@
 // STD includes
 #include <iostream>
 
-static ctkLogger logger("org.commontk.Widgets.ctkThumbnailListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.Widgets.ctkThumbnailListWidget"))
 
 //----------------------------------------------------------------------------
 // ctkThumbnailListWidgetPrivate methods
@@ -209,7 +209,7 @@ void ctkThumbnailListWidget::setCurrentThumbnail(int index)
 
   int count = d->ScrollAreaContentWidget->layout()->count();
 
-  logger.debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
+  logger->debug("Select thumbnail " + QVariant(index).toString() + " of " + QVariant(count).toString());
 
   if(index >= count)return;
 
