@@ -171,6 +171,14 @@ set(CTK_PATCH_VERSION 0)
 set(CTK_VERSION
     "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_PATCH_VERSION}")
 
+# CTK_DISABLE_DEPRECATED_BEFORE controls which deprecated CTK APIs are compiled in.
+# Set to a version hex value to hide APIs deprecated before that version.
+# Format: 0xMMmmpp (major, minor, patch each one byte).
+# Example: -DCTK_DISABLE_DEPRECATED_BEFORE=0x000100 hides APIs deprecated since 0.1.x.
+# Default 0x000000 keeps all deprecated APIs available.
+set(CTK_DISABLE_DEPRECATED_BEFORE "0x000000" CACHE STRING
+    "Disable CTK APIs deprecated before this version (hex: 0xMMmmpp)")
+
 # Append the library version information to the library target
 # properties.  A parent project may set its own properties and/or may
 # block this.

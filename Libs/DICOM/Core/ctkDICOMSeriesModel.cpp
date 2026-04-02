@@ -132,7 +132,7 @@ ctkDICOMSeriesModelPrivate::ctkDICOMSeriesModelPrivate(ctkDICOMSeriesModel& obj)
   this->Scheduler = nullptr;
   this->PatientID = "";
   this->StudyFilter = "";
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->ModalityFilter = ctkDICOMModalities::allModalities();
   this->SeriesDescriptionFilter = "";
 }
 

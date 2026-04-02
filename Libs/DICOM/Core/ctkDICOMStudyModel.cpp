@@ -141,7 +141,7 @@ ctkDICOMStudyModelPrivate::ctkDICOMStudyModelPrivate(ctkDICOMStudyModel& obj)
   this->NumberOfOpenedStudies = 2;
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->ModalityFilter = ctkDICOMModalities::allModalities();
 }
 
 //------------------------------------------------------------------------------
