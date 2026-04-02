@@ -24,6 +24,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// Qt includes
+#include <QGlobalStatic>
+
 // CTK includes
 #include <ctkAbstractJob.h> // For ctkJobDetail
 #include <ctkBooleanMapper.h>
@@ -40,7 +43,7 @@
 // for non-static methods.
 //
 
-static ctkLogger logger("org.commontk.core.ctkCorePythonQtDecorators");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.core.ctkCorePythonQtDecorators"))
 
 /// \ingroup Core
 class ctkCorePythonQtDecorators : public QObject
@@ -250,7 +253,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setJobClass - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setJobClass - Invalid ctkJobDetail");
       return;
     }
 
@@ -260,7 +263,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::jobClass - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::jobClass - Invalid ctkJobDetail");
       return "";
     }
 
@@ -271,7 +274,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setJobUID - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setJobUID - Invalid ctkJobDetail");
       return;
     }
 
@@ -281,7 +284,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::JobUID - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::JobUID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -292,7 +295,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setCreationDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setCreationDateTime - Invalid ctkJobDetail");
       return;
     }
 
@@ -302,7 +305,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::creationDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::creationDateTime - Invalid ctkJobDetail");
       return "";
     }
 
@@ -313,7 +316,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setStartDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setStartDateTime - Invalid ctkJobDetail");
       return;
     }
 
@@ -323,7 +326,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::startDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::startDateTime - Invalid ctkJobDetail");
       return "";
     }
 
@@ -334,7 +337,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setCompletionDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setCompletionDateTime - Invalid ctkJobDetail");
       return;
     }
 
@@ -344,7 +347,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::completionDateTime - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::completionDateTime - Invalid ctkJobDetail");
       return "";
     }
 
@@ -355,7 +358,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setRunningThreadID - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setRunningThreadID - Invalid ctkJobDetail");
       return;
     }
 
@@ -365,7 +368,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::runningThreadID - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::runningThreadID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -376,7 +379,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::setLogging - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::setLogging - Invalid ctkJobDetail");
       return;
     }
     td->Logging = logging;
@@ -385,7 +388,7 @@ public Q_SLOTS:
   {
     if (td == nullptr)
     {
-      logger.error("ctkJobDetail::logging - Invalid ctkJobDetail");
+      logger->error("ctkJobDetail::logging - Invalid ctkJobDetail");
       return "";
     }
 

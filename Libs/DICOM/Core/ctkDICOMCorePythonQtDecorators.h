@@ -24,6 +24,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// Qt includes
+#include <QGlobalStatic>
+
 // CTK Core includes
 #include <ctkLogger.h>
 
@@ -40,7 +43,7 @@
 // for non-static methods.
 //
 
-static ctkLogger logger("org.commontk.core.ctkDICOMCorePythonQtDecorators");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.core.ctkDICOMCorePythonQtDecorators"))
 
 /// \ingroup DICOM_Core
 class ctkDICOMCorePythonQtDecorators : public QObject
@@ -69,7 +72,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setPatientID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setPatientID - Invalid ctkJobDetail");
       return;
     }
 
@@ -79,7 +82,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::patientID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::patientID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -90,7 +93,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setStudyInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setStudyInstanceUID - Invalid ctkJobDetail");
       return;
     }
 
@@ -100,7 +103,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::studyInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::studyInstanceUID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -111,7 +114,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setSeriesInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setSeriesInstanceUID - Invalid ctkJobDetail");
       return;
     }
 
@@ -121,7 +124,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::seriesInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::seriesInstanceUID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -132,7 +135,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setSOPInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setSOPInstanceUID - Invalid ctkJobDetail");
       return;
     }
 
@@ -142,7 +145,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::sopInstanceUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::sopInstanceUID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -153,7 +156,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setReferenceInserterJobUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setReferenceInserterJobUID - Invalid ctkJobDetail");
       return;
     }
 
@@ -163,7 +166,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::referenceInserterJobUID - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::referenceInserterJobUID - Invalid ctkJobDetail");
       return "";
     }
 
@@ -174,7 +177,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setQueriedPatientIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setQueriedPatientIDs - Invalid ctkJobDetail");
       return;
     }
 
@@ -184,7 +187,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::queriedPatientIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::queriedPatientIDs - Invalid ctkJobDetail");
       return QStringList();
     }
 
@@ -195,7 +198,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setQueriedStudyInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setQueriedStudyInstanceUIDs - Invalid ctkJobDetail");
       return;
     }
 
@@ -205,7 +208,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::queriedStudyInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::queriedStudyInstanceUIDs - Invalid ctkJobDetail");
       return QStringList();
     }
 
@@ -216,7 +219,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setQueriedSeriesInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setQueriedSeriesInstanceUIDs - Invalid ctkJobDetail");
       return;
     }
 
@@ -226,7 +229,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::queriedSeriesInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::queriedSeriesInstanceUIDs - Invalid ctkJobDetail");
       return QStringList();
     }
 
@@ -237,7 +240,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setQueriedSOPInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setQueriedSOPInstanceUIDs - Invalid ctkJobDetail");
       return;
     }
 
@@ -247,7 +250,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::queriedSOPInstanceUIDs - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::queriedSOPInstanceUIDs - Invalid ctkJobDetail");
       return QStringList();
     }
 
@@ -258,7 +261,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setConnectionName - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setConnectionName - Invalid ctkJobDetail");
       return;
     }
 
@@ -268,7 +271,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::connectionName - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::connectionName - Invalid ctkJobDetail");
       return "";
     }
 
@@ -279,7 +282,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setDICOMLevel - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setDICOMLevel - Invalid ctkJobDetail");
       return;
     }
 
@@ -289,7 +292,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::DICOMLevel - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::DICOMLevel - Invalid ctkJobDetail");
       return ctkDICOMJob::DICOMLevels::None;
     }
 
@@ -300,7 +303,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setJobType - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setJobType - Invalid ctkJobDetail");
       return;
     }
 
@@ -310,7 +313,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::jobType - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::jobType - Invalid ctkJobDetail");
       return ctkDICOMJobResponseSet::JobType::None;
     }
 
@@ -321,7 +324,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::setNumberOfDataSets - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::setNumberOfDataSets - Invalid ctkJobDetail");
       return;
     }
 
@@ -331,7 +334,7 @@ public slots:
   {
     if (td == nullptr)
     {
-      logger.error("ctkDICOMJobDetail::numberOfDataSets - Invalid ctkJobDetail");
+      logger->error("ctkDICOMJobDetail::numberOfDataSets - Invalid ctkJobDetail");
       return -1;
     }
 
