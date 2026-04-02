@@ -27,10 +27,16 @@
 
 namespace {
 
-static QString PREFIX_EXECUTABLE = "executable:";
-static QString PREFIX_PARAMETER_GROUP = "paramGroup:";
-static QString PREFIX_PARAMETER_CONTAINER = "paramContainer:";
-static QString PREFIX_PARAMETER = "parameter:";
+template<std::size_t N>
+constexpr QLatin1String make_constexpr_QLatin1String_(const char (&str)[N])
+{
+  return QLatin1String{str, static_cast<int>(N - 1)};
+}
+
+constexpr QLatin1String PREFIX_EXECUTABLE         = make_constexpr_QLatin1String_("executable:");
+constexpr QLatin1String PREFIX_PARAMETER_GROUP    = make_constexpr_QLatin1String_("paramGroup:");
+constexpr QLatin1String PREFIX_PARAMETER_CONTAINER= make_constexpr_QLatin1String_("paramContainer:");
+constexpr QLatin1String PREFIX_PARAMETER          = make_constexpr_QLatin1String_("parameter:");
 
 }
 
