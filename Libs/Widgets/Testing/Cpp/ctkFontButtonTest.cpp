@@ -163,7 +163,14 @@ void ctkFontButtonTester::testUpdateText()
 void ctkFontButtonTester::testBrowseFont()
 {
   ctkFontButton fontButton;
-  QTimer::singleShot(200, qApp, SLOT(quit()));
+  // Close all top-level widgets (including modal QFontDialog) to exit.
+  // QApplication::quit() does not close modal dialogs in Qt6.
+  QTimer::singleShot(200, qApp, []() {
+    foreach (QWidget* w, QApplication::topLevelWidgets())
+    {
+      w->close();
+    }
+  });
   QTimer::singleShot(100, &fontButton, SLOT(browseFont()));
   fontButton.show();
   qApp->exec();

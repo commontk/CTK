@@ -423,4 +423,14 @@ if(CTK_USE_QTTESTING)
     ctkDoubleSliderEventTranslatorPlayerTest1
     PROPERTIES TIMEOUT 180
     )
+  # These tests open modal dialogs during event playback that block
+  # the event dispatcher. The recorded XML events reference stale
+  # widget paths inside the dialogs, preventing them from closing.
+  # Disabled until the XML files are re-recorded. See #1394.
+  set_tests_properties(
+    ctkColorPickerButtonEventTranslatorPlayerTest1
+    ctkDirectoryButtonEventTranslatorPlayerTest1
+    ctkFileDialogEventTranslatorPlayerTest1
+    PROPERTIES LABELS "ModalDialogHang" DISABLED TRUE
+    )
 endif()
