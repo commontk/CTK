@@ -31,4 +31,18 @@
 
 @CTK_EXPORT_CUSTOM_CONTENT@
 
+// CTK version encoding: (major << 16) | (minor << 8) | patch
+#define CTK_VERSION_CHECK(major, minor, patch) ((major << 16) | (minor << 8) | (patch))
+
+// Set CTK_DISABLE_DEPRECATED_BEFORE to hide APIs deprecated before a given version.
+// Example: -DCTK_DISABLE_DEPRECATED_BEFORE=0x000100 hides APIs deprecated since 0.1.x
+#ifndef CTK_DISABLE_DEPRECATED_BEFORE
+#  define CTK_DISABLE_DEPRECATED_BEFORE 0x000000
+#endif
+
+// CTK_DEPRECATED_SINCE(major, minor) evaluates to true when the deprecated API
+// should still be compiled in (i.e. not yet hidden by CTK_DISABLE_DEPRECATED_BEFORE).
+#define CTK_DEPRECATED_SINCE(major, minor) \
+    (CTK_VERSION_CHECK(major, minor, 0) > CTK_DISABLE_DEPRECATED_BEFORE)
+
 #endif
