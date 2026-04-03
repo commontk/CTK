@@ -31,7 +31,7 @@
 #include <dcmtk/dcmimgle/dcmimage.h>
 #include <dcmtk/ofstd/ofbmanip.h>
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMImage" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMImage"))
 struct Node;
 
 //------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ QImage ctkDICOMImage::frame(int frame) const
 
       if (!image.loadFromData( buffer ))
       {
-        logger.error("QImage couldn't created");
+        logger->error("QImage couldn't created");
       }
     }
   }

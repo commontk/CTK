@@ -54,7 +54,7 @@
 #include "ctkDICOMServerNodeWidget2.h"
 #include "ui_ctkDICOMServerNodeWidget2.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMServerNodeWidget2");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.DICOMServerNodeWidget2"))
 QColor ctkDICOMServerNodeWidget2DefaultColor(Qt::white);
 QColor ctkDICOMServerNodeWidget2DarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMServerNodeWidget2ModifiedColor(Qt::darkYellow);
@@ -579,7 +579,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
 
   if (this->getServerNodeRowFromConnectionName(node["Name"].toString()) != -1)
   {
-    logger.warn("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
+    logger->warn("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
     return -1;
   }
 
@@ -699,7 +699,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
 
   if (this->getServerNodeRowFromConnectionName(server->connectionName()) != -1)
   {
-    logger.debug("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
+    logger->debug("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
     return -1;
   }
 
@@ -1665,7 +1665,7 @@ int ctkDICOMServerNodeWidget2::serversCount()
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("serversCount failed, no task pool has been set. \n");
+    logger->error("serversCount failed, no task pool has been set. \n");
     return -1;
   }
 
@@ -1678,7 +1678,7 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::server(int id)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("server failed, no task pool has been set. \n");
+    logger->error("server failed, no task pool has been set. \n");
     return nullptr;
   }
 
@@ -1691,7 +1691,7 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::server(const QString& connectionName)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("server failed, no task pool has been set. \n");
+    logger->error("server failed, no task pool has been set. \n");
     return nullptr;
   }
 
@@ -1704,7 +1704,7 @@ int ctkDICOMServerNodeWidget2::addServer(ctkDICOMServer* server)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("addServer failed, no task pool has been set. \n");
+    logger->error("addServer failed, no task pool has been set. \n");
     return -1;
   }
 
@@ -1719,7 +1719,7 @@ void ctkDICOMServerNodeWidget2::removeServer(const QString& connectionName)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("removeServer failed, no task pool has been set. \n");
+    logger->error("removeServer failed, no task pool has been set. \n");
     return;
   }
 
@@ -1732,7 +1732,7 @@ void ctkDICOMServerNodeWidget2::removeServer(int id)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("removeServer failed, no task pool has been set. \n");
+    logger->error("removeServer failed, no task pool has been set. \n");
     return;
   }
 
@@ -1748,7 +1748,7 @@ void ctkDICOMServerNodeWidget2::removeAllServers()
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("removeAllServers failed, no task pool has been set. \n");
+    logger->error("removeAllServers failed, no task pool has been set. \n");
     return;
   }
 
@@ -1763,7 +1763,7 @@ QString ctkDICOMServerNodeWidget2::getServerNameFromIndex(int id)
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("getServerNameFromIndex failed, no task pool has been set. \n");
+    logger->error("getServerNameFromIndex failed, no task pool has been set. \n");
     return "";
   }
 
@@ -1776,7 +1776,7 @@ int ctkDICOMServerNodeWidget2::getServerIndexFromName(const QString& connectionN
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("getServerIndexFromName failed, no task pool has been set. \n");
+    logger->error("getServerIndexFromName failed, no task pool has been set. \n");
     return -1;
   }
 
