@@ -334,7 +334,7 @@ bool ctkMessageBox
   // regardless the parent widget is null or non-null.
   dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-  dialog->setText(tr("Are you sure you want to exit?"));
+  dialog->setText(ctkMessageBox::tr("Are you sure you want to exit?"));
   dialog->setIcon(QMessageBox::Question);
   dialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
   dialog->setDontShowAgainSettingsKey(dontShowAgainKey);
