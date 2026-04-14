@@ -327,12 +327,21 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
   if (main)
   {
     QString path = QFileInfo(filename).absolutePath();
+    // try/finally: without it the sys.path prepend would leak for the rest of the process lifetime.
     QStringList code = QStringList()
         << "import sys"
-        << QString("sys.path.insert(0, %1)").arg(ctkAbstractPythonManager::toPythonStringLiteral(path))
-        << "_updated_globals = globals()"
-        << QString("_updated_globals['__file__'] = %1").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename))
-        << QString("exec(open(%1).read(), _updated_globals)").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename));
+        << QString("_ctk_executefile_dir = %1").arg(ctkAbstractPythonManager::toPythonStringLiteral(path))
+        << "sys.path.insert(0, _ctk_executefile_dir)"
+        << "try:"
+        << "    _updated_globals = globals()"
+        << QString("    _updated_globals['__file__'] = %1").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename))
+        << QString("    exec(open(%1).read(), _updated_globals)").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename))
+        << "finally:"
+        << "    try:"
+        << "        sys.path.remove(_ctk_executefile_dir)"
+        << "    except ValueError:"
+        << "        pass"
+        << "    del _ctk_executefile_dir";
     this->executeString(code.join("\n"));
     //PythonQt::self()->handleError(); // Clear errorOccured flag
   }
