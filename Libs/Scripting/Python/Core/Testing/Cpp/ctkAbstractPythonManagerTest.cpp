@@ -51,6 +51,8 @@ private Q_SLOTS:
   void testExecuteFile();
   void testExecuteFile_data();
 
+  void testExecuteFileDoesNotLeakSysPath();
+
   void testPythonAttributes();
   void testPythonAttributes_data();
 
@@ -269,6 +271,38 @@ void ctkAbstractPythonManagerTester::testExecuteFile_data()
 
   QTest::newRow("3-check __file__ attribute") << QString("print('This file is: %s' % __file__)")
                      << false;
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testExecuteFileDoesNotLeakSysPath()
+{
+  QTemporaryFile pythonFile("testExecuteFileLeak-XXXXXX.py");
+  QVERIFY(pythonFile.open());
+  QTextStream out(&pythonFile);
+  out << "pass\n";
+  pythonFile.close();
+
+  const QString scriptDir = QFileInfo(pythonFile.fileName()).absolutePath();
+  const QString inSysPathExpr =
+      QString("%1 in sys.path").arg(ctkAbstractPythonManager::toPythonStringLiteral(scriptDir));
+
+  this->PythonManager.executeString("import sys");
+
+  QVariant beforeContains = this->PythonManager.executeString(
+        inSysPathExpr, ctkAbstractPythonManager::EvalInput);
+  QCOMPARE(beforeContains, QVariant(false));
+
+  this->PythonManager.executeFile(pythonFile.fileName());
+  QCOMPARE(this->PythonManager.pythonErrorOccured(), false);
+
+  QVariant afterContains = this->PythonManager.executeString(
+        inSysPathExpr, ctkAbstractPythonManager::EvalInput);
+  QCOMPARE(afterContains, QVariant(false));
+
+  QVariant helperExists = this->PythonManager.executeString(
+        "'_ctk_executefile_dir' in globals()",
+        ctkAbstractPythonManager::EvalInput);
+  QCOMPARE(helperExists, QVariant(false));
 }
 
 // ----------------------------------------------------------------------------
