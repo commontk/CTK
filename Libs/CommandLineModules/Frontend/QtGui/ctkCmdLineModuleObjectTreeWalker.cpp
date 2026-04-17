@@ -27,10 +27,10 @@
 
 namespace {
 
-static QString PREFIX_EXECUTABLE = "executable:";
-static QString PREFIX_PARAMETER_GROUP = "paramGroup:";
-static QString PREFIX_PARAMETER_CONTAINER = "paramContainer:";
-static QString PREFIX_PARAMETER = "parameter:";
+static constexpr QLatin1String PREFIX_EXECUTABLE{"executable:", static_cast<int>(sizeof("executable:") - 1)};
+static constexpr QLatin1String PREFIX_PARAMETER_GROUP{"paramGroup:", static_cast<int>(sizeof("paramGroup:") - 1)};
+static constexpr QLatin1String PREFIX_PARAMETER_CONTAINER{"paramContainer:", static_cast<int>(sizeof("paramContainer:") - 1)};
+static constexpr QLatin1String PREFIX_PARAMETER{"parameter:", static_cast<int>(sizeof("parameter:") - 1)};
 
 }
 

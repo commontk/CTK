@@ -82,7 +82,7 @@ const QString ctkPluginFrameworkLauncher::PROP_APPLICATION_LAUNCHDEFAULT = "ctk.
 
 const QString ctkPluginFrameworkLauncher::PROP_OSGI_RELAUNCH = "ctk.pluginfw.relaunch";
 
-static const QString PROP_FORCED_RESTART = "ctk.forcedRestart";
+static constexpr QLatin1String PROP_FORCED_RESTART{"ctk.forcedRestart", static_cast<int>(sizeof("ctk.forcedRestart") - 1)};
 
 class ctkPluginFrameworkLauncherPrivate
 {
