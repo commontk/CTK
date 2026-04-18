@@ -479,7 +479,7 @@ void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
   Q_D(ctkDICOMScheduler);
 
   // Do not generate thumbnails for modalities that do not have meaningful image thumbnails
-  if (ctkDICOMModalities::ExcludedFromThumbnailGeneration.contains(modality))
+  if (ctkDICOMModalities::excludedFromThumbnailGeneration().contains(modality))
   {
     // Do not generate thumbnails for excluded modalities
     // To Do: refactor the ctkDICOMThumbnailGenerator to handle properly these cases

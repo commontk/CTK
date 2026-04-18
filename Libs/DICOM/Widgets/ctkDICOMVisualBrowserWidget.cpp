@@ -235,7 +235,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->CustomDateRangeWidget = nullptr;
   this->FilteringStartDateEdit = nullptr;
   this->FilteringEndDateEdit = nullptr;
-  this->FilteringModalities = ctkDICOMModalities::AllModalities;
+  this->FilteringModalities = ctkDICOMModalities::allModalities();
 
   this->PatientsAddedDuringImport = 0;
   this->StudiesAddedDuringImport = 0;
@@ -324,8 +324,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   // To Do: add an option to disable styling
   this->FilteringModalityCheckableComboBox->setStyleSheet("combobox-popup: 0;");
 
-  QStringList allModalities = ctkDICOMModalities::AllModalities;
-  QStringList commonModalities = ctkDICOMModalities::CommonImagingModalities;
+  QStringList allModalities = ctkDICOMModalities::allModalities();
+  QStringList commonModalities = ctkDICOMModalities::commonImagingModalities();
 
   QSet<QString> otherModalitiesSet = QSet<QString>(allModalities.begin(), allModalities.end());
   otherModalitiesSet.subtract(QSet<QString>(commonModalities.begin(), commonModalities.end()));
@@ -666,7 +666,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
 
   bool shouldCheckAllCommon = this->PreviousFilteringModalities.contains("Any") &&
                               !this->FilteringModalities.contains("Any");
-  bool shouldUncheckAll = this->PreviousFilteringModalities == ctkDICOMModalities::CommonImagingModalities;
+  bool shouldUncheckAll = this->PreviousFilteringModalities == ctkDICOMModalities::commonImagingModalities();
   bool shouldCheckAll = !this->PreviousFilteringModalities.contains("Any") &&
                          this->FilteringModalities.contains("Any");
   if (shouldUncheckAll)
@@ -692,7 +692,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
   }
   else if (shouldCheckAllCommon)
   {
-    this->FilteringModalities = ctkDICOMModalities::CommonImagingModalities;
+    this->FilteringModalities = ctkDICOMModalities::commonImagingModalities();
   }
 
   // First, uncheck all items
@@ -921,8 +921,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::resetFilters()
   this->FilteringDate = ctkDICOMVisualBrowserWidget::Any;
   this->FilteringDateComboBox->setCurrentIndex(static_cast<int>(this->FilteringDate));
   this->PatientModel->setDateFilter(static_cast<ctkDICOMPatientModel::DateType>(this->FilteringDate));
-  this->PreviousFilteringModalities = ctkDICOMModalities::AllModalities;
-  this->FilteringModalities = ctkDICOMModalities::AllModalities;
+  this->PreviousFilteringModalities = ctkDICOMModalities::allModalities();
+  this->FilteringModalities = ctkDICOMModalities::allModalities();
 
   this->updateModalityCheckableComboBox();
 

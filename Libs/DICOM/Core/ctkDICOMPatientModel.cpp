@@ -143,7 +143,7 @@ ctkDICOMPatientModelPrivate::ctkDICOMPatientModelPrivate(ctkDICOMPatientModel& o
   this->IsUpdating = false;
   this->QueryInProgress = false;
 
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->ModalityFilter = ctkDICOMModalities::allModalities();
 }
 
 //------------------------------------------------------------------------------
