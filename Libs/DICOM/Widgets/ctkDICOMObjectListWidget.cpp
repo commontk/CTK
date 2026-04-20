@@ -36,7 +36,7 @@
 //CTK includes
 #include <ctkDICOMObjectModel.h>
 #include <ctkLogger.h>
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget"))
 
 class qRecursiveTreeProxyFilter : public QSortFilterProxyModel {
   Q_OBJECT

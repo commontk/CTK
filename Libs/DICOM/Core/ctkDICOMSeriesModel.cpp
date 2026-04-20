@@ -30,6 +30,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMModalities.h"
@@ -39,7 +40,7 @@
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMJob.h"
 
-static ctkLogger logger("org.commontk.DICOM.Core.DICOMSeriesModel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Core.DICOMSeriesModel"))
 
 //----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)
@@ -163,7 +164,7 @@ void ctkDICOMSeriesModelPrivate::populateSeriesData()
 
   if (!this->DicomDatabase)
   {
-    logger.error("populateSeriesData: No database set");
+    logger->error("populateSeriesData: No database set");
     return;
   }
 
@@ -594,7 +595,7 @@ void ctkDICOMSeriesModel::setDicomDatabase(QSharedPointer<ctkDICOMDatabase> data
   Q_D(ctkDICOMSeriesModel);
   if (!database.data())
   {
-    logger.error("setDicomDatabase: Invalid (null) database pointer");
+    logger->error("setDicomDatabase: Invalid (null) database pointer");
     return;
   }
   if (d->DicomDatabase == database)
@@ -1045,7 +1046,7 @@ void ctkDICOMSeriesModel::forceRetrieveSeries(const QString &seriesInstanceUID)
   ctkDICOMSeriesModelPrivate::SeriesData& seriesData = d->SeriesList[linearIndex];
   if (d->AllowedServers.isEmpty())
   {
-    logger.warn("ctkDICOMSeriesModel::forceRetrieveSeries: No allowed servers specified, cannot retrieve series.");
+    logger->warn("ctkDICOMSeriesModel::forceRetrieveSeries: No allowed servers specified, cannot retrieve series.");
     seriesData.operationStatus = ctkDICOMSeriesModel::Failed;
   }
   else
