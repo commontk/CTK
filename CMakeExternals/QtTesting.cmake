@@ -27,7 +27,7 @@ if(NOT DEFINED QtTesting_DIR)
   if("${CMAKE_CXX_STANDARD}" STREQUAL "98")
     set(revision_tag c44b32fdea827be737e8c2f5608ffbc2e3bd08b2)
   else()
-    set(revision_tag cf5fa4156734edb9c3515c7104c19783b17ed0c1) # ctk-2026-03-27 Qt5+Qt6 support
+    set(revision_tag 6d1531564ae61f702fdd0d63f573fef08853460f) # ctk-2026-02-09-4e0a3eb
   endif()
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
