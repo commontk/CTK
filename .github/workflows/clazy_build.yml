@@ -1,0 +1,117 @@
+name: clazy Qt Compatibilty CI (Build)
+
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "*"
+  # Allows running this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: ["ubuntu-24.04"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Retrieve new lists of APT packages
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade -y
+
+      - name: Install Qt
+        run: |
+          sudo apt-get install -y \
+            qtbase5-dev \
+            qtmultimedia5-dev \
+            qttools5-dev \
+            libqt5xmlpatterns5-dev \
+            libqt5svg5-dev \
+            qtwebengine5-dev \
+            qtscript5-dev \
+            qtbase5-private-dev \
+            libqt5x11extras5-dev \
+            libxt-dev \
+            cmake \
+            ninja-build
+
+      - name: Install VTK
+        if: matrix.runs-on == 'ubuntu-24.04'
+        run: |
+          sudo apt-get install -y \
+            libvtk9-dev \
+            libvtk9-qt-dev \
+            clazy
+
+      - name: Show Environment
+        run: |
+          echo "lsb_release:"
+          lsb_release -a
+          echo "Ninja Version: $(ninja --version)"
+          echo "CMake Version:"
+          cmake --version
+          echo "clazy version:"
+          clazy --version
+          echo "Current Directory: $(pwd)"
+
+      - name: Configure CTK
+        run: |
+          export CLAZY_CHECKS="qt6-deprecated-api-fixes,qt6-header-fixes,qt6-qhash-signature,qt6-fwd-fixes,missing-qobject-macro"
+          export CLAZY_EXPORT_FIXES=ON
+          export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+          export CMAKE_GENERATOR=Ninja
+          cmake \
+            -G${CMAKE_GENERATOR} \
+            -DCMAKE_CXX_COMPILER=clazy \
+            -DCTK_QT_VERSION:STRING=5 \
+            -DCTK_ENABLE_Widgets:BOOL=ON \
+            -DCTK_USE_SYSTEM_VTK:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS:BOOL=$CTK_USE_VTK \
+            -DCTK_APP_ctkDICOM:BOOL=ON \
+            -DCTK_LIB_DICOM/Core:BOOL=ON \
+            -DCTK_LIB_DICOM/Widgets:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTNETWORK:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTMULTIMEDIA:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTWEBKIT:BOOL=OFF \
+            -DCTK_LIB_Scripting/Python/Widgets:BOOL=ON \
+            -DCTK_ENABLE_Python_Wrapping:BOOL=ON \
+            -B CTK-build \
+            -S $(pwd)
+        env:
+          CTK_USE_VTK: "${{ matrix.runs-on == 'ubuntu-24.04' && 'ON' || 'OFF' }}"
+
+      - name: Display Qt5_DIR
+        run: |
+          cat CTK-build/CMakeCache.txt | grep ^Qt5_DIR
+
+      - name: Build CTK (SuperBuild)
+        run: |
+          cmake \
+            --build CTK-build -- -j4
+
+      - name: Build CTK (CTK Proper)
+        run: |
+          cd CTK-build/CTK-build
+          cmake --build . --target clean
+          cmake .
+          ctest -D ExperimentalStart
+          ctest -D ExperimentalConfigure
+          ctest -D ExperimentalBuild
+          # ctest -D ExperimentalTest # Skip testing, we do not have a valid Desktop configured in CI
+          ctest -D ExperimentalSubmit
