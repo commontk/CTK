@@ -132,7 +132,12 @@ ctkDICOMSeriesModelPrivate::ctkDICOMSeriesModelPrivate(ctkDICOMSeriesModel& obj)
   this->Scheduler = nullptr;
   this->PatientID = "";
   this->StudyFilter = "";
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  // Fallback to ctkDICOMModalities::AllModalities until a database is attached
+  // via setDicomDatabase(); once attached, callers may opt in to the database's
+  // configured supportedModalities() via setModalityFilter().
+  this->ModalityFilter = this->DicomDatabase
+    ? this->DicomDatabase->supportedModalities()
+    : ctkDICOMModalities::AllModalities;
   this->SeriesDescriptionFilter = "";
 }
 

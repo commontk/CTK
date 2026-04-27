@@ -37,6 +37,7 @@
 #include "ctkDICOMAbstractThumbnailGenerator.h"
 #include "ctkDICOMItem.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMModalities.h"
 
 #include "ctkLogger.h"
 #include "ctkUtils.h"
@@ -85,6 +86,14 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
 {
   this->resetLastInsertedValues();
   this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
+
+  // Seed application-configurable modality lists with the historical defaults
+  // from ctkDICOMModalities. Applications can override via the corresponding
+  // setters / Q_PROPERTY bindings.
+  this->SupportedModalities = ctkDICOMModalities::AllModalities;
+  this->DefaultModalities = ctkDICOMModalities::CommonImagingModalities;
+  this->ModalitiesExcludedFromThumbnailGeneration =
+    ctkDICOMModalities::ExcludedFromThumbnailGeneration;
 }
 
 //------------------------------------------------------------------------------
@@ -3403,6 +3412,63 @@ const QStringList ctkDICOMDatabase::tagsToExcludeFromStorage()
 {
   Q_D(ctkDICOMDatabase);
   return d->TagsToExcludeFromStorage;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::supportedModalities() const
+{
+  Q_D(const ctkDICOMDatabase);
+  return d->SupportedModalities;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::setSupportedModalities(const QStringList& modalities)
+{
+  Q_D(ctkDICOMDatabase);
+  if (d->SupportedModalities == modalities)
+  {
+    return;
+  }
+  d->SupportedModalities = modalities;
+  emit supportedModalitiesChanged();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::defaultModalities() const
+{
+  Q_D(const ctkDICOMDatabase);
+  return d->DefaultModalities;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::setDefaultModalities(const QStringList& modalities)
+{
+  Q_D(ctkDICOMDatabase);
+  if (d->DefaultModalities == modalities)
+  {
+    return;
+  }
+  d->DefaultModalities = modalities;
+  emit defaultModalitiesChanged();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::modalitiesExcludedFromThumbnailGeneration() const
+{
+  Q_D(const ctkDICOMDatabase);
+  return d->ModalitiesExcludedFromThumbnailGeneration;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::setModalitiesExcludedFromThumbnailGeneration(const QStringList& modalities)
+{
+  Q_D(ctkDICOMDatabase);
+  if (d->ModalitiesExcludedFromThumbnailGeneration == modalities)
+  {
+    return;
+  }
+  d->ModalitiesExcludedFromThumbnailGeneration = modalities;
+  emit modalitiesExcludedFromThumbnailGenerationChanged();
 }
 
 //------------------------------------------------------------------------------

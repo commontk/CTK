@@ -171,6 +171,14 @@ set(CTK_PATCH_VERSION 0)
 set(CTK_VERSION
     "${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_PATCH_VERSION}")
 
+# CTK_DISABLE_DEPRECATED_BEFORE controls which deprecated CTK APIs are compiled in.
+# Format is the hex encoding 0xMMmmpp (one byte each for major / minor / patch).
+# Example: -DCTK_DISABLE_DEPRECATED_BEFORE=0x000100 hides APIs deprecated since 0.1.x.
+# The default 0x000000 keeps all deprecated APIs available.
+# See Libs/ctkDeprecated.h for the CTK_DEPRECATED_SINCE() helper macro.
+set(CTK_DISABLE_DEPRECATED_BEFORE "0x000000" CACHE STRING
+    "Disable CTK APIs deprecated before this version (hex: 0xMMmmpp)")
+
 # Append the library version information to the library target
 # properties.  A parent project may set its own properties and/or may
 # block this.
@@ -289,6 +297,10 @@ foreach(file
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()
+
+# Public CTK headers that are not specific to any single library.
+install(FILES Libs/ctkDeprecated.h
+  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development)
 
 install(FILES
   CMake/ctkLinkerAsNeededFlagCheck/CMakeLists.txt
