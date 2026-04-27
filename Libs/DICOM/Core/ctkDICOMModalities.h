@@ -23,8 +23,10 @@
 
 // Qt includes
 #include <QStringList>
+#include <QtGlobal>
 
 // CTK includes
+#include "ctkDeprecated.h"
 #include "ctkDICOMCoreExport.h"
 
 /// \ingroup DICOM_Core
@@ -35,113 +37,41 @@
 /// as defined in DICOM PS3.16 Annex D - DICOM Controlled Terminology Definitions.
 /// Reference: https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_D.html
 ///
+/// \deprecated These lists are deprecated as of CTK 0.1. Applications should
+/// query the attached ctkDICOMDatabase instance instead, which exposes
+/// configurable equivalents:
+///
+///   ctkDICOMModalities::AllModalities                    ->
+///       ctkDICOMDatabase::supportedModalities()
+///   ctkDICOMModalities::CommonImagingModalities          ->
+///       ctkDICOMDatabase::defaultModalities()
+///   ctkDICOMModalities::ExcludedFromThumbnailGeneration  ->
+///       ctkDICOMDatabase::modalitiesExcludedFromThumbnailGeneration()
+///
+/// The deprecated aliases below are defined as references to Meyers'
+/// singletons in ctkDICOMModalities.cpp, which fixes the clazy
+/// non-pod-global-static warning that the previous in-header
+/// `static const QStringList` definitions produced (one heap-allocated
+/// copy per translation unit, plus static-initialization-order risk).
+///
 namespace ctkDICOMModalities
 {
-  /// Complete list of all current (non-retired) DICOM modality codes
-  static const QStringList AllModalities = {
-    "Any",      // Special filter value for "all modalities"
-    "AR",       // Autorefraction
-    "ASMT",     // Content Assessment Results
-    "AU",       // Audio
-    "BDUS",     // Bone Densitometry (ultrasound)
-    "BI",       // Biomagnetic imaging
-    "BMD",      // Bone Densitometry (X-Ray)
-    "CR",       // Computed Radiography
-    "CT",       // Computed Tomography
-    "DG",       // Diaphanography
-    "DOC",      // Document
-    "DX",       // Digital Radiography
-    "ECG",      // Electrocardiography
-    "EPS",      // Cardiac Electrophysiology
-    "ES",       // Endoscopy
-    "FID",      // Fiducials
-    "GM",       // General Microscopy
-    "HC",       // Hard Copy
-    "HD",       // Hemodynamic Waveform
-    "IO",       // Intra-Oral Radiography
-    "IOL",      // Intraocular Lens Data
-    "IVOCT",    // Intravascular Optical Coherence Tomography
-    "IVUS",     // Intravascular Ultrasound
-    "KER",      // Keratometry
-    "KO",       // Key Object Selection
-    "LEN",      // Lensometry
-    "LS",       // Laser surface scan
-    "MG",       // Mammography
-    "MR",       // Magnetic Resonance
-    "NM",       // Nuclear Medicine
-    "OAM",      // Ophthalmic Axial Measurements
-    "OCT",      // Optical Coherence Tomography (non-Ophthalmic)
-    "OP",       // Ophthalmic Photography
-    "OPM",      // Ophthalmic Mapping
-    "OPT",      // Ophthalmic Tomography
-    "OPV",      // Ophthalmic Visual Field
-    "OSS",      // Optical Surface Scan
-    "OT",       // Other
-    "PLAN",     // Plan
-    "PR",       // Presentation State
-    "PT",       // Positron emission tomography (PET)
-    "PX",       // Panoramic X-Ray
-    "REG",      // Registration
-    "RESP",     // Respiratory Waveform
-    "RF",       // Radio Fluoroscopy
-    "RG",       // Radiographic imaging (conventional film/screen)
-    "RTDOSE",   // Radiotherapy Dose
-    "RTIMAGE",  // Radiotherapy Image
-    "RTPLAN",   // Radiotherapy Plan
-    "RTRECORD", // RT Treatment Record
-    "RTSTRUCT", // Radiotherapy Structure Set
-    "RWV",      // Real World Value Map
-    "SEG",      // Segmentation
-    "SM",       // Slide Microscopy
-    "SMR",      // Stereometric Relationship
-    "SR",       // SR Document
-    "SRF",      // Subjective Refraction
-    "STAIN",    // Automated Slide Stainer
-    "TG",       // Thermography
-    "US",       // Ultrasound
-    "VA",       // Visual Acuity
-    "XA",       // X-Ray Angiography
-    "XC"        // External-camera Photography
-  };
+#if CTK_DEPRECATED_SINCE(0, 1)
 
-  /// Modalities that should be excluded from thumbnail generation
-  /// because they do not have meaningful image thumbnails
-  static const QStringList ExcludedFromThumbnailGeneration = {
-    "SEG",      // Segmentation
-    "SR",       // Structured Report
-    "RTSTRUCT", // Radiotherapy Structure Set
-    "RTPLAN",   // Radiotherapy Plan
-    "RTDOSE",   // Radiotherapy Dose
-    "RTRECORD", // RT Treatment Record
-    "PR",       // Presentation State
-    "DOC",      // Document
-    "REG",      // Registration
-    "PLAN",     // Plan
-    "FID",      // Fiducials
-    "KO",       // Key Object Selection
-    "RWV",      // Real World Value Map
-    "AU",       // Audio
-    "ECG",      // Electrocardiography
-    "EPS",      // Cardiac Electrophysiology
-    "HD",       // Hemodynamic Waveform
-    "RESP"      // Respiratory Waveform
-  };
+  /// \deprecated Use ctkDICOMDatabase::supportedModalities() instead.
+  /// Complete list of all current (non-retired) DICOM modality codes.
+  CTK_DICOM_CORE_EXPORT extern const QStringList& AllModalities;
 
-  /// Common imaging modalities typically used for filtering in UI
-  static const QStringList CommonImagingModalities = {
-    "CR",       // Computed Radiography
-    "CT",       // Computed Tomography
-    "DX",       // Digital Radiography
-    "MG",       // Mammography
-    "MR",       // Magnetic Resonance
-    "NM",       // Nuclear Medicine
-    "PT",       // Positron emission tomography
-    "RF",       // Radio Fluoroscopy
-    "SEG",      // Segmentation
-    "SR",       // Structured Report
-    "US",       // Ultrasound
-    "XA"        // X-Ray Angiography
-  };
+  /// \deprecated Use ctkDICOMDatabase::modalitiesExcludedFromThumbnailGeneration()
+  /// instead. Modalities that should be excluded from thumbnail generation
+  /// because they do not have meaningful image thumbnails.
+  CTK_DICOM_CORE_EXPORT extern const QStringList& ExcludedFromThumbnailGeneration;
+
+  /// \deprecated Use ctkDICOMDatabase::defaultModalities() instead.
+  /// Common imaging modalities typically used for filtering in UI.
+  CTK_DICOM_CORE_EXPORT extern const QStringList& CommonImagingModalities;
+
+#endif
 }
 
 #endif // __ctkDICOMModalities_h
