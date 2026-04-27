@@ -63,6 +63,7 @@ macro(ctkMacroBuildLib)
   set(my_includes
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CTK_SOURCE_DIR}/Libs            # for ctkDeprecated.h
     )
 
   # Add the include directories from the library dependencies
@@ -111,8 +112,11 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     ${MY_RESOURCES}
     )
 
-  target_compile_definitions(${lib_name} PRIVATE
-    HAVE_QT${CTK_QT_VERSION}
+  target_compile_definitions(${lib_name}
+    PUBLIC
+      CTK_DISABLE_DEPRECATED_BEFORE=${CTK_DISABLE_DEPRECATED_BEFORE}
+    PRIVATE
+      HAVE_QT${CTK_QT_VERSION}
     )
 
   # Configure CMake Qt automatic code generation

@@ -150,6 +150,8 @@ foreach(lib ${CTK_LIBRARIES} CTKTesting)
   list(APPEND _include_dirs ${${lib}_INCLUDE_DIRS})
   set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")\n")
 endforeach()
+# ctkDeprecated.h lives directly under Libs/; build-tree consumers need it on the include path.
+list(APPEND _include_dirs ${CTK_SOURCE_DIR}/Libs)
 list(REMOVE_DUPLICATES _include_dirs)
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_INCLUDE_DIRS \"${_include_dirs}\")\n")
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library directories that could be used for linking\n")
