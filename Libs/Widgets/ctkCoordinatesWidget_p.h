@@ -60,6 +60,9 @@ public:
   /// \sa ctk::significantDecimals()
   static int spinBoxSignificantDecimals(ctkDoubleSpinBox* spinBox);
 
+  // Emit both versions of the coordinatesChanged signal
+  void emitCoordinatesChanged();
+
   int     Decimals;
   ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double  SingleStep;

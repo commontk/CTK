@@ -137,7 +137,11 @@ public:
   double const * coordinates()const;
 
   /// Convenient function that sets up to 4 elements of the coordinates.
-  void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
+  Q_INVOKABLE void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
+
+  /// Gets the coordinate for the specified dimention
+  /// Returns NaN if \p dim is out of bounds.
+  Q_INVOKABLE double getCoordinate(int dim)const;
 
   /// Set the sizeHintPolicy property value.
   /// \sa sizeHintPolicy
@@ -181,6 +185,7 @@ Q_SIGNALS:
   /// value is the point coordinates
   /// TODO: Don't fire the signal if the new values are not changed
   void coordinatesChanged(double* pos);
+  void coordinatesChanged(double x, double y, double z, double w);
 
 protected Q_SLOTS:
   void updateCoordinates();
