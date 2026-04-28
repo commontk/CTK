@@ -31,6 +31,7 @@
 #include "ctkValueProxy.h"
 
 // STD includes
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -556,6 +557,18 @@ void ctkCoordinatesWidget::setCoordinates(double x, double y, double z, double w
 }
 
 //------------------------------------------------------------------------------
+double ctkCoordinatesWidget::getCoordinate(int dim)const
+{
+  Q_D(const ctkCoordinatesWidget);
+  if (dim < 0 || dim >= d->Dimension)
+  {
+    return 0.0;
+  }
+
+  return d->Coordinates[dim];
+}
+
+//------------------------------------------------------------------------------
 double const * ctkCoordinatesWidget::coordinates()const
 {
   Q_D(const ctkCoordinatesWidget);
@@ -670,7 +683,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
   }
   else
   {
-    emit coordinatesChanged(d->Coordinates);
+    d->emitCoordinatesChanged();
   }
 }
 
@@ -682,7 +695,29 @@ void ctkCoordinatesWidget::updateCoordinates()
   {
     d->Coordinates[i] = this->spinBox(i)->value();
   }
-  emit coordinatesChanged(d->Coordinates);
+  d->emitCoordinatesChanged();
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidgetPrivate::emitCoordinatesChanged()
+{
+  Q_Q(ctkCoordinatesWidget);
+  if (this->LastEmittedCoordinates.size() == this->Dimension
+      && std::equal(this->Coordinates, this->Coordinates + this->Dimension,
+                    this->LastEmittedCoordinates.cbegin()))
+  {
+    // No change in coordinates, no need to emit signal
+    return;
+  }
+  this->LastEmittedCoordinates.resize(this->Dimension);
+  std::copy(this->Coordinates, this->Coordinates + this->Dimension,
+            this->LastEmittedCoordinates.begin());
+  double x = this->Dimension > 0 ? this->Coordinates[0] : 0.0;
+  double y = this->Dimension > 1 ? this->Coordinates[1] : 0.0;
+  double z = this->Dimension > 2 ? this->Coordinates[2] : 0.0;
+  double w = this->Dimension > 3 ? this->Coordinates[3] : 0.0;
+  emit q->coordinatesChanged(this->Coordinates);
+  emit q->coordinatesChanged(x, y, z, w);
 }
 
 //------------------------------------------------------------------------------

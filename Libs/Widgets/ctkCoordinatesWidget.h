@@ -137,7 +137,11 @@ public:
   double const * coordinates()const;
 
   /// Convenient function that sets up to 4 elements of the coordinates.
-  void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
+  Q_INVOKABLE void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
+
+  /// Gets the coordinate for the specified dimension
+  /// Returns 0.0 if \p dim is out of bounds.
+  Q_INVOKABLE double getCoordinate(int dim)const;
 
   /// Set the sizeHintPolicy property value.
   /// \sa sizeHintPolicy
@@ -177,10 +181,16 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   ///
-  /// valueChanged is fired anytime a coordinate is modified, the returned
-  /// value is the point coordinates
-  /// TODO: Don't fire the signal if the new values are not changed
+  /// coordinatesChanged is fired anytime a coordinate is modified.
+  /// The argument contains the coordinate values.
+  /// \sa coordinatesChanged(double x, double y, double z, double w), dimension()
   void coordinatesChanged(double* pos);
+
+  /// coordinatesChanged is fired anytime a coordinate is modified.
+  /// The argument contains the coordinates up to the first 4 components.
+  /// Components values for dimensions beyond the widget's dimension() are 0.0.
+  /// \sa coordinatesChanged(double*), dimension()
+  void coordinatesChanged(double x, double y, double z, double w);
 
 protected Q_SLOTS:
   void updateCoordinates();
