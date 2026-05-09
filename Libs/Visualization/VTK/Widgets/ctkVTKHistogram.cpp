@@ -36,7 +36,7 @@
 #include <limits>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.visualization.core.ctkVTKHistogram");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.visualization.core.ctkVTKHistogram"))
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -116,14 +116,14 @@ void ctkVTKHistogram::setRange(qreal minRange, qreal maxRange)
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
   {
-    logger.warn("no data array. range will be reset when setting array.");
+    logger->warn("no data array. range will be reset when setting array.");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;
   }
   if (minRange >= maxRange)
   {
-    logger.warn("minRange >= maxRange");
+    logger->warn("minRange >= maxRange");
     qreal pivot = minRange;
     minRange = maxRange;
     maxRange = pivot;
@@ -144,7 +144,7 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
   {
-    logger.warn("no dataArray");
+    logger->warn("no dataArray");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;

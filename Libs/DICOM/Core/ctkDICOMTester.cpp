@@ -28,9 +28,10 @@
 // ctkDICOM includes
 #include "ctkDICOMTester.h"
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 
 //------------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.dicom.DICOMTester" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMTester"))
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

@@ -26,7 +26,9 @@
 #include "ui_ctkTemplateWidget.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkTemplateWidget");
+#include <QGlobalStatic>
+
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkTemplateWidget"))
 
 //-----------------------------------------------------------------------------
 class ctkTemplateWidgetPrivate: public Ui_ctkTemplateWidget

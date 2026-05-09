@@ -41,7 +41,7 @@
 #include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKChartView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKChartView"))
 //----------------------------------------------------------------------------
 
 class ctkVTKChartViewPrivate
