@@ -143,7 +143,10 @@ ctkDICOMPatientModelPrivate::ctkDICOMPatientModelPrivate(ctkDICOMPatientModel& o
   this->IsUpdating = false;
   this->QueryInProgress = false;
 
-  this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  // Fallback to ctkDICOMModalities::AllModalities until a database is attached.
+  this->ModalityFilter = this->DicomDatabase
+    ? this->DicomDatabase->supportedModalities()
+    : ctkDICOMModalities::AllModalities;
 }
 
 //------------------------------------------------------------------------------

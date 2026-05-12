@@ -173,6 +173,9 @@ public:
   QString TagCacheDatabaseFilename;
   QStringList TagsToPrecache;
   QStringList TagsToExcludeFromStorage;
+  QStringList SupportedModalities;
+  QStringList DefaultModalities;
+  QStringList ModalitiesExcludedFromThumbnailGeneration;
   bool openTagCacheDatabase();
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 
