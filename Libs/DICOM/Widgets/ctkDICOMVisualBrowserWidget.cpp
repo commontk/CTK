@@ -4314,16 +4314,6 @@ bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& u
   confirmDeleteDialog.addButton(tr("Cancel"), QMessageBox::RejectRole);
   confirmDeleteDialog.setDontShowAgainSettingsKey("VisualDICOMBrowser/DontConfirmDeleteSelected");
 
-  int result = confirmDeleteDialog.exec();
-
-  // Check both the result code and the clicked button for robustness
-  // When auto-accepting via "Don't show again", result will be QDialog::Accepted
-  if (result == QDialog::Accepted || confirmDeleteDialog.clickedButton() == deleteButton)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  confirmDeleteDialog.exec();
+  return confirmDeleteDialog.clickedButton() == deleteButton;
 }

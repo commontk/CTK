@@ -85,7 +85,7 @@ void ctkMessageBoxPrivate::init()
 #if (QT_VERSION >= QT_VERSION_CHECK(5,12,0))
   // QMessageBox::done(int) is not called after Qt-5.12
   // (see https://bugreports.qt.io/browse/QTBUG-74699),
-  // but onFinished(int) signal can be used instead.
+  // but the finished(int) signal can be used to invoke onFinished(int) instead.
   QObject::connect(q, SIGNAL(finished(int)), q, SLOT(onFinished(int)));
 #endif
 }
@@ -299,7 +299,22 @@ void ctkMessageBox::onFinished(int resultCode)
   // Don't save if the button is not an accepting button
   if (d->DontShowAgainButtonRoles.contains(buttonRole))
   {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    Q_UNUSED(resultCode);
+    // Prefer storing the StandardButton value so that buttons sharing the same
+    // role (e.g. Ok/Open/Save all map to AcceptRole) are correctly identified
+    // on replay. Fall back to ButtonRole only for truly custom (non-standard)
+    // buttons, where standardButton() returns NoButton. In Qt6, resultCode for
+    // custom buttons is QDialog::Accepted (2) rather than the role, so storing
+    // the role explicitly is still necessary for the fallback path.
+    QMessageBox::StandardButton stdButton = this->standardButton(this->clickedButton());
+    int buttonOrRole = (stdButton != QMessageBox::NoButton)
+      ? static_cast<int>(stdButton)
+      : static_cast<int>(buttonRole);
+    d->writeSettings(buttonOrRole);
+#else
     d->writeSettings(resultCode);
+#endif
   }
 }
 
@@ -313,11 +328,20 @@ void ctkMessageBox::setVisible(bool visible)
     QAbstractButton* autoAcceptButton = d->button(dontShowAgainButtonOrRole);
     if (autoAcceptButton)
     {
-      // Show the dialog first, then auto-accept it after the event loop processes
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      // In Qt6, the action (e.g. deletion) triggered by the auto-accepted button
+      // does not execute unless the dialog has been made visible before click()
+      // is called. WA_DontShowOnScreen should make the dialog "visible" in Qt's internal
+      // state without creating a native window, so no window ever appears on screen.
+      this->setAttribute(Qt::WA_DontShowOnScreen, true);
       this->Superclass::setVisible(visible);
-      QTimer::singleShot(0, this, [autoAcceptButton]() {
-        autoAcceptButton->click();
-      });
+      QTimer::singleShot(0, autoAcceptButton, SLOT(click()));
+#else
+      // Don't call click now, it would destroy the message box. The calling
+      // function might expect the message box to be still valid after
+      // setVisible() return.
+      QTimer::singleShot(0, autoAcceptButton, SLOT(click()));
+#endif
       return;
     }
   }
