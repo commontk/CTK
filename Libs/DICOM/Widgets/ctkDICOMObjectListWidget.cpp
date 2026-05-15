@@ -28,6 +28,7 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QImage>
+#include <QRegularExpression>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
@@ -48,17 +49,10 @@ public:
 
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
   {
-    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      if (filterRegExp().isEmpty() && filterRegularExpression().pattern().isEmpty())
-      {
-        return true;
-      }
-    #else
-      if (filterRegularExpression().pattern().isEmpty())
-      {
-        return true;
-      }
-    #endif
+    if (filterRegularExpression().pattern().isEmpty())
+    {
+      return true;
+    }
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     return filterAcceptsIndex(index);
   }
@@ -141,13 +135,22 @@ void ctkDICOMObjectListWidgetPrivate::setFilterExpressionInModel(qRecursiveTreeP
   const QString regexpPrefix("regexp:");
   if (expr.startsWith(regexpPrefix))
   {
-    filterModel->setFilterCaseSensitivity(Qt::CaseSensitive);
-    filterModel->setFilterRegularExpression(expr.right(expr.length() - regexpPrefix.length()));
+    // User-supplied regex: case-sensitive by default (user can add (?i) if needed)
+    filterModel->setFilterRegularExpression(
+      QRegularExpression(expr.right(expr.length() - regexpPrefix.length())));
   }
   else
   {
-    filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    filterModel->setFilterWildcard(expr);
+    // Convert wildcard pattern to QRegularExpression so that filterRegularExpression()
+    // (used by filterAcceptsIndex) works correctly in both Qt5 and Qt6.
+    // setFilterWildcard() in Qt5 stores a QRegExp internally; Qt5's conversion of that
+    // QRegExp to QRegularExpression copies the wildcard pattern as-is, making '*' an
+    // invalid leading quantifier that never matches anything.
+    QString regexPattern = QRegularExpression::escape(expr);
+    regexPattern.replace("\\*", ".*");
+    regexPattern.replace("\\?", ".");
+    filterModel->setFilterRegularExpression(
+      QRegularExpression(regexPattern, QRegularExpression::CaseInsensitiveOption));
   }
 }
 
