@@ -556,6 +556,18 @@ void ctkCoordinatesWidget::setCoordinates(double x, double y, double z, double w
 }
 
 //------------------------------------------------------------------------------
+double ctkCoordinatesWidget::getCoordinate(int dim)const
+{
+    Q_D(const ctkCoordinatesWidget);
+    if (dim < 0 || dim > d->Dimension)
+    {
+        return NAN;
+    }
+
+    return d->Coordinates[dim];
+}
+
+//------------------------------------------------------------------------------
 double const * ctkCoordinatesWidget::coordinates()const
 {
   Q_D(const ctkCoordinatesWidget);
@@ -670,7 +682,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
   }
   else
   {
-    emit coordinatesChanged(d->Coordinates);
+    d->emitCoordinatesChanged();
   }
 }
 
@@ -682,7 +694,24 @@ void ctkCoordinatesWidget::updateCoordinates()
   {
     d->Coordinates[i] = this->spinBox(i)->value();
   }
-  emit coordinatesChanged(d->Coordinates);
+  d->emitCoordinatesChanged();
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidgetPrivate::emitCoordinatesChanged()
+{
+  Q_Q(ctkCoordinatesWidget);
+  emit q->coordinatesChanged(this->Coordinates);
+  double x = 0.0, y = 0.0, z = 0.0, w = 0.0;
+  if (this->Dimension >= 1)
+    x = this->Coordinates[0];
+  if (this->Dimension >= 2)
+    y = this->Coordinates[1];
+  if (this->Dimension >= 3)
+    z = this->Coordinates[2];
+  if (this->Dimension >= 4)
+    w = this->Coordinates[3];
+  emit q->coordinatesChanged(x, y, z, w);
 }
 
 //------------------------------------------------------------------------------
