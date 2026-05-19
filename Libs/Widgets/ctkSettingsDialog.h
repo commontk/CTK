@@ -92,6 +92,9 @@ public:
   Q_INVOKABLE void addPanel(const QString& label, const QIcon& icon,
                             ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
+  Q_INVOKABLE void removePanel(const QString& label);
+  Q_INVOKABLE void removePanel(ctkSettingsPanel* panel);
+
   bool resetButton()const;
   void setResetButton(bool show);
 
