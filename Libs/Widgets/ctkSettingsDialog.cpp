@@ -261,27 +261,27 @@ void ctkSettingsDialog
 void ctkSettingsDialogPrivate::removePanelRecursive(QTreeWidgetItem* item)
 {
   Q_Q(ctkSettingsDialog);
-      
+
   // Remove all of the children first
   for (int i = item->childCount() - 1; i >= 0; i--)
   {
     QTreeWidgetItem* child = item->child(i);
     this->removePanelRecursive(child);
   }
-  
+
   ctkSettingsPanel* panel = this->panel(item);
-  
+
   q->disconnect(panel, SIGNAL(settingChanged(QString, QVariant)),
     q, SLOT(onSettingChanged(QString, QVariant)));
   panel->setSettings(0);
-  
+
   this->SettingsStackedWidget->removeWidget(panel);
   panel->deleteLater();
-  
+
   QTreeWidgetItem* parent = item->parent();
   if (parent != 0)
     parent->removeChild(item);
-  
+
   this->Panels.remove(item);
   delete item;
 }
