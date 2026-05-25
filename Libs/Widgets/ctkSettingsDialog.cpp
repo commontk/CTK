@@ -287,11 +287,11 @@ void ctkSettingsDialogPrivate::removePanelRecursive(QTreeWidgetItem* item)
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsDialog::removePanel(const QString& label)
+void ctkSettingsDialog::removePanel(ctkSettingsPanel* panel)
 {
     Q_D(ctkSettingsDialog);
 
-    QTreeWidgetItem* item = d->item(label);
+    QTreeWidgetItem* item = d->item(panel);
 
     if (item != d->SettingsTreeWidget->invisibleRootItem())
     {
@@ -303,11 +303,11 @@ void ctkSettingsDialog::removePanel(const QString& label)
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsDialog::removePanel(ctkSettingsPanel* panel)
+void ctkSettingsDialog::removePanel(const QString& label)
 {
     Q_D(ctkSettingsDialog);
 
-    QTreeWidgetItem* item = d->item(panel);
+    QTreeWidgetItem* item = d->item(label);
 
     if (item != d->SettingsTreeWidget->invisibleRootItem())
     {
