@@ -276,6 +276,7 @@ void ctkSettingsDialogPrivate::removePanelRecursive(QTreeWidgetItem* item)
     panel->setSettings(0);
 
     this->SettingsStackedWidget->removeWidget(panel);
+    panel->deleteLater();
 
     QTreeWidgetItem* parent = item->parent();
     if (parent != 0)
@@ -298,6 +299,7 @@ void ctkSettingsDialog::removePanel(const QString& label)
     }
 
     this->adjustTreeWidgetToContents();
+    d->updateRestartRequiredLabel();
 }
 
 // --------------------------------------------------------------------------
@@ -313,6 +315,7 @@ void ctkSettingsDialog::removePanel(ctkSettingsPanel* panel)
     }
 
     this->adjustTreeWidgetToContents();
+    d->updateRestartRequiredLabel();
 }
 
 // --------------------------------------------------------------------------
@@ -454,7 +457,14 @@ void ctkSettingsDialog
 {
   Q_D(ctkSettingsDialog);
   Q_UNUSED(previousItem);
-  d->SettingsStackedWidget->setCurrentWidget(d->panel(currentItem));
+  if (currentItem != 0)
+  {
+    d->SettingsStackedWidget->setCurrentWidget(d->panel(currentItem));
+  }
+  else
+  {
+    d->SettingsStackedWidget->setCurrentIndex(-1);
+  }
 }
 
 // --------------------------------------------------------------------------
