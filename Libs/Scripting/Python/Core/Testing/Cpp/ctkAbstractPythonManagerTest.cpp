@@ -1,5 +1,6 @@
 
 // Qt includes
+#include <QFileInfo>
 #include <QTemporaryFile>
 #include <QTextStream>
 
@@ -52,6 +53,7 @@ private Q_SLOTS:
   void testExecuteFile_data();
 
   void testExecuteFileDoesNotLeakSysPath();
+  void testExecuteFileUsesMainGlobals();
 
   void testPythonAttributes();
   void testPythonAttributes_data();
@@ -303,6 +305,34 @@ void ctkAbstractPythonManagerTester::testExecuteFileDoesNotLeakSysPath()
         "'_ctk_executefile_dir' in globals()",
         ctkAbstractPythonManager::EvalInput);
   QCOMPARE(helperExists, QVariant(false));
+
+  QVariant updatedGlobalsExists = this->PythonManager.executeString(
+        "'_updated_globals' in globals()",
+        ctkAbstractPythonManager::EvalInput);
+  QCOMPARE(updatedGlobalsExists, QVariant(false));
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testExecuteFileUsesMainGlobals()
+{
+  QTemporaryFile pythonFile("testExecuteFileGlobals-XXXXXX.py");
+  QVERIFY(pythonFile.open());
+  QTextStream out(&pythonFile);
+  out << "execfile_counter = 0\n"
+         "def execfile_bump():\n"
+         "    global execfile_counter\n"
+         "    execfile_counter += 1\n"
+         "del execfile_removed\n";
+  pythonFile.close();
+
+  this->PythonManager.executeString("execfile_removed = 1");
+  this->PythonManager.executeFile(pythonFile.fileName());
+  QCOMPARE(this->PythonManager.pythonErrorOccured(), false);
+
+  this->PythonManager.executeString("execfile_bump()");
+  QCOMPARE(this->PythonManager.getVariable("execfile_counter"), QVariant(1));
+  QCOMPARE(this->PythonManager.executeString("'execfile_removed' in globals()",
+                                             ctkAbstractPythonManager::EvalInput), QVariant(false));
 }
 
 // ----------------------------------------------------------------------------
@@ -311,10 +341,8 @@ void ctkAbstractPythonManagerTester::testPythonAttributes()
   QFETCH(QString, pythonVariableName);
   QFETCH(QStringList, expectedAttributeList);
 
-  QString test_path = __FILE__; // return the local path of this source file
-  test_path.replace(test_path.lastIndexOf("/"),
-                         test_path.size() - test_path.lastIndexOf("/"),
-                         "/PythonAttributes-test.py");
+  QString test_path = QFileInfo(QString::fromUtf8(__FILE__)).absolutePath()
+      + "/PythonAttributes-test.py";
   this->PythonManager.executeFile(test_path);
 
   QStringList AttributeList = this->PythonManager.pythonAttributes(pythonVariableName, QString("__main__").toLatin1(), false);
@@ -377,10 +405,8 @@ void ctkAbstractPythonManagerTester::testPythonAttributeValues()
   QFETCH(QString, code);
   QFETCH(QVariant, expectedValue);
 
-  QString test_path = __FILE__; // return the local path of this source file
-  test_path.replace(test_path.lastIndexOf("/"),
-                         test_path.size() - test_path.lastIndexOf("/"),
-                         "/PythonAttributes-test.py");
+  QString test_path = QFileInfo(QString::fromUtf8(__FILE__)).absolutePath()
+      + "/PythonAttributes-test.py";
 
   this->PythonManager.executeFile(test_path);
   this->PythonManager.executeString(QString("value=%1").arg(code));
