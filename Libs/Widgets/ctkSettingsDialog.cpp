@@ -260,62 +260,62 @@ void ctkSettingsDialog
 // --------------------------------------------------------------------------
 void ctkSettingsDialogPrivate::removePanelRecursive(QTreeWidgetItem* item)
 {
-    Q_Q(ctkSettingsDialog);
-    
-    // Remove all of the children first
-    for (int i = item->childCount() - 1; i >= 0; i--)
-    {
-        QTreeWidgetItem* child = item->child(i);
-        this->removePanelRecursive(child);
-    }
-
-    ctkSettingsPanel* panel = this->panel(item);
-
-    q->disconnect(panel, SIGNAL(settingChanged(QString, QVariant)),
-        q, SLOT(onSettingChanged(QString, QVariant)));
-    panel->setSettings(0);
-
-    this->SettingsStackedWidget->removeWidget(panel);
-    panel->deleteLater();
-
-    QTreeWidgetItem* parent = item->parent();
-    if (parent != 0)
-        parent->removeChild(item);
-
-    this->Panels.remove(item);
-    delete item;
+  Q_Q(ctkSettingsDialog);
+      
+  // Remove all of the children first
+  for (int i = item->childCount() - 1; i >= 0; i--)
+  {
+    QTreeWidgetItem* child = item->child(i);
+    this->removePanelRecursive(child);
+  }
+  
+  ctkSettingsPanel* panel = this->panel(item);
+  
+  q->disconnect(panel, SIGNAL(settingChanged(QString, QVariant)),
+    q, SLOT(onSettingChanged(QString, QVariant)));
+  panel->setSettings(0);
+  
+  this->SettingsStackedWidget->removeWidget(panel);
+  panel->deleteLater();
+  
+  QTreeWidgetItem* parent = item->parent();
+  if (parent != 0)
+    parent->removeChild(item);
+  
+  this->Panels.remove(item);
+  delete item;
 }
 
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::removePanel(ctkSettingsPanel* panel)
 {
-    Q_D(ctkSettingsDialog);
+  Q_D(ctkSettingsDialog);
 
-    QTreeWidgetItem* item = d->item(panel);
+  QTreeWidgetItem* item = d->item(panel);
 
-    if (item != d->SettingsTreeWidget->invisibleRootItem())
-    {
-        d->removePanelRecursive(item);
-    }
+  if (item != d->SettingsTreeWidget->invisibleRootItem())
+  {
+    d->removePanelRecursive(item);
+  }
 
-    this->adjustTreeWidgetToContents();
-    d->updateRestartRequiredLabel();
+  this->adjustTreeWidgetToContents();
+  d->updateRestartRequiredLabel();
 }
 
 // --------------------------------------------------------------------------
 void ctkSettingsDialog::removePanel(const QString& label)
 {
-    Q_D(ctkSettingsDialog);
+  Q_D(ctkSettingsDialog);
 
-    QTreeWidgetItem* item = d->item(label);
+  QTreeWidgetItem* item = d->item(label);
 
-    if (item != d->SettingsTreeWidget->invisibleRootItem())
-    {
-        d->removePanelRecursive(item);
-    }
+  if (item != d->SettingsTreeWidget->invisibleRootItem())
+  {
+    d->removePanelRecursive(item);
+  }
 
-    this->adjustTreeWidgetToContents();
-    d->updateRestartRequiredLabel();
+  this->adjustTreeWidgetToContents();
+  d->updateRestartRequiredLabel();
 }
 
 // --------------------------------------------------------------------------
