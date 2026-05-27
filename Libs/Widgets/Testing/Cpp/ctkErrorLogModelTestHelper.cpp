@@ -66,8 +66,9 @@ QString checkTextMessages(int line, const QStringList& currentMessages, const QS
     if (!expectedMessages.contains(currentMessages.at(i)))
     {
       QString errorMsg("Line %1 - Problem with logged messages !\n"
-                       "\tMessage [%2] hasn't been logged !\n");
-      return errorMsg.arg(line).arg(expectedMessages.value(i));
+                       "\tMessage [%2] hasn't been logged !\n"
+                       "Current messages:\n%3");
+      return errorMsg.arg(line).arg(expectedMessages.value(i)).arg(currentMessages.join("\n"));
     }
   }
   return QString();
