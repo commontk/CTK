@@ -29,6 +29,7 @@
 #ifdef _MSC_VER
 # include <io.h> // For _write()
 #else
+# include <cerrno>
 # include <unistd.h>
 #endif
 
@@ -127,14 +128,28 @@ void ctkErrorLogTerminalOutput::output(const QString& text)
     QMutexLocker locker(&d->OutputMutex);
     QByteArray bytes = text.toUtf8();
     bytes.append('\n');
-#ifdef _MSC_VER
-    int res = _write(d->FD, bytes.constData(), bytes.size());
-#else
-    ssize_t res = write(d->FD, bytes.constData(), bytes.size());
-#endif
-    if (res == -1)
+    int offset = 0;
+    while (offset < bytes.size())
     {
-      return;
+#ifdef _MSC_VER
+      int written = _write(d->FD, bytes.constData() + offset, bytes.size() - offset);
+      if (written <= 0)
+      {
+        break;
+      }
+      offset += written;
+#else
+      ssize_t written = write(d->FD, bytes.constData() + offset, bytes.size() - offset);
+      if (written == -1)
+      {
+        if (errno == EINTR)
+        {
+          continue;
+        }
+        break;
+      }
+      offset += static_cast<int>(written);
+#endif
     }
   }
 }
