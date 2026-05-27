@@ -70,8 +70,16 @@ bool checkTerminalOutput(const QStringList& expectedMessages)
     process.setProcessChannelMode(QProcess::MergedChannels);
     process.start(testLauncher, QStringList() << QCoreApplication::arguments().at(0));
     process.waitForFinished(1000);
-    QString output = process.readAll();
-    QString errorMsg = checkTextMessages(__LINE__, output.split("\n"), expectedMessages);
+    QStringList lines;
+    for (const QString& line : QString::fromUtf8(process.readAll()).split('\n'))
+    {
+      const QString trimmed = line.trimmed();
+      if (!trimmed.isEmpty())
+      {
+        lines << trimmed;
+      }
+    }
+    QString errorMsg = checkTextMessages(__LINE__, lines, expectedMessages);
     if (!errorMsg.isEmpty())
     {
       printErrorMessage(errorMsg);
@@ -94,12 +102,15 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
   QString qtMessage0("This is a qDebug message");
   QString qtMessage1("This is a qWarning message");
   QString qtMessage2("This is a qCritical message");
+  // e with acute (U+00E9) is 1 UTF-16 unit but 2 UTF-8 bytes; size() != toUtf8().size() for this string.
+  // This guards against regressions where output() used QString::size() as the write byte count.
+  QString qtMessageUtf8 = QString::fromUtf8("caf\xc3\xa9 r\xc3\xa9sum\xc3\xa9"); // "café résumé"
   QString stdMessage0("This is a std::cerr message");
   QString stdMessage1("This is a std::cout message");
 
   QStringList expectedMessages;
   expectedMessages << fdMessage0 << fdMessage1
-                   << qtMessage0 << qtMessage1 << qtMessage2
+                   << qtMessage0 << qtMessage1 << qtMessage2 << qtMessageUtf8
                    << stdMessage0 << stdMessage1;
 
   // Since the order of the messages outputted on the terminal is not deterministic,
@@ -171,6 +182,8 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
     std::cout << qPrintable(stdMessage1) << std::endl;
 
     qCritical().nospace() << qUtf8Printable(qtMessage2);
+
+    qDebug().nospace() << qUtf8Printable(qtMessageUtf8);
 
     // Give enough time to the ErrorLogModel to consider the queued messages.
     processEvents(1000);
