@@ -50,7 +50,7 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
   this->MessageHandler = messageHandler;
   this->LogLevel = logLevel;
   this->TerminalOutput = terminalOutput;
-  this->SavedFDNumber = 0;
+  this->SavedFDNumber = -1;
   this->Pipe[0] = -1;
   this->Pipe[1] = -1;
   this->Enabled = false;
@@ -83,14 +83,15 @@ FILE* ctkFDHandler::terminalOutputFile()
 }
 
 // --------------------------------------------------------------------------
-void ctkFDHandler::setEnabled(bool value)
+void ctkFDHandler::setEnabled(bool enable)
 {
-  if (this->Enabled == value)
+  if (this->Enabled == enable)
   {
     return;
   }
 
-  if (value)
+  int terminalOutputFileDescriptor = -1;
+  if (enable)
   {
     this->setupPipe();
 
@@ -108,6 +109,7 @@ void ctkFDHandler::setEnabled(bool value)
     dup2(this->Pipe[1], fileno(this->terminalOutputFile()));
     close(this->Pipe[1]);
 #endif
+    terminalOutputFileDescriptor = this->SavedFDNumber;
 
     // Start polling thread
     this->Enabled = true;
@@ -132,11 +134,10 @@ void ctkFDHandler::setEnabled(bool value)
       this->Enabled = false;
     }
 
-    QString newline("\n");
 #ifdef Q_OS_WIN32
-    unused = _write(_fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+    unused = _write(_fileno(this->terminalOutputFile()), "\n", 1);
 #else
-    unused = write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+    unused = write(fileno(this->terminalOutputFile()), "\n", 1);
 #endif
     Q_UNUSED(unused);
 
@@ -154,21 +155,25 @@ void ctkFDHandler::setEnabled(bool value)
     clearerr(this->terminalOutputFile());
     fsetpos(this->terminalOutputFile(), &this->SavedFDPos);
 
-
 #ifdef Q_OS_WIN32
     _close(this->Pipe[0]);
 #else
     close(this->Pipe[0]);
 #endif
 
-    this->SavedFDNumber = 0;
+    this->SavedFDNumber = -1;
+#ifdef Q_OS_WIN32
+    terminalOutputFileDescriptor = _fileno(this->terminalOutputFile());
+#else
+    terminalOutputFileDescriptor = fileno(this->terminalOutputFile());
+#endif
   }
 
   ctkErrorLogTerminalOutput * terminalOutput =
       this->MessageHandler->terminalOutput(this->TerminalOutput);
-  if(terminalOutput)
+  if (terminalOutput)
   {
-    terminalOutput->setFileDescriptor(this->SavedFDNumber);
+    terminalOutput->setFileDescriptor(terminalOutputFileDescriptor);
   }
 }
 
