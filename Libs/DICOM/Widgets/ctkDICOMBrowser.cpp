@@ -1290,7 +1290,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
   QString metadataString = tr("View DICOM metadata");
   if (numSeries > 1)
   {
-    metadataString += tr("View DICOM metadata of %1 selected series").arg(numSeries);
+    metadataString = tr("View DICOM metadata of %1 selected series").arg(numSeries);
   }
   QAction *metadataAction = new QAction(metadataString, seriesMenu);
   seriesMenu->addAction(metadataAction);
@@ -1298,7 +1298,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
   QString deleteString = tr("Delete");
   if (numSeries > 1)
   {
-    deleteString += tr("Delete %1 selected series").arg(numSeries);
+    deleteString = tr("Delete %1 selected series").arg(numSeries);
   }
   QAction *deleteAction = new QAction(deleteString, seriesMenu);
   seriesMenu->addAction(deleteAction);
@@ -1306,7 +1306,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
   QString exportString = tr("Export to file system");
   if (numSeries > 1)
   {
-    exportString += tr("Export %1 selected series to file system").arg(numSeries);
+    exportString = tr("Export %1 selected series to file system").arg(numSeries);
   }
   QAction *exportAction = new QAction(exportString, seriesMenu);
   seriesMenu->addAction(exportAction);
@@ -1314,7 +1314,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
   QString sendString = tr("Send to DICOM server");
   if (numSeries > 1)
   {
-    sendString += tr("Send %1 selected series to DICOM server").arg(numSeries);
+    sendString = tr("Send %1 selected series to DICOM server").arg(numSeries);
   }
   QAction* sendAction = new QAction(sendString, seriesMenu);
   if (this->isSendActionVisible())
