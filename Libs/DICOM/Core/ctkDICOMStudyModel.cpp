@@ -28,6 +28,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMStudyModel.h"
@@ -39,7 +40,7 @@
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMJob.h"
 
-static ctkLogger logger("org.commontk.DICOM.Core.ctkDICOMStudyModel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Core.ctkDICOMStudyModel"))
 
 //------------------------------------------------------------------------------
 // Helper function for setDicomDatabase/setScheduler
@@ -198,7 +199,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
 
   if (!this->DicomDatabase)
   {
-    logger.error("populateStudies: No database set");
+    logger->error("populateStudies: No database set");
     return;
   }
 
@@ -604,7 +605,7 @@ ctkDICOMSeriesModel* ctkDICOMStudyModelPrivate::createSeriesModel(const QString&
 
   if (!this->DicomDatabase)
   {
-    logger.warn("createSeriesModel: No database set");
+    logger->warn("createSeriesModel: No database set");
     return nullptr;
   }
 

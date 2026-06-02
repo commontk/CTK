@@ -30,7 +30,7 @@
 
 //logger
 #include <ctkLogger.h>
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.ctkDICOMQueryWidget"))
 
 
 //----------------------------------------------------------------------------

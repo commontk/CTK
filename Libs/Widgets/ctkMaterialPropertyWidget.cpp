@@ -29,7 +29,7 @@
 #include "ui_ctkMaterialPropertyWidget.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkMaterialPropertyWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkMaterialPropertyWidget"))
 
 //-----------------------------------------------------------------------------
 class ctkMaterialPropertyWidgetPrivate: public Ui_ctkMaterialPropertyWidget

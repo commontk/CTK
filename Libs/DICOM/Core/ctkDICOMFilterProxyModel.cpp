@@ -27,7 +27,8 @@
 
 //logger
 #include <ctkLogger.h>
-static ctkLogger logger("org.commontk.DICOM.Core.ctkDICOMFilterProxyModel");
+#include <QGlobalStatic>
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Core.ctkDICOMFilterProxyModel"))
 
 
 //----------------------------------------------------------------------------

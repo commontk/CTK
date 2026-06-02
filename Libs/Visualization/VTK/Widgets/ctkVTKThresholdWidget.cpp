@@ -34,7 +34,7 @@
 #include <cmath> // for pow
 
 //----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKThresholdWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKThresholdWidget"))
 //----------------------------------------------------------------------------
 
 class ctkVTKThresholdWidgetPrivate:

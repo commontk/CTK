@@ -76,7 +76,7 @@
 #include "ctkDICOMVisualBrowserWidget.h"
 #include "ui_ctkDICOMVisualBrowserWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget"))
 
 QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
 QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
@@ -574,19 +574,19 @@ void ctkDICOMVisualBrowserWidgetPrivate::importDirectory(QString directory, ctkD
 {
   if (!this->DicomDatabase)
   {
-    logger.error("importDirectory failed, no DICOM Database has been set. \n");
+    logger->error("importDirectory failed, no DICOM Database has been set. \n");
     return;
   }
 
   if (!this->Scheduler || !this->Indexer)
   {
-    logger.error("importDirectory failed, no task pool has been set. \n");
+    logger->error("importDirectory failed, no task pool has been set. \n");
     return;
   }
 
   if (!QDir(directory).exists())
   {
-    logger.error(QString("importDirectory failed, input directory %1 does not exist. \n").arg(directory));
+    logger->error(QString("importDirectory failed, input directory %1 does not exist. \n").arg(directory));
     return;
   }
   // Start background indexing
@@ -598,13 +598,13 @@ void ctkDICOMVisualBrowserWidgetPrivate::importFiles(const QStringList& files, c
 {
   if (!this->DicomDatabase)
   {
-    logger.error("importFiles failed, no DICOM Database has been set. \n");
+    logger->error("importFiles failed, no DICOM Database has been set. \n");
     return;
   }
 
   if (!this->Scheduler || !this->Indexer)
   {
-    logger.error("importFiles failed, no task pool has been set. \n");
+    logger->error("importFiles failed, no task pool has been set. \n");
     return;
   }
 
@@ -764,13 +764,13 @@ QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
 
   if (!this->DicomDatabase)
   {
-    logger.error("createPatients failed, no DICOM database has been set. \n");
+    logger->error("createPatients failed, no DICOM database has been set. \n");
     return QString();
   }
 
   if (!this->PatientModel)
   {
-    logger.error("createPatients failed, no PatientModel has been set. \n");
+    logger->error("createPatients failed, no PatientModel has been set. \n");
     return QString();
   }
 
@@ -885,7 +885,7 @@ QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
         "The server settings section is below.\n"
         "Check also the allowed servers at patient level."
       );
-      logger.warn(warningText);
+      logger->warn(warningText);
       this->WarningPushButton->setText(warningText);
       this->WarningPushButton->show();
       q->openServerSettingsSection();
@@ -950,13 +950,13 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 {
   if (!this->DicomDatabase)
   {
-    logger.error("updateFiltersWarnings failed, no DICOM database has been set. \n");
+    logger->error("updateFiltersWarnings failed, no DICOM database has been set. \n");
     return;
   }
 
   if (!this->PatientModel)
   {
-    logger.error("updateFiltersWarnings failed, no PatientModel has been set. \n");
+    logger->error("updateFiltersWarnings failed, no PatientModel has been set. \n");
     return;
   }
 
@@ -1234,7 +1234,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
   QStringList filteredPatientList;
   if (!this->DicomDatabase)
   {
-    logger.error("filterPatientList failed, no DICOM Database has been set. \n");
+    logger->error("filterPatientList failed, no DICOM Database has been set. \n");
     return filteredPatientList;
   }
 
@@ -1270,7 +1270,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterStudyList(const QStringLis
   QStringList filteredStudyList;
   if (!this->DicomDatabase)
   {
-    logger.error("filterStudyList failed, no DICOM Database has been set. \n");
+    logger->error("filterStudyList failed, no DICOM Database has been set. \n");
     return filteredStudyList;
   }
 
@@ -1322,7 +1322,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
   QStringList filteredSeriesList;
   if (!this->DicomDatabase)
   {
-    logger.error("filterSeriesList failed, no DICOM Database has been set. \n");
+    logger->error("filterSeriesList failed, no DICOM Database has been set. \n");
     return filteredSeriesList;
   }
 
@@ -1609,7 +1609,7 @@ void ctkDICOMVisualBrowserWidget::setTagsToPrecache(const QStringList& tags)
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
   {
-    logger.error("setTagsToPrecache failed, no DICOM Database has been set. \n");
+    logger->error("setTagsToPrecache failed, no DICOM Database has been set. \n");
     return;
   }
 
@@ -1622,7 +1622,7 @@ const QStringList ctkDICOMVisualBrowserWidget::tagsToPrecache()
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
   {
-    logger.error("Get tagsToPrecache failed, no DICOM Database has been set. \n");
+    logger->error("Get tagsToPrecache failed, no DICOM Database has been set. \n");
     return QStringList();
   }
 
@@ -1926,7 +1926,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
   {
-    logger.error("setDatabaseDirectory failed, no DICOM database has been set. \n");
+    logger->error("setDatabaseDirectory failed, no DICOM database has been set. \n");
     return;
   }
 
@@ -1942,7 +1942,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
   if (!QDir(absDirectory).exists()
     || (!ctk::isDirEmpty(QDir(absDirectory)) && !QFile(databaseFileName).exists()))
   {
-    logger.warn("Database folder does not contain ctkDICOM.sql file: " + absDirectory + "\n");
+    logger->warn("Database folder does not contain ctkDICOM.sql file: " + absDirectory + "\n");
     d->DatabaseDirectoryProblemFrame->show();
     d->DatabaseDirectoryProblemLabel->setText(
       //: %1 is the folder path
@@ -1969,7 +1969,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
     }
     if (!databaseOpenSuccess || d->DicomDatabase->schemaVersionLoaded().isEmpty())
     {
-      logger.warn(tr("Database error: %1 \n").arg(d->DicomDatabase->lastError()));
+      logger->warn(tr("Database error: %1 \n").arg(d->DicomDatabase->lastError()));
       d->DicomDatabase->closeDatabase();
       d->DatabaseDirectoryProblemFrame->show();
       d->DatabaseDirectoryProblemLabel->setText(
@@ -1987,8 +1987,8 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
   {
     if (d->DicomDatabase->schemaVersionLoaded() != d->DicomDatabase->schemaVersion())
     {
-      logger.warn(QString("Database version mismatch: version of selected database = %1, version required = %2 \n")
-        .arg(d->DicomDatabase->schemaVersionLoaded(), d->DicomDatabase->schemaVersion()));
+      logger->warn(QString("Database version mismatch: version of selected database = %1, version required = %2 \n")
+        .arg(d->DicomDatabase->schemaVersionLoaded()).arg(d->DicomDatabase->schemaVersion()));
       d->DicomDatabase->closeDatabase();
       d->DatabaseDirectoryProblemFrame->show();
       d->DatabaseDirectoryProblemLabel->setText(
@@ -2069,7 +2069,7 @@ void ctkDICOMVisualBrowserWidget::waitForImportFinished()
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->Scheduler || !d->Indexer)
   {
-    logger.error("waitForImportFinished failed, no task pool has been set. \n");
+    logger->error("waitForImportFinished failed, no task pool has been set. \n");
     return;
   }
   d->Indexer->waitForImportFinished();
@@ -2457,7 +2457,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 
   if (!d->DicomDatabase)
   {
-    logger.error("onQueryPatients failed, no DICOM database has been set. \n");
+    logger->error("onQueryPatients failed, no DICOM database has been set. \n");
     return;
   }
 
@@ -2480,7 +2480,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
     QString warningText = tr("No server is configured for query/retrieve operations.\n"
                               "The server settings section is below.");
-    logger.warn(warningText);
+    logger->warn(warningText);
     d->WarningPushButton->setText(warningText);
     d->WarningPushButton->show();
     this->openServerSettingsSection();
@@ -2493,7 +2493,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
     QString warningText = tr("No filters are set and no patients are found in the local database.\n"
                               "Please specify at least one filter to query the servers.");
-    logger.warn(warningText);
+    logger->warn(warningText);
     d->WarningPushButton->setText(warningText);
     d->WarningPushButton->show();
     return;
@@ -3551,13 +3551,13 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
 
   if (!d->Scheduler)
   {
-    logger.error("onLoadSeries failed, no scheduler has been set. \n");
+    logger->error("onLoadSeries failed, no scheduler has been set. \n");
     return;
   }
 
   if (!d->DicomDatabase)
   {
-    logger.error("onLoadSeries failed, no DicomDatabase has been set. \n");
+    logger->error("onLoadSeries failed, no DicomDatabase has been set. \n");
     return;
   }
 
@@ -3769,13 +3769,13 @@ void ctkDICOMVisualBrowserWidget::forceRetrieveSeries(const QStringList& seriesI
 
   if (!d->Scheduler)
   {
-    logger.error("forceRetrieveSeries failed, no scheduler has been set. \n");
+    logger->error("forceRetrieveSeries failed, no scheduler has been set. \n");
     return;
   }
 
   if (!d->DicomDatabase)
   {
-    logger.error("forceRetrieveSeries failed, no DicomDatabase has been set. \n");
+    logger->error("forceRetrieveSeries failed, no DicomDatabase has been set. \n");
     return;
   }
 
@@ -3966,7 +3966,7 @@ void ctkDICOMVisualBrowserWidget::exportSeriesToDirectory(const QString& dirPath
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
   {
-    logger.error("exportSeries failed, no DICOM database has been set. \n");
+    logger->error("exportSeries failed, no DICOM database has been set. \n");
     return;
   }
 
@@ -4265,7 +4265,7 @@ bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& u
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
   {
-    logger.error("confirmDeleteSelectedUIDs failed, no DICOM database has been set. \n");
+    logger->error("confirmDeleteSelectedUIDs failed, no DICOM database has been set. \n");
     return false;
   }
 

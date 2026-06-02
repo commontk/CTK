@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMQueryWorker_p.h"
@@ -33,7 +34,7 @@
 // DCMTK includes
 #include <dcmtk/oflog/spi/logevent.h>
 
-static ctkLogger logger ("org.commontk.dicom.DICOMQueryWorker");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMQueryWorker"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryWorkerPrivate methods
@@ -126,14 +127,14 @@ void ctkDICOMQueryWorker::run()
 
   queryJob->setStatus(ctkAbstractJob::JobStatus::Running);
 
-  logger.debug(QString("ctkDICOMQueryWorker : running job %1 in thread %2.\n")
+  logger->debug(QString("ctkDICOMQueryWorker : running job %1 in thread %2.\n")
                        .arg(queryJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   switch (queryJob->dicomLevel())
   {
     case ctkDICOMJob::DICOMLevels::None:
-      logger.warn("ctkDICOMQueryWorker : DICOMLevels was not set.");
+      logger->warn("ctkDICOMQueryWorker : DICOMLevels was not set.");
       this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
       return;
     case ctkDICOMJob::DICOMLevels::Patients:

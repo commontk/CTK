@@ -25,8 +25,9 @@
 #include "ctkDICOMInserterJob.h"
 #include "ctkDICOMInserterWorker.h"
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 
-static ctkLogger logger ("org.commontk.dicom.DICOMInserterJob");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMInserterJob"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterJob methods

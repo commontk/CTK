@@ -27,11 +27,12 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger("org.commontk.dicom.DICOMServer");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMServer"))
 
 //------------------------------------------------------------------------------
 class ctkDICOMServerPrivate : public QObject
