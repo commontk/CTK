@@ -23,7 +23,23 @@
 #ifndef CTKPLUGINFRAMEWORKDEBUG_P_H
 #define CTKPLUGINFRAMEWORKDEBUG_P_H
 
+// Qt includes
+#include <QLatin1String>
+
 #include "ctkPluginFramework_global.h"
+
+namespace {
+/// Construct a QLatin1String from a string literal, deducing length at
+/// compile time via the array-reference parameter.  Avoids repeating
+/// sizeof/static_cast at every definition site.
+template<std::size_t N>
+constexpr QLatin1String make_constexpr_QLatin1String_(const char (&str)[N])
+{
+  return QLatin1String{str, static_cast<int>(N - 1)};
+}
+} // namespace
+
+#define CTK_OSGI "org.commontk.pluginfw"
 
 /**
  * Variables that control debugging of the pluginfw code.
@@ -34,37 +50,37 @@ class ctkPluginFrameworkDebug
 public:
   ctkPluginFrameworkDebug();
 
-  static QString OPTION_DEBUG_GENERAL;
+  static constexpr QLatin1String OPTION_DEBUG_GENERAL         = make_constexpr_QLatin1String_(CTK_OSGI "/debug");
   bool enabled;
 
   /**
    * Report error handling events.
    */
-  static QString OPTION_DEBUG_ERRORS;
+  static constexpr QLatin1String OPTION_DEBUG_ERRORS          = make_constexpr_QLatin1String_(CTK_OSGI "/debug/errors");
   bool errors;
 
   /**
    * Report pluginfw create, init, start, stop
    */
-  static QString OPTION_DEBUG_FRAMEWORK;
+  static constexpr QLatin1String OPTION_DEBUG_FRAMEWORK       = make_constexpr_QLatin1String_(CTK_OSGI "/debug/framework");
   bool framework;
 
   /**
    * Report hooks handling
    */
-  static QString OPTION_DEBUG_HOOKS;
+  static constexpr QLatin1String OPTION_DEBUG_HOOKS           = make_constexpr_QLatin1String_(CTK_OSGI "/debug/hooks");
   bool hooks;
 
   /**
    * Report triggering of lazy activation
    */
-  static QString OPTION_DEBUG_LAZY_ACTIVATION;
+  static constexpr QLatin1String OPTION_DEBUG_LAZY_ACTIVATION = make_constexpr_QLatin1String_(CTK_OSGI "/debug/lazy_activation");
   bool lazy_activation;
 
   /**
    * Report LDAP handling
    */
-  static QString OPTION_DEBUG_LDAP;
+  static constexpr QLatin1String OPTION_DEBUG_LDAP            = make_constexpr_QLatin1String_(CTK_OSGI "/debug/ldap");
   bool ldap;
 
   /**
@@ -72,27 +88,29 @@ public:
    * and rejections due to missing permissions
    * for calling plug-ins.
    */
-  static QString OPTION_DEBUG_SERVICE_REFERENCE;
+  static constexpr QLatin1String OPTION_DEBUG_SERVICE_REFERENCE = make_constexpr_QLatin1String_(CTK_OSGI "/debug/service_reference");
   bool service_reference;
 
   /**
    * Report startlevel.
    */
-  static QString OPTION_DEBUG_STARTLEVEL;
+  static constexpr QLatin1String OPTION_DEBUG_STARTLEVEL      = make_constexpr_QLatin1String_(CTK_OSGI "/debug/startlevel");
   bool startlevel;
 
   /**
    * Report url
    */
-  static QString OPTION_DEBUG_URL;
+  static constexpr QLatin1String OPTION_DEBUG_URL             = make_constexpr_QLatin1String_(CTK_OSGI "/debug/url");
   bool url;
 
   /**
    * Report plug-in resolve progress
    */
-  static QString OPTION_DEBUG_RESOLVE;
+  static constexpr QLatin1String OPTION_DEBUG_RESOLVE         = make_constexpr_QLatin1String_(CTK_OSGI "/debug/resolve");
   bool resolve;
 
 };
+
+#undef CTK_OSGI
 
 #endif // CTKPLUGINFRAMEWORKDEBUG_P_H
