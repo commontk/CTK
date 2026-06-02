@@ -478,8 +478,13 @@ void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
 {
   Q_D(ctkDICOMScheduler);
 
-  // Do not generate thumbnails for modalities that do not have meaningful image thumbnails
-  if (ctkDICOMModalities::ExcludedFromThumbnailGeneration.contains(modality))
+  // Do not generate thumbnails for modalities that do not have meaningful image thumbnails.
+  // Prefer the database's configured exclusion list when a database is attached;
+  // otherwise fall back to ctkDICOMModalities::ExcludedFromThumbnailGeneration.
+  const QStringList excludedModalities = d->DicomDatabase
+    ? d->DicomDatabase->modalitiesExcludedFromThumbnailGeneration()
+    : ctkDICOMModalities::ExcludedFromThumbnailGeneration;
+  if (excludedModalities.contains(modality))
   {
     // Do not generate thumbnails for excluded modalities
     // To Do: refactor the ctkDICOMThumbnailGenerator to handle properly these cases

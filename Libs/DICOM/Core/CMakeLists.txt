@@ -42,6 +42,8 @@ set(KIT_SRCS
   ctkDICOMJob.h
   ctkDICOMJobResponseSet.cpp
   ctkDICOMJobResponseSet.h
+  ctkDICOMModalities.cpp
+  ctkDICOMModalities.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMPatientFilterProxyModel.cpp
