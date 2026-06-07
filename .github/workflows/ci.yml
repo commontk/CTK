@@ -41,6 +41,7 @@ jobs:
         if: ${{ matrix.qt-major-version == 5 }}
         run: |
           sudo apt-get install -y \
+            python3-dev \
             qtbase5-dev \
             qtmultimedia5-dev \
             qttools5-dev \

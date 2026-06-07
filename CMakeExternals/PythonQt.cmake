@@ -74,22 +74,23 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     endforeach()
   endif()
 
-  # Python is required
-  if(NOT PYTHONLIBS_FOUND)
-    find_package(PythonLibs)
-    if(NOT PYTHONLIBS_FOUND)
-      message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
-    endif()
-  endif()
+  # CMakeLists.txt already required Python3 with Interpreter and Development
+  # before reaching this block. A subsequent dependency (e.g. system VTK) may
+  # call find_package(Python3) with a narrower component set, which resets
+  # Python3_Development_FOUND. Force a fresh REQUIRED detection so the cache
+  # carries Development.Module + Development.Embed alongside Interpreter.
+  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-  # Variable expected by FindPython3 CMake module
-  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  set(Python3_LIBRARY ${PYTHON_LIBRARY})
-  set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
-  set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
-  find_package(Python3 COMPONENTS Development REQUIRED)
+  # find_package(Python3) populates the plural / _RELEASE output vars; the
+  # singular Python3_INCLUDE_DIR / Python3_LIBRARY hint vars are left empty.
+  # Set them so mark_as_superbuild propagates non-empty hints to the inner CTK
+  # build (whose find_package(Python3) needs them to locate Development).
+  set(Python3_INCLUDE_DIR "${Python3_INCLUDE_DIRS}")
+  set(Python3_LIBRARY "${Python3_LIBRARY_RELEASE}")
 
-  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+  # Bridge to legacy PYTHON_* names that downstream CTK CMake code still reads.
+  set(PYTHON_INCLUDE_DIR "${Python3_INCLUDE_DIRS}")
+  set(PYTHON_LIBRARY "${Python3_LIBRARY_RELEASE}")
 
   set(revision_tag 74dcd675e1515324cd7467a328d63dd25d263679) # patched-v4.1.0-2026-06-05-9992368e9
   if(${proj}_REVISION_TAG)
@@ -154,11 +155,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       ${ep_common_cache_args}
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
       -DPythonQt_GENERATED_PATH:PATH=${PythonQtGenerator_OUTPUT_DIR}/generated_cpp
-      # FindPython3
-      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
-      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
-      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY}
-      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY}
+      # FindPython3 hints (singulars are hint inputs; values come from the
+      # populated plural / _RELEASE output vars).
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIRS}
+      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY_RELEASE}
+      -DPython3_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY_RELEASE}
+      -DPython3_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
       ${ep_PythonQt_args}
     DEPENDS
       ${proj}-source
@@ -299,7 +301,11 @@ set(PythonQt_DIR ${PYTHONQT_INSTALL_DIR})
 mark_as_superbuild(
   VARS
     PYTHONQT_INSTALL_DIR:PATH
-    PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
+    Python3_EXECUTABLE:FILEPATH # FindPython3 hint
+    Python3_INCLUDE_DIR:PATH # FindPython3 hint
+    Python3_LIBRARY:FILEPATH # FindPython3 hint
+    Python3_LIBRARY_DEBUG:FILEPATH # FindPython3 hint
+    Python3_LIBRARY_RELEASE:FILEPATH # FindPython3 hint
     PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     PYTHON_INCLUDE_DIR2:PATH
     PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
