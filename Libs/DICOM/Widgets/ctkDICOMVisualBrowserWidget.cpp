@@ -3973,6 +3973,11 @@ void ctkDICOMVisualBrowserWidget::exportSeriesToDirectory(const QString& dirPath
   foreach (const QString& uid, uids)
   {
     QStringList filesForSeries = d->DicomDatabase->filesForSeries(uid);
+    if (filesForSeries.isEmpty())
+    {
+      logger.warn(QString("exportSeries: no local files found for series %1, skipping export.\n").arg(uid));
+      continue;
+    }
 
     // Use the first file to get the overall series information
     QString firstFilePath = filesForSeries[0];
