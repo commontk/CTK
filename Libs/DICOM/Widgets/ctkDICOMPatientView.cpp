@@ -945,7 +945,7 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
   {
     d->DisplayModeButton->setFixedSize(36, 36);
     d->DisplayModeButton->setIconSize(QSize(28, 28));
-    d->DisplayModeButton->setIcon(QIcon(":/Icons/more_horiz.svg"));
+    d->DisplayModeButton->setIcon(QIcon(":/Icons/list.svg"));
     d->DisplayModeButton->setToolTip(tr("Show all patients"));
   }
   else
@@ -1249,7 +1249,7 @@ void ctkDICOMPatientView::setDisplayMode(DisplayMode mode)
     {
       d->DisplayModeButton->setFixedSize(36, 36);
       d->DisplayModeButton->setIconSize(QSize(28, 28));
-      d->DisplayModeButton->setIcon(QIcon(":/Icons/more_horiz.svg"));
+      d->DisplayModeButton->setIcon(QIcon(":/Icons/list.svg"));
       d->DisplayModeButton->setToolTip(tr("Show all patients"));
     }
     else

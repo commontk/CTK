@@ -47,5 +47,6 @@
         <file>Icons/metadata.svg</file>
         <file>Icons/upload.svg</file>
         <file>Icons/accept2.svg</file>
+        <file>Icons/list.svg</file>
     </qresource>
 </RCC>
