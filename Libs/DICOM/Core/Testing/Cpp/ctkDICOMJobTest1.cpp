@@ -55,7 +55,7 @@ int ctkDICOMJobTest1(int argc, char* argv[])
   CHECK_QSTRING(queryJob.studyInstanceUID(), "");
   CHECK_QSTRING(queryJob.seriesInstanceUID(), "");
   CHECK_QSTRING(queryJob.sopInstanceUID(), "");
-  CHECK_INT(queryJob.maximumPatientsQuery(), 25);
+  CHECK_INT(queryJob.maximumPatientsQuery(), 0);
   CHECK_POINTER(queryJob.server(), nullptr);
 
   // Test setting and getting

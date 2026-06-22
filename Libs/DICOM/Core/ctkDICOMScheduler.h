@@ -210,7 +210,7 @@ public:
 
   ///@{
   /// maximum number of responses allowed in one query
-  /// when query is at Patient level. Default is 25.
+  /// when query is at Patient level. Default is 0 (unlimited).
   void setMaximumPatientsQuery(int maximumPatientsQuery);
   int maximumPatientsQuery();
   ///@}
@@ -259,7 +259,7 @@ public:
   QMap<QString, QMetaObject::Connection> ServersConnections;
   QMap<QString, QVariant> Filters;
 
-  int MaximumPatientsQuery{25};
+  int MaximumPatientsQuery{0}; // unlimited by default
 
   dcmtk::log4cplus::SharedAppenderPtr Appender;
 };

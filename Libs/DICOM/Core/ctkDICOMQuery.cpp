@@ -154,7 +154,7 @@ ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
   this->Port = 0;
   this->Canceled = false;
   this->AssociationClosing = false;
-  this->MaximumPatientsQuery = 25;
+  this->MaximumPatientsQuery = 0; // unlimited
 
   this->PresentationContext = 0;
   this->SCU = new ctkDICOMQuerySCUPrivate();
@@ -591,7 +591,7 @@ bool ctkDICOMQuery::queryPatients()
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
     {
       contResponses++;
-      if (contResponses > d->MaximumPatientsQuery)
+      if (d->MaximumPatientsQuery != 0 && contResponses > d->MaximumPatientsQuery)
       {
         LOG_AND_EMIT_WARN(QString("The number of responses of the query task at patients level "
                                   "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery), warn)

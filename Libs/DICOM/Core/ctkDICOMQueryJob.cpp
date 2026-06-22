@@ -40,7 +40,7 @@ ctkDICOMQueryJobPrivate::ctkDICOMQueryJobPrivate(ctkDICOMQueryJob* object)
  : q_ptr(object)
 {
   this->Server = nullptr;
-  this->MaximumPatientsQuery = 25;
+  this->MaximumPatientsQuery = 0; // unlimited
 }
 
 //------------------------------------------------------------------------------

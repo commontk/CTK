@@ -67,7 +67,7 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
   CHECK_INT(scheduler.maximumThreadCount(), 20);
   CHECK_INT(scheduler.maximumNumberOfRetry(), 3);
   CHECK_INT(scheduler.retryDelay(), 100);
-  CHECK_INT(scheduler.maximumPatientsQuery(), 25);
+  CHECK_INT(scheduler.maximumPatientsQuery(), 0);
 
   // Test setting and getting
   scheduler.setMaximumThreadCount(19);

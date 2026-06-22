@@ -92,7 +92,7 @@ public:
 
   ///@{
   /// maximum number of responses allowed in one query
-  /// when query is at Patient level. Default is 25.
+  /// when query is at Patient level. Default is 0 (unlimited).
   void setMaximumPatientsQuery(const int& maximumPatientsQuery);
   int maximumPatientsQuery() const;
   ///@}
