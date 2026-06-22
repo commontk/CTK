@@ -232,9 +232,18 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
 {
   Q_D(ctkDICOMScheduler);
 
+  // Top-level study queries (no patient context) should use all query/retrieve
+  // servers, matching queryPatients() behavior.
+  const bool topLevelQuery = patientID.isEmpty() && allowedSeversForPatient.isEmpty();
+
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
+    if (!server || !server->queryRetrieveEnabled())
+    {
+      continue;
+    }
+
+    if (!topLevelQuery && !d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }
@@ -261,9 +270,20 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
 {
   Q_D(ctkDICOMScheduler);
 
+  // Top-level series queries (no patient/study context) should use all
+  // query/retrieve servers, matching queryPatients() behavior.
+  const bool topLevelQuery = patientID.isEmpty() &&
+                             studyInstanceUID.isEmpty() &&
+                             allowedSeversForPatient.isEmpty();
+
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!d->isServerAllowed(server.data(), allowedSeversForPatient))
+    if (!server || !server->queryRetrieveEnabled())
+    {
+      continue;
+    }
+
+    if (!topLevelQuery && !d->isServerAllowed(server.data(), allowedSeversForPatient))
     {
       continue;
     }

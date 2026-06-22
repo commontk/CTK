@@ -24,6 +24,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QMutex>
 #include <QPair>
 #include <QSet>
@@ -120,6 +121,35 @@ public:
   /// Add StudyInstanceUID and SeriesInstanceUID that may be further retrieved
   void addStudyAndSeriesInstanceUID( const QString& studyInstanceUID, const QString& seriesInstanceUID );
 
+  struct StudyMetadata
+  {
+    QString PatientID;
+    QString PatientName;
+    QString PatientBirthDate;
+    QString StudyID;
+    QString StudyDescription;
+    QString StudyDate;
+    QString StudyTime;
+    QString AccessionNumber;
+    QString ModalitiesInStudy;
+    bool Valid = false;
+  };
+
+  /// Query STUDY level C-FIND to resolve patient and study metadata.
+  StudyMetadata queryStudyMetadata(ctkDICOMQuery* queryObject,
+                                   Uint16 presentationContext,
+                                   const QString& studyInstanceUID,
+                                   QHash<QString, StudyMetadata>& cache);
+
+  /// Copy patient/study identifiers and study metadata into a series-level dataset.
+  void enrichSeriesDataset(DcmDataset* dataset,
+                           const QString& studyInstanceUID,
+                           const StudyMetadata& studyMetadata) const;
+
+  void putDatasetStringIfEmpty(DcmDataset* dataset,
+                               const DcmTagKey& tag,
+                               const QString& value) const;
+
   /// \warning: releaseAssociation is not a thread safe method.
   /// If called concurrently from different threads DCMTK can crash.
   /// Therefore use this method instead of calling directly SCU->releaseAssociation()
@@ -210,6 +240,146 @@ OFCondition ctkDICOMQueryPrivate::releaseAssociation()
   this->AssociationClosing = false;
 
   return status;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMQueryPrivate::StudyMetadata ctkDICOMQueryPrivate::queryStudyMetadata(
+  ctkDICOMQuery* queryObject,
+  Uint16 presentationContext,
+  const QString& studyInstanceUID,
+  QHash<QString, StudyMetadata>& cache)
+{
+  StudyMetadata metadata;
+  if (studyInstanceUID.isEmpty())
+  {
+    return metadata;
+  }
+
+  if (cache.contains(studyInstanceUID))
+  {
+    return cache.value(studyInstanceUID);
+  }
+
+  if (!this->SCU || !this->QueryDcmDataset)
+  {
+    return metadata;
+  }
+
+  DcmDataset studyQueryDataset;
+  studyQueryDataset.insertEmptyElement(DCM_PatientID);
+  studyQueryDataset.insertEmptyElement(DCM_PatientName);
+  studyQueryDataset.insertEmptyElement(DCM_PatientBirthDate);
+  studyQueryDataset.insertEmptyElement(DCM_StudyID);
+  studyQueryDataset.insertEmptyElement(DCM_StudyInstanceUID);
+  studyQueryDataset.insertEmptyElement(DCM_StudyDescription);
+  studyQueryDataset.insertEmptyElement(DCM_StudyDate);
+  studyQueryDataset.insertEmptyElement(DCM_StudyTime);
+  studyQueryDataset.insertEmptyElement(DCM_ModalitiesInStudy);
+  studyQueryDataset.insertEmptyElement(DCM_AccessionNumber);
+  studyQueryDataset.putAndInsertString(DCM_QueryRetrieveLevel, "STUDY");
+  studyQueryDataset.putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
+
+  OFList<QRResponse*> responses;
+  OFCondition status = this->SCU->sendFINDRequest(presentationContext, &studyQueryDataset, &responses);
+  if (!status.good())
+  {
+    LOG_AND_EMIT_WARN(
+      QString("Study-level C-FIND failed while resolving metadata for study %1").arg(studyInstanceUID),
+      queryObject->warn);
+    cache.insert(studyInstanceUID, metadata);
+    return metadata;
+  }
+
+  for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); ++it)
+  {
+    DcmDataset* dataset = (*it)->m_dataset;
+    if (!dataset)
+    {
+      continue;
+    }
+
+    OFString patientID;
+    OFString patientName;
+    OFString patientBirthDate;
+    OFString studyID;
+    OFString studyDescription;
+    OFString studyDate;
+    OFString studyTime;
+    OFString accessionNumber;
+    OFString modalitiesInStudy;
+    dataset->findAndGetOFString(DCM_PatientID, patientID);
+    dataset->findAndGetOFString(DCM_PatientName, patientName);
+    dataset->findAndGetOFString(DCM_PatientBirthDate, patientBirthDate);
+    dataset->findAndGetOFString(DCM_StudyID, studyID);
+    dataset->findAndGetOFString(DCM_StudyDescription, studyDescription);
+    dataset->findAndGetOFString(DCM_StudyDate, studyDate);
+    dataset->findAndGetOFString(DCM_StudyTime, studyTime);
+    dataset->findAndGetOFString(DCM_AccessionNumber, accessionNumber);
+    dataset->findAndGetOFString(DCM_ModalitiesInStudy, modalitiesInStudy);
+
+    metadata.PatientID = QString(patientID.c_str());
+    metadata.PatientName = QString(patientName.c_str());
+    metadata.PatientBirthDate = QString(patientBirthDate.c_str());
+    metadata.StudyID = QString(studyID.c_str());
+    metadata.StudyDescription = QString(studyDescription.c_str());
+    metadata.StudyDate = QString(studyDate.c_str());
+    metadata.StudyTime = QString(studyTime.c_str());
+    metadata.AccessionNumber = QString(accessionNumber.c_str());
+    metadata.ModalitiesInStudy = QString(modalitiesInStudy.c_str());
+    metadata.Valid = !metadata.PatientID.isEmpty();
+    break;
+  }
+
+  if (!metadata.Valid)
+  {
+    LOG_AND_EMIT_WARN(
+      QString("Study-level C-FIND returned no PatientID for study %1").arg(studyInstanceUID),
+      queryObject->warn);
+  }
+
+  cache.insert(studyInstanceUID, metadata);
+  return metadata;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMQueryPrivate::putDatasetStringIfEmpty(DcmDataset* dataset,
+                                                   const DcmTagKey& tag,
+                                                   const QString& value) const
+{
+  if (!dataset || value.isEmpty())
+  {
+    return;
+  }
+
+  OFString existingValue;
+  if (dataset->findAndGetOFString(tag, existingValue).good() && !existingValue.empty())
+  {
+    return;
+  }
+
+  dataset->putAndInsertString(tag, value.toStdString().c_str());
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMQueryPrivate::enrichSeriesDataset(DcmDataset* dataset,
+                                               const QString& studyInstanceUID,
+                                               const StudyMetadata& studyMetadata) const
+{
+  if (!dataset)
+  {
+    return;
+  }
+
+  this->putDatasetStringIfEmpty(dataset, DCM_StudyInstanceUID, studyInstanceUID);
+  this->putDatasetStringIfEmpty(dataset, DCM_PatientID, studyMetadata.PatientID);
+  this->putDatasetStringIfEmpty(dataset, DCM_PatientName, studyMetadata.PatientName);
+  this->putDatasetStringIfEmpty(dataset, DCM_PatientBirthDate, studyMetadata.PatientBirthDate);
+  this->putDatasetStringIfEmpty(dataset, DCM_StudyID, studyMetadata.StudyID);
+  this->putDatasetStringIfEmpty(dataset, DCM_StudyDescription, studyMetadata.StudyDescription);
+  this->putDatasetStringIfEmpty(dataset, DCM_StudyDate, studyMetadata.StudyDate);
+  this->putDatasetStringIfEmpty(dataset, DCM_StudyTime, studyMetadata.StudyTime);
+  this->putDatasetStringIfEmpty(dataset, DCM_AccessionNumber, studyMetadata.AccessionNumber);
+  this->putDatasetStringIfEmpty(dataset, DCM_ModalitiesInStudy, studyMetadata.ModalitiesInStudy);
 }
 
 //------------------------------------------------------------------------------
@@ -787,6 +957,14 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
   // Insert all keys that we like to receive values for
   d->QueryDcmDataset->clear();
+  d->QueryDcmDataset->insertEmptyElement(DCM_PatientID);
+  d->QueryDcmDataset->insertEmptyElement(DCM_PatientName);
+  d->QueryDcmDataset->insertEmptyElement(DCM_PatientBirthDate);
+  d->QueryDcmDataset->insertEmptyElement(DCM_StudyID);
+  d->QueryDcmDataset->insertEmptyElement(DCM_StudyInstanceUID);
+  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDescription);
+  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDate);
+  d->QueryDcmDataset->insertEmptyElement(DCM_StudyTime);
   d->QueryDcmDataset->insertEmptyElement(DCM_SeriesNumber);
   d->QueryDcmDataset->insertEmptyElement(DCM_SeriesDescription);
   d->QueryDcmDataset->insertEmptyElement(DCM_SeriesInstanceUID);
@@ -833,7 +1011,10 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     return false;
   }
 
-  LOG_AND_EMIT_DEBUG(QString("Starting series C-FIND for study: %1").arg(studyInstanceUID), debug)
+  LOG_AND_EMIT_DEBUG(QString("Starting series C-FIND for study: %1 patient: %2")
+                       .arg(studyInstanceUID.isEmpty() ? QString("<any>") : studyInstanceUID)
+                       .arg(patientID.isEmpty() ? QString("<any>") : patientID),
+                     debug)
   emit progress(50);
   if (d->Canceled)
   {
@@ -841,18 +1022,31 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     return false;
   }
 
-  d->QueryDcmDataset->putAndInsertString(DCM_PatientID, patientID.toStdString().c_str());
-  d->QueryDcmDataset->putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
+  if (!patientID.isEmpty())
+  {
+    d->QueryDcmDataset->putAndInsertString(DCM_PatientID, patientID.toStdString().c_str());
+  }
+  if (!studyInstanceUID.isEmpty())
+  {
+    d->QueryDcmDataset->putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
+  }
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
   JobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::QuerySeries);
-  JobResponseSet->setPatientID(patientID.toStdString().c_str());
-  JobResponseSet->setStudyInstanceUID(studyInstanceUID.toStdString().c_str());
+  if (!patientID.isEmpty())
+  {
+    JobResponseSet->setPatientID(patientID);
+  }
+  if (!studyInstanceUID.isEmpty())
+  {
+    JobResponseSet->setStudyInstanceUID(studyInstanceUID);
+  }
   JobResponseSet->setConnectionName(d->ConnectionName);
   JobResponseSet->setJobUID(d->JobUID);
 
   QMap<QString, DcmItem*> datasetsMap;
+  QHash<QString, ctkDICOMQueryPrivate::StudyMetadata> studyMetadataCache;
 
   OFList<QRResponse *> responses;
   OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
@@ -883,6 +1077,74 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
         OFString seriesInstanceUID;
         dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);
+        if (seriesInstanceUID.empty())
+        {
+          LOG_AND_EMIT_WARN(QString("Series C-FIND response missing SeriesInstanceUID"), warn);
+          continue;
+        }
+
+        QString resolvedStudyInstanceUID = studyInstanceUID;
+        if (resolvedStudyInstanceUID.isEmpty())
+        {
+          OFString studyUID;
+          dataset->findAndGetOFString(DCM_StudyInstanceUID, studyUID);
+          resolvedStudyInstanceUID = QString(studyUID.c_str());
+        }
+
+        if (resolvedStudyInstanceUID.isEmpty())
+        {
+          LOG_AND_EMIT_WARN(
+            QString("Series C-FIND response missing StudyInstanceUID for series %1")
+              .arg(seriesInstanceUID.c_str()),
+            warn);
+          continue;
+        }
+
+        ctkDICOMQueryPrivate::StudyMetadata studyMetadata =
+          d->queryStudyMetadata(this, presentationContext, resolvedStudyInstanceUID, studyMetadataCache);
+
+        if (!patientID.isEmpty())
+        {
+          studyMetadata.PatientID = patientID;
+          studyMetadata.Valid = true;
+        }
+        else
+        {
+          OFString responsePatientID;
+          dataset->findAndGetOFString(DCM_PatientID, responsePatientID);
+          if (!responsePatientID.empty())
+          {
+            studyMetadata.PatientID = QString(responsePatientID.c_str());
+            studyMetadata.Valid = true;
+          }
+
+          OFString responsePatientName;
+          dataset->findAndGetOFString(DCM_PatientName, responsePatientName);
+          if (!responsePatientName.empty())
+          {
+            studyMetadata.PatientName = QString(responsePatientName.c_str());
+          }
+
+          OFString responsePatientBirthDate;
+          dataset->findAndGetOFString(DCM_PatientBirthDate, responsePatientBirthDate);
+          if (!responsePatientBirthDate.empty())
+          {
+            studyMetadata.PatientBirthDate = QString(responsePatientBirthDate.c_str());
+          }
+        }
+
+        if (studyMetadata.PatientID.isEmpty())
+        {
+          LOG_AND_EMIT_WARN(
+            QString("Skipping series %1: unable to resolve PatientID for study %2")
+              .arg(seriesInstanceUID.c_str())
+              .arg(resolvedStudyInstanceUID),
+            warn);
+          continue;
+        }
+
+        studyMetadata.Valid = true;
+        d->enrichSeriesDataset(dataset, resolvedStudyInstanceUID, studyMetadata);
         datasetsMap.insert(seriesInstanceUID.c_str(), dataset);
       }
     }
