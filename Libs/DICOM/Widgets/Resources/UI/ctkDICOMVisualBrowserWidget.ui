@@ -134,20 +134,20 @@
         <item row="0" column="2">
          <widget class="QLabel" name="FilteringModalityLabel">
           <property name="text">
-           <string>Modality</string>
+           <string>Modality:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="3">
+        <item row="1" column="2">
          <widget class="QLabel" name="FilteringDateLabel">
           <property name="text">
-           <string>Date</string>
+           <string>Date:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -177,7 +177,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="0" column="3">
          <widget class="ctkCheckableComboBox" name="FilteringModalityCheckableComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">

@@ -136,6 +136,7 @@ public:
   void setBackgroundColorToFilterWidgets(bool warning = false);
   void setBackgroundColorToWidget(QColor color, QWidget* widget);
   void updateFiltersLayoutOrientation();
+  void updateFilteringLabelsAppearance(bool horizontal);
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
   QString findPatientUIDByPatientID(const QString& patientID);
@@ -547,6 +548,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
   QObject::connect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
   QObject::connect(this->Indexer.data(), SIGNAL(indexingComplete(int,int,int,int)), q, SLOT(onIndexingComplete(int,int,int,int)));
+
+  this->updateFilteringLabelsAppearance(true);
 }
 
 //----------------------------------------------------------------------------
@@ -1278,6 +1281,37 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updateFilteringLabelsAppearance(bool horizontal)
+{
+  QLabel* modalityLabel = this->FilteringModalityLabel;
+  QLabel* dateLabel = this->FilteringDateLabel;
+  if (!modalityLabel || !dateLabel)
+  {
+    return;
+  }
+
+  if (horizontal)
+  {
+    modalityLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    dateLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    const int labelWidth = modalityLabel->fontMetrics().horizontalAdvance(modalityLabel->text());
+    modalityLabel->setMinimumWidth(labelWidth);
+    dateLabel->setMinimumWidth(labelWidth);
+    modalityLabel->setContentsMargins(12, 0, 4, 0);
+    dateLabel->setContentsMargins(12, 0, 4, 0);
+  }
+  else
+  {
+    modalityLabel->setAlignment(Qt::AlignCenter);
+    dateLabel->setAlignment(Qt::AlignCenter);
+    modalityLabel->setMinimumWidth(0);
+    dateLabel->setMinimumWidth(0);
+    modalityLabel->setContentsMargins(0, 0, 0, 0);
+    dateLabel->setContentsMargins(0, 0, 0, 0);
+  }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
@@ -1353,10 +1387,12 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
     this->setGridWidget(searchGridLayout, studyDescriptionBox, 1, 0);
     this->setGridWidget(searchGridLayout, seriesDescriptionBox, 1, 1);
     this->setGridWidget(searchGridLayout, modalityLabel, 0, 2);
-    this->setGridWidget(searchGridLayout, modalityCombo, 1, 2);
-    this->setGridWidget(searchGridLayout, dateLabel, 0, 3);
+    this->setGridWidget(searchGridLayout, modalityCombo, 0, 3);
+    this->setGridWidget(searchGridLayout, dateLabel, 1, 2);
     this->setGridWidget(searchGridLayout, dateCombo, 1, 3);
   }
+
+  this->updateFilteringLabelsAppearance(this->IsGUIHorizontal);
 
   QWidget* searchPushButton = this->SearchPushButton;
   QWidget* closePushButton = this->ClosePushButton;
