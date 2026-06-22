@@ -27,6 +27,7 @@
 // ctkDICOMCore includes
 #include "ctkDICOMQueryWorker_p.h"
 #include "ctkDICOMQueryJob.h"
+#include "ctkDICOMQueryLimitWarning.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
@@ -74,6 +75,23 @@ void ctkDICOMQueryWorkerPrivate::setQueryParameters()
   this->Query->setConnectionTimeout(server->connectionTimeout());
   this->Query->setJobUID(queryJob->jobUID());
   this->Query->setFilters(queryJob->filters());
+  this->Query->setMaximumPatientsQuery(queryJob->maximumPatientsQuery());
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMQueryWorkerPrivate::forwardQueryLimitWarnings(
+  const QSharedPointer<ctkDICOMQueryJob>& queryJob)
+{
+  if (!queryJob)
+  {
+    return;
+  }
+
+  for (const ctkDICOMQueryLimitWarning& warning : this->Query->queryLimitWarnings())
+  {
+    queryJob->appendQueryWarning(formatQueryLimitWarning(warning));
+  }
+  this->Query->clearQueryLimitWarnings();
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +122,7 @@ void ctkDICOMQueryWorker::requestCancel()
 //----------------------------------------------------------------------------
 void ctkDICOMQueryWorker::run()
 {
-  Q_D(const ctkDICOMQueryWorker);
+  Q_D(ctkDICOMQueryWorker);
   QSharedPointer<ctkDICOMQueryJob> queryJob =
     qSharedPointerObjectCast<ctkDICOMQueryJob>(this->Job);
   if (!queryJob)
@@ -130,6 +148,8 @@ void ctkDICOMQueryWorker::run()
                        .arg(queryJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
+  d->Query->clearQueryLimitWarnings();
+
   switch (queryJob->dicomLevel())
   {
     case ctkDICOMJob::DICOMLevels::None:
@@ -139,6 +159,7 @@ void ctkDICOMQueryWorker::run()
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())
       {
+        d->forwardQueryLimitWarnings(queryJob);
         this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
@@ -146,6 +167,7 @@ void ctkDICOMQueryWorker::run()
     case ctkDICOMJob::DICOMLevels::Studies:
       if (!d->Query->queryStudies(queryJob->patientID()))
       {
+        d->forwardQueryLimitWarnings(queryJob);
         this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
@@ -154,6 +176,7 @@ void ctkDICOMQueryWorker::run()
       if (!d->Query->querySeries(queryJob->patientID(),
                                  queryJob->studyInstanceUID()))
       {
+        d->forwardQueryLimitWarnings(queryJob);
         this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
@@ -163,6 +186,7 @@ void ctkDICOMQueryWorker::run()
                                     queryJob->studyInstanceUID(),
                                     queryJob->seriesInstanceUID()))
       {
+        d->forwardQueryLimitWarnings(queryJob);
         this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
@@ -171,6 +195,7 @@ void ctkDICOMQueryWorker::run()
 
   if (d->Query->wasCanceled())
   {
+    d->forwardQueryLimitWarnings(queryJob);
     this->onJobCanceled(d->Query->wasCanceled());
     return;
   }
@@ -181,6 +206,7 @@ void ctkDICOMQueryWorker::run()
       (scheduler->insertJobResponseSets(d->Query->jobResponseSetsShared()));
   }
 
+  d->forwardQueryLimitWarnings(queryJob);
   queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
 }
 

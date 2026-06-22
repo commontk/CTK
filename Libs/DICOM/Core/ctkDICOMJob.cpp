@@ -170,6 +170,22 @@ void ctkDICOMJob::copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResp
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMJob::appendQueryWarning(const QString& message)
+{
+  if (message.isEmpty())
+  {
+    return;
+  }
+  this->QueryWarningMessages.append(message);
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMJob::queryWarningMessages() const
+{
+  return this->QueryWarningMessages;
+}
+
+//------------------------------------------------------------------------------
 ctkDICOMJobResponseSet::JobType ctkDICOMJob::getJobType() const
 {
   return ctkDICOMJobResponseSet::JobType::None;
