@@ -1584,7 +1584,7 @@ void ctkDICOMStudyModel::forceUpdateStudyJobs(const QString &studyInstanceUID)
 //------------------------------------------------------------------------------
 void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
 {
-  Q_D(const ctkDICOMStudyModel);
+  Q_D(ctkDICOMStudyModel);
   if (d->IsUpdating || !d->Scheduler)
   {
     return;
@@ -1674,10 +1674,81 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
     }
   }
 
-  QModelIndex idx = this->indexFromStudyInstanceUID(td.StudyInstanceUID);
-  bool studyIsCollapsed = this->data(idx, ctkDICOMStudyModel::IsCollapsedRole).toBool();
+  QModelIndex idx;
+  bool studyIsCollapsed = true;
+  ctkDICOMSeriesModel* seriesModel = nullptr;
 
-  ctkDICOMSeriesModel* seriesModel = this->seriesModelForStudyInstanceUID(td.StudyInstanceUID);
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      !td.StudyInstanceUID.isEmpty() &&
+      !td.QueriedSeriesInstanceUIDs.isEmpty())
+  {
+    idx = this->indexFromStudyInstanceUID(td.StudyInstanceUID);
+    if (!idx.isValid())
+    {
+      this->refreshStudy(td.StudyInstanceUID);
+      idx = this->indexFromStudyInstanceUID(td.StudyInstanceUID);
+    }
+
+    QList<QPair<QDateTime, QString>> studyDateTimePairs;
+    for (int row = 0; row < this->rowCount(); ++row)
+    {
+      QModelIndex studyIdx = this->index(row, 0);
+      const QString studyInstanceUID = this->studyInstanceUID(studyIdx);
+      QString studyDate = this->data(studyIdx, ctkDICOMStudyModel::StudyDateRole).toString();
+      QString studyTime = this->data(studyIdx, ctkDICOMStudyModel::StudyTimeRole).toString();
+
+      QDateTime studyDateTime;
+      if (!studyDate.isEmpty())
+      {
+        QString dateTimeStr = studyDate;
+        if (!studyTime.isEmpty())
+        {
+          dateTimeStr += studyTime;
+        }
+        studyDateTime = QDateTime::fromString(dateTimeStr, "yyyyMMddHHmmss");
+      }
+
+      studyDateTimePairs.append(qMakePair(studyDateTime, studyInstanceUID));
+    }
+
+    std::sort(studyDateTimePairs.begin(), studyDateTimePairs.end(),
+              [](const QPair<QDateTime, QString>& a, const QPair<QDateTime, QString>& b) {
+                return a.first > b.first;
+              });
+
+    QStringList sortedStudyUIDs;
+    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
+    {
+      sortedStudyUIDs.append(pair.second);
+    }
+
+    emit this->studiesSortedByDate(sortedStudyUIDs);
+
+    const int studyOpenIndex = sortedStudyUIDs.indexOf(td.StudyInstanceUID);
+    const bool shouldOpenStudy = (studyOpenIndex >= 0 && studyOpenIndex < d->NumberOfOpenedStudies);
+    if (shouldOpenStudy && idx.isValid())
+    {
+      this->setStudyCollapsed(idx, false);
+      studyIsCollapsed = false;
+    }
+    else if (idx.isValid())
+    {
+      studyIsCollapsed = this->data(idx, ctkDICOMStudyModel::IsCollapsedRole).toBool();
+    }
+
+    seriesModel = this->seriesModelForStudyInstanceUID(td.StudyInstanceUID);
+    if (!seriesModel)
+    {
+      seriesModel = d->createSeriesModel(td.StudyInstanceUID);
+    }
+  }
+  else
+  {
+    idx = this->indexFromStudyInstanceUID(td.StudyInstanceUID);
+    studyIsCollapsed = this->data(idx, ctkDICOMStudyModel::IsCollapsedRole).toBool();
+    seriesModel = this->seriesModelForStudyInstanceUID(td.StudyInstanceUID);
+  }
+
   if (!seriesModel)
   {
     return;

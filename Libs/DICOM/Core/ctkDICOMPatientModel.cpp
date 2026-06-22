@@ -1571,7 +1571,75 @@ void ctkDICOMPatientModel::updateGUIFromScheduler(const QVariant& data)
   }
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-  if (td.JobUID.isEmpty() || td.PatientID.isEmpty())
+  if (td.JobUID.isEmpty())
+  {
+    return;
+  }
+
+  if (td.PatientID.isEmpty() &&
+      td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies &&
+      !td.QueriedStudyInstanceUIDs.isEmpty() &&
+      d->DicomDatabase)
+  {
+    QMap<QString, QStringList> studiesByPatientID;
+    foreach (const QString& studyInstanceUID, td.QueriedStudyInstanceUIDs)
+    {
+      QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
+      if (patientUID.isEmpty())
+      {
+        continue;
+      }
+      QString patientID = d->DicomDatabase->fieldForPatient("PatientID", patientUID);
+      studiesByPatientID[patientID].append(studyInstanceUID);
+    }
+    foreach (const QString& patientID, studiesByPatientID.keys())
+    {
+      ctkDICOMJobDetail patientTd = td;
+      patientTd.PatientID = patientID;
+      patientTd.QueriedStudyInstanceUIDs = studiesByPatientID.value(patientID);
+      this->updateGUIFromScheduler(QVariant::fromValue(patientTd));
+    }
+    return;
+  }
+
+  if (td.PatientID.isEmpty() &&
+      td.StudyInstanceUID.isEmpty() &&
+      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      !td.QueriedSeriesInstanceUIDs.isEmpty() &&
+      d->DicomDatabase)
+  {
+    QMap<QString, QMap<QString, QStringList>> seriesByPatientAndStudy;
+    foreach (const QString& seriesInstanceUID, td.QueriedSeriesInstanceUIDs)
+    {
+      QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
+      if (studyInstanceUID.isEmpty())
+      {
+        continue;
+      }
+      QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
+      if (patientUID.isEmpty())
+      {
+        continue;
+      }
+      QString patientID = d->DicomDatabase->fieldForPatient("PatientID", patientUID);
+      seriesByPatientAndStudy[patientID][studyInstanceUID].append(seriesInstanceUID);
+    }
+    foreach (const QString& patientID, seriesByPatientAndStudy.keys())
+    {
+      const QMap<QString, QStringList>& studyMap = seriesByPatientAndStudy.value(patientID);
+      foreach (const QString& studyInstanceUID, studyMap.keys())
+      {
+        ctkDICOMJobDetail studyTd = td;
+        studyTd.PatientID = patientID;
+        studyTd.StudyInstanceUID = studyInstanceUID;
+        studyTd.QueriedSeriesInstanceUIDs = studyMap.value(studyInstanceUID);
+        this->updateGUIFromScheduler(QVariant::fromValue(studyTd));
+      }
+    }
+    return;
+  }
+
+  if (td.PatientID.isEmpty())
   {
     return;
   }

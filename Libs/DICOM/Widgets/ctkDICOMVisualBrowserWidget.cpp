@@ -97,8 +97,23 @@ protected:
   ctkDICOMVisualBrowserWidget* const q_ptr;
 
 public:
+  enum DirectQueryLevelEnum
+  {
+    DirectQueryLevelNone = 0,
+    DirectQueryLevelPatients,
+    DirectQueryLevelStudies,
+    DirectQueryLevelSeries
+  };
+
   ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMVisualBrowserWidget& obj);
   ~ctkDICOMVisualBrowserWidgetPrivate();
+
+  static DirectQueryLevelEnum resolveQueryLevel(const QMap<QString, QVariant>& parameters);
+  bool isInitialDirectQueryJob(ctkDICOMJobResponseSet::JobType jobType,
+                               const ctkDICOMJobDetail& td) const;
+  void syncFiltersFromWidgets();
+  QMap<QString, QVariant> buildQueryParameters() const;
+  bool dispatchFilteredQuery(const QMap<QString, QVariant>& parameters);
 
   void init();
   void disconnectScheduler();
@@ -111,6 +126,7 @@ public:
   QString createPatients(bool queryRetrieve = false,
                          const QStringList& queriedPatientIDs = QStringList(),
                          bool isImport = false);
+  void updatePatientViewDisplayModeFromModel();
   bool areFiltersEmpty();
   void resetFilters();
   void updateUIAfterFilters();
@@ -191,6 +207,7 @@ public:
   bool IsGUIUpdating;
   bool IsGUIHorizontal;
   bool IsLoading;
+  DirectQueryLevelEnum DirectQueryLevel;
   QString SelectedPatientUID;
   QMap<QString, QStringList> StudiesToOpenPerPatient; // Track which studies (by UID) should be opened for each patient
 
@@ -248,6 +265,7 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->IsGUIUpdating = false;
   this->IsGUIHorizontal = true;
   this->IsLoading = false;
+  this->DirectQueryLevel = DirectQueryLevelNone;
 
   this->ExportProgress = nullptr;
   this->UpdateSchemaProgress = nullptr;
@@ -754,6 +772,173 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
 }
 
 //----------------------------------------------------------------------------
+ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelEnum
+ctkDICOMVisualBrowserWidgetPrivate::resolveQueryLevel(const QMap<QString, QVariant>& parameters)
+{
+  if (!parameters.value("Name").toString().isEmpty() ||
+      !parameters.value("ID").toString().isEmpty())
+  {
+    return DirectQueryLevelPatients;
+  }
+
+  if (!parameters.value("Study").toString().isEmpty() ||
+      parameters.contains("StartDate") ||
+      parameters.contains("EndDate"))
+  {
+    return DirectQueryLevelStudies;
+  }
+
+  if (!parameters.value("Series").toString().isEmpty() ||
+      parameters.contains("Modalities"))
+  {
+    return DirectQueryLevelSeries;
+  }
+
+  return DirectQueryLevelPatients;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMVisualBrowserWidgetPrivate::isInitialDirectQueryJob(
+  ctkDICOMJobResponseSet::JobType jobType,
+  const ctkDICOMJobDetail& td) const
+{
+  if (this->DirectQueryLevel == DirectQueryLevelStudies &&
+      jobType == ctkDICOMJobResponseSet::JobType::QueryStudies &&
+      td.PatientID.isEmpty())
+  {
+    return true;
+  }
+
+  if (this->DirectQueryLevel == DirectQueryLevelSeries &&
+      jobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+      td.PatientID.isEmpty() &&
+      td.StudyInstanceUID.isEmpty())
+  {
+    return true;
+  }
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::syncFiltersFromWidgets()
+{
+  if (this->FilteringPatientIDSearchBox)
+  {
+    this->FilteringPatientID = this->FilteringPatientIDSearchBox->text();
+  }
+  if (this->FilteringPatientNameSearchBox)
+  {
+    this->FilteringPatientName = this->FilteringPatientNameSearchBox->text();
+  }
+  if (this->FilteringStudyDescriptionSearchBox)
+  {
+    this->FilteringStudyDescription = this->FilteringStudyDescriptionSearchBox->text();
+  }
+  if (this->FilteringSeriesDescriptionSearchBox)
+  {
+    this->FilteringSeriesDescription = this->FilteringSeriesDescriptionSearchBox->text();
+  }
+}
+
+//----------------------------------------------------------------------------
+QMap<QString, QVariant> ctkDICOMVisualBrowserWidgetPrivate::buildQueryParameters() const
+{
+  QMap<QString, QVariant> parameters;
+  parameters["Name"] = this->FilteringPatientName;
+  parameters["ID"] = this->FilteringPatientID;
+  parameters["Study"] = this->FilteringStudyDescription;
+  parameters["Series"] = this->FilteringSeriesDescription;
+  if (!this->FilteringModalities.contains("Any"))
+  {
+    parameters["Modalities"] = this->FilteringModalities;
+  }
+
+  int nDays = getNDaysFromFilteringDate(this->FilteringDate);
+  if (nDays != -1)
+  {
+    QDate endDate = QDate::currentDate();
+    QString formattedEndDate = endDate.toString("yyyyMMdd");
+
+    QDate startDate = endDate.addDays(-nDays);
+    QString formattedStartDate = startDate.toString("yyyyMMdd");
+
+    parameters["StartDate"] = formattedStartDate;
+    parameters["EndDate"] = formattedEndDate;
+  }
+  else if (this->FilteringDate == ctkDICOMVisualBrowserWidget::CustomRange)
+  {
+    QString formattedStartDate = this->FilteringStartDate.toString("yyyyMMdd");
+    QString formattedEndDate = this->FilteringEndDate.toString("yyyyMMdd");
+
+    parameters["StartDate"] = formattedStartDate;
+    parameters["EndDate"] = formattedEndDate;
+  }
+
+  return parameters;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMVisualBrowserWidgetPrivate::dispatchFilteredQuery(
+  const QMap<QString, QVariant>& parameters)
+{
+  if (!this->Scheduler)
+  {
+    return false;
+  }
+
+  const int jobsBefore = this->Scheduler->numberOfJobs();
+
+  this->Scheduler->setFilters(parameters);
+  this->DirectQueryLevel = resolveQueryLevel(parameters);
+  switch (this->DirectQueryLevel)
+  {
+    case DirectQueryLevelStudies:
+      this->Scheduler->queryStudies("", QThread::LowPriority);
+      break;
+    case DirectQueryLevelSeries:
+      this->Scheduler->querySeries("", "", QThread::LowPriority);
+      break;
+    default:
+      this->Scheduler->queryPatients(QThread::LowPriority);
+      break;
+  }
+
+  return this->Scheduler->numberOfJobs() > jobsBefore;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updatePatientViewDisplayModeFromModel()
+{
+  if (!this->PatientModel || !this->PatientView)
+  {
+    return;
+  }
+
+  int visiblePatientCount = 0;
+  for (int row = 0; row < this->PatientModel->rowCount(); ++row)
+  {
+    QModelIndex patientIndex = this->PatientModel->index(row, 0);
+    if (patientIndex.data(ctkDICOMPatientModel::IsVisibleRole).toBool())
+    {
+      visiblePatientCount++;
+    }
+  }
+
+  ctkDICOMPatientView::DisplayMode viewMode =
+    visiblePatientCount > 5 ? ctkDICOMPatientView::ListMode : ctkDICOMPatientView::TabMode;
+  this->PatientView->setDisplayMode(viewMode);
+
+  if (this->PatientFilterProxyModel)
+  {
+    this->PatientFilterProxyModel->setDisplayMode(
+      viewMode == ctkDICOMPatientView::TabMode
+        ? ctkDICOMPatientFilterProxyModel::TabMode
+        : ctkDICOMPatientFilterProxyModel::ListMode);
+  }
+}
+
+//----------------------------------------------------------------------------
 QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
                                                            const QStringList& queriedPatientIDs,
                                                            bool isImport)
@@ -783,14 +968,6 @@ QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
     this->PatientModel->refresh();
     return QString();
   }
-  else if (patientList.count() > 5)
-  {
-    this->PatientView->setDisplayMode(ctkDICOMPatientView::ListMode);
-  }
-  else
-  {
-    this->PatientView->setDisplayMode(ctkDICOMPatientView::TabMode);
-  }
 
   this->IsGUIUpdating = true;
 
@@ -805,6 +982,7 @@ QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
 
   // Refresh the model to populate with filtered patients
   this->PatientModel->refresh();
+  this->updatePatientViewDisplayModeFromModel();
 
   QString patientUIDToShow;
   // If this is an import and we have new patients, select the most recent one
@@ -2465,10 +2643,6 @@ void ctkDICOMVisualBrowserWidget::onFilteringEndDateChanged(const QDate& date)
 void ctkDICOMVisualBrowserWidget::onQueryPatients()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  if (d->IsGUIUpdating)
-  {
-    return;
-  }
 
   if (!d->DicomDatabase)
   {
@@ -2476,8 +2650,14 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     return;
   }
 
-  // Stop any fetching task.
-  this->onStop();
+  d->syncFiltersFromWidgets();
+
+  // Stop any fetching task without blocking the UI with a busy cursor.
+  if (d->Scheduler)
+  {
+    d->Scheduler->stopAllJobs(false, false);
+    d->ProgressFrame->hide();
+  }
 
   // Reset the studies-to-open list for all patients since we're starting a new query
   d->StudiesToOpenPerPatient.clear();
@@ -2536,42 +2716,43 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
   d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
   if (!filtersAreEmpty)
   {
-    QMap<QString, QVariant> parameters;
-    parameters["Name"] = d->FilteringPatientName;
-    parameters["ID"] = d->FilteringPatientID;
-    parameters["Study"] = d->FilteringStudyDescription;
-    parameters["Series"] = d->FilteringSeriesDescription;
-    if (!d->FilteringModalities.contains("Any"))
+    if (d->IsGUIUpdating)
     {
-      parameters["Modalities"] = d->FilteringModalities;
+      d->IsGUIUpdating = false;
     }
 
-    int nDays = d->getNDaysFromFilteringDate(d->FilteringDate);
-    if (nDays != -1)
+    QMap<QString, QVariant> parameters = d->buildQueryParameters();
+    if (d->PatientModel)
     {
-      QDate endDate = QDate::currentDate();
-      QString formattedEndDate = endDate.toString("yyyyMMdd");
-
-      QDate startDate = endDate.addDays(-nDays);
-      QString formattedStartDate = startDate.toString("yyyyMMdd");
-
-      parameters["StartDate"] = formattedStartDate;
-      parameters["EndDate"] = formattedEndDate;
+      d->PatientModel->setQueryInProgress(true);
     }
-    else if (d->FilteringDate == ctkDICOMVisualBrowserWidget::CustomRange)
+    if (d->PatientView)
     {
-      QString formattedStartDate = d->FilteringStartDate.toString("yyyyMMdd");
-      QString formattedEndDate = d->FilteringEndDate.toString("yyyyMMdd");
-
-      parameters["StartDate"] = formattedStartDate;
-      parameters["EndDate"] = formattedEndDate;
+      d->PatientView->viewport()->update();
     }
 
-    d->Scheduler->setFilters(parameters);
-    d->Scheduler->queryPatients(QThread::LowPriority);
+    if (!d->dispatchFilteredQuery(parameters))
+    {
+      d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      QString warningText = tr("Failed to schedule query jobs on the configured servers.\n"
+                               "Verify that query/retrieve is enabled and servers are reachable.");
+      logger.warn(warningText);
+      d->WarningPushButton->setText(warningText);
+      d->WarningPushButton->show();
+      if (d->PatientModel)
+      {
+        d->PatientModel->setQueryInProgress(false);
+      }
+      if (d->PatientView)
+      {
+        d->PatientView->viewport()->update();
+      }
+    }
   }
   else
   {
+    d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
     d->createPatients(true, QStringList(), false);
   }
 }
@@ -2594,6 +2775,59 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
     if (td.JobUID.isEmpty())
     {
       d->updateFiltersWarnings();
+      continue;
+    }
+
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies &&
+        td.PatientID.isEmpty())
+    {
+      d->updateFiltersWarnings();
+      if (td.NumberOfDataSets == 0)
+      {
+        d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+        d->WarningPushButton->setText(tr("The studies query provided no results. Please refine your filters in the search section."));
+        d->WarningPushButton->show();
+        d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+        d->PatientModel->setQueryInProgress(false);
+        d->PatientView->viewport()->update();
+      }
+      else
+      {
+        d->WarningPushButton->hide();
+        d->createPatients(false, QStringList(), false);
+        d->PatientModel->updateGUIFromScheduler(data);
+      }
+      continue;
+    }
+
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries &&
+        td.PatientID.isEmpty() &&
+        td.StudyInstanceUID.isEmpty())
+    {
+      d->updateFiltersWarnings();
+      if (td.NumberOfDataSets == 0)
+      {
+        d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+        d->WarningPushButton->setText(tr("The series query provided no results. Please refine your filters in the search section."));
+        d->WarningPushButton->show();
+        d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+        d->PatientModel->setQueryInProgress(false);
+        d->PatientView->viewport()->update();
+      }
+      else
+      {
+        d->WarningPushButton->hide();
+        d->createPatients(false, QStringList(), false);
+        d->PatientModel->updateGUIFromScheduler(data);
+        if (!d->SelectedPatientUID.isEmpty())
+        {
+          d->PatientView->selectPatientUID(d->SelectedPatientUID);
+        }
+        d->PatientView->refreshLayout();
+        d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(
+          this->numberOfOpenedStudiesPerPatient());
+      }
+      d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
       continue;
     }
 
@@ -2621,13 +2855,6 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QList<QVariant> datas)
       }
       d->updateFiltersWarnings();
       continue;
-    }
-    else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
-    {
-      // NOTE: Study opening is now handled progressively via the studyReadyToOpen signal
-      // from the study model, which is emitted as soon as QueryInstances completes for each study.
-      // This allows studies to open immediately as they become ready, rather than waiting
-      // for all query jobs to finish.
     }
     else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
@@ -2670,7 +2897,8 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
       continue;
     }
 
-    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
+        d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
@@ -2707,12 +2935,17 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
       continue;
     }
 
-    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
+        d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
       d->PatientModel->setQueryInProgress(false);
       d->PatientView->viewport()->update();
+      if (d->isInitialDirectQueryJob(td.JobType, td))
+      {
+        d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+      }
       continue;
     }
 
@@ -2755,6 +2988,25 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
       continue;
     }
 
+    if (d->isInitialDirectQueryJob(td.JobType, td))
+    {
+      d->updateFiltersWarnings();
+      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
+      if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+      {
+        d->WarningPushButton->setText(tr("The studies query failed. Please check the servers settings."));
+      }
+      else
+      {
+        d->WarningPushButton->setText(tr("The series query failed. Please check the servers settings."));
+      }
+      d->WarningPushButton->show();
+      d->PatientModel->setQueryInProgress(false);
+      d->PatientView->viewport()->update();
+      d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+      continue;
+    }
+
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
         td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
         td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
@@ -2784,12 +3036,17 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
     }
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
-        td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+        td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+        d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
       d->SearchPushButton->setIcon(QIcon(":/Icons/query_success.svg"));
       d->PatientModel->setQueryInProgress(false);
       d->PatientView->viewport()->update();
+      if (d->isInitialDirectQueryJob(td.JobType, td))
+      {
+        d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
+      }
     }
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
         td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
