@@ -3573,9 +3573,9 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
     QDir().rmpath(folderToRemove);
   }
 
-  if (cleanup)
+  if (cleanup && !this->cleanupSeries(seriesInstanceUID))
   {
-    this->cleanup();
+    return false;
   }
 
   d->resetLastInsertedValues();
@@ -3583,6 +3583,93 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   emit seriesRemoved(seriesInstanceUID);
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::vacuumDatabases()
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery vacuumQuery(d->Database);
+  vacuumQuery.exec("VACUUM;");
+  QSqlQuery tagcacheVacuum(d->TagCacheDatabase);
+  tagcacheVacuum.exec("VACUUM;");
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cleanupEntityIfEmpty(
+  const QString& deleteQueryString,
+  const QString& countChildrenQueryString,
+  const QVariant& bindValue,
+  bool vacuum)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QSqlQuery deleteQuery(d->Database);
+  deleteQuery.prepare(deleteQueryString);
+  deleteQuery.addBindValue(bindValue);
+  if (!d->loggedExec(deleteQuery))
+  {
+    return false;
+  }
+  if (deleteQuery.numRowsAffected() > 0)
+  {
+    if (vacuum)
+    {
+      this->vacuumDatabases();
+    }
+    return true;
+  }
+
+  QSqlQuery countChildrenQuery(d->Database);
+  countChildrenQuery.prepare(countChildrenQueryString);
+  countChildrenQuery.addBindValue(bindValue);
+  if (!d->loggedExec(countChildrenQuery) || !countChildrenQuery.next())
+  {
+    return false;
+  }
+  if (countChildrenQuery.value(0).toInt() > 0)
+  {
+    return false;
+  }
+
+  if (vacuum)
+  {
+    this->vacuumDatabases();
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cleanupSeries(const QString& seriesInstanceUID, bool vacuum/*=false*/)
+{
+  return this->cleanupEntityIfEmpty(
+    "DELETE FROM Series WHERE SeriesInstanceUID = ? "
+    "AND ( SELECT COUNT(*) FROM Images WHERE Images.SeriesInstanceUID = Series.SeriesInstanceUID ) = 0",
+    "SELECT COUNT(*) FROM Images WHERE SeriesInstanceUID = ?",
+    seriesInstanceUID,
+    vacuum);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cleanupStudy(const QString& studyInstanceUID, bool vacuum/*=false*/)
+{
+  return this->cleanupEntityIfEmpty(
+    "DELETE FROM Studies WHERE StudyInstanceUID = ? "
+    "AND ( SELECT COUNT(*) FROM Series WHERE Series.StudyInstanceUID = Studies.StudyInstanceUID ) = 0",
+    "SELECT COUNT(*) FROM Series WHERE StudyInstanceUID = ?",
+    studyInstanceUID,
+    vacuum);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cleanupPatient(const QString& patientUID, bool vacuum/*=false*/)
+{
+  return this->cleanupEntityIfEmpty(
+    "DELETE FROM Patients WHERE UID = ? "
+    "AND ( SELECT COUNT(*) FROM Studies WHERE Studies.PatientsUID = Patients.UID ) = 0",
+    "SELECT COUNT(*) FROM Studies WHERE PatientsUID = ?",
+    patientUID,
+    vacuum);
 }
 
 //------------------------------------------------------------------------------
@@ -3595,9 +3682,7 @@ bool ctkDICOMDatabase::cleanup(bool vacuum/*=false*/)
   seriesCleanup.exec("DELETE FROM Patients WHERE ( SELECT COUNT(*) FROM Studies WHERE Studies.PatientsUID = Patients.UID ) = 0;");
   if (vacuum)
   {
-    seriesCleanup.exec("VACUUM;");
-    QSqlQuery tagcacheCleanup(d->TagCacheDatabase);
-    tagcacheCleanup.exec("VACUUM;");
+    this->vacuumDatabases();
   }
   d->resetLastInsertedValues();
   return true;
@@ -3626,6 +3711,12 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID, bool cleanup
       result = false;
     }
   }
+
+  if (result && cleanup && !this->cleanupStudy(studyInstanceUID))
+  {
+    result = false;
+  }
+
   d->resetLastInsertedValues();
 
   if(result)
@@ -3661,6 +3752,12 @@ bool ctkDICOMDatabase::removePatient(const QString& patientUID, bool cleanup/*=t
       result = false;
     }
   }
+
+  if (result && cleanup && !this->cleanupPatient(patientUID))
+  {
+    result = false;
+  }
+
   d->resetLastInsertedValues();
 
   if(result)
