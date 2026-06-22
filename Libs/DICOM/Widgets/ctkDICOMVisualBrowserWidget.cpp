@@ -30,6 +30,7 @@
 #include <QEvent>
 #include <QFormLayout>
 #include <QKeyEvent>
+#include <QLineEdit>
 #include <QMap>
 #include <QMenu>
 #include <QProgressBar>
@@ -81,6 +82,7 @@ static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
 QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
 QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
+QColor ctkDICOMVisualBrowserWidgetWarningPlaceholderTextColor(0, 0, 0, 128);
 int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsNone = 0;
 int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsSmall = 128;
 int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsMedium = 192;
@@ -1057,6 +1059,19 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
   else
   {
     pal.setColor(widget->backgroundRole(), color);
+    QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget);
+    if (lineEdit)
+    {
+      QPalette appPalette = QApplication::palette();
+      if (color == ctkDICOMVisualBrowserWidgetWarningColor)
+      {
+        pal.setColor(QPalette::PlaceholderText, ctkDICOMVisualBrowserWidgetWarningPlaceholderTextColor);
+      }
+      else
+      {
+        pal.setColor(QPalette::PlaceholderText, appPalette.color(QPalette::PlaceholderText));
+      }
+    }
   }
   widget->setPalette(pal);
 }
