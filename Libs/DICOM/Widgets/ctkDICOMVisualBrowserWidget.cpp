@@ -1701,7 +1701,22 @@ ctkDICOMVisualBrowserWidget::ctkDICOMVisualBrowserWidget(QWidget* parentWidget)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget() = default;
+ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget()
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // Tear down the patient view before releasing shared models. The private
+  // members are destroyed before the UI hierarchy, so models would otherwise
+  // disappear while the view (and its merged proxy model in ListMode) is alive.
+  if (d->PatientView)
+  {
+    d->PatientView->shutdown();
+  }
+  if (d->PatientFilterProxyModel)
+  {
+    d->PatientFilterProxyModel->setSourceModel(nullptr);
+  }
+}
 
 //----------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectory, DatabaseDirectory);
