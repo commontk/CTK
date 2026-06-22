@@ -159,6 +159,11 @@ public:
 
   /// Clean the view and all child views (study view and series views)
   Q_INVOKABLE void clean();
+
+  /// Release models and restore widget hierarchy before shutdown.
+  /// Must be called while parent widgets are still valid (e.g. from the owning
+  /// browser widget destructor). Safe to call multiple times.
+  Q_INVOKABLE void shutdown();
   ///@}
 
   /// Check if a given index is currently hovered (for delegate rendering)

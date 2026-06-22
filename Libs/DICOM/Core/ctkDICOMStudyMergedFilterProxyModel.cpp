@@ -163,7 +163,16 @@ ctkDICOMStudyMergedFilterProxyModel::ctkDICOMStudyMergedFilterProxyModel(QObject
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMStudyMergedFilterProxyModel::~ctkDICOMStudyMergedFilterProxyModel() = default;
+ctkDICOMStudyMergedFilterProxyModel::~ctkDICOMStudyMergedFilterProxyModel()
+{
+  Q_D(ctkDICOMStudyMergedFilterProxyModel);
+  for (int sourceModelIndex = 0; sourceModelIndex < d->SourceProxyFilterModels.size(); ++sourceModelIndex)
+  {
+    d->disconnectSourceModel(d->SourceProxyFilterModels.at(sourceModelIndex));
+  }
+  d->SourceProxyFilterModels.clear();
+  d->MergedRows.clear();
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyMergedFilterProxyModel::setSourceProxyFilterModels(const QList<ctkDICOMStudyFilterProxyModel*>& models)

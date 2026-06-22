@@ -113,6 +113,8 @@ public:
   // Display mode toggle button
   QPushButton* DisplayModeButton;
 
+  bool ShutdownCleanupDone;
+
   // Allowed servers combo box and label for TabMode
   QLabel* AllowedServersLabel;
   ctkCheckableComboBox* AllowedServersComboBox;
@@ -125,6 +127,7 @@ public:
   void updateDisplayModeButtonPosition();
   void updateSelectedPatientsCache();
   void setupSplitter();
+  void restoreTabModeParenting();
 };
 
 //------------------------------------------------------------------------------
@@ -143,11 +146,83 @@ ctkDICOMPatientViewPrivate::ctkDICOMPatientViewPrivate(ctkDICOMPatientView& obje
   this->AllowedServersComboBox = nullptr;
   this->StudyModelsNeedRefresh = false;
   this->PatientsCacheNeedsUpdate = false;
+  this->ShutdownCleanupDone = false;
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMPatientViewPrivate::~ctkDICOMPatientViewPrivate()
 {
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientViewPrivate::restoreTabModeParenting()
+{
+  Q_Q(ctkDICOMPatientView);
+
+  if (!this->SplitterContainer || !this->OriginalParent)
+  {
+    return;
+  }
+
+  // Reparent patient view back to original parent
+  q->setParent(this->OriginalParent);
+
+  // Restore to original position
+  QSplitter* parentSplitter = qobject_cast<QSplitter*>(this->OriginalParent);
+  if (parentSplitter)
+  {
+    // Parent is a splitter - insert at saved position
+    if (this->OriginalParentIndex >= 0)
+    {
+      parentSplitter->insertWidget(this->OriginalParentIndex, q);
+    }
+    else
+    {
+      parentSplitter->addWidget(q);
+    }
+  }
+  else
+  {
+    // Parent has a layout
+    QLayout* parentLayout = this->OriginalParent->layout();
+    if (parentLayout)
+    {
+      if (this->OriginalParentIndex >= 0)
+      {
+        QBoxLayout* boxLayout = qobject_cast<QBoxLayout*>(parentLayout);
+        if (boxLayout)
+        {
+          boxLayout->insertWidget(this->OriginalParentIndex, q);
+        }
+        else
+        {
+          parentLayout->addWidget(q);
+        }
+      }
+      else
+      {
+        parentLayout->addWidget(q);
+      }
+    }
+  }
+
+  // Reparent study view to viewport
+  if (!this->StudyListView.isNull())
+  {
+    this->StudyListView->setParent(q->viewport());
+  }
+
+  // Detach and delete splitter container (children already reparented out)
+  QWidget* container = this->SplitterContainer;
+  this->SplitterContainer = nullptr;
+  this->Splitter = nullptr;
+  this->OriginalParent = nullptr;
+  this->OriginalParentIndex = -1;
+  if (container)
+  {
+    container->setParent(nullptr);
+    delete container;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -162,60 +237,7 @@ void ctkDICOMPatientViewPrivate::setupViewForDisplayMode()
     // Restore original parenting if we were in ListMode
     if (this->SplitterContainer && this->OriginalParent)
     {
-      // Reparent patient view back to original parent
-      q->setParent(this->OriginalParent);
-
-      // Restore to original position
-      QSplitter* parentSplitter = qobject_cast<QSplitter*>(this->OriginalParent);
-      if (parentSplitter)
-      {
-        // Parent is a splitter - insert at saved position
-        if (this->OriginalParentIndex >= 0)
-        {
-          parentSplitter->insertWidget(this->OriginalParentIndex, q);
-        }
-        else
-        {
-          parentSplitter->addWidget(q);
-        }
-      }
-      else
-      {
-        // Parent has a layout
-        QLayout* parentLayout = this->OriginalParent->layout();
-        if (parentLayout)
-        {
-          if (this->OriginalParentIndex >= 0)
-          {
-            QBoxLayout* boxLayout = qobject_cast<QBoxLayout*>(parentLayout);
-            if (boxLayout)
-            {
-              boxLayout->insertWidget(this->OriginalParentIndex, q);
-            }
-            else
-            {
-              parentLayout->addWidget(q);
-            }
-          }
-          else
-          {
-            parentLayout->addWidget(q);
-          }
-        }
-      }
-
-      // Reparent study view to viewport
-      if (!this->StudyListView.isNull())
-      {
-        this->StudyListView->setParent(q->viewport());
-      }
-
-      // Delete splitter container
-      delete this->SplitterContainer;
-      this->SplitterContainer = nullptr;
-      this->Splitter = nullptr;
-      this->OriginalParent = nullptr;
-      this->OriginalParentIndex = -1;
+      this->restoreTabModeParenting();
     }
     else
     {
@@ -1083,7 +1105,37 @@ void ctkDICOMPatientViewPrivate::setupSplitter()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMPatientView::~ctkDICOMPatientView() = default;
+ctkDICOMPatientView::~ctkDICOMPatientView()
+{
+  Q_D(ctkDICOMPatientView);
+  if (!d->ShutdownCleanupDone)
+  {
+    d->ShutdownCleanupDone = true;
+    this->setModel(nullptr);
+    this->clean();
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientView::shutdown()
+{
+  Q_D(ctkDICOMPatientView);
+  if (d->ShutdownCleanupDone)
+  {
+    return;
+  }
+  d->ShutdownCleanupDone = true;
+
+  this->setModel(nullptr);
+  this->clean();
+
+  // ListMode reparents this view into a SplitterContainer. Restore the original
+  // hierarchy while parent widgets are still alive (not during ~QWidget).
+  if (d->SplitterContainer)
+  {
+    d->restoreTabModeParenting();
+  }
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMPatientView::setModel(QAbstractItemModel* model)
@@ -1097,7 +1149,10 @@ void ctkDICOMPatientView::setModel(QAbstractItemModel* model)
   if (this->model())
   {
     disconnect(this->model(), nullptr, this, nullptr);
-    disconnect(this->selectionModel(), nullptr, this, nullptr);
+    if (this->selectionModel())
+    {
+      disconnect(this->selectionModel(), nullptr, this, nullptr);
+    }
   }
 
   // Set the new model
@@ -2376,7 +2431,12 @@ void ctkDICOMPatientView::onModelReset()
 void ctkDICOMPatientView::onLayoutRefreshed()
 {
   Q_D(ctkDICOMPatientView);
-  QTimer::singleShot(5, this, [d]() {
+  QTimer::singleShot(5, this, [this]() {
+    Q_D(ctkDICOMPatientView);
+    if (d->ShutdownCleanupDone)
+    {
+      return;
+    }
     d->updateDisplayModeButtonPosition();
     d->updateAllowedServersComboBoxFromModel();
     d->updateAllowedServersComboBoxGeometry();
