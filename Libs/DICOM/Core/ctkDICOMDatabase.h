@@ -354,6 +354,15 @@ public:
   /// cleaned from remnants of all previously deleted data from the file.
   /// Vacuuming may fail if there are multiple connections to the database.
   Q_INVOKABLE bool cleanup(bool vacuum=false);
+  /// Remove a specific series from the database if it has no associated images.
+  /// If vacuum is set to true then the database is vacuumed after removal.
+  Q_INVOKABLE bool cleanupSeries(const QString& seriesInstanceUID, bool vacuum=false);
+  /// Remove a specific study from the database if it has no associated series.
+  /// If vacuum is set to true then the database is vacuumed after removal.
+  Q_INVOKABLE bool cleanupStudy(const QString& studyInstanceUID, bool vacuum=false);
+  /// Remove a specific patient from the database if it has no associated studies.
+  /// If vacuum is set to true then the database is vacuumed after removal.
+  Q_INVOKABLE bool cleanupPatient(const QString& patientUID, bool vacuum=false);
 
   /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
@@ -538,6 +547,13 @@ protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
 
 private:
+  void vacuumDatabases();
+  bool cleanupEntityIfEmpty(
+    const QString& deleteQueryString,
+    const QString& countChildrenQueryString,
+    const QVariant& bindValue,
+    bool vacuum);
+
   Q_DECLARE_PRIVATE(ctkDICOMDatabase);
   Q_DISABLE_COPY(ctkDICOMDatabase);
 };
