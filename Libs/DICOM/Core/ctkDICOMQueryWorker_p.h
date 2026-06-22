@@ -30,6 +30,7 @@
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
 #include "ctkDICOMQueryWorker.h"
+class ctkDICOMQueryJob;
 
 //------------------------------------------------------------------------------
 class ctkDICOMQueryWorkerPrivate : public QObject
@@ -45,6 +46,7 @@ public:
   virtual ~ctkDICOMQueryWorkerPrivate();
 
   void setQueryParameters();
+  void forwardQueryLimitWarnings(const QSharedPointer<ctkDICOMQueryJob>& queryJob);
 
   QSharedPointer<ctkDICOMQuery> Query;
 };

@@ -33,6 +33,7 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QMenu>
+#include <QMessageBox>
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QScrollArea>
@@ -131,6 +132,7 @@ public:
   void resetFilters();
   void updateUIAfterFilters();
   void updateFiltersWarnings();
+  void showQueryLimitWarnings(const QStringList& warningMessages);
   void setBackgroundColorToFilterWidgets(bool warning = false);
   void setBackgroundColorToWidget(QColor color, QWidget* widget);
   void updateFiltersLayoutOrientation();
@@ -1123,6 +1125,27 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateUIAfterFilters()
   this->PatientView->studyListView()->refreshLayout();
   this->PatientView->studyListView()->refreshSeriesLayout();
   this->updateFiltersWarnings();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::showQueryLimitWarnings(const QStringList& warningMessages)
+{
+  Q_Q(ctkDICOMVisualBrowserWidget);
+  if (warningMessages.isEmpty())
+  {
+    return;
+  }
+
+  const QString dialogText = warningMessages.join("\n\n");
+  ctkMessageBox queryLimitWarningMessageBox(
+    QMessageBox::Warning,
+    ctkDICOMVisualBrowserWidget::tr("Query warning"),
+    dialogText,
+    QMessageBox::Ok,
+    q);
+  queryLimitWarningMessageBox.exec();
+  this->WarningPushButton->setText(dialogText);
+  this->WarningPushButton->show();
 }
 
 //----------------------------------------------------------------------------
@@ -3027,12 +3050,32 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
     return;
   }
 
+  QStringList queryLimitWarnings;
   foreach (QVariant data, datas)
   {
     ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
     if (td.JobUID.isEmpty())
     {
       continue;
+    }
+
+    if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+        td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
+    {
+      foreach (const QString& message, td.QueryWarningMessages)
+      {
+        if (td.ConnectionName.isEmpty())
+        {
+          queryLimitWarnings.append(message);
+        }
+        else
+        {
+          queryLimitWarnings.append(
+            QString("%1: %2").arg(td.ConnectionName, message));
+        }
+      }
     }
 
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients ||
@@ -3058,6 +3101,8 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
       d->PatientModel->onJobFinished(data);
     }
   }
+
+  d->showQueryLimitWarnings(queryLimitWarnings);
 }
 
 //------------------------------------------------------------------------------

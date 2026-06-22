@@ -209,8 +209,15 @@ public:
   ///@}
 
   ///@{
-  /// maximum number of responses allowed in one query
-  /// when query is at Patient level. Default is 0 (unlimited).
+  /// Client-side maximum number of responses allowed in one C-FIND at Patient level.
+  /// Default is 0 (unlimited).
+  /// The DICOM server (Query SCP) may impose its own limits independently; when the
+  /// server supports Repository Query (PS3.4 C.6.4), status B001 indicates that matching
+  /// reached a response limit and additional matches may exist.
+  /// Standard Study Root PACS may truncate results without an explicit warning — refine
+  /// filters if results look incomplete.
+  /// See https://dicom.nema.org/medical/dicom/2022e/output/chtml/part04/sect_C.6.4.5.2.html
+  /// and https://dicom.nema.org/medical/dicom/2022e/output/chtml/part04/sect_C.6.4.3.html
   void setMaximumPatientsQuery(int maximumPatientsQuery);
   int maximumPatientsQuery();
   ///@}

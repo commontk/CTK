@@ -107,6 +107,10 @@ public:
   void copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
   ///@}
 
+  /// Append a user-facing query warning (e.g. query result limits).
+  void appendQueryWarning(const QString& message);
+  QStringList queryWarningMessages() const;
+
   /// Return job type.
   Q_INVOKABLE virtual ctkDICOMJobResponseSet::JobType getJobType() const;
 
@@ -132,6 +136,7 @@ protected:
   QString ReferenceInserterJobUID;
   ctkDICOMJob::DICOMLevels DICOMLevel;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
+  QStringList QueryWarningMessages;
 
 private:
   Q_DISABLE_COPY(ctkDICOMJob);
@@ -151,6 +156,7 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
     this->SeriesInstanceUID = job.seriesInstanceUID();
     this->SOPInstanceUID = job.sopInstanceUID();
     this->ReferenceInserterJobUID = job.referenceInserterJobUID();
+    this->QueryWarningMessages = job.queryWarningMessages();
   }
 
   explicit ctkDICOMJobDetail(const ctkDICOMJob& job, const QString& connectionName)
@@ -207,6 +213,9 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
   // Specific to DICOM JobResponseSet
   ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
   int NumberOfDataSets{0};
+
+  // User-facing query warnings (e.g. result limits) reported to the GUI
+  QStringList QueryWarningMessages;
 };
 Q_DECLARE_METATYPE(ctkDICOMJobDetail);
 

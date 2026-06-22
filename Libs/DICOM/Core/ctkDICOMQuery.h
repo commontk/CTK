@@ -22,6 +22,7 @@
 #define __ctkDICOMQuery_h
 
 // Qt includes
+#include <QList>
 #include <QObject>
 #include <QMap>
 #include <QString>
@@ -32,8 +33,11 @@
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMQueryLimitWarning.h"
 class ctkDICOMQueryPrivate;
 class ctkDICOMJobResponseSet;
+class QRResponse;
+template <typename T> class OFList;
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
@@ -91,8 +95,15 @@ public:
   ///@}
 
   ///@{
-  /// maximum number of responses allowed in one query
-  /// when query is at Patient level. Default is 0 (unlimited).
+  /// Client-side maximum number of responses allowed in one C-FIND at Patient level.
+  /// Default is 0 (unlimited).
+  /// The DICOM server (Query SCP) may impose its own limits independently; when the
+  /// server supports Repository Query (PS3.4 C.6.4), status B001 indicates that matching
+  /// reached a response limit and additional matches may exist.
+  /// Standard Study Root PACS may truncate results without an explicit warning — refine
+  /// filters if results look incomplete.
+  /// See https://dicom.nema.org/medical/dicom/2022e/output/chtml/part04/sect_C.6.4.5.2.html
+  /// and https://dicom.nema.org/medical/dicom/2022e/output/chtml/part04/sect_C.6.4.3.html
   void setMaximumPatientsQuery(const int& maximumPatientsQuery);
   int maximumPatientsQuery() const;
   ///@}
@@ -166,6 +177,10 @@ public:
   QString jobUID() const;
   ///@}
 
+  /// Query result limit warnings collected during the last query operation(s).
+  QList<ctkDICOMQueryLimitWarning> queryLimitWarnings() const;
+  void clearQueryLimitWarnings();
+
 Q_SIGNALS:
   /// Signal is emitted inside the query() function. It ranges from 0 to 100.
   /// In case of an error, you are assured that the progress value 100 is fired
@@ -192,6 +207,8 @@ public Q_SLOTS:
 protected:
   QString applyFilters(QMap<QString,QVariant>);
   bool initializeSCU();
+  void reportIncompleteFindStatus(const OFList<QRResponse*>& responses, const QString& level);
+  void recordQueryLimitWarning(const ctkDICOMQueryLimitWarning& warning);
 
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;
 
@@ -200,6 +217,7 @@ private:
   Q_DISABLE_COPY(ctkDICOMQuery);
 
   friend class ctkDICOMQuerySCUPrivate;  // for access to queryResponseHandled
+  friend class ctkDICOMQueryPrivate;
 };
 
 #endif

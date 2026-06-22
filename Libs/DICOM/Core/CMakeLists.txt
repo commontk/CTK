@@ -52,6 +52,8 @@ set(KIT_SRCS
   ctkDICOMPersonName.h
   ctkDICOMQuery.cpp
   ctkDICOMQuery.h
+  ctkDICOMQueryLimitWarning.cpp
+  ctkDICOMQueryLimitWarning.h
   ctkDICOMQueryJob.cpp
   ctkDICOMQueryJob.h
   ctkDICOMQueryJob_p.h

@@ -39,8 +39,11 @@
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMQueryLimitWarning.h"
 
 // DCMTK includes
+#include <dcmtk/dcmnet/dimse.h>
+#include <dcmtk/dcmnet/diutil.h>
 #include <dcmtk/dcmnet/scu.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcdeftag.h>
@@ -172,6 +175,7 @@ public:
   int MaximumPatientsQuery;
   QString JobUID;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
+  QList<ctkDICOMQueryLimitWarning> QueryLimitWarnings;
 };
 
 //------------------------------------------------------------------------------
@@ -329,6 +333,8 @@ ctkDICOMQueryPrivate::StudyMetadata ctkDICOMQueryPrivate::queryStudyMetadata(
     metadata.Valid = !metadata.PatientID.isEmpty();
     break;
   }
+
+  queryObject->reportIncompleteFindStatus(responses, "study metadata");
 
   if (!metadata.Valid)
   {
@@ -595,6 +601,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     }
   }
 
+  this->reportIncompleteFindStatus(responses, "study");
+
   /* Only ask for series attributes now. This requires kicking out the rest of former query. */
   d->QueryDcmDataset->clear();
   d->QueryDcmDataset->insertEmptyElement(DCM_SeriesNumber);
@@ -651,6 +659,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
           database.insert(dataset, false /* do not store */, false /* no thumbnail */);
         }
       }
+
+      this->reportIncompleteFindStatus(responses, "series");
 
       LOG_AND_EMIT_DEBUG(QString("Find succeeded at Series level for Study: %1").arg(studyInstanceUID), debug)
       emit progress(50 + (progressRatio * i++));
@@ -763,8 +773,11 @@ bool ctkDICOMQuery::queryPatients()
       contResponses++;
       if (d->MaximumPatientsQuery != 0 && contResponses > d->MaximumPatientsQuery)
       {
-        LOG_AND_EMIT_WARN(QString("The number of responses of the query task at patients level "
-                                  "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery), warn)
+        ctkDICOMQueryLimitWarning limitWarning;
+        limitWarning.Reason = ctkDICOMQueryLimitReason::ClientMaximumReached;
+        limitWarning.Level = QStringLiteral("patient");
+        limitWarning.Limit = d->MaximumPatientsQuery;
+        this->recordQueryLimitWarning(limitWarning);
         break;
       }
       DcmDataset *dataset = (*it)->m_dataset;
@@ -775,6 +788,8 @@ bool ctkDICOMQuery::queryPatients()
         datasetsMap.insert(patientID.c_str(), dataset);
       }
     }
+
+    this->reportIncompleteFindStatus(responses, "patient");
 
     if (contResponses == 0)
     {
@@ -910,6 +925,8 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
         datasetsMap.insert(studyInstanceUID.c_str(), dataset);
       }
     }
+
+    this->reportIncompleteFindStatus(responses, "study");
 
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
@@ -1149,6 +1166,8 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
       }
     }
 
+    this->reportIncompleteFindStatus(responses, "series");
+
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
@@ -1295,6 +1314,8 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
       }
     }
 
+    this->reportIncompleteFindStatus(responses, "instance");
+
     LOG_AND_EMIT_DEBUG(QString("Find succeeded at sop instance level for series: %1").arg(seriesInstanceUID), debug)
   }
   else
@@ -1335,6 +1356,70 @@ void ctkDICOMQuery::releaseAssociation()
 {
   Q_D(ctkDICOMQuery);
   d->releaseAssociation();
+}
+
+//----------------------------------------------------------------------------
+QList<ctkDICOMQueryLimitWarning> ctkDICOMQuery::queryLimitWarnings() const
+{
+  Q_D(const ctkDICOMQuery);
+  return d->QueryLimitWarnings;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQuery::clearQueryLimitWarnings()
+{
+  Q_D(ctkDICOMQuery);
+  d->QueryLimitWarnings.clear();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQuery::recordQueryLimitWarning(const ctkDICOMQueryLimitWarning& warning)
+{
+  Q_D(ctkDICOMQuery);
+  d->QueryLimitWarnings.append(warning);
+  LOG_AND_EMIT_WARN(formatQueryLimitWarning(warning), warn);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQuery::reportIncompleteFindStatus(const OFList<QRResponse*>& responses,
+                                               const QString& level)
+{
+  if (responses.empty())
+  {
+    return;
+  }
+
+  QRResponse* finalResponse = responses.back();
+  if (!finalResponse)
+  {
+    return;
+  }
+
+  const Uint16 status = finalResponse->m_status;
+  if (status == STATUS_Success)
+  {
+    return;
+  }
+
+  ctkDICOMQueryLimitWarning limitWarning;
+  limitWarning.Level = level;
+  limitWarning.DimseStatus = status;
+
+  // Repository Query SOP Class: matching reached response limit (PS3.4 C.6.4.3)
+  if (status == 0xB001)
+  {
+    limitWarning.Reason = ctkDICOMQueryLimitReason::ServerResponseLimit;
+  }
+  else if (DICOM_WARNING_STATUS(status))
+  {
+    limitWarning.Reason = ctkDICOMQueryLimitReason::ServerIncompleteWarning;
+  }
+  else
+  {
+    return;
+  }
+
+  this->recordQueryLimitWarning(limitWarning);
 }
 
 //----------------------------------------------------------------------------
