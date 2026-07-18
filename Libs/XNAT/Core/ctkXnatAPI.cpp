@@ -129,6 +129,13 @@ QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const 
 
   // e.g. {"ResultSet":{"Result": [{"p1":"v1","p2":"v2",...}], "totalRecords":"13"}}
   QScriptValue resultSet = scriptValue.property("ResultSet");
+  if (!resultSet.isObject())
+  {
+    // Plain JSON object without the XNAT ResultSet wrapper, e.g. XAPI
+    // responses such as /xapi/siteConfig/buildInfo.
+    qRestAPI::appendScriptValueToVariantMapList(result, scriptValue);
+    return result;
+  }
   QScriptValue data = resultSet.property("Result");
   if (!data.isObject())
   {

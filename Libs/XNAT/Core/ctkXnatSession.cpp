@@ -189,21 +189,33 @@ void ctkXnatSessionPrivate::checkSession() const
 void ctkXnatSessionPrivate::setSessionProperties()
 {
   sessionProperties.clear();
+
+  // XNAT 1.6 and earlier report the server version at /data/version.
   QUuid uuid = xnat->get("/data/version");
   QScopedPointer<qRestResult> restResult(xnat->takeResult(uuid));
+  QString version;
   if (restResult)
   {
-    QString version = restResult->result()["content"].toString();
-    if (version.isEmpty())
-    {
-      throw ctkXnatProtocolFailureException("No version information available.");
-    }
-    sessionProperties[SERVER_VERSION] = version;
+    version = restResult->result()["content"].toString();
   }
-  else
+  if (version.isEmpty())
   {
-    this->throwXnatException("Retrieving session properties failed.");
+    // XNAT 1.7 and later report the server version at /xapi/siteConfig/buildInfo.
+    uuid = xnat->get("/xapi/siteConfig/buildInfo");
+    restResult.reset(xnat->takeResult(uuid));
+    if (restResult)
+    {
+      version = restResult->result()["version"].toString();
+    }
   }
+  if (version.isEmpty())
+  {
+    // The server version is informational only, therefore failure to
+    // retrieve it must not prevent opening the session.
+    qWarning() << "Failed to retrieve XNAT server version.";
+    return;
+  }
+  sessionProperties[SERVER_VERSION] = version;
 }
 
 //----------------------------------------------------------------------------
