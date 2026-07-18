@@ -39,6 +39,7 @@
 
 // STD includes
 #include <cstdlib>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 int vtkLightBoxRendererManagerTest1(int argc, char* argv[])

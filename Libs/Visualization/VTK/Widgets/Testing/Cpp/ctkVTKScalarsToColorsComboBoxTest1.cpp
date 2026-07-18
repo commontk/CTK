@@ -32,6 +32,7 @@
 #include <vtkPiecewiseFunction.h>
 
 // STD includes
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 int ctkVTKScalarsToColorsComboBoxTest1(int argc, char * argv [] )

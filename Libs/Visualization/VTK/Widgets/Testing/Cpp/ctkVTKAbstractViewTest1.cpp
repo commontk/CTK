@@ -40,6 +40,7 @@
 #else
 #include <time.h>
 #endif
+#include <iostream>
 
 void sleep_ms(int ms)
 {
