@@ -81,6 +81,7 @@ set(KIT_SRCS
   ctkScopedCurrentDir.cpp
   ctkScopedCurrentDir.h
   ctkSingleton.h
+  ctkStringLiterals.h
   ctkUtils.cpp
   ctkUtils.h
   ctkUtils.tpp
