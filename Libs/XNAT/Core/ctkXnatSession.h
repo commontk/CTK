@@ -87,7 +87,7 @@ public:
   /**
    * @brief Get the XNAT server version.
    * @return The XNAT version running on the remote server. Returns a null string
-   *         if the session is not open.
+   *         if the session is not open or the version could not be determined.
    */
   QString version() const;
 
