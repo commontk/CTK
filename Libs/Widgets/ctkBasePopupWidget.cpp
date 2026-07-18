@@ -20,6 +20,11 @@
 
 // Qt includes
 #include <QApplication>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QScreen>
+#else
+#include <QDesktopWidget>
+#endif
 #include <QDebug>
 #include <QDir>
 #include <QEvent>
@@ -418,6 +423,33 @@ QRect ctkBasePopupWidgetPrivate::desiredOpenGeometry(QRect baseGeometry)const
   else if (this->Alignment & Qt::AlignVCenter)
   {
     geometry.moveTop((topLeft.y() + bottomRight.y()) / 2 - size.height() / 2);
+  }
+
+  // Keep the popup visible on the screen: if the base widget is close to a screen
+  // edge then the popup would be cut off, move it back to the visible area instead.
+  if (!this->BaseWidget.isNull())
+  {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QRect available = this->BaseWidget->screen()->availableGeometry();
+#else
+    QRect available = QApplication::desktop()->availableGeometry(this->BaseWidget);
+#endif
+    if (geometry.right() > available.right())
+    {
+      geometry.moveRight(available.right());
+    }
+    if (geometry.left() < available.left())
+    {
+      geometry.moveLeft(available.left());
+    }
+    if (geometry.bottom() > available.bottom())
+    {
+      geometry.moveBottom(available.bottom());
+    }
+    if (geometry.top() < available.top())
+    {
+      geometry.moveTop(available.top());
+    }
   }
   return geometry;
 }
