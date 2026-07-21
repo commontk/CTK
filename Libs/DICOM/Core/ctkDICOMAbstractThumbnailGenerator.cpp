@@ -22,8 +22,9 @@
 // ctkDICOMCore includes
 #include "ctkDICOMAbstractThumbnailGenerator.h"
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMAbstractThumbnailGenerator" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMAbstractThumbnailGenerator"))
 struct Node;
 
 //------------------------------------------------------------------------------

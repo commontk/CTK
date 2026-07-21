@@ -28,7 +28,7 @@
 #include "ctkSettingsPanel.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkSettingsPanel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkSettingsPanel"))
 
 namespace
 {
@@ -281,7 +281,7 @@ void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
   d->Properties[key].setValue(newVal);
   if (settings->status() != QSettings::NoError)
   {
-    logger.warn( QString("Error #%1 while writing setting \"%2\"")
+    logger->warn( QString("Error #%1 while writing setting \"%2\"")
       .arg(static_cast<int>(settings->status()))
       .arg(key));
   }

@@ -25,7 +25,7 @@
 
 // ctkCore includes
 #include "ctkLogger.h"
-static ctkLogger logger("org.commontk.Widgets.ctkThumbnailLabel");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.Widgets.ctkThumbnailLabel"))
 
 // ctkWidgets includes
 #include "ctkThumbnailLabel.h"

@@ -35,8 +35,9 @@
 #include "ctkJobScheduler.h"
 #include "ctkAbstractWorker.h"
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 
-static ctkLogger logger("org.commontk.core.AbstractScheduler");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.core.AbstractScheduler"))
 
 // --------------------------------------------------------------------------
 // ctkJobSchedulerPrivate methods
@@ -114,7 +115,7 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
           return;
         }
 
-        logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
+        logger->debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
                    .arg(job->jobUID())
                    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
@@ -143,15 +144,16 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 
   if (this->FreezeJobsScheduling)
   {
-    logger.debug(QString("ctkJobScheduler: job object %1 of type %2 in thread %3 "
+    logger->debug(QString("ctkJobScheduler: job object %1 of type %2 in thread %3 "
                          "not added to the job list since jobs are being stopped.\n")
       .arg(job->jobUID(), job->className())
       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
     return false;
   }
 
-  logger.debug(QString("ctkJobScheduler: creating job object %1 of type %2 in thread %3.\n")
-    .arg(job->jobUID(), job->className())
+  logger->debug(QString("ctkJobScheduler: creating job object %1 of type %2 in thread %3.\n")
+    .arg(job->jobUID())
+    .arg(job->className())
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   QMetaObject::Connection startedConnection = QObject::connect(job.data(), &ctkAbstractJob::started, q, [q, job](){
@@ -185,7 +187,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 
   emit q->jobInitialized(job->toVariant());
 
-  logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
+  logger->debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
                      .arg(job->jobUID())
                      .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
@@ -203,7 +205,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
       return false;
     }
 
-    logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
+    logger->debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
                    .arg(job->jobUID())
                    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
@@ -223,8 +225,9 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 //------------------------------------------------------------------------------
 bool ctkJobSchedulerPrivate::cleanJob(const QString &jobUID)
 {
-  logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
-    .arg(jobUID, QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
+  logger->debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
+    .arg(jobUID)
+    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
   {
     // The QWriteLocker is enclosed within brackets to restrict its scope and
@@ -273,8 +276,9 @@ void ctkJobSchedulerPrivate::cleanJobs(const QStringList &jobUIDs)
 //------------------------------------------------------------------------------
 bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
-  logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
-    .arg(jobUID, QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
+  logger->debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
+    .arg(jobUID)
+    .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
   {
     // The QWriteLocker is enclosed within brackets to restrict its scope and
@@ -806,7 +810,7 @@ void ctkJobScheduler::onJobStarted(ctkAbstractJob* job)
     return;
   }
 
-  logger.debug(job->loggerReport(tr("started")));
+  logger->debug(job->loggerReport(tr("started")));
 
   d->BatchedJobsStarted.append(job->toVariant());
   if (!d->ThrottleTimer->isActive())
@@ -824,7 +828,7 @@ void ctkJobScheduler::onJobUserStopped(ctkAbstractJob* job)
     return;
   }
 
-  logger.debug(job->loggerReport(tr("user stopped")));
+  logger->debug(job->loggerReport(tr("user stopped")));
 
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
@@ -853,7 +857,7 @@ void ctkJobScheduler::onJobFinished(ctkAbstractJob* job)
     return;
   }
 
-  logger.debug(job->loggerReport(tr("finished")));
+  logger->debug(job->loggerReport(tr("finished")));
 
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
@@ -882,7 +886,7 @@ void ctkJobScheduler::onJobAttemptFailed(ctkAbstractJob* job)
     return;
   }
 
-  logger.debug(job->loggerReport(tr("attempt failed")));
+  logger->debug(job->loggerReport(tr("attempt failed")));
 
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
@@ -911,7 +915,7 @@ void ctkJobScheduler::onJobFailed(ctkAbstractJob* job)
     return;
   }
 
-  logger.debug(job->loggerReport(tr("failed")));
+  logger->debug(job->loggerReport(tr("failed")));
 
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);

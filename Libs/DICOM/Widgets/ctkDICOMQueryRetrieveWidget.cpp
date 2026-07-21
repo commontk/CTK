@@ -44,7 +44,7 @@
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ui_ctkDICOMQueryRetrieveWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryRetrieveWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.ctkDICOMQueryRetrieveWidget"))
 
 //----------------------------------------------------------------------------
 class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
@@ -188,7 +188,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     catch (const std::exception& e)
     {
       Q_UNUSED(e);
-      logger.error("Database error: " + d->QueryResultDatabase.lastError());
+      logger->error("Database error: " + d->QueryResultDatabase.lastError());
       d->QueryResultDatabase.closeDatabase();
       return;
     }
@@ -258,7 +258,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     catch (const std::exception& e)
     {
       Q_UNUSED(e);
-      logger.error ( "Query error: " + parameters["Name"].toString() );
+      logger->error ( "Query error: " + parameters["Name"].toString() );
       progress.setLabelText("Query error: " + parameters["Name"].toString());
       delete query;
     }
@@ -354,7 +354,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     ctkDICOMQuery* currentQuery = (queryIt == d->QueriesByStudyUID.end() ? nullptr : *queryIt);
     if (!currentQuery)
     {
-      logger.warn("Retrieve of series " + seriesUID + " failed. No query found for study " + studyUID + ".");
+      logger->warn("Retrieve of series " + seriesUID + " failed. No query found for study " + studyUID + ".");
       continue;
     }
 
@@ -365,8 +365,8 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     retrieve->setHost( currentQuery->host() );
     // TODO: check the model item to see if it is checked
     // for now, assume all studies queried and shown to the user will be retrieved
-    logger.debug("About to retrieve " + seriesUID + " from " + currentQuery->host());
-    logger.info ( "Starting to retrieve" );
+    logger->debug("About to retrieve " + seriesUID + " from " + currentQuery->host());
+    logger->info ( "Starting to retrieve" );
 
     if(d->UseProgressDialog)
     {
@@ -402,7 +402,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     catch (const std::exception& e)
     {
       Q_UNUSED(e);
-      logger.error ( "Retrieve failed" );
+      logger->error ( "Retrieve failed" );
       if(d->UseProgressDialog)
       {
         if ( QMessageBox::question ( this,
@@ -426,7 +426,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
               this, SLOT(updateRetrieveProgress(int)));
       disconnect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
     }
-    logger.info ( "Retrieve success" );
+    logger->info ( "Retrieve success" );
   }
 
   if (retrieve->dicomDatabase())
@@ -505,7 +505,7 @@ void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
     d->ProgressDialog->resize(targetWidth, d->ProgressDialog->height());
   }
   d->ProgressDialog->setValue( value );
-  logger.error(QString("setting value to %1").arg(value) );
+  logger->error(QString("setting value to %1").arg(value) );
   QApplication::processEvents();
 }
 

@@ -47,7 +47,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMItemView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.ctkDICOMItemView"))
 
 //--------------------------------------------------------------------------
 class ctkDICOMItemViewPrivate
@@ -272,7 +272,7 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
     EI_Status result = dcmImage.getStatus();
     if (result != EIS_Normal)
     {
-      logger.error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+      logger->error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
       return;
     }
     // Select first window defined in image. If none, compute min/max window as best guess.
@@ -328,7 +328,7 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
     {
       if (!image.loadFromData( buffer ))
       {
-            logger.error("QImage couldn't created");
+            logger->error("QImage couldn't created");
       }
     }
     this->addImage(image);
@@ -424,7 +424,7 @@ void ctkDICOMItemView::displayImage(int imageIndex){
           }
           else
           {
-            logger.debug("out of index");
+            logger->debug("out of index");
           }
       }
   }

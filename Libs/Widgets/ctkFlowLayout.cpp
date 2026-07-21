@@ -30,7 +30,7 @@
 // STD includes
 #include <cmath>
 
-static ctkLogger logger("org.commontk.libs.widgets.ctkFlowLayout");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.libs.widgets.ctkFlowLayout"))
 
 //-----------------------------------------------------------------------------
 class ctkFlowLayoutPrivate

@@ -41,7 +41,7 @@
 #include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.ctkVTKThumbnailView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.slicer.libs.qmrmlwidgets.ctkVTKThumbnailView"))
 //--------------------------------------------------------------------------
 
 #define DEGREES2RADIANS 0.0174532925
@@ -340,7 +340,7 @@ void ctkVTKThumbnailViewPrivate::resetCamera()
 
   if (!ren || !cam)
   {
-    logger.error("Trying to reset non-existent camera");
+    logger->error("Trying to reset non-existent camera");
     return;
   }
 
@@ -349,7 +349,7 @@ void ctkVTKThumbnailViewPrivate::resetCamera()
 
   if (!vtkMath::AreBoundsInitialized(bounds))
   {
-    logger.error("Cannot reset camera!");
+    logger->error("Cannot reset camera!");
     return;
   }
   ren->InvokeEvent(vtkCommand::ResetCameraEvent, ren);
@@ -395,7 +395,7 @@ void ctkVTKThumbnailViewPrivate::resetCamera()
   double* vup = cam->GetViewUp();
   if ( fabs(vtkMath::Dot(vup,vn)) > 0.999 )
   {
-    logger.warn("Resetting view-up since view plane normal is parallel");
+    logger->warn("Resetting view-up since view plane normal is parallel");
     cam->SetViewUp(-vup[2], vup[0], vup[1]);
   }
 

@@ -38,8 +38,9 @@
 // ctkDICOMCore includes
 #include "ctkDICOMModel.h"
 #include "ctkLogger.h"
+#include <QGlobalStatic>
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMModel" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMModel"))
 struct Node;
 
 Q_DECLARE_METATYPE(Qt::CheckState);
@@ -303,7 +304,7 @@ QString ctkDICOMModelPrivate::generateQuery(const QString& fields, const QString
   {
     res += QString(" ORDER BY ") + this->Sort;
   }
-  logger.debug ( "ctkDICOMModelPrivate::generateQuery: query is: " + res );
+  logger->debug ( "ctkDICOMModelPrivate::generateQuery: query is: " + res );
   return res;
 }
 
@@ -324,7 +325,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
         condition.append("PatientsName LIKE \"%" + this->SearchParameters["Name"].toString() + "%\"");
       }
       query = this->generateQuery("UID as UID, PatientsName as Name, PatientsAge as Age, PatientsBirthDate as Date, PatientID as \"Subject ID\"","Patients", condition);
-      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Root: query is: " + query );
+      logger->debug ( "ctkDICOMModelPrivate::updateQueries for Root: query is: " + query );
       break;
     case ctkDICOMModel::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
@@ -343,7 +344,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
                            + "\' AND \'" + QDate::fromString(this->SearchParameters["EndDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd") + "\' ) AND ");
       }
       query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, InstitutionName as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
-      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
+      logger->debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModel::StudyType:
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
@@ -352,7 +353,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
         condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
       }
       query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, Modality as Age, SeriesNumber as Scan, BodyPartExamined as \"Subject ID\", SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
-      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
+      logger->debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModel::SeriesType:
       if(this->SearchParameters["ID"].toString() != "")
@@ -361,7 +362,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
       }
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", condition + QString("SeriesInstanceUID='%1'").arg(node->UID));
-      logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
+      logger->debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
     case ctkDICOMModel::ImageType:
       break;

@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
@@ -34,7 +35,7 @@
 // DCMTK includes
 #include <dcmtk/oflog/spi/logevent.h>
 
-static ctkLogger logger ("org.commontk.dicom.DICOMRetrieveWorker");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMRetrieveWorker"))
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveWorkerPrivate methods
@@ -148,7 +149,7 @@ void ctkDICOMRetrieveWorker::run()
 
   retrieveJob->setStatus(ctkAbstractJob::JobStatus::Running);
 
-  logger.debug(QString("ctkDICOMRetrieveWorker : running job %1 in thread %2.\n")
+  logger->debug(QString("ctkDICOMRetrieveWorker : running job %1 in thread %2.\n")
                        .arg(retrieveJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
@@ -158,11 +159,11 @@ void ctkDICOMRetrieveWorker::run()
       switch(retrieveJob->dicomLevel())
       {
         case ctkDICOMJob::DICOMLevels::None:
-          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          logger->warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
           this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("ctkDICOMRetrieveWorker : get operation for a full patient is not implemented.");
+          logger->warn("ctkDICOMRetrieveWorker : get operation for a full patient is not implemented.");
           this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
@@ -198,11 +199,11 @@ void ctkDICOMRetrieveWorker::run()
       switch(retrieveJob->dicomLevel())
       {
         case ctkDICOMJob::DICOMLevels::None:
-          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          logger->warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
           this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
+          logger->warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
           retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
