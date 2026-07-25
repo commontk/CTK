@@ -44,6 +44,12 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
                       GIT_TAG ${revision_tag})
   endif()
 
+  # DCMTK uses its own container classes by default. With this option its
+  # OFList, OFMap and friends become aliases of the corresponding STL types,
+  # which changes the headers that CTK and its users compile against.
+  option(DCMTK_ENABLE_STL "Build DCMTK with STL containers" OFF)
+  mark_as_advanced(DCMTK_ENABLE_STL)
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   if(UNIX)
@@ -77,6 +83,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_DEFAULT_DICT:STRING=builtin
       -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
+      -DDCMTK_ENABLE_STL:BOOL=${DCMTK_ENABLE_STL}
 
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     DEPENDS
