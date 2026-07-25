@@ -25,7 +25,7 @@
 #include <QDateTime>
 
 ctkEALogTracker::ctkEALogTracker(ctkPluginContext* context, QIODevice* out)
-  : ctkServiceTracker<ctkLogService*>(context), out(out), logLevel(std::numeric_limits<int>::max())
+  : ctkServiceTracker<ctkLogService*>(context), out(out), logLevel(ctkLogService::LOG_INFO)
 {
 
 }
