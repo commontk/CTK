@@ -55,25 +55,39 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
              )
       endif()
 
-      list(APPEND _include_dirs
-        # Ensure AUTOUIC-generated headers (ui_*.h) are on the include path.
-        #
-        # By default CMake writes them to:
-        #
-        #   - Single-config generators (Ninja/Makefiles):
-        #       <AUTOGEN_BUILD_DIR>/include
-        #
-        #   - Multi-config generators (VS, Xcode, Ninja Multi-Config):
-        #       <AUTOGEN_BUILD_DIR>/include_<CONFIG>
-        #
-        # where AUTOGEN_BUILD_DIR defaults to:
-        #   <target-binary-dir>/<target-name>_autogen
-        #
-        # References:
-        # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
-        # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
-        ${${dep}_BINARY_DIR}/${dep}_autogen/include$<$<BOOL:${_isMultiConfig}>:_$<CONFIG>>
-        )
+      # Ensure AUTOUIC-generated headers (ui_*.h) are on the include path.
+      #
+      # By default CMake writes them to:
+      #
+      #   - Single-config generators (Ninja/Makefiles):
+      #       <AUTOGEN_BUILD_DIR>/include
+      #
+      #   - Multi-config generators (VS, Xcode, Ninja Multi-Config):
+      #       <AUTOGEN_BUILD_DIR>/include_<CONFIG>
+      #
+      # where AUTOGEN_BUILD_DIR defaults to:
+      #   <target-binary-dir>/<target-name>_autogen
+      #
+      # References:
+      # - https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html#autouic
+      # - https://cmake.org/cmake/help/latest/prop_tgt/AUTOGEN_BUILD_DIR.html
+      #
+      # Plug-ins are excluded, because that directory also holds AUTOMOC's
+      # output, in a subdirectory named after a hash of the source directory
+      # relative to the source tree. Plug-ins of a project tend to keep their
+      # sources in the same relative directory, so the hash is identical for
+      # all of them, and mocs_compilation.cpp includes its moc output with
+      # angle brackets. Since CMake appends a target's own autogen include dir
+      # last, a plug-in would compile a dependency's meta object instead of its
+      # own whenever both have a header of the same name. A plug-in has no
+      # reason to include another plug-in's generated ui_*.h.
+      #
+      # ${dep}_INCLUDE_SUFFIXES is only ever set by ctkMacroBuildPlugin.
+      if(NOT DEFINED ${dep}_INCLUDE_SUFFIXES)
+        list(APPEND _include_dirs
+          ${${dep}_BINARY_DIR}/${dep}_autogen/include$<$<BOOL:${_isMultiConfig}>:_$<CONFIG>>
+          )
+      endif()
 
       # For external projects, CTKConfig.cmake contains variables
       # listening the include dirs for CTK libraries and plugins
