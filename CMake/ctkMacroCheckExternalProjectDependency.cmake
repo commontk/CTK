@@ -483,6 +483,7 @@ function(_sb_get_external_project_arguments proj varname)
     CMAKE_JOB_POOL_COMPILE:STRING
     CMAKE_JOB_POOL_LINK:STRING
     CMAKE_JOB_POOLS:STRING
+    CMAKE_VS_GLOBALS:STRING
     )
   if(NOT CMAKE_VERSION VERSION_LESS "3.16")
     list(APPEND _options
