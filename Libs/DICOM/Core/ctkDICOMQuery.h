@@ -30,6 +30,11 @@
 // ctkCore includes
 #include <ctkPimpl.h>
 
+// DCMTK includes
+// OFList cannot be forward declared: when DCMTK is built with DCMTK_ENABLE_STL
+// it is a macro that aliases std::list.
+#include <dcmtk/ofstd/oflist.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMDatabase.h"
@@ -37,7 +42,6 @@
 class ctkDICOMQueryPrivate;
 class ctkDICOMJobResponseSet;
 class QRResponse;
-template <typename T> class OFList;
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
