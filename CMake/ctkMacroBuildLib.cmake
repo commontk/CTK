@@ -102,10 +102,12 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  source_group("Resources" FILES
-    ${MY_RESOURCES}
-    ${MY_UI_FORMS}
-    )
+  if(NOT CTK_NO_SOURCE_GROUPS)
+    source_group("Resources" FILES
+      ${MY_RESOURCES}
+      ${MY_UI_FORMS}
+      )
+  endif()
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
