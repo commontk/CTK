@@ -128,3 +128,60 @@ function(ctkFunctionGetIncludeDirs var_include_dirs)
   set(${var_include_dirs} ${_include_dirs} PARENT_SCOPE)
 
 endfunction()
+
+#
+# cmake -DTEST_ctk_function_get_include_dirs_test:BOOL=ON -P ctkFunctionGetIncludeDirs.cmake
+#
+function(ctk_function_get_include_dirs_test)
+
+  include(${CMAKE_CURRENT_LIST_DIR}/ctkMacroParseArguments.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/ctkMacroListFilter.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/ctkMacroTargetLibraries.cmake)
+
+  function(ctk_function_get_include_dirs_test_check id dirs pattern expected)
+    set(_found 0)
+    foreach(_dir IN LISTS dirs)
+      if(_dir MATCHES "${pattern}")
+        set(_found 1)
+      endif()
+    endforeach()
+    if(NOT _found EQUAL expected)
+      message(FATAL_ERROR "Problem with ctkFunctionGetIncludeDirs() - See testcase: ${id}\n"
+                          "pattern:${pattern}\n"
+                          "found:${_found}\n"
+                          "expected:${expected}\n"
+                          "dirs:${dirs}")
+    endif()
+  endfunction()
+
+  # A library and a plug-in dependency. Only ctkMacroBuildPlugin defines
+  # <target>_INCLUDE_SUFFIXES, so that is what tells the two apart.
+  set(CTKFoo_SOURCE_DIR "/src/Libs/Foo")
+  set(CTKFoo_BINARY_DIR "/bin/Libs/Foo")
+
+  set(org_commontk_bar_SOURCE_DIR "/src/Plugins/org.commontk.bar")
+  set(org_commontk_bar_BINARY_DIR "/bin/Plugins/org.commontk.bar")
+  set(org_commontk_bar_INCLUDE_SUFFIXES "")
+
+  set(mytarget_DEPENDENCIES CTKFoo org_commontk_bar)
+
+  set(dirs )
+  ctkFunctionGetIncludeDirs(dirs mytarget)
+
+  # A library contributes its autogen dir, because a dependent may include the
+  # ui_*.h generated for it.
+  ctk_function_get_include_dirs_test_check(1 "${dirs}" "CTKFoo_autogen" 1)
+
+  # A plug-in does not. That directory also holds AUTOMOC output in a
+  # subdirectory named after a hash of the source directory relative to the
+  # source tree, which collides between plug-ins sharing that layout.
+  ctk_function_get_include_dirs_test_check(2 "${dirs}" "org_commontk_bar_autogen" 0)
+
+  # The plug-in is still on the include path, only its autogen dir is not.
+  ctk_function_get_include_dirs_test_check(3 "${dirs}" "org.commontk.bar" 1)
+
+  message("SUCCESS")
+endfunction()
+if(TEST_ctk_function_get_include_dirs_test)
+  ctk_function_get_include_dirs_test()
+endif()

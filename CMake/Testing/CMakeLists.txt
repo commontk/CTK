@@ -14,3 +14,4 @@ endmacro()
 # Add 'CMake script' Tests
 #
 add_cmakescript_test(ctk_list_to_string_test ctkListToString)
+add_cmakescript_test(ctk_function_get_include_dirs_test ctkFunctionGetIncludeDirs)
