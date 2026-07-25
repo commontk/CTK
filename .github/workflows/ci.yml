@@ -22,6 +22,13 @@ jobs:
       matrix:
         runs-on: ["ubuntu-latest"]
         qt-major-version: [5, 6]
+        dcmtk-enable-stl: ["OFF"]
+        include:
+          # Projects embedding CTK may bring their own DCMTK built with STL
+          # containers, which makes OFList and friends aliases of the STL types.
+          - runs-on: "ubuntu-latest"
+            qt-major-version: 6
+            dcmtk-enable-stl: "ON"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -79,6 +86,7 @@ jobs:
         run: |
           cmake \
             -DCTK_QT_VERSION:STRING=${{ matrix.qt-major-version }} \
+            -DDCMTK_ENABLE_STL:BOOL=${{ matrix.dcmtk-enable-stl }} \
             -DCTK_ENABLE_Widgets:BOOL=ON \
             -DCTK_USE_SYSTEM_VTK:BOOL=$CTK_USE_VTK \
             -DCTK_LIB_Visualization/VTK/Widgets:BOOL=$CTK_USE_VTK \
