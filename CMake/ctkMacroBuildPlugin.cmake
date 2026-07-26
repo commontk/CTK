@@ -283,7 +283,14 @@ macro(ctkMacroBuildPlugin)
   endforeach()
   list(REMOVE_DUPLICATES uic_search_paths)
 
+  # A plug-in target name is derived from its symbolic name and is long, and
+  # the default autogen directory repeats it below a directory that already
+  # carries it. Together with the names of the generated sources this can
+  # exceed the 260 character path limit of the Windows toolchain. The autogen
+  # directory only has to be unique per target, and the plug-in's binary
+  # directory already is.
   set_target_properties(${lib_name} PROPERTIES
+    AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/autogen"
     AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
