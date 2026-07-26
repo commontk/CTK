@@ -257,9 +257,19 @@ macro(ctkMacroBuildPlugin)
     HAVE_QT${CTK_QT_VERSION}
     )
 
+  # The autogen include directories of the dependencies are only needed to
+  # compile this plug-in. They must not become part of its exported interface:
+  # they contain $<CONFIG>, and a consumer generating configurations that were
+  # never built here would reference directories that do not exist, which CMake
+  # rejects when it reads the imported target.
+  set(my_autogen_includes ${my_includes})
+  list(FILTER my_autogen_includes INCLUDE REGEX "_autogen/include")
+  list(FILTER my_includes EXCLUDE REGEX "_autogen/include")
+
   target_include_directories(${lib_name}
     PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
            "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
+    PRIVATE ${my_autogen_includes}
     )
 
   # Configure CMake Qt automatic code generation
