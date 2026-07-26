@@ -223,10 +223,9 @@ macro(ctkMacroBuildPlugin)
 
   # Add any other additional resource files
   if(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
-    string(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
     set(plugin_qrc_filepath)
     ctkMacroGeneratePluginResourcefile(plugin_qrc_filepath
-      NAME ${_plugin_symbolicname}_cached.qrc
+      NAME cached.qrc
       PREFIX ${Plugin-SymbolicName}
       RESOURCES ${_plugin_cached_resources_in_source_tree}
       BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree}
