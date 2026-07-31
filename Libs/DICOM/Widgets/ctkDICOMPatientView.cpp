@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QPointer>
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -81,8 +82,10 @@ public:
   // Mouse pressed tracking
   bool MousePressed;
 
-  // Single study list view - reused for all patients
-  QSharedPointer<ctkDICOMStudyListView> StudyListView;
+  // Single study list view - reused for all patients.
+  // This widget is constructed with a real Qt parent, so Qt's parent-child ownership
+  // already deletes it. No need to wrap it in a QSharedPointer as well (double-free issue).
+  QPointer<ctkDICOMStudyListView> StudyListView;
 
   // Merged proxy model for multi-patient selection in ListMode
   QSharedPointer<ctkDICOMStudyMergedFilterProxyModel> MergedStudyProxyModel;
@@ -104,10 +107,12 @@ public:
   QModelIndex SelectAllIconHoveredIndex;
   QModelIndex SelectAllIconPressedIndex;
 
-  // Splitter for ListMode - reparents the patient view
-  QWidget* SplitterContainer;  // Wrapper that replaces patient view in parent's layout
-  ctkSplitter* Splitter;  // The splitter widget inside container
-  QWidget* OriginalParent;  // Original parent to restore in TabMode
+  // Splitter for ListMode - reparents the patient view.
+  // These are QPointer because they reference widgets outside this object's own ownership,
+  // which may already be destroyed by the time restoreTabModeParenting() runs.
+  QPointer<QWidget> SplitterContainer;  // Wrapper that replaces patient view in parent's layout
+  QPointer<ctkSplitter> Splitter;  // The splitter widget inside container
+  QPointer<QWidget> OriginalParent;  // Original parent to restore in TabMode
   int OriginalParentIndex;  // Index in parent's layout
 
   // Display mode toggle button
@@ -978,7 +983,7 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
                 this, SLOT(onAllowedServersComboBoxChanged()));
 
   // Create the single study list view that will be reused for all patients
-  d->StudyListView.reset(new ctkDICOMStudyListView(this->viewport()));
+  d->StudyListView = new ctkDICOMStudyListView(this->viewport());
   d->MergedStudyProxyModel.reset(new ctkDICOMStudyMergedFilterProxyModel(this));
 
   // Create and set the delegate for study rendering
@@ -1129,12 +1134,11 @@ void ctkDICOMPatientView::shutdown()
   this->setModel(nullptr);
   this->clean();
 
-  // ListMode reparents this view into a SplitterContainer. Restore the original
-  // hierarchy while parent widgets are still alive (not during ~QWidget).
-  if (d->SplitterContainer)
-  {
-    d->restoreTabModeParenting();
-  }
+  // Note: this deliberately does NOT call restoreTabModeParenting() to undo the ListMode reparenting since
+  // shutdown() is only ever called while this widget is itself being torn down as part of a larger widget-tree
+  // destruction cascade. Reparenting into OriginalParent in that context is both pointless and unsafe:
+  // OriginalParent may be mid-destruction itself somewhere up the same cascade even if it has not been fully
+  // deleted yet, which crashes inside Qt's internal focus-widget reparenting.
 }
 
 //------------------------------------------------------------------------------
