@@ -26,7 +26,11 @@ Configure the project using CMake by setting the following options:
   * `CTK_QT_VERSION`: 5
   * `Qt5_DIR`: `C:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5` (or a similar path, depending on your operating system)
 
+Similarly for Qt 6.
+
 ### Notes
+
+* By default, the variable `CTK_SUPERBUILD`is ON, to build most dependencies/plugins automatically. Set it to OFF if you want to rely on externally installed packages/plugins. 
 
 * To install the required development environment easily, refer to the "Prerequisites" section of the
   3D Slicer [build instructions](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions/index.html).
