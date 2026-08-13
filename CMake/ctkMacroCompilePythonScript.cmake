@@ -164,15 +164,15 @@ function(_ctk_add_compile_python_directories_target target keep_only_pyc)
       endif()
     endforeach()
 
-    if(NOT PYTHONINTERP_FOUND)
-      find_package(PythonInterp REQUIRED)
+    if(NOT Python3_Interpreter_FOUND)
+      find_package(Python3 COMPONENTS Interpreter REQUIRED)
     endif()
-    if(NOT PYTHONLIBS_FOUND)
-      find_package(PythonLibs REQUIRED)
+    if(NOT Python3_Development_FOUND)
+      find_package(Python3 COMPONENTS Development REQUIRED)
     endif()
 
     # Extract python lib path
-    ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+    ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
     get_filename_component(PYTHON_LIBRARY_PATH "${PYTHON_LIBRARY}" PATH)
 
     # Configure cmake script associated with the custom command
