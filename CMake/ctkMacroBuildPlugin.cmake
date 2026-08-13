@@ -237,15 +237,17 @@ macro(ctkMacroBuildPlugin)
       )
   endif()
 
-  source_group("Resources" FILES
-    ${MY_RESOURCES}
-    ${MY_UI_FORMS}
-    ${MY_TRANSLATIONS}
-    )
+  if(NOT CTK_NO_SOURCE_GROUPS)
+    source_group("Resources" FILES
+      ${MY_RESOURCES}
+      ${MY_UI_FORMS}
+      ${MY_TRANSLATIONS}
+      )
 
-  source_group("Generated" FILES
-    ${_plugin_qm_files}
-    )
+    source_group("Generated" FILES
+      ${_plugin_qm_files}
+      )
+  endif()
 
   add_library(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}

@@ -70,10 +70,12 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
-  source_group("Resources" FILES
-    ${MY_RESOURCES}
-    ${MY_UI_FORMS}
-    )
+  if(NOT CTK_NO_SOURCE_GROUPS)
+    source_group("Resources" FILES
+      ${MY_RESOURCES}
+      ${MY_UI_FORMS}
+      )
+  endif()
 
   # Create executable
   ctk_add_executable_utf8(${proj_name}
