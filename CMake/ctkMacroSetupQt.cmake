@@ -137,6 +137,10 @@ macro(ctkMacroSetupQt)
       list(APPEND CTK_QT_COMPONENTS Network)
     endif()
 
+    if(CTK_ENABLE_DICOM)
+      list(APPEND CTK_QT_COMPONENTS Svg)
+    endif()
+
     if(CTK_QT_VERSION VERSION_EQUAL "5")
       find_package(Qt5 COMPONENTS ${CTK_QT_COMPONENTS} REQUIRED)
       mark_as_superbuild(Qt5_DIR) # Qt 5
