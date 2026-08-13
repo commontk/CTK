@@ -37,8 +37,15 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-static const QString PROP_OSGI_LOCKING = "blueberry.locking";
-static const QString DEFAULT_LOCK_FILENAME = ".metadata/.lock";
+namespace {
+template<std::size_t N>
+constexpr QLatin1String make_constexpr_QLatin1String_(const char (&str)[N])
+{
+  return QLatin1String{str, static_cast<int>(N - 1)};
+}
+constexpr QLatin1String PROP_OSGI_LOCKING     = make_constexpr_QLatin1String_("blueberry.locking");
+constexpr QLatin1String DEFAULT_LOCK_FILENAME = make_constexpr_QLatin1String_(".metadata/.lock");
+} // namespace
 
 
 //----------------------------------------------------------------------------
