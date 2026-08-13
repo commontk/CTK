@@ -92,6 +92,18 @@ public:
   Q_INVOKABLE void addPanel(const QString& label, const QIcon& icon,
                             ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
+  /// Removes settings panel from the dialog and all child panels of that dialog.
+  ///
+  /// The removed settings panels are deleted.
+  Q_INVOKABLE void removePanel(ctkSettingsPanel* panel);
+
+  /// \copybreif removePanel
+  ///
+  /// This convenience overload allows the caller to specify the panel name
+  /// of the panel to remove. If multiple panels share the same name
+  /// which panel removed is undefined.
+  Q_INVOKABLE void removePanel(const QString& label);
+
   bool resetButton()const;
   void setResetButton(bool show);
 
