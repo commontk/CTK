@@ -53,11 +53,6 @@ set(KITTests_SRCS
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
   )
-if(HAVE_BFD)
-  list(APPEND KITTests_SRCS
-    ctkBinaryFileDescriptorTest1.cpp
-    )
-endif()
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/Libs/Testing
@@ -86,10 +81,6 @@ set(Tests_Helpers_SRCS
   ctkSingletonTestHelper.cpp
   ctkSingletonTestHelper.h
   )
-
-if(HAVE_BFD)
-  ctk_add_executable_utf8(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
-endif()
 
 if(MSVC)
   add_definitions( /D _CRT_SECURE_NO_WARNINGS)
@@ -130,9 +121,6 @@ SIMPLE_TEST( ctkAbstractPluginFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   SIMPLE_TEST( ctkBackTraceTest )
-endif()
-if(HAVE_BFD)
-  SIMPLE_TEST( ctkBinaryFileDescriptorTest1 $<TARGET_FILE:ctkBinaryFileDescriptorTestHelper> )
 endif()
 SIMPLE_TEST( ctkBooleanMapperTest )
 SIMPLE_TEST( ctkCallbackTest1 )

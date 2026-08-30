@@ -5,5 +5,4 @@
 #
 
 set(target_libraries
-  BFD_LIBRARIES
   )

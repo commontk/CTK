@@ -7,9 +7,6 @@ project(CTKCore)
 # CMake modules
 set(CMAKE_MODULE_PATH ${CTKCore_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 
-# CMake Macros
-include(CMake/ctkMacroBFDCheck.cmake) # HAVE_BFD will be set to True if it applies
-
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
@@ -96,13 +93,6 @@ set(KIT_SRCS
   ctkSetName.cpp
   ctkSetName.h
   )
-
-if(HAVE_BFD)
-  list(APPEND KIT_SRCS
-    ctkBinaryFileDescriptor.cpp
-    ctkBinaryFileDescriptor.h
-    )
-endif()
 
 # Abstract class should not be wrapped !
 set_source_files_properties(
