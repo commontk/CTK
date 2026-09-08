@@ -31,6 +31,7 @@
 #include "ctkBasicLocation_p.h"
 
 #include <ctkConfig.h>
+#include <ctkStringLiterals.h>
 
 #include <QStringList>
 #include <QDirIterator>
@@ -82,7 +83,10 @@ const QString ctkPluginFrameworkLauncher::PROP_APPLICATION_LAUNCHDEFAULT = "ctk.
 
 const QString ctkPluginFrameworkLauncher::PROP_OSGI_RELAUNCH = "ctk.pluginfw.relaunch";
 
-static const QString PROP_FORCED_RESTART = "ctk.forcedRestart";
+namespace {
+using namespace ctk::string_literals;
+constexpr QLatin1String PROP_FORCED_RESTART = "ctk.forcedRestart"_L1;
+} // namespace
 
 class ctkPluginFrameworkLauncherPrivate
 {
