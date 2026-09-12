@@ -87,8 +87,7 @@ function(ctkFunctionGeneratePluginManifest MANIFEST_QRC_FILEPATH_VAR)
 
   set(_manifest_filename "MANIFEST.MF")
   set(_manifest_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_manifest_filename}")
-  string(REPLACE "." "_" _symbolic_name ${MY_SYMBOLIC_NAME})
-  set(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_symbolic_name}_manifest.qrc")
+  set(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/manifest.qrc")
 
   set(_manifest_qrc_content
 "<!DOCTYPE RCC><RCC version=\"1.0\">
