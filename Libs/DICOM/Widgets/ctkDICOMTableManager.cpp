@@ -440,9 +440,12 @@ int ctkDICOMTableManager::selectionMode() const
 void ctkDICOMTableManager::updateTableViews()
 {
   Q_D(ctkDICOMTableManager);
-  d->patientsTable->setQuery();
-  d->studiesTable->setQuery();
-  d->seriesTable->setQuery();
+  // Refresh the tables with the same patients and studies as before.
+  // If selected items are removed then the selection changed signals update the
+  // queries of the dependent tables before they are refreshed here.
+  d->patientsTable->refreshQuery();
+  d->studiesTable->refreshQuery();
+  d->seriesTable->refreshQuery();
 }
 
 //------------------------------------------------------------------------------

@@ -108,8 +108,16 @@ public:
    * Set the query for the underlying database. If the uid list is not empty just the
    * entries with the according uids are selected
    * @param uids a list of uids which should be selected
+   * The uid list is stored and used when the query is refreshed.
+   * \sa refreshQuery()
    */
   Q_INVOKABLE void setQuery(const QStringList &uids = QStringList());
+
+  /**
+   * Update the table content from the database, using the same uid list as in the last setQuery() call.
+   * Selection is preserved for items that are still in the table.
+   */
+  Q_INVOKABLE void refreshQuery();
 
   /**
    * @brief Add a WHERE condition to the SELECT statement that filters for matching values
@@ -337,6 +345,18 @@ protected Q_SLOTS:
    * @brief Called if a new instance was added to the database
    */
   void onInstanceAdded();
+
+  /**
+   * @brief Called before the table content is reset (e.g., because the query is updated)
+   */
+  void onModelAboutToBeReset();
+
+  /**
+   * @brief Called after the table content is reset
+   * Restores the selection of the rows that are still in the table.
+   * Selection changed signals are emitted only if the selection has changed.
+   */
+  void onModelReset();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
