@@ -21,6 +21,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMServerNodeWidget2Test1.cpp
   ctkDICOMStudyDelegateTest1.cpp
   ctkDICOMStudyListViewTest1.cpp
+  ctkDICOMTableManagerTest.cpp
   ctkDICOMThumbnailListWidgetTest1.cpp
   ctkDICOMVisualBrowserWidgetTest1.cpp
   )
@@ -62,6 +63,7 @@ SIMPLE_TEST(ctkDICOMModelTest2
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
 SIMPLE_TEST(ctkDICOMServerNodeWidget2Test1)
+SIMPLE_TEST(ctkDICOMTableManagerTest)
 SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1
   ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMThumbnailListWidgetTest1-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql

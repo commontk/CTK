@@ -25,6 +25,7 @@
 // Qt includes
 #include <QJsonObject>
 #include <QMouseEvent>
+#include <QSet>
 #include <QSortFilterProxyModel>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -102,7 +103,11 @@ public:
   QString queryTableName;
   QString queryForeignKey;
 
-  QStringList currentSelection;
+  /// UIDs used in the most recent setQuery() call, used for refreshing the query
+  QStringList queryUIDs;
+
+  /// Selected UIDs saved before model reset, for restoring the selection after the reset
+  QStringList selectionBeforeModelReset;
 
   bool batchUpdate;
   /// Set to true if database modification is notified while in batch update mode
@@ -180,6 +185,13 @@ void ctkDICOMTableViewPrivate::init()
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
                    SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                    q, SIGNAL(selectionChanged(QItemSelection,QItemSelection)));
+
+  // The selection model silently clears the selection when the model is reset (e.g., when the query
+  // is updated), therefore the selection is saved before and restored after the reset.
+  QObject::connect(this->dicomSQLFilterModel, SIGNAL(modelAboutToBeReset()),
+                   q, SLOT(onModelAboutToBeReset()));
+  QObject::connect(this->dicomSQLFilterModel, SIGNAL(modelReset()),
+                   q, SLOT(onModelReset()));
 
   QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(QModelIndex)),
                    q, SIGNAL(doubleClicked(QModelIndex)));
@@ -524,7 +536,76 @@ void ctkDICOMTableView::onDatabaseChanged()
     d->batchUpdateModificationPending = true;
     return;
   }
-  this->setQuery();
+  this->refreshQuery();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onModelAboutToBeReset()
+{
+  Q_D(ctkDICOMTableView);
+  d->selectionBeforeModelReset = this->currentSelection();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onModelReset()
+{
+  Q_D(ctkDICOMTableView);
+  if (d->selectionBeforeModelReset.isEmpty())
+  {
+    // Nothing was selected, so the selection has not changed
+    return;
+  }
+  QSet<QString> uidsToSelect;
+  foreach (const QString& uid, d->selectionBeforeModelReset)
+  {
+    uidsToSelect.insert(uid);
+  }
+  d->selectionBeforeModelReset.clear();
+
+  // Find rows of previously selected items that are still in the table
+  QAbstractItemModel* tableModel = d->tblDicomDatabaseView->model();
+  QItemSelection selection;
+  QSet<QString> uidsFound;
+  int row = 0;
+  while (uidsFound.size() < uidsToSelect.size())
+  {
+    if (row >= tableModel->rowCount())
+    {
+      if (!tableModel->canFetchMore(QModelIndex()))
+      {
+        break;
+      }
+      // The SQL model loads rows incrementally, make sure selected rows are loaded
+      tableModel->fetchMore(QModelIndex());
+      continue;
+    }
+    QModelIndex index = tableModel->index(row, 0);
+    QString uid = index.data().toString();
+    if (uidsToSelect.contains(uid))
+    {
+      selection.select(index, index);
+      uidsFound.insert(uid);
+    }
+    ++row;
+  }
+
+  if (!selection.isEmpty())
+  {
+    // Restoring the selection is not a selection change, so do not emit selection changed signals
+    const QSignalBlocker blocker(this);
+    d->tblDicomDatabaseView->selectionModel()->select(selection,
+      QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+  }
+
+  if (uidsFound.size() == uidsToSelect.size())
+  {
+    // All previously selected items are still selected
+    return;
+  }
+
+  // Some selected items are not in the table anymore
+  emit selectionChanged(d->tblDicomDatabaseView->selectionModel()->selection(), QItemSelection());
+  emit selectionChanged(this->currentSelection());
 }
 
 //------------------------------------------------------------------------------
@@ -661,6 +742,8 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);
 
+  d->queryUIDs = uids;
+
   QString queryString = ("SELECT DISTINCT %1.* FROM Patients, Series, Studies WHERE "
                    "Patients.UID = Studies.PatientsUID AND Studies.StudyInstanceUID = Series.StudyInstanceUID");
   QList<QVariant> boundValues;
@@ -741,6 +824,13 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   {
     d->dicomSQLModel.clear();
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::refreshQuery()
+{
+  Q_D(ctkDICOMTableView);
+  this->setQuery(d->queryUIDs);
 }
 
 //------------------------------------------------------------------------------
