@@ -91,7 +91,9 @@ QString ctkDICOMThumbnailGeneratorJob::loggerReport(const QString& status)
 ctkAbstractJob* ctkDICOMThumbnailGeneratorJob::clone() const
 {
   ctkDICOMThumbnailGeneratorJob* newThumbnailGeneratorJob = new ctkDICOMThumbnailGeneratorJob;
-  newThumbnailGeneratorJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newThumbnailGeneratorJob->setRetryEnabled(this->retryEnabled());
+  newThumbnailGeneratorJob->setMaximumRetryWait(this->maximumRetryWait());
+  newThumbnailGeneratorJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newThumbnailGeneratorJob->setRetryDelay(this->retryDelay());
   newThumbnailGeneratorJob->setRetryCounter(this->retryCounter());
   newThumbnailGeneratorJob->setIsPersistent(this->isPersistent());

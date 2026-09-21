@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSignalSpy>
 #include <QTimer>
 
 // ctkCore includes
@@ -75,6 +76,14 @@ int ctkDICOMPatientViewTest1(int argc, char* argv[])
     ctkDICOMPatientFilterProxyModel proxyModel;
     proxyModel.setSourceModel(&model);
 
+    // A view without a model has no selection model: applying the layout restored
+    // from the settings at startup must not need one
+    {
+      ctkDICOMPatientView viewWithoutModel;
+      viewWithoutModel.setDisplayMode(ctkDICOMPatientView::ListMode);
+      CHECK_INT(viewWithoutModel.displayMode(), ctkDICOMPatientView::ListMode);
+    }
+
     // Create view
     ctkDICOMPatientView view;
     view.setModel(&proxyModel);
@@ -86,12 +95,18 @@ int ctkDICOMPatientViewTest1(int argc, char* argv[])
     CHECK_QSTRING(view.currentPatientID(), "");
     CHECK_QSTRING(view.currentPatientName(), "");
 
-    // Test display mode
+    // Test display mode. Only a different current patient is reported, so that
+    // changing the layout does not restart the retrieve of a patient
+    QSignalSpy currentPatientChangedSpy(&view, SIGNAL(currentPatientChanged(QString)));
+
     view.setDisplayMode(ctkDICOMPatientView::ListMode);
     CHECK_INT(view.displayMode(), ctkDICOMPatientView::ListMode);
 
     view.setDisplayMode(ctkDICOMPatientView::TabMode);
     CHECK_INT(view.displayMode(), ctkDICOMPatientView::TabMode);
+
+    CHECK_QSTRING(view.currentPatientUID(), "");
+    CHECK_INT(currentPatientChangedSpy.count(), 0);
 
     // Test clear selection
     view.clearSelection();

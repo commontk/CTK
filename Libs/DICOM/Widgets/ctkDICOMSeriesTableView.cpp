@@ -187,6 +187,17 @@ void ctkDICOMSeriesTableView::setModel(QAbstractItemModel* model)
 
   // Update layout
   this->updateGridLayout();
+
+  // Setting a model replaces the selection model, so the previous selection is
+  // dropped without any selectionChanged being emitted. Re-announce the current
+  // selection to keep the listeners (e.g. the load button) in sync.
+  Q_D(ctkDICOMSeriesTableView);
+  QStringList selectedSeriesInstanceUIDs;
+  if (this->selectionModel())
+  {
+    selectedSeriesInstanceUIDs = this->selectedSeriesInstanceUIDs();
+  }
+  emit this->seriesSelectionChanged(d->StudyInstanceUID, selectedSeriesInstanceUIDs);
 }
 
 //------------------------------------------------------------------------------

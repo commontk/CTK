@@ -159,14 +159,14 @@ public:
       jobResponseSet->setJobUID(this->retrieve->jobUID());
       jobResponseSet->setCopyFile(true);
 
-      // To Do: this should be emitted for all the RetrieveTypes, but we should change the insert in the
-      // ctkDICOMRetrieveWorker to happen every 10 frames (configurable).
-      // i.e. a slot in ctkDICOMRetrieveWorker with a counter. When the counter > batchLimit -> insert
+      // To Do: this should be emitted for all the RetrieveTypes.
       if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
       {
         emit this->retrieve->progressJobDetail(jobResponseSet->toVariant());
       }
 
+      // Appending may emit framesBatchReady(), which makes the owner insert and
+      // drop the accumulated frames, keeping the memory usage bounded.
       this->retrieve->addJobResponseSet(jobResponseSet);
       return EC_Normal;
     }
@@ -245,6 +245,7 @@ public:
   T_ASC_PresentationContextID PresentationContext;
   QString MoveDestinationAETitle;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
+  int FramesBatchLimit;
 
   bool initializeSCU(const QString& patientID,
                      const QString& studyInstanceUID,
@@ -277,6 +278,7 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   this->ConnectionParamsChanged = false;
   this->AssociationClosing = false;
   this->LastRetrieveType = ctkDICOMRetrieve::RetrieveNone;
+  this->FramesBatchLimit = 25;
 
   // Register the JPEG libraries in case we need them
   // (registration only happens once, so it's okay to call repeatedly)
@@ -960,6 +962,14 @@ void ctkDICOMRetrieve::addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> 
 {
   Q_D(ctkDICOMRetrieve);
   d->JobResponseSets.append(jobResponseSet);
+
+  // Hand the accumulated frames over for insertion as soon as the batch is full,
+  // so that their memory can be released instead of growing until the end of the
+  // retrieve operation. The receiver is expected to call removeJobResponseSets().
+  if (d->FramesBatchLimit > 0 && d->JobResponseSets.count() >= d->FramesBatchLimit)
+  {
+    emit this->framesBatchReady(d->JobResponseSets);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -967,6 +977,30 @@ void ctkDICOMRetrieve::removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSe
 {
   Q_D(ctkDICOMRetrieve);
   d->JobResponseSets.removeOne(jobResponseSet);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::removeJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets)
+{
+  Q_D(ctkDICOMRetrieve);
+  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
+  {
+    d->JobResponseSets.removeOne(jobResponseSet);
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setFramesBatchLimit(const int& framesBatchLimit)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->FramesBatchLimit = framesBatchLimit;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMRetrieve::framesBatchLimit() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->FramesBatchLimit;
 }
 
 //------------------------------------------------------------------------------

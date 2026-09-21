@@ -53,6 +53,26 @@ public:
   Q_INVOKABLE void setServer(const ctkDICOMServer& server);
   ///@}
 
+  /// The connection name of the server, so that the scheduler limits how many
+  /// jobs run at the same time against the same server.
+  /// \sa ctkAbstractJob::concurrencyGroup, ctkDICOMServer::maximumConcurrentWorkers
+  QString concurrencyGroup() const override;
+
+  ///@{
+  /// Number of received frames that the retriever keeps in memory before they are
+  /// inserted in the database and released. 0 or less inserts them all at the end
+  /// of the retrieve operation, which makes the peak memory usage proportional to
+  /// the size of the series.
+  ///
+  /// The scheduler sets this per series: its own framesBatchLimit() is only the lower
+  /// limit, and a series with a large number of frames gets a proportionally larger
+  /// batch. The value stored here is the resulting batch, used as-is by the retriever.
+  /// \sa ctkDICOMRetrieve::setFramesBatchLimit, ctkDICOMScheduler::setFramesBatchLimit
+  /// default: 25
+  void setFramesBatchLimit(const int& framesBatchLimit);
+  int framesBatchLimit() const;
+  ///@}
+
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) override;
 

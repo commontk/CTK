@@ -58,6 +58,8 @@ public:
   bool KeepAssociationOpen;
   QString MoveDestinationAETitle;
   int ConnectionTimeout;
+  int MaximumConcurrentWorkers;
+  int MaximumRetryWait;
   ctkDICOMServer* ProxyServer;
 };
 
@@ -73,6 +75,8 @@ ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
   this->TrustedEnabled = true;
   this->KeepAssociationOpen = false;
   this->ConnectionTimeout = 10;
+  this->MaximumConcurrentWorkers = 8;
+  this->MaximumRetryWait = 60;
   this->Port = 80;
   this->RetrieveProtocol = ctkDICOMServer::RetrieveProtocol::CGET;
   this->ProxyServer = nullptr;
@@ -114,6 +118,8 @@ CTK_GET_CPP(ctkDICOMServer, ctkDICOMServer::RetrieveProtocol, retrieveProtocol, 
 CTK_GET_CPP(ctkDICOMServer, QString, moveDestinationAETitle, MoveDestinationAETitle)
 CTK_GET_CPP(ctkDICOMServer, bool, keepAssociationOpen, KeepAssociationOpen)
 CTK_GET_CPP(ctkDICOMServer, int, connectionTimeout, ConnectionTimeout)
+CTK_GET_CPP(ctkDICOMServer, int, maximumConcurrentWorkers, MaximumConcurrentWorkers)
+CTK_GET_CPP(ctkDICOMServer, int, maximumRetryWait, MaximumRetryWait)
 
 //------------------------------------------------------------------------------
 void ctkDICOMServer::setConnectionName(const QString& connectionName)
@@ -254,6 +260,22 @@ void ctkDICOMServer::setConnectionTimeout(const int& timeout)
   emit serverModified(d->ConnectionName);
 }
 
+//------------------------------------------------------------------------------
+void ctkDICOMServer::setMaximumConcurrentWorkers(const int& maximumConcurrentWorkers)
+{
+  Q_D(ctkDICOMServer);
+  d->MaximumConcurrentWorkers = maximumConcurrentWorkers;
+  emit serverModified(d->ConnectionName);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMServer::setMaximumRetryWait(const int& maximumRetryWait)
+{
+  Q_D(ctkDICOMServer);
+  d->MaximumRetryWait = maximumRetryWait;
+  emit serverModified(d->ConnectionName);
+}
+
 //----------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMServer::proxyServer() const
 {
@@ -285,6 +307,8 @@ ctkDICOMServer *ctkDICOMServer::clone() const
   newServer->setMoveDestinationAETitle(this->moveDestinationAETitle());
   newServer->setKeepAssociationOpen(this->keepAssociationOpen());
   newServer->setConnectionTimeout(this->connectionTimeout());
+  newServer->setMaximumConcurrentWorkers(this->maximumConcurrentWorkers());
+  newServer->setMaximumRetryWait(this->maximumRetryWait());
   if (this->proxyServer())
     {
     newServer->setProxyServer(*this->proxyServer());

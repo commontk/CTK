@@ -46,6 +46,8 @@ int ctkDICOMServerTest1(int argc, char* argv[])
   CHECK_QSTRING(server.moveDestinationAETitle(), "");
   CHECK_INT(server.port(), 80);
   CHECK_INT(server.connectionTimeout(), 10);
+  CHECK_INT(server.maximumConcurrentWorkers(), 8);
+  CHECK_INT(server.maximumRetryWait(), 60);
   CHECK_BOOL(server.queryRetrieveEnabled(), true);
   CHECK_BOOL(server.storageEnabled(), true);
   CHECK_BOOL(server.keepAssociationOpen(), false);
@@ -67,12 +69,22 @@ int ctkDICOMServerTest1(int argc, char* argv[])
   CHECK_INT(server.port(), 11112);
   server.setConnectionTimeout(30);
   CHECK_INT(server.connectionTimeout(), 30);
+  server.setMaximumConcurrentWorkers(2);
+  CHECK_INT(server.maximumConcurrentWorkers(), 2);
+  server.setMaximumRetryWait(120);
+  CHECK_INT(server.maximumRetryWait(), 120);
   server.setQueryRetrieveEnabled(false);
   CHECK_BOOL(server.queryRetrieveEnabled(), false);
   server.setStorageEnabled(false);
   CHECK_BOOL(server.storageEnabled(), false);
   server.setKeepAssociationOpen(true);
   CHECK_BOOL(server.keepAssociationOpen(), true);
+
+  // The scheduling settings are carried over to the copy given to each job
+  QScopedPointer<ctkDICOMServer> clonedServer(server.clone());
+  CHECK_INT(clonedServer->maximumConcurrentWorkers(), 2);
+  CHECK_INT(clonedServer->maximumRetryWait(), 120);
+  CHECK_INT(clonedServer->connectionTimeout(), 30);
 
   return EXIT_SUCCESS;
 }

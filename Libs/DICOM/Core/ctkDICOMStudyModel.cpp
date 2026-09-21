@@ -123,6 +123,8 @@ public:
 
   // Configuration
   int NumberOfOpenedStudies;
+  bool AutoOpenStudiesEnabled;
+  bool AutoRetrieveFullSeries;
   int ThumbnailSize;
 
   // State
@@ -139,6 +141,8 @@ ctkDICOMStudyModelPrivate::ctkDICOMStudyModelPrivate(ctkDICOMStudyModel& obj)
   this->SeriesDescriptionFilter = "";
   this->DateFilter = ctkDICOMStudyModel::Any;
   this->NumberOfOpenedStudies = 2;
+  this->AutoOpenStudiesEnabled = true;
+  this->AutoRetrieveFullSeries = true;
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
   this->ModalityFilter = ctkDICOMModalities::AllModalities;
@@ -620,6 +624,7 @@ ctkDICOMSeriesModel* ctkDICOMStudyModelPrivate::createSeriesModel(const QString&
   seriesModel->setSeriesDescriptionFilter(this->SeriesDescriptionFilter);
   seriesModel->setAllowedServers(this->AllowedServers);
   seriesModel->setThumbnailSize(this->ThumbnailSize);
+  seriesModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
   seriesModel->setPatientID(this->PatientID);
   seriesModel->setStudyFilter(studyInstanceUID);
   this->SeriesModels.insert(studyInstanceUID, seriesModel);
@@ -1267,6 +1272,20 @@ int ctkDICOMStudyModel::numberOfOpenedStudies() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMStudyModel::setAutoOpenStudiesEnabled(bool enabled)
+{
+  Q_D(ctkDICOMStudyModel);
+  d->AutoOpenStudiesEnabled = enabled;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModel::autoOpenStudiesEnabled() const
+{
+  Q_D(const ctkDICOMStudyModel);
+  return d->AutoOpenStudiesEnabled;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMStudyModel::setNumberOfOpenedStudies(int count)
 {
   Q_D(ctkDICOMStudyModel);
@@ -1280,6 +1299,34 @@ void ctkDICOMStudyModel::setNumberOfOpenedStudies(int count)
 
   // Emit signal to let views handle the collapsed state based on their proxy models
   emit this->numberOfOpenedStudiesChanged(count);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModel::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMStudyModel);
+  return d->AutoRetrieveFullSeries;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyModel::setAutoRetrieveFullSeries(bool enabled)
+{
+  Q_D(ctkDICOMStudyModel);
+  if (d->AutoRetrieveFullSeries == enabled)
+  {
+    return;
+  }
+
+  d->AutoRetrieveFullSeries = enabled;
+  for (QHash<QString, ctkDICOMSeriesModel*>::iterator it = d->SeriesModels.begin();
+       it != d->SeriesModels.end(); ++it)
+  {
+    ctkDICOMSeriesModel* seriesModel = it.value();
+    if (seriesModel)
+    {
+      seriesModel->setAutoRetrieveFullSeries(enabled);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1725,7 +1772,11 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
     emit this->studiesSortedByDate(sortedStudyUIDs);
 
     const int studyOpenIndex = sortedStudyUIDs.indexOf(td.StudyInstanceUID);
-    const bool shouldOpenStudy = (studyOpenIndex >= 0 && studyOpenIndex < d->NumberOfOpenedStudies);
+    // Opening a study retrieves its series, so it is only done on its own for the
+    // patient being looked at. For the others the study stays collapsed until its
+    // patient is selected, which opens it explicitly.
+    const bool shouldOpenStudy = d->AutoOpenStudiesEnabled &&
+                                 (studyOpenIndex >= 0 && studyOpenIndex < d->NumberOfOpenedStudies);
     if (shouldOpenStudy && idx.isValid())
     {
       this->setStudyCollapsed(idx, false);

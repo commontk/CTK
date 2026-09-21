@@ -101,12 +101,11 @@ bool ctkDICOMInserter::addJobResponseSets(const QList<ctkDICOMJobResponseSet*>& 
   database.setTagsToPrecache(d->TagsToPrecache);
   database.setTagsToExcludeFromStorage(d->TagsToExcludeFromStorage);
 
-  // To Do: We should ensure that only one write operation occurs at a time.
-  // In the ctkDICOMScheduler, we ensure this by utilizing a job queue, preventing multiple inserter jobs from running concurrently.
-  // Similarly, it would be necessary to implement a check in the insert method of ctkDICOMDatabase
-  // to determine if any other process is currently writing (for example, a UI element writing the patient's name into the database).
-  // Therefore, we propose the inclusion of a static variable in ctkDICOMDatabase that indicates ongoing write operations
-  // for each DatabaseFilename, except in cases where it is an in-memory database.
+  // Only one write operation occurs at a time: the write entry points of
+  // ctkDICOMDatabase serialize on ctkDICOMDatabase::writeMutex(), which is static
+  // and therefore also covers the writes issued outside of the inserter jobs
+  // (for example a UI element writing the patient's name into the database).
+  // \sa ctkDICOMDatabase::writeMutex
   ctkDICOMDatabase::InsertResult result = database.insert(jobResponseSets);
   database.updateDisplayedFields();
   database.closeDatabase();

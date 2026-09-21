@@ -76,6 +76,12 @@ int ctkDICOMStudyModelTest1(int argc, char* argv[])
     CHECK_INT(model.dateFilter(), ctkDICOMStudyModel::Any);
     CHECK_INT(model.numberOfOpenedStudies(), 2);
     CHECK_INT(model.thumbnailSize(), 128);
+    // Studies are opened on their own by default: only the models of the patients
+    // that are not the current one have this disabled, so that querying several
+    // patients does not retrieve image data for all of them
+    CHECK_BOOL(model.autoOpenStudiesEnabled(), true);
+    // The series models created by this model prefetch the full series by default
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
 
     // Test setting patient UID and ID
     model.setPatientUID("TestPatientUID");
@@ -114,6 +120,20 @@ int ctkDICOMStudyModelTest1(int argc, char* argv[])
     // Test number of opened studies
     model.setNumberOfOpenedStudies(5);
     CHECK_INT(model.numberOfOpenedStudies(), 5);
+
+    // Test automatic opening of the first studies
+    model.setAutoOpenStudiesEnabled(false);
+    CHECK_BOOL(model.autoOpenStudiesEnabled(), false);
+    model.setAutoOpenStudiesEnabled(true);
+    CHECK_BOOL(model.autoOpenStudiesEnabled(), true);
+    // The series models created by this model prefetch the full series by default
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
+
+    // Test the automatic prefetch of the full series, forwarded to the series models
+    model.setAutoRetrieveFullSeries(false);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), false);
+    model.setAutoRetrieveFullSeries(true);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
 
     // Test thumbnail size
     model.setThumbnailSize(256);

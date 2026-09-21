@@ -156,6 +156,10 @@ void ctkDICOMStudyListViewPrivate::cleanupSeriesView(const QString& studyInstanc
 
       seriesView->deleteLater();
     }
+
+    // The selection held by the removed view is gone, but no selection change was
+    // emitted for it: refresh the load button so it does not keep a stale count.
+    this->updateLoadButtonVisibility();
   }
 }
 
@@ -170,6 +174,8 @@ void ctkDICOMStudyListViewPrivate::clearSeriesViewCache()
   {
     this->cleanupSeriesView(studyUID);
   }
+
+  this->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -391,8 +397,8 @@ void ctkDICOMStudyListViewPrivate::updateLoadButtonVisibility()
     }
   }
 
-  // Show button only if more than 1 series is selected
-  bool shouldShow = totalSelectedSeries > 1;
+  // Show button as soon as at least one series is selected
+  bool shouldShow = totalSelectedSeries > 0;
   this->LoadSeriesButton->setVisible(shouldShow);
 
   if (shouldShow)
@@ -697,6 +703,13 @@ void ctkDICOMStudyListView::clearSelection()
 int ctkDICOMStudyListView::selectedCount() const
 {
   return this->selectedStudyInstanceUIDs().count();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListView::updateLoadButton()
+{
+  Q_D(ctkDICOMStudyListView);
+  d->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -1951,10 +1964,22 @@ void ctkDICOMStudyListView::onNumberOfOpenedStudiesChanged(int count)
       QPair<ctkDICOMStudyModel*, QModelIndex> sourceInfo = mergedStudyModel->mapToSource(mergedIndex);
       ctkDICOMStudyModel* sourceStudyModel = sourceInfo.first;
       QModelIndex sourceIndex = sourceInfo.second;
-      if (sourceStudyModel)
+      if (!sourceStudyModel)
       {
-        sourceStudyModel->setStudyCollapsed(sourceIndex, row >= count);
+        continue;
       }
+
+      // The merged model spans the study models of several patients. Opening a
+      // study retrieves its series, so only the current patient is opened here:
+      // the others are opened when they become the current patient.
+      // \sa ctkDICOMStudyModel::setAutoOpenStudiesEnabled
+      bool collapsed = row >= count;
+      if (!collapsed && !sourceStudyModel->autoOpenStudiesEnabled())
+      {
+        continue;
+      }
+
+      sourceStudyModel->setStudyCollapsed(sourceIndex, collapsed);
     }
   }
 }

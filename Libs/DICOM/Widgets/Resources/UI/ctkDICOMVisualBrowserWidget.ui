@@ -114,7 +114,7 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string> MRN...</string>
+           <string> MRN ...</string>
           </property>
          </widget>
         </item>
@@ -127,7 +127,7 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string> Name...</string>
+           <string> Name ...</string>
           </property>
          </widget>
         </item>
@@ -160,7 +160,7 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string> Study Description...</string>
+           <string> Study Description ...</string>
           </property>
          </widget>
         </item>
@@ -248,7 +248,7 @@
           </item>
           <item>
            <property name="text">
-            <string>Custom...</string>
+            <string>Custom ...</string>
            </property>
           </item>
          </widget>
@@ -367,6 +367,32 @@ If no filters are set, a study query for the currently selected patient in the l
          </widget>
         </item>
         <item row="2" column="0" colspan="2">
+         <widget class="ctkPushButton" name="LayoutPushButton">
+          <property name="minimumSize">
+           <size>
+            <width>1</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Choose how the patient selector is laid out: automatically, as tabs, or as a list.</string>
+          </property>
+          <property name="text">
+           <string> Layout </string>
+          </property>
+          <property name="icon">
+           <iconset resource="ctkDICOMWidget.qrc">
+            <normaloff>:/Icons/tab.svg</normaloff>:/Icons/tab.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
          <widget class="ctkDynamicSpacer" name="ActionsDynamicSpacer"/>
         </item>
        </layout>
@@ -503,6 +529,56 @@ If no filters are set, a study query for the currently selected patient in the l
           <property name="bottomMargin">
            <number>2</number>
           </property>
+          <item>
+           <widget class="ctkCollapsibleGroupBox" name="OperationsCollapsibleGroupBox">
+            <property name="title">
+             <string>Operations</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_14">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="AutoRetrieveFullSeriesCheckBox">
+               <property name="toolTip">
+                <string>When checked, all the frames of a series are retrieved as soon as its thumbnail is shown. When unchecked, only the frame used for the thumbnail is retrieved, and the remaining frames are retrieved when the series is loaded.</string>
+               </property>
+               <property name="text">
+                <string>Prefetch series</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="SendActionVisibleCheckBox">
+               <property name="toolTip">
+                <string>When checked, the right click menu of patients, studies and series offers to send the selected data to a DICOM server.</string>
+               </property>
+               <property name="text">
+                <string>Send to DICOM server</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
           <item>
            <widget class="ctkDICOMServerNodeWidget2" name="ServerNodeWidget"/>
           </item>

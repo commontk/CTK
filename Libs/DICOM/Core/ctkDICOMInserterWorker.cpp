@@ -133,6 +133,9 @@ void ctkDICOMInserterWorker::run()
 
   foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
   {
+    // These datasets were already reported when they arrived: this report says that
+    // they are now in the database, it does not mean that more frames were received.
+    jobResponseSet->setInsertionCompleted(true);
     emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
   }
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);

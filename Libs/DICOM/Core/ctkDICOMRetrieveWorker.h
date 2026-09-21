@@ -25,12 +25,14 @@
 #define __ctkDICOMRetrieveWorker_h
 
 // Qt includes
+#include <QList>
 #include <QObject>
 #include <QSharedPointer>
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkAbstractWorker.h"
+class ctkDICOMJobResponseSet;
 class ctkDICOMRetrieve;
 class ctkDICOMRetrieveWorkerPrivate;
 
@@ -63,6 +65,13 @@ public:
   QSharedPointer<ctkDICOMRetrieve> retrieverShared() const;
   Q_INVOKABLE ctkDICOMRetrieve* retriever() const;
   ///@}
+
+protected Q_SLOTS:
+  /// Insert a batch of frames that the retriever accumulated, and drop them from
+  /// the retriever so that their memory is released before the operation ends.
+  /// Connected to ctkDICOMRetrieve::framesBatchReady with a direct connection, so
+  /// it runs in the thread performing the retrieve.
+  void onFramesBatchReady(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
 
 protected:
   QScopedPointer<ctkDICOMRetrieveWorkerPrivate> d_ptr;

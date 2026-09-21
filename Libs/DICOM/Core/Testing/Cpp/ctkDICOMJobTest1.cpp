@@ -46,9 +46,14 @@ int ctkDICOMJobTest1(int argc, char* argv[])
   CHECK_INT(queryJob.status(), ctkAbstractJob::JobStatus::Initialized);
   CHECK_BOOL(queryJob.isPersistent(), false);
   CHECK_INT(queryJob.retryCounter(), 0);
-  CHECK_INT(queryJob.retryDelay(), 100);
-  CHECK_INT(queryJob.maximumNumberOfRetry(), 3);
+  CHECK_INT(queryJob.retryDelay(), 1000);
+  CHECK_BOOL(queryJob.retryEnabled(), true);
+  CHECK_INT(queryJob.maximumRetryWait(), 60000);
+  CHECK_INT(queryJob.accumulatedRetryWait(), 0);
   CHECK_INT(queryJob.maximumConcurrentJobsPerType(), 20);
+  CHECK_INT(queryJob.maximumConcurrentJobsPerGroup(), 8);
+  // Without a server a job is not part of any concurrency group
+  CHECK_QSTRING(queryJob.concurrencyGroup(), "");
   CHECK_INT(queryJob.priority(), QThread::Priority::LowPriority);
   CHECK_INT(queryJob.dicomLevel(), ctkDICOMJob::DICOMLevels::None);
   CHECK_QSTRING(queryJob.patientID(), "");
@@ -69,10 +74,17 @@ int ctkDICOMJobTest1(int argc, char* argv[])
   CHECK_INT(queryJob.retryCounter(), 3);
   queryJob.setRetryDelay(300);
   CHECK_INT(queryJob.retryDelay(), 300);
-  queryJob.setMaximumNumberOfRetry(5);
-  CHECK_INT(queryJob.maximumNumberOfRetry(), 5);
+  queryJob.setMaximumRetryWait(5000);
+  CHECK_INT(queryJob.maximumRetryWait(), 5000);
+  queryJob.setAccumulatedRetryWait(400);
+  CHECK_INT(queryJob.accumulatedRetryWait(), 400);
+  queryJob.setRetryEnabled(false);
+  CHECK_BOOL(queryJob.retryEnabled(), false);
+  queryJob.setRetryEnabled(true);
   queryJob.setMaximumConcurrentJobsPerType(5);
   CHECK_INT(queryJob.maximumConcurrentJobsPerType(), 5);
+  queryJob.setMaximumConcurrentJobsPerGroup(2);
+  CHECK_INT(queryJob.maximumConcurrentJobsPerGroup(), 2);
   queryJob.setPriority(QThread::Priority::HighPriority);
   CHECK_INT(queryJob.priority(), QThread::Priority::HighPriority);
   queryJob.setDICOMLevel(ctkDICOMJob::DICOMLevels::Studies);
@@ -91,12 +103,23 @@ int ctkDICOMJobTest1(int argc, char* argv[])
   server.setConnectionName("server");
   queryJob.setServer(server);
   CHECK_QSTRING(queryJob.server()->connectionName(), "server");
+  // Jobs of a server compete with each other for that server's workers
+  CHECK_QSTRING(queryJob.concurrencyGroup(), "server");
+
+  // The retry settings survive the clone made for the next attempt
+  QScopedPointer<ctkAbstractJob> clonedJob(queryJob.clone());
+  CHECK_INT(clonedJob->maximumRetryWait(), 5000);
+  CHECK_INT(clonedJob->retryDelay(), 300);
+  CHECK_BOOL(clonedJob->retryEnabled(), true);
+  CHECK_INT(clonedJob->maximumConcurrentJobsPerGroup(), 2);
+  CHECK_QSTRING(qobject_cast<ctkDICOMQueryJob*>(clonedJob.data())->concurrencyGroup(), "server");
+  CHECK_INT(qobject_cast<ctkDICOMQueryJob*>(clonedJob.data())->maximumPatientsQuery(), 100);
 
   // Inserter Job
   ctkDICOMInserterJob inserterJob;
 
   // Test the default values
-  CHECK_INT(inserterJob.maximumConcurrentJobsPerType(), 1);
+  CHECK_INT(inserterJob.maximumConcurrentJobsPerType(), 20);
   CHECK_QSTRING(inserterJob.databaseFilename(), "");
   QStringList tagsToPrecache;
   CHECK_QSTRINGLIST(inserterJob.tagsToPrecache(), tagsToPrecache)
@@ -117,10 +140,40 @@ int ctkDICOMJobTest1(int argc, char* argv[])
 
   // Test the default values
   CHECK_POINTER(retrieveJob.server(), nullptr);
+  CHECK_QSTRING(retrieveJob.concurrencyGroup(), "");
+  CHECK_INT(retrieveJob.framesBatchLimit(), 25);
 
   // Test setting and getting
   retrieveJob.setServer(server);
   CHECK_QSTRING(retrieveJob.server()->connectionName(), "server");
+  CHECK_QSTRING(retrieveJob.concurrencyGroup(), "server");
+  retrieveJob.setFramesBatchLimit(120);
+  CHECK_INT(retrieveJob.framesBatchLimit(), 120);
+
+  // The batch size is kept when the job is reattempted
+  QScopedPointer<ctkAbstractJob> clonedRetrieveJob(retrieveJob.clone());
+  CHECK_INT(qobject_cast<ctkDICOMRetrieveJob*>(clonedRetrieveJob.data())->framesBatchLimit(), 120);
+  CHECK_QSTRING(qobject_cast<ctkDICOMRetrieveJob*>(clonedRetrieveJob.data())->concurrencyGroup(), "server");
+
+  // A frame is reported twice, on arrival and on insertion, and must be counted once.
+  // Frames pulled by a C-GET arrive through the retrieve job, so they count on arrival.
+  ctkDICOMJobResponseSet retrievedFrame;
+  retrievedFrame.setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
+  CHECK_BOOL(ctkDICOMJobDetail(retrievedFrame).countsAsFrameProgress(), true);
+  retrievedFrame.setInsertionCompleted(true);
+  CHECK_BOOL(ctkDICOMJobDetail(retrievedFrame).countsAsFrameProgress(), false);
+
+  // Frames pushed by a C-MOVE arrive at the storage listener, and the retrieve job
+  // that asked for them only learns about them once they are inserted.
+  ctkDICOMJobResponseSet storedFrame;
+  storedFrame.setJobType(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
+  CHECK_BOOL(ctkDICOMJobDetail(storedFrame).countsAsFrameProgress(), false);
+  storedFrame.setInsertionCompleted(true);
+  CHECK_BOOL(ctkDICOMJobDetail(storedFrame).countsAsFrameProgress(), true);
+
+  // The flag survives the copy the inserter job works on
+  QScopedPointer<ctkDICOMJobResponseSet> clonedFrame(storedFrame.clone());
+  CHECK_BOOL(clonedFrame->insertionCompleted(), true);
 
   ctkDICOMStorageListenerJob storageListenerJob;
 
