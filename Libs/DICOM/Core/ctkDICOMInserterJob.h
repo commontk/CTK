@@ -70,6 +70,15 @@ public:
   QStringList tagsToExcludeFromStorage() const;
   ///}@
 
+  ///@{
+  /// Series whose instances this job inserts, taken from its response sets when it is
+  /// created. Kept apart from the response sets, which are released once the job is
+  /// done, so that which series are still being inserted can be asked from any thread.
+  /// \sa ctkDICOMScheduler::isRetrievingSeries
+  void setInsertedSeriesInstanceUIDs(const QStringList& seriesInstanceUIDs);
+  QStringList insertedSeriesInstanceUIDs() const;
+  ///}@
+
   /// \see ctkAbstractJob::clone()
   Q_INVOKABLE ctkAbstractJob* clone() const override;
 
@@ -83,6 +92,7 @@ protected:
   QString DatabaseFilename;
   QStringList TagsToPrecache;
   QStringList TagsToExcludeFromStorage;
+  QStringList InsertedSeriesInstanceUIDs;
 
 private:
   Q_DISABLE_COPY(ctkDICOMInserterJob);

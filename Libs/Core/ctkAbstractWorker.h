@@ -72,6 +72,10 @@ public:
 public slots:
   /// These slots are thread safe
   virtual void startNextJob();
+  /// Queue the next attempt of the job after delayMsec milliseconds.
+  /// The waiting does not block the thread pool.
+  /// \sa ctkAbstractJob::nextRetryDelay()
+  virtual void startNextJob(int delayMsec);
   virtual void onJobCanceled(const bool& wasCanceled);
 
 protected:

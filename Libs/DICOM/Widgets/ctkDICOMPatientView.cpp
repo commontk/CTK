@@ -30,7 +30,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPointer>
-#include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QSharedPointer>
@@ -115,10 +114,8 @@ public:
   QPointer<QWidget> OriginalParent;  // Original parent to restore in TabMode
   int OriginalParentIndex;  // Index in parent's layout
 
-  // Display mode toggle button
-  QPushButton* DisplayModeButton;
-
   bool ShutdownCleanupDone;
+  QString LastCurrentPatientUID;
 
   // Allowed servers combo box and label for TabMode
   QLabel* AllowedServersLabel;
@@ -129,7 +126,6 @@ public:
   void updateStudyListViewGeometry();
   void updateAllowedServersComboBoxGeometry(const QModelIndex& index = QModelIndex());
   void updateAllowedServersComboBoxFromModel(const QModelIndex& index = QModelIndex());
-  void updateDisplayModeButtonPosition();
   void updateSelectedPatientsCache();
   void setupSplitter();
   void restoreTabModeParenting();
@@ -146,7 +142,6 @@ ctkDICOMPatientViewPrivate::ctkDICOMPatientViewPrivate(ctkDICOMPatientView& obje
   this->Splitter = nullptr;
   this->OriginalParent = nullptr;
   this->OriginalParentIndex = -1;
-  this->DisplayModeButton = nullptr;
   this->AllowedServersLabel = nullptr;
   this->AllowedServersComboBox = nullptr;
   this->StudyModelsNeedRefresh = false;
@@ -509,88 +504,6 @@ void ctkDICOMPatientViewPrivate::updateStudyListViewGeometry()
 }
 
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-void ctkDICOMPatientViewPrivate::updateDisplayModeButtonPosition()
-{
-  Q_Q(ctkDICOMPatientView);
-
-  if (!this->DisplayModeButton)
-  {
-    return;
-  }
-
-  ctkDICOMPatientDelegate* delegate = qobject_cast<ctkDICOMPatientDelegate*>(q->itemDelegate());
-  if (!delegate)
-  {
-    return;
-  }
-
-  // This slot updates the position and visibility of the display mode button.
-  // It should be called after layout or model changes to ensure correct placement.
-  if (this->DisplayMode == ctkDICOMPatientView::TabMode)
-  {
-    int spacing = delegate->spacing();
-    int xPos = spacing;
-    int visibleCount = 0;
-    QAbstractItemModel* model = q->model();
-    if (model)
-    {
-      for (int row = 0; row < model->rowCount(); ++row)
-      {
-        QModelIndex index = model->index(row, 0);
-        bool isVisible = index.data(ctkDICOMPatientModel::IsVisibleRole).toBool();
-        if (isVisible)
-        {
-          QRect itemRect = q->visualRect(index);
-          if (itemRect.isValid())
-          {
-            visibleCount++;
-            xPos = itemRect.right() + spacing;
-          }
-        }
-      }
-    }
-    int y = spacing;
-    this->DisplayModeButton->move(xPos, y);
-    this->DisplayModeButton->setVisible(visibleCount > 0);
-  }
-  else if (this->DisplayMode == ctkDICOMPatientView::ListMode)
-  {
-    // In ListMode, position in top-right corner
-    int margin = delegate->spacing() * 4;
-    int x = q->viewport()->rect().width() - this->DisplayModeButton->width() * 2 - margin;
-    int y = margin;
-
-    // Adjust for scrollbar if visible
-    QScrollBar* vScrollBar = q->verticalScrollBar();
-    if (vScrollBar && vScrollBar->isVisible())
-    {
-      x -= vScrollBar->width();
-    }
-
-    QAbstractItemModel* model = q->model();
-    int visibleCount = 0;
-    if (model)
-    {
-      for (int row = 0; row < model->rowCount(); ++row)
-      {
-        QModelIndex index = model->index(row, 0);
-        bool isVisible = index.data(ctkDICOMPatientModel::IsVisibleRole).toBool();
-        if (isVisible)
-        {
-          visibleCount++;
-          break;
-        }
-      }
-    }
-
-    this->DisplayModeButton->move(x, y);
-    this->DisplayModeButton->setVisible(visibleCount > 0);
-  }
-  this->DisplayModeButton->raise();
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMPatientViewPrivate::updateAllowedServersComboBoxGeometry(const QModelIndex& index)
 {
   Q_Q(ctkDICOMPatientView);
@@ -916,58 +829,6 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
             this, &ctkDICOMPatientView::onScrollBarValueChanged);
   }
 
-  // Create display mode toggle button (FAB style)
-  d->DisplayModeButton = new QPushButton(this);
-  d->DisplayModeButton->setToolTip(tr("Toggle between Tab Mode and List Mode"));
-  d->DisplayModeButton->setCursor(Qt::PointingHandCursor);
-  d->DisplayModeButton->setAttribute(Qt::WA_Hover, true); // Enable hover events
-
-  // FAB-style circular button with subtle appearance and hover effect
-  d->DisplayModeButton->setStyleSheet(QString(R"(
-    QPushButton {
-      background-color: rgba(255, 255, 255, 0.8);
-      border: 2px solid rgb(240, 240, 240);
-      border-radius: 8px;
-      font-size: 28px;
-      font-weight: bold;
-      color: rgba(80, 80, 80, 0.5);
-      padding: 0px;
-    }
-    QPushButton:hover {
-      border: 2px solid rgb(220, 220, 220);
-      background-color: rgba(255, 255, 255, 0.8);
-      color: rgba(60, 60, 60, 1.0);
-    }
-    QPushButton:pressed {
-      border: 2px solid rgb(200, 200, 200);
-      background-color: rgba(255, 255, 255, 0.8);
-      color: rgba(40, 40, 40, 1.0);
-    }
-  )"));
-
-  // Set initial icon based on current mode
-  if (d->DisplayMode == ctkDICOMPatientView::TabMode)
-  {
-    d->DisplayModeButton->setFixedSize(36, 36);
-    d->DisplayModeButton->setIconSize(QSize(28, 28));
-    d->DisplayModeButton->setIcon(QIcon(":/Icons/list.svg"));
-    d->DisplayModeButton->setToolTip(tr("Show all patients"));
-  }
-  else
-  {
-    d->DisplayModeButton->setFixedSize(48, 48);
-    d->DisplayModeButton->setIconSize(QSize(32, 32));
-    d->DisplayModeButton->setIcon(QIcon(":/Icons/tab.svg"));
-    d->DisplayModeButton->setToolTip(tr("Switch to Tab Mode"));
-  }
-
-  // Connect button to toggle display mode
-  this->connect(d->DisplayModeButton, &QPushButton::clicked,
-                this, &ctkDICOMPatientView::onDisplayModeButtonClicked);
-
-  // Install event filter on the button to clear hover state when mouse enters it
-  d->DisplayModeButton->installEventFilter(this);
-
   // Create allowed servers label and combo box for TabMode
   d->AllowedServersLabel = new QLabel(tr("Allowed servers:"), this->viewport());
   d->AllowedServersLabel->hide();
@@ -1222,16 +1083,20 @@ void ctkDICOMPatientView::setDisplayMode(DisplayMode mode)
     return;
   }
 
-  QModelIndexList selectedIndexes = this->selectionModel()->selectedIndexes();
-  if (!selectedIndexes.isEmpty())
+  // There is no selection model until a model has been set on the view
+  if (this->selectionModel())
   {
-    QModelIndex index = selectedIndexes.first();
-    this->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-    this->setCurrentIndex(index);
-  }
-  else
-  {
-    this->selectPatientUID("");
+    QModelIndexList selectedIndexes = this->selectionModel()->selectedIndexes();
+    if (!selectedIndexes.isEmpty())
+    {
+      QModelIndex index = selectedIndexes.first();
+      this->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+      this->setCurrentIndex(index);
+    }
+    else
+    {
+      this->selectPatientUID("");
+    }
   }
 
   d->DisplayMode = mode;
@@ -1243,29 +1108,6 @@ void ctkDICOMPatientView::setDisplayMode(DisplayMode mode)
   if (mode == ctkDICOMPatientView::ListMode)
   {
     d->PatientsCacheNeedsUpdate = true;
-  }
-
-  // Update button icon and tooltip based on mode
-  if (d->DisplayModeButton)
-  {
-    // Set initial icon based on current mode
-    if (d->DisplayMode == ctkDICOMPatientView::TabMode)
-    {
-      d->DisplayModeButton->setFixedSize(36, 36);
-      d->DisplayModeButton->setIconSize(QSize(28, 28));
-      d->DisplayModeButton->setIcon(QIcon(":/Icons/list.svg"));
-      d->DisplayModeButton->setToolTip(tr("Show all patients"));
-    }
-    else
-    {
-      d->DisplayModeButton->setFixedSize(48, 48);
-      d->DisplayModeButton->setIconSize(QSize(32, 32));
-      d->DisplayModeButton->setIcon(QIcon(":/Icons/tab.svg"));
-      d->DisplayModeButton->setToolTip(tr("Switch to Tab Mode"));
-    }
-
-    // Update button position for the new mode
-    d->updateDisplayModeButtonPosition();
   }
 
   emit displayModeChanged(mode);
@@ -2114,25 +1956,6 @@ ctkDICOMPatientDelegate* ctkDICOMPatientView::patientDelegate() const
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMPatientView::eventFilter(QObject* watched, QEvent* event)
-{
-  Q_D(ctkDICOMPatientView);
-
-  // Handle display mode button events
-  if (watched == d->DisplayModeButton)
-  {
-    if (event->type() == QEvent::Enter)
-    {
-      // Clear hover state when mouse enters the display mode button
-      this->viewport()->update();
-      d->HoveredIndex = QModelIndex();
-    }
-  }
-
-  return Superclass::eventFilter(watched, event);
-}
-
-//------------------------------------------------------------------------------
 bool ctkDICOMPatientView::isIndexHovered(const QModelIndex& index) const
 {
   Q_D(const ctkDICOMPatientView);
@@ -2196,11 +2019,22 @@ void ctkDICOMPatientView::onPatientSelectionChanged()
   this->refreshLayout();
   this->viewport()->update();
 
-  this->scrollToPatientUID(this->currentPatientUID());
+  QString currentPatientUID = this->currentPatientUID();
+  this->scrollToPatientUID(currentPatientUID);
 
   // Update allowed servers combo box for new selection
   d->updateAllowedServersComboBoxFromModel();
   d->updateAllowedServersComboBoxGeometry();
+
+  // This slot also runs for a selection made programmatically, since
+  // selectPatientUID() goes through the selection model. Report only the changes of
+  // the current patient, so that the listeners are not asked to redo their work when
+  // the selection changed around an unchanged current patient.
+  if (currentPatientUID != d->LastCurrentPatientUID)
+  {
+    d->LastCurrentPatientUID = currentPatientUID;
+    emit this->currentPatientChanged(currentPatientUID);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2441,7 +2275,6 @@ void ctkDICOMPatientView::onLayoutRefreshed()
     {
       return;
     }
-    d->updateDisplayModeButtonPosition();
     d->updateAllowedServersComboBoxFromModel();
     d->updateAllowedServersComboBoxGeometry();
     d->StudyListView->refreshLayout(false);
@@ -2452,20 +2285,6 @@ void ctkDICOMPatientView::onLayoutRefreshed()
 void ctkDICOMPatientView::onStudySelectionChanged()
 {
   this->viewport()->update();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMPatientView::onDisplayModeButtonClicked()
-{
-  Q_D(ctkDICOMPatientView);
-  if (d->DisplayMode == ctkDICOMPatientView::TabMode)
-  {
-    this->setDisplayMode(ctkDICOMPatientView::ListMode);
-  }
-  else
-  {
-    this->setDisplayMode(ctkDICOMPatientView::TabMode);
-  }
 }
 
 //------------------------------------------------------------------------------

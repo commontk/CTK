@@ -65,19 +65,25 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   // Test the default values
   CHECK_INT(scheduler.maximumThreadCount(), 20);
-  CHECK_INT(scheduler.maximumNumberOfRetry(), 3);
-  CHECK_INT(scheduler.retryDelay(), 100);
+  CHECK_INT(scheduler.maximumRetryWait(), 60000);
+  CHECK_INT(scheduler.retryDelay(), 1000);
   CHECK_INT(scheduler.maximumPatientsQuery(), 0);
+  CHECK_INT(scheduler.framesBatchLimit(), 25);
+  CHECK_INT(scheduler.framesBatchesPerSeries(), 10);
 
   // Test setting and getting
   scheduler.setMaximumThreadCount(19);
   CHECK_INT(scheduler.maximumThreadCount(), 19);
-  scheduler.setMaximumNumberOfRetry(5);
-  CHECK_INT(scheduler.maximumNumberOfRetry(), 5);
+  scheduler.setMaximumRetryWait(5000);
+  CHECK_INT(scheduler.maximumRetryWait(), 5000);
   scheduler.setRetryDelay(300);
   CHECK_INT(scheduler.retryDelay(), 300);
   scheduler.setMaximumPatientsQuery(30);
   CHECK_INT(scheduler.maximumPatientsQuery(), 30);
+  scheduler.setFramesBatchLimit(100);
+  CHECK_INT(scheduler.framesBatchLimit(), 100);
+  scheduler.setFramesBatchesPerSeries(4);
+  CHECK_INT(scheduler.framesBatchesPerSeries(), 4);
 
   // Test scheduler
   std::cout << qPrintable(testName) << ": Setting up scheduler" << std::endl;

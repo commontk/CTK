@@ -46,6 +46,7 @@ public:
   virtual ~ctkDICOMRetrieveJobPrivate();
 
   ctkDICOMServer* Server;
+  int FramesBatchLimit;
 };
 
 #endif

@@ -27,6 +27,7 @@
 #include <QIntValidator>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QAbstractButton>
 #include <QLineEdit>
 #include <QList>
 #include <QMap>
@@ -264,6 +265,10 @@ public:
   int addServerNode(const QMap<QString, QVariant>& parameters);
   int addServerNode(ctkDICOMServer* server);
   QSharedPointer<ctkDICOMServer> createServerFromServerNode(const QMap<QString, QVariant>& node);
+  /// Spin boxes of the per server scheduling settings
+  /// \sa ctkDICOMServer::maximumConcurrentWorkers, ctkDICOMServer::maximumRetryWait
+  QSpinBox* createMaximumWorkersSpinBox(int value) const;
+  QSpinBox* createMaximumRetryWaitSpinBox(int value) const;
   void updateProxyComboBoxes() const;
   QStringList getAllServerNames();
 
@@ -276,6 +281,11 @@ public:
                     int verticalScrollBarValue,
                     bool resetServerStatus = true);
   void setDynamicPaletteColorToWidget(QPalette* palette, QWidget* widget);
+
+  /// Used both as the value of a new server node and as the fallback for the
+  /// server nodes saved before these settings existed.
+  static const int DefaultMaximumWorkers = 8;
+  static const int DefaultMaximumRetryWait = 60;
 
   bool SettingsModified;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -519,6 +529,16 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
   {
     node["Timeout"] = timeoutSpinBox->value();
   }
+  QSpinBox* maximumWorkersSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::MaximumWorkersColumn));
+  if (maximumWorkersSpinBox)
+  {
+    node["Max Workers"] = maximumWorkersSpinBox->value();
+  }
+  QSpinBox* maximumRetryWaitSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn));
+  if (maximumRetryWaitSpinBox)
+  {
+    node["Max Retry Wait"] = maximumRetryWaitSpinBox->value();
+  }
   QComboBox* protocolComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProtocolColumn));
   if (protocolComboBox)
   {
@@ -662,6 +682,18 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox = this->createMaximumWorkersSpinBox(
+    node.value("Max Workers", ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers).toInt());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox = this->createMaximumRetryWaitSpinBox(
+    node.value("Max Retry Wait", ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait).toInt());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
   proxyComboBox->setObjectName("proxyComboBox");
   QStringListModel* cbModel = new QStringListModel();
@@ -783,6 +815,15 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, timeoutSpinBox);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox = this->createMaximumWorkersSpinBox(server->maximumConcurrentWorkers());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox = this->createMaximumRetryWaitSpinBox(server->maximumRetryWait());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
@@ -833,9 +874,54 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFro
   server->setPort(node["Port"].toInt());
   server->setRetrieveProtocolAsString(node["Retrieve Protocol"].toString());
   server->setConnectionTimeout(node["Timeout"].toInt());
+  server->setMaximumConcurrentWorkers(
+    node.value("Max Workers", ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers).toInt());
+  server->setMaximumRetryWait(
+    node.value("Max Retry Wait", ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait).toInt());
   server->setMoveDestinationAETitle(this->StorageAETitle->text());
 
   return server;
+}
+
+//----------------------------------------------------------------------------
+QSpinBox* ctkDICOMServerNodeWidget2Private::createMaximumWorkersSpinBox(int value) const
+{
+  Q_Q(const ctkDICOMServerNodeWidget2);
+
+  QSpinBox* spinBox = new QSpinBox();
+  spinBox->setObjectName("maximumWorkersSpinBox");
+  spinBox->setToolTip(ctkDICOMServerNodeWidget2::tr(
+    "Maximum number of jobs running at the same time against this server."));
+  spinBox->setMinimum(1);
+  spinBox->setMaximum(INT_MAX);
+  spinBox->setSingleStep(1);
+  spinBox->setValue(value > 0 ? value : ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers);
+  spinBox->setAlignment(Qt::AlignLeft);
+  QObject::connect(spinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(onSettingsModified()));
+  return spinBox;
+}
+
+//----------------------------------------------------------------------------
+QSpinBox* ctkDICOMServerNodeWidget2Private::createMaximumRetryWaitSpinBox(int value) const
+{
+  Q_Q(const ctkDICOMServerNodeWidget2);
+
+  QSpinBox* spinBox = new QSpinBox();
+  spinBox->setObjectName("maximumRetryWaitSpinBox");
+  spinBox->setToolTip(ctkDICOMServerNodeWidget2::tr(
+    "Total time spent retrying a job that fails against this server. Each attempt waits "
+    "longer than the previous one; when this time is over, the job fails and a warning is "
+    "shown. Zero means that a failed job is never retried."));
+  spinBox->setMinimum(0);
+  spinBox->setMaximum(INT_MAX);
+  spinBox->setSingleStep(10);
+  spinBox->setSuffix(ctkDICOMServerNodeWidget2::tr(" s"));
+  spinBox->setValue(value >= 0 ? value : ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait);
+  spinBox->setAlignment(Qt::AlignLeft);
+  QObject::connect(spinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(onSettingsModified()));
+  return spinBox;
 }
 
 //----------------------------------------------------------------------------
@@ -1002,9 +1088,15 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
     }
   }
 
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageEnabledCheckBox);
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageAETitle);
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StoragePort);
+  // Every editable widget of the storage group, including the ones that another widget
+  // added to it, such as the operations check boxes of the visual browser.
+  foreach (QWidget* widget, this->StorageCollapsibleGroupBox->findChildren<QWidget*>())
+  {
+    if (qobject_cast<QAbstractButton*>(widget) || qobject_cast<QLineEdit*>(widget))
+    {
+      this->setDynamicPaletteColorToWidget(&this->DefaultPalette, widget);
+    }
+  }
 
   this->NodeTable->horizontalScrollBar()->setValue(horizontalScrollBarValue);
   this->NodeTable->verticalScrollBar()->setValue(verticalScrollBarValue);
@@ -1128,6 +1220,18 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
                    this, SLOT(onSettingsModified()));
   d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, timeoutSpinBox);
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox =
+    d->createMaximumWorkersSpinBox(ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers);
+  d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox =
+    d->createMaximumRetryWaitSpinBox(ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait);
+  d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
@@ -1567,6 +1671,8 @@ void ctkDICOMServerNodeWidget2::readSettings()
 
   d->NodeTable->selectionModel()->clearSelection();
   d->restoreFocus(selectedIndexes, horizontalScrollBarValue, verticalScrollBarValue);
+
+  emit settingsDiscarded();
 }
 
 //----------------------------------------------------------------------------

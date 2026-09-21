@@ -48,6 +48,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
 {
   Q_OBJECT
   Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
+  Q_PROPERTY(int framesBatchLimit READ framesBatchLimit WRITE setFramesBatchLimit);
+  Q_PROPERTY(int framesBatchesPerSeries READ framesBatchesPerSeries WRITE setFramesBatchesPerSeries);
 
 public:
   typedef ctkJobScheduler Superclass;
@@ -204,6 +206,15 @@ public:
                                                              ctkAbstractJob::JobStatus::Queued,
                                                              ctkAbstractJob::JobStatus::Running
                                                            });
+  /// True while the files of any of these series are still on their way into the
+  /// database: a retrieve job for one of them is queued or running (including the
+  /// C-GET from the proxy server that follows a C-MOVE through it), or an inserter job
+  /// still has frames of one of them to write.
+  ///
+  /// A finished retrieve job alone does not mean the series is in the database: behind
+  /// a proxy server the C-MOVE job only asks PACS to send the series to the proxy, and
+  /// for every retrieve the files are written by inserter jobs that run after it.
+  Q_INVOKABLE bool isRetrievingSeries(const QStringList& seriesInstanceUIDs);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
   ///@}
@@ -220,6 +231,39 @@ public:
   /// and https://dicom.nema.org/medical/dicom/2022e/output/chtml/part04/sect_C.6.4.3.html
   void setMaximumPatientsQuery(int maximumPatientsQuery);
   int maximumPatientsQuery();
+  ///@}
+
+  ///@{
+  /// Lower limit (minimum) of the number of received frames that a retrieve job keeps
+  /// in memory before they are inserted in the database and released. Keeping the whole
+  /// series in memory and inserting it only once the last frame arrived makes the peak
+  /// memory usage proportional to the size of the series; batching bounds it.
+  ///
+  /// This value is never the batch size of a long series: the batch actually used by a
+  /// retrieve job is computed per series as
+  ///   qMax(framesBatchLimit(), instanceCount / framesBatchesPerSeries())
+  /// where instanceCount is the number of instances the preceding query found for the
+  /// series. A long series therefore does not pay the fixed cost of an insert operation
+  /// (database open, displayed fields update, inserter job) hundreds of times, while a
+  /// short series, or one whose instance count is not known yet, falls back on this
+  /// minimum.
+  ///
+  /// 0 or less disables batching altogether, restoring the single insert at the end of
+  /// the retrieve operation.
+  /// default: 25
+  void setFramesBatchLimit(int framesBatchLimit);
+  int framesBatchLimit();
+  ///@}
+
+  ///@{
+  /// Number of insert operations to aim for when retrieving a series whose number of
+  /// frames is known, used to enlarge the batch beyond the framesBatchLimit() minimum.
+  /// The peak memory of a retrieve is then roughly the size of the series divided by
+  /// this value. Values lower than 1 disable the proportional batch size, leaving
+  /// framesBatchLimit() to be used as-is for every series.
+  /// default: 10
+  void setFramesBatchesPerSeries(int framesBatchesPerSeries);
+  int framesBatchesPerSeries();
   ///@}
 
   ///@{
@@ -261,12 +305,22 @@ public:
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
   bool isJobDuplicate(ctkDICOMJob* job);
 
+  /// Batch size to use for a retrieve job: FramesBatchLimit is the lower limit, and the
+  /// batch is enlarged proportionally to the number of frames already known for the
+  /// series, so that long series do not pay the fixed cost of an insert operation once
+  /// per handful of frames.
+  /// Returns qMax(FramesBatchLimit, instanceCount / FramesBatchesPerSeries), or
+  /// FramesBatchLimit when the instance count of the series is not known yet.
+  int computeFramesBatchLimit(const QString& seriesInstanceUID) const;
+
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QList<QSharedPointer<ctkDICOMServer>> Servers;
   QMap<QString, QMetaObject::Connection> ServersConnections;
   QMap<QString, QVariant> Filters;
 
   int MaximumPatientsQuery{0}; // unlimited by default
+  int FramesBatchLimit{25};
+  int FramesBatchesPerSeries{10};
 
   dcmtk::log4cplus::SharedAppenderPtr Appender;
 };

@@ -40,6 +40,8 @@
 // DCMTK includes
 #include <dcmtk/oflog/oflog.h>
 
+class QAction;
+
 class ctkCollapsibleGroupBox;
 class ctkDICOMVisualBrowserWidgetPrivate;
 class ctkDICOMDatabase;
@@ -108,6 +110,15 @@ public:
   };
   Q_ENUM(ImportDirectoryMode)
 
+  /// Layout of the patient selector
+  enum PatientLayoutMode
+  {
+    PatientLayoutAutomatic = 0,  ///< Tabs or list, chosen from the number of visible patients
+    PatientLayoutTabs,           ///< Always tabs
+    PatientLayoutList            ///< Always list
+  };
+  Q_ENUM(PatientLayoutMode)
+
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
   Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
@@ -119,7 +130,9 @@ public:
   Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
   Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient);
   Q_PROPERTY(ThumbnailSizePresetOption thumbnailSizePreset READ thumbnailSizePreset WRITE setThumbnailSizePreset);
+  Q_PROPERTY(bool autoRetrieveFullSeries READ autoRetrieveFullSeries WRITE setAutoRetrieveFullSeries);
   Q_PROPERTY(ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
+  Q_PROPERTY(PatientLayoutMode patientLayoutMode READ patientLayoutMode WRITE setPatientLayoutMode)
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
   Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
   Q_PROPERTY(bool alwaysShowQueryButton READ alwaysShowQueryButton WRITE setAlwaysShowQueryButton)
@@ -265,9 +278,26 @@ public:
   ///@}
 
   ///@{
+  /// Whether all the frames of a series are retrieved as soon as its thumbnail is
+  /// shown (the default), or only when the user loads the series.
+  /// The value is persisted in QSettings under the DICOM/AutoRetrieveFullSeries key.
+  /// \sa ctkDICOMSeriesModel::setAutoRetrieveFullSeries
+  bool autoRetrieveFullSeries() const;
+  ///@}
+
+  ///@{
+  /// Set how the patient selector is laid out: automatically chosen from the
+  /// number of visible patients, always tabs, or always list.
+  /// PatientLayoutAutomatic by default. The value is persisted in QSettings
+  /// under the DICOM/PatientViewLayoutMode key.
+  void setPatientLayoutMode(PatientLayoutMode mode);
+  PatientLayoutMode patientLayoutMode() const;
+  ///@}
+
+  ///@{
   /// Set if send action on right click context menu is available
   /// false by default
-  void setSendActionVisible(bool visible);
+  /// \sa setSendActionVisible(bool), which is a slot
   bool isSendActionVisible() const;
   ///@}
 
@@ -317,6 +347,14 @@ public:
   Q_INVOKABLE void refreshBrowser(bool isImport = false);
 
 public Q_SLOTS:
+  /// Enable/disable the automatic retrieval of all the frames of a series.
+  /// \sa autoRetrieveFullSeries()
+  void setAutoRetrieveFullSeries(bool enable);
+
+  /// Show/hide the send action of the right click context menus.
+  /// \sa isSendActionVisible()
+  void setSendActionVisible(bool visible);
+
   /// \brief Set value of ImportDirectoryMode settings.
   ///
   /// Setting the value will update the comboBox found at the bottom
@@ -409,6 +447,7 @@ public Q_SLOTS:
   void updateGUIFromScheduler(QList<QVariant>);
   void onJobStarted(QList<QVariant>);
   void onJobUserStopped(QList<QVariant>);
+  void onJobAttemptFailed(QList<QVariant>);
   void onJobFailed(QList<QVariant>);
   void onJobFinished(QList<QVariant>);
   ///@}
@@ -426,12 +465,16 @@ public Q_SLOTS:
 
   /// server settings have been changed
   void onServersSettingsChanged();
+  void onServersSettingsDiscarded();
 
   /// user selected a job in the job list widget
   void patientSelectedOnJobList(const QString&, const QString&, const QString&);
 
   // Slot to handle display mode changes in PatientView
   void onPatientViewDisplayModeChanged(ctkDICOMPatientView::DisplayMode mode);
+
+  // Slot to handle the patient layout actions of the layout button and menus
+  void onPatientLayoutActionTriggered(QAction* action);
 
   // Slot to handle when a study model is created
   void onStudyModelCreated(const QString& patientUID, ctkDICOMStudyModel* studyModel);
@@ -441,6 +484,10 @@ public Q_SLOTS:
 
   // Slot to handle when a study is ready to open
   void onStudyReadyToOpen(const QString& studyInstanceUID);
+
+  // Slot to handle when the current patient changes: the first studies of that
+  // patient are opened, which starts retrieving their series
+  void onCurrentPatientChanged(const QString& patientUID);
 
 Q_SIGNALS:
   /// Emitted when directory is changed

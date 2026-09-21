@@ -60,6 +60,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMStudyModel : public QAbstractListModel
   Q_PROPERTY(QString seriesDescriptionFilter READ seriesDescriptionFilter WRITE setSeriesDescriptionFilter NOTIFY seriesDescriptionFilterChanged)
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged)
   Q_PROPERTY(int numberOfOpenedStudies READ numberOfOpenedStudies WRITE setNumberOfOpenedStudies NOTIFY numberOfOpenedStudiesChanged)
+  Q_PROPERTY(bool autoOpenStudiesEnabled READ autoOpenStudiesEnabled WRITE setAutoOpenStudiesEnabled)
+  Q_PROPERTY(bool autoRetrieveFullSeries READ autoRetrieveFullSeries WRITE setAutoRetrieveFullSeries)
   Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged)
 
 public:
@@ -179,6 +181,25 @@ public:
   /// Get/Set number of studies that should be opened by default
   int numberOfOpenedStudies() const;
   void setNumberOfOpenedStudies(int count);
+
+  /// Get/Set whether the first numberOfOpenedStudies() studies are opened on their own
+  /// as soon as the series query results arrive.
+  ///
+  /// Opening a study starts retrieving its series, so a model whose patient is not the
+  /// one being looked at should have this disabled: otherwise querying several patients
+  /// fetches image data for all of them at once. The studies of such a model are opened
+  /// later, by an explicit setStudyCollapsed(index, false), when its patient is selected.
+  ///
+  /// Explicit calls to setStudyCollapsed() are never affected by this.
+  /// default: true
+  bool autoOpenStudiesEnabled() const;
+  void setAutoOpenStudiesEnabled(bool enabled);
+
+  /// Get/Set whether the series models fetch all the frames of a series automatically.
+  /// default: true
+  /// \sa ctkDICOMSeriesModel::setAutoRetrieveFullSeries
+  bool autoRetrieveFullSeries() const;
+  void setAutoRetrieveFullSeries(bool enabled);
 
   /// Get/Set thumbnail size for series models in pixels
   int thumbnailSize() const;

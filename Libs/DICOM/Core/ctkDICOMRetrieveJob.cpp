@@ -40,6 +40,7 @@ ctkDICOMRetrieveJobPrivate::ctkDICOMRetrieveJobPrivate(ctkDICOMRetrieveJob* obje
  : q_ptr(object)
 {
   this->Server = nullptr;
+  this->FramesBatchLimit = 25;
 }
 
 //------------------------------------------------------------------------------
@@ -78,10 +79,31 @@ ctkDICOMServer* ctkDICOMRetrieveJob::server() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkDICOMRetrieveJob::concurrencyGroup() const
+{
+  Q_D(const ctkDICOMRetrieveJob);
+  return d->Server ? d->Server->connectionName() : QString();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMRetrieveJob::setServer(const ctkDICOMServer& server)
 {
   Q_D(ctkDICOMRetrieveJob);
   d->Server = server.clone();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieveJob::setFramesBatchLimit(const int& framesBatchLimit)
+{
+  Q_D(ctkDICOMRetrieveJob);
+  d->FramesBatchLimit = framesBatchLimit;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMRetrieveJob::framesBatchLimit() const
+{
+  Q_D(const ctkDICOMRetrieveJob);
+  return d->FramesBatchLimit;
 }
 
 //----------------------------------------------------------------------------
@@ -159,11 +181,15 @@ ctkAbstractJob* ctkDICOMRetrieveJob::clone() const
   newRetrieveJob->setStudyInstanceUID(this->studyInstanceUID());
   newRetrieveJob->setSeriesInstanceUID(this->seriesInstanceUID());
   newRetrieveJob->setSOPInstanceUID(this->sopInstanceUID());
-  newRetrieveJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newRetrieveJob->setRetryEnabled(this->retryEnabled());
+  newRetrieveJob->setMaximumRetryWait(this->maximumRetryWait());
+  newRetrieveJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newRetrieveJob->setRetryDelay(this->retryDelay());
   newRetrieveJob->setRetryCounter(this->retryCounter());
   newRetrieveJob->setIsPersistent(this->isPersistent());
   newRetrieveJob->setMaximumConcurrentJobsPerType(this->maximumConcurrentJobsPerType());
+  newRetrieveJob->setMaximumConcurrentJobsPerGroup(this->maximumConcurrentJobsPerGroup());
+  newRetrieveJob->setFramesBatchLimit(this->framesBatchLimit());
   newRetrieveJob->setPriority(this->priority());
 
   return newRetrieveJob;

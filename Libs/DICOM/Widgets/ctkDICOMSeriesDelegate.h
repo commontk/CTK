@@ -82,6 +82,9 @@ public:
   /// Get the status button rect
   QRect statusButtonRect(const QRect& itemRect, const QModelIndex& index) const;
 
+  /// Get the selection badge rect
+  QRect selectionBadgeRect(const QRect& itemRect, const QModelIndex& index) const;
+
 Q_SIGNALS:
   /// Emitted when spacing changes
   void spacingChanged(int spacing);
@@ -99,8 +102,12 @@ protected:
   /// Paint overlay information on thumbnail
   void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
 
-  /// Paint cloud/downloading status button in top-right corner of thumbnail
+  /// Paint cloud/downloading status button in lower-left corner of thumbnail
   void paintStatusButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+
+  /// Paint the selection badge in the top-right corner of the thumbnail: a filled
+  /// circled checkmark when the series is selected, an empty circle when hovered
+  void paintSelectionBadge(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint progress bar below thumbnail when downloading
   void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index) const;

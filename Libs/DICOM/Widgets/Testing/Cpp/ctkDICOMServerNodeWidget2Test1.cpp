@@ -78,6 +78,9 @@ int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
   CHECK_INT(widget.server("ExampleHost")->port(), 11112);
   CHECK_QSTRING(widget.server("ExampleHost")->retrieveProtocolAsString(), "CGET");
   CHECK_INT(widget.server("ExampleHost")->connectionTimeout(), 30);
+  // Servers saved before these settings existed fall back to their default
+  CHECK_INT(widget.server("ExampleHost")->maximumConcurrentWorkers(), 8);
+  CHECK_INT(widget.server("ExampleHost")->maximumRetryWait(), 60);
 
   CHECK_QSTRING(widget.getServerNameFromIndex(1), "MedicalConnections");
   CHECK_BOOL(widget.server("MedicalConnections")->queryRetrieveEnabled(), false);
@@ -92,11 +95,16 @@ int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
   // Test adding and removing servers
   ctkDICOMServer* server = new ctkDICOMServer();
   server->setConnectionName("server");
+  server->setMaximumConcurrentWorkers(3);
+  server->setMaximumRetryWait(15);
   widget.addServer(server);
   CHECK_INT(widget.serversCount(), 3);
   CHECK_INT(widget.getServerIndexFromName("server"), 2);
   CHECK_QSTRING(widget.getServerNameFromIndex(2), "server");
   CHECK_QSTRING(widget.server("server")->connectionName(), server->connectionName());
+  // The scheduling settings make the round trip through the table
+  CHECK_INT(widget.server("server")->maximumConcurrentWorkers(), 3);
+  CHECK_INT(widget.server("server")->maximumRetryWait(), 15);
   widget.removeServer("server");
   CHECK_INT(widget.serversCount(), 2);
   delete server;
