@@ -2785,6 +2785,163 @@ QMap<QString, QString> ctkDICOMDatabase::instanceValues(const QStringList& sopIn
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabasePrivate::instancesForFiles(const QStringList& fileNames)
+{
+  // File names as stored in the database
+  QStringList internalPaths;
+  internalPaths.reserve(fileNames.size());
+  QSet<QString> internalPathsToQuery;
+  for (const QString& fileName : fileNames)
+  {
+    QString internalPath = fileName.isEmpty() ? QString() : this->internalPathFromAbsolute(fileName);
+    internalPaths << internalPath;
+    if (!internalPath.isEmpty())
+    {
+      internalPathsToQuery.insert(internalPath);
+    }
+  }
+
+  // Query in batches to not exceed the maximum number of parameters in a query
+  QHash<QString, QString> sopInstanceUIDForInternalPath;
+  const int batchSize = 500;
+  QStringList uniqueInternalPaths = internalPathsToQuery.values();
+  for (int batchStartIndex = 0; batchStartIndex < uniqueInternalPaths.size(); batchStartIndex += batchSize)
+  {
+    QStringList batchInternalPaths = uniqueInternalPaths.mid(batchStartIndex, batchSize);
+    QStringList placeholders;
+    for (int i = 0; i < batchInternalPaths.size(); ++i)
+    {
+      placeholders << "?";
+    }
+    QSqlQuery query(this->Database);
+    query.prepare(QString("SELECT Filename, SOPInstanceUID FROM Images WHERE Filename IN (%1)").arg(placeholders.join(",")));
+    for (const QString& internalPath : batchInternalPaths)
+    {
+      query.addBindValue(internalPath);
+    }
+    if (!this->loggedExec(query))
+    {
+      continue;
+    }
+    while (query.next())
+    {
+      sopInstanceUIDForInternalPath.insert(query.value(0).toString(), query.value(1).toString());
+    }
+  }
+
+  QStringList sopInstanceUIDs;
+  sopInstanceUIDs.reserve(fileNames.size());
+  for (const QString& internalPath : internalPaths)
+  {
+    sopInstanceUIDs << (internalPath.isEmpty() ? QString() : sopInstanceUIDForInternalPath.value(internalPath));
+  }
+  return sopInstanceUIDs;
+}
+
+//------------------------------------------------------------------------------
+QHash<QString, QString> ctkDICOMDatabasePrivate::cachedTagValues(const QStringList& sopInstanceUIDs, const QString& upperTag)
+{
+  QHash<QString, QString> values;
+  // Query in batches to not exceed the maximum number of parameters in a query
+  const int batchSize = 500;
+  for (int batchStartIndex = 0; batchStartIndex < sopInstanceUIDs.size(); batchStartIndex += batchSize)
+  {
+    QStringList batchSopInstanceUIDs = sopInstanceUIDs.mid(batchStartIndex, batchSize);
+    QStringList placeholders;
+    for (int i = 0; i < batchSopInstanceUIDs.size(); ++i)
+    {
+      placeholders << "?";
+    }
+    QSqlQuery query(this->TagCacheDatabase);
+    query.prepare(QString("SELECT SOPInstanceUID, Value FROM TagCache WHERE Tag = ? AND SOPInstanceUID IN (%1)").arg(placeholders.join(",")));
+    query.addBindValue(upperTag);
+    for (const QString& sopInstanceUID : batchSopInstanceUIDs)
+    {
+      query.addBindValue(sopInstanceUID);
+    }
+    if (!this->loggedExec(query))
+    {
+      continue;
+    }
+    while (query.next())
+    {
+      QString value = query.value(1).toString();
+      // Same convention as in cachedTag(): empty string means that the value is not in the cache
+      values.insert(query.value(0).toString(), value.isEmpty() ? ValueIsEmptyString : value);
+    }
+  }
+  return values;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::fileValues(const QStringList& fileNames, const QString& tag)
+{
+  Q_D(ctkDICOMDatabase);
+  QStringList values;
+  values.reserve(fileNames.size());
+  if (tag.isEmpty())
+  {
+    for (int i = 0; i < fileNames.size(); ++i)
+    {
+      values << QString();
+    }
+    return values;
+  }
+  QString upperTag = tag.toUpper();
+
+  if (!this->tagCacheExists() && !this->initializeTagCache())
+  {
+    // Tag cache is not available, retrieve values one by one
+    for (const QString& fileName : fileNames)
+    {
+      values << this->fileValue(fileName, upperTag);
+    }
+    return values;
+  }
+
+  QStringList sopInstanceUIDs = d->instancesForFiles(fileNames);
+  QStringList sopInstanceUIDsToQuery;
+  QSet<QString> sopInstanceUIDsToQuerySet;
+  for (const QString& sopInstanceUID : sopInstanceUIDs)
+  {
+    if (!sopInstanceUID.isEmpty() && !sopInstanceUIDsToQuerySet.contains(sopInstanceUID))
+    {
+      sopInstanceUIDsToQuerySet.insert(sopInstanceUID);
+      sopInstanceUIDsToQuery << sopInstanceUID;
+    }
+  }
+  QHash<QString, QString> cachedValues = d->cachedTagValues(sopInstanceUIDsToQuery, upperTag);
+
+  for (int i = 0; i < fileNames.size(); ++i)
+  {
+    const QString& fileName = fileNames[i];
+    if (fileName.isEmpty())
+    {
+      values << QString();
+      continue;
+    }
+    QHash<QString, QString>::const_iterator cachedValue = cachedValues.constFind(sopInstanceUIDs[i]);
+    if (cachedValue != cachedValues.constEnd())
+    {
+      const QString& value = cachedValue.value();
+      if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+      {
+        values << QString();
+      }
+      else
+      {
+        values << value;
+      }
+      continue;
+    }
+    // The instance is not found by local file path or the value is not in the tag cache.
+    // Use fileValue(), which handles URLs and reads the value from the file.
+    values << this->fileValue(fileName, upperTag);
+  }
+  return values;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const QString tag)
 {
   Q_D(ctkDICOMDatabase);

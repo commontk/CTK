@@ -388,6 +388,15 @@ public:
   /// @returns Map of sopInstanceUID -> tag value. Missing or empty values are not included.
   Q_INVOKABLE QMap<QString, QString> instanceValues(const QStringList& sopInstanceUIDs, const QString& tag);
 
+  /// \brief Efficiently retrieve tag values for multiple files
+  /// The result is the same as calling fileValue() for each file, but it is much faster when
+  /// values are retrieved for many files, because the database is queried in batches.
+  /// @param fileNames List of local file paths or URLs (see fileValue())
+  /// @param tag The DICOM tag to retrieve (e.g., "0020,0013" for Instance Number)
+  /// @returns List of values, in the same order as fileNames.
+  ///   Empty string is returned for an item if the element is missing or excluded from storage.
+  Q_INVOKABLE QStringList fileValues(const QStringList& fileNames, const QString& tag);
+
   /// Convert between string and (unsigned short int, unsigned short int) representation of a DICOM tag.
   Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
   Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);

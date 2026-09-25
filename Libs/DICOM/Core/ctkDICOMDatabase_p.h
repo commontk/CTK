@@ -32,6 +32,9 @@
 // We mean it.
 //
 
+// Qt includes
+#include <QHash>
+
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMDisplayedFieldGenerator.h"
@@ -163,6 +166,14 @@ public:
 
   /// resets the variables to new inserts won't be fooled by leftover values
   void resetLastInsertedValues();
+
+  /// Get SOP instance UIDs for multiple local files using batch queries.
+  /// Returns empty string for files that are not found in the Images table.
+  QStringList instancesForFiles(const QStringList& fileNames);
+  /// Get values stored in the tag cache for multiple instances using batch queries.
+  /// Returns map from SOP instance UID to the stored value. Stored empty value is returned as ValueIsEmptyString,
+  /// instances that do not have the value in the tag cache are not included in the result.
+  QHash<QString, QString> cachedTagValues(const QStringList& sopInstanceUIDs, const QString& upperTag);
 
   /// tagCache table has been checked to exist
   bool TagCacheVerified;
