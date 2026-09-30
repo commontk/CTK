@@ -127,10 +127,8 @@ int ctkDICOMDatabaseTest8(int argc, char* argv[])
 
   // Test retrieval of values for more files than the batch size used in database queries (500).
   // Create copies of a file with different SOP instance UID and instance number.
-  // Copies are created outside the database folder, because files that are inserted from within the
-  // database folder without copying are not found by instanceForFile().
-  QTemporaryDir copiesDirectory;
-  CHECK_BOOL(copiesDirectory.isValid(), true);
+  // Copies are created in the database folder and inserted without copying, to test that such files
+  // can be found by their file path (relative path is stored in the database).
   const int numberOfCopies = 520;
   const QString instanceNumberTag = "0020,0013";
   ctkDICOMItem item;
@@ -140,12 +138,14 @@ int ctkDICOMDatabaseTest8(int argc, char* argv[])
   {
     CHECK_BOOL(item.SetElementAsString(DCM_SOPInstanceUID, QString("2.25.1234567890123456789%1").arg(copyIndex)), true);
     CHECK_BOOL(item.SetElementAsString(DCM_InstanceNumber, QString::number(1000 + copyIndex)), true);
-    QString copiedFilePath = QDir(copiesDirectory.path()).filePath(QString("copy%1.dcm").arg(copyIndex));
+    QString copiedFilePath = databaseDirectory.filePath(QString("copy%1.dcm").arg(copyIndex));
     CHECK_BOOL(item.SaveToFile(copiedFilePath), true);
     database.insert(copiedFilePath, /*storeFile=*/false, /*generateThumbnail=*/false);
     copiedFilePaths << copiedFilePath;
   }
   CHECK_INT(database.imagesCount(), dicomFilePaths.size() + numberOfCopies);
+  CHECK_QSTRING(database.instanceForFile(copiedFilePaths[0]), QString("2.25.12345678901234567890"));
+  CHECK_QSTRING(database.fileForInstance("2.25.12345678901234567890"), copiedFilePaths[0]);
 
   QStringList allFilePaths = dicomFilePaths + copiedFilePaths;
   CHECK_BOOL(checkFileValues(database, allFilePaths, modalityTag), true);
