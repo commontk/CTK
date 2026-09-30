@@ -127,6 +127,10 @@ int ctkDICOMDatabaseTest8(int argc, char* argv[])
 
   // Test retrieval of values for more files than the batch size used in database queries (500).
   // Create copies of a file with different SOP instance UID and instance number.
+  // Copies are created outside the database folder, because files that are inserted from within the
+  // database folder without copying are not found by instanceForFile().
+  QTemporaryDir copiesDirectory;
+  CHECK_BOOL(copiesDirectory.isValid(), true);
   const int numberOfCopies = 520;
   const QString instanceNumberTag = "0020,0013";
   ctkDICOMItem item;
@@ -136,7 +140,7 @@ int ctkDICOMDatabaseTest8(int argc, char* argv[])
   {
     CHECK_BOOL(item.SetElementAsString(DCM_SOPInstanceUID, QString("2.25.1234567890123456789%1").arg(copyIndex)), true);
     CHECK_BOOL(item.SetElementAsString(DCM_InstanceNumber, QString::number(1000 + copyIndex)), true);
-    QString copiedFilePath = databaseDirectory.filePath(QString("copy%1.dcm").arg(copyIndex));
+    QString copiedFilePath = QDir(copiesDirectory.path()).filePath(QString("copy%1.dcm").arg(copyIndex));
     CHECK_BOOL(item.SaveToFile(copiedFilePath), true);
     database.insert(copiedFilePath, /*storeFile=*/false, /*generateThumbnail=*/false);
     copiedFilePaths << copiedFilePath;
@@ -153,6 +157,39 @@ int ctkDICOMDatabaseTest8(int argc, char* argv[])
   {
     CHECK_QSTRING(copiedInstanceNumbers[copyIndex], QString::number(1000 + copyIndex));
   }
+
+  // instanceValues() returns values in the same order as the instance UIDs (for more instances than the batch size).
+  // Empty string is returned for unknown or empty instance UIDs. Duplicate instance UIDs are allowed.
+  QStringList copiedInstanceUIDs;
+  for (const QString& copiedFilePath : copiedFilePaths)
+  {
+    copiedInstanceUIDs << database.instanceForFile(copiedFilePath);
+  }
+  QStringList instanceUIDs = copiedInstanceUIDs;
+  instanceUIDs << "1.2.3.4.5.6.7.8.9.1234567890" << QString() << copiedInstanceUIDs[1];
+  QStringList instanceNumbers = database.instanceValues(instanceUIDs, instanceNumberTag);
+  CHECK_INT(instanceNumbers.size(), instanceUIDs.size());
+  for (int copyIndex = 0; copyIndex < numberOfCopies; ++copyIndex)
+  {
+    CHECK_QSTRING(instanceNumbers[copyIndex], QString::number(1000 + copyIndex));
+  }
+  CHECK_QSTRING(instanceNumbers[numberOfCopies], QString());
+  CHECK_QSTRING(instanceNumbers[numberOfCopies + 1], QString());
+  CHECK_QSTRING(instanceNumbers[numberOfCopies + 2], QString::number(1001));
+  // Values are the same as returned by instanceValue(), including values that are stored in the tag cache
+  // as not present in the instance
+  QString firstInstanceUID = database.instanceForFile(dicomFilePaths[0]);
+  QStringList firstInstanceValues = database.instanceValues(QStringList() << firstInstanceUID << firstInstanceUID, modalityTag);
+  CHECK_INT(firstInstanceValues.size(), 2);
+  CHECK_QSTRING(firstInstanceValues[0], database.instanceValue(firstInstanceUID, modalityTag));
+  CHECK_QSTRING(firstInstanceValues[1], QString("MR"));
+  CHECK_QSTRING(database.instanceValues(QStringList() << firstInstanceUID, missingTag)[0], QString());
+  CHECK_QSTRING(database.instanceValue(firstInstanceUID, missingTag), QString());
+  // Empty inputs
+  CHECK_INT(database.instanceValues(QStringList(), instanceNumberTag).size(), 0);
+  QStringList valuesForEmptyTag = database.instanceValues(copiedInstanceUIDs, QString());
+  CHECK_INT(valuesForEmptyTag.size(), numberOfCopies);
+  CHECK_QSTRING(valuesForEmptyTag[0], QString());
 
   // Instance for file must not be returned after the image is removed from the database
   QString seriesUID = database.seriesForFile(dicomFilePaths[0]);

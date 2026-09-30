@@ -382,11 +382,14 @@ public:
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
 
-  /// \brief Efficiently retrieve tag values for multiple instances in a single query
+  /// \brief Efficiently retrieve tag values for multiple instances
+  /// Values are retrieved from the tag cache, the database is queried in batches.
+  /// If the tag cache does not exist then values are retrieved using instanceValue().
   /// @param sopInstanceUIDs List of instance UIDs to query
   /// @param tag The DICOM tag to retrieve (e.g., "0020,0013" for Instance Number)
-  /// @returns Map of sopInstanceUID -> tag value. Missing or empty values are not included.
-  Q_INVOKABLE QMap<QString, QString> instanceValues(const QStringList& sopInstanceUIDs, const QString& tag);
+  /// @returns List of values, in the same order as sopInstanceUIDs.
+  ///   Empty string is returned for an item if the value is not found, empty, or excluded from storage.
+  Q_INVOKABLE QStringList instanceValues(const QStringList& sopInstanceUIDs, const QString& tag);
 
   /// \brief Efficiently retrieve tag values for multiple files
   /// The result is the same as calling fileValue() for each file, but it is much faster when
