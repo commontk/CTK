@@ -24,6 +24,7 @@
 #include "ctkPluginFrameworkProperties_p.h"
 
 #include <ctkException.h>
+#include <ctkStringLiterals.h>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 1, 0))
 #define HAVE_QT_QLOCKFILE
@@ -37,8 +38,11 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-static const QString PROP_OSGI_LOCKING = "blueberry.locking";
-static const QString DEFAULT_LOCK_FILENAME = ".metadata/.lock";
+namespace {
+using namespace ctk::string_literals;
+constexpr QLatin1String PROP_OSGI_LOCKING     = "blueberry.locking"_L1;
+constexpr QLatin1String DEFAULT_LOCK_FILENAME = ".metadata/.lock"_L1;
+} // namespace
 
 
 //----------------------------------------------------------------------------

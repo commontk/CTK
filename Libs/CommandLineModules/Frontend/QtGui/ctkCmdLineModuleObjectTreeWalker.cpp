@@ -21,16 +21,21 @@
 
 #include "ctkCmdLineModuleObjectTreeWalker_p.h"
 
+// CTK includes
+#include <ctkStringLiterals.h>
+
 #include <QObject>
 #include <QStack>
 #include <QVariant>
 
 namespace {
 
-static QString PREFIX_EXECUTABLE = "executable:";
-static QString PREFIX_PARAMETER_GROUP = "paramGroup:";
-static QString PREFIX_PARAMETER_CONTAINER = "paramContainer:";
-static QString PREFIX_PARAMETER = "parameter:";
+using namespace ctk::string_literals;
+
+constexpr QLatin1String PREFIX_EXECUTABLE          = "executable:"_L1;
+constexpr QLatin1String PREFIX_PARAMETER_GROUP     = "paramGroup:"_L1;
+constexpr QLatin1String PREFIX_PARAMETER_CONTAINER = "paramContainer:"_L1;
+constexpr QLatin1String PREFIX_PARAMETER           = "parameter:"_L1;
 
 }
 

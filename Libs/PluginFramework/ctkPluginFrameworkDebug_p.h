@@ -23,7 +23,17 @@
 #ifndef CTKPLUGINFRAMEWORKDEBUG_P_H
 #define CTKPLUGINFRAMEWORKDEBUG_P_H
 
+// Qt includes
+#include <QLatin1String>
+
+// CTK includes
+#include <ctkStringLiterals.h>
+
 #include "ctkPluginFramework_global.h"
+
+using namespace ctk::string_literals;
+
+#define CTK_OSGI "org.commontk.pluginfw"
 
 /**
  * Variables that control debugging of the pluginfw code.
@@ -34,37 +44,37 @@ class ctkPluginFrameworkDebug
 public:
   ctkPluginFrameworkDebug();
 
-  static QString OPTION_DEBUG_GENERAL;
+  static constexpr QLatin1String OPTION_DEBUG_GENERAL         = CTK_OSGI "/debug"_L1;
   bool enabled;
 
   /**
    * Report error handling events.
    */
-  static QString OPTION_DEBUG_ERRORS;
+  static constexpr QLatin1String OPTION_DEBUG_ERRORS          = CTK_OSGI "/debug/errors"_L1;
   bool errors;
 
   /**
    * Report pluginfw create, init, start, stop
    */
-  static QString OPTION_DEBUG_FRAMEWORK;
+  static constexpr QLatin1String OPTION_DEBUG_FRAMEWORK       = CTK_OSGI "/debug/framework"_L1;
   bool framework;
 
   /**
    * Report hooks handling
    */
-  static QString OPTION_DEBUG_HOOKS;
+  static constexpr QLatin1String OPTION_DEBUG_HOOKS           = CTK_OSGI "/debug/hooks"_L1;
   bool hooks;
 
   /**
    * Report triggering of lazy activation
    */
-  static QString OPTION_DEBUG_LAZY_ACTIVATION;
+  static constexpr QLatin1String OPTION_DEBUG_LAZY_ACTIVATION = CTK_OSGI "/debug/lazy_activation"_L1;
   bool lazy_activation;
 
   /**
    * Report LDAP handling
    */
-  static QString OPTION_DEBUG_LDAP;
+  static constexpr QLatin1String OPTION_DEBUG_LDAP            = CTK_OSGI "/debug/ldap"_L1;
   bool ldap;
 
   /**
@@ -72,27 +82,29 @@ public:
    * and rejections due to missing permissions
    * for calling plug-ins.
    */
-  static QString OPTION_DEBUG_SERVICE_REFERENCE;
+  static constexpr QLatin1String OPTION_DEBUG_SERVICE_REFERENCE = CTK_OSGI "/debug/service_reference"_L1;
   bool service_reference;
 
   /**
    * Report startlevel.
    */
-  static QString OPTION_DEBUG_STARTLEVEL;
+  static constexpr QLatin1String OPTION_DEBUG_STARTLEVEL      = CTK_OSGI "/debug/startlevel"_L1;
   bool startlevel;
 
   /**
    * Report url
    */
-  static QString OPTION_DEBUG_URL;
+  static constexpr QLatin1String OPTION_DEBUG_URL             = CTK_OSGI "/debug/url"_L1;
   bool url;
 
   /**
    * Report plug-in resolve progress
    */
-  static QString OPTION_DEBUG_RESOLVE;
+  static constexpr QLatin1String OPTION_DEBUG_RESOLVE         = CTK_OSGI "/debug/resolve"_L1;
   bool resolve;
 
 };
+
+#undef CTK_OSGI
 
 #endif // CTKPLUGINFRAMEWORKDEBUG_P_H
