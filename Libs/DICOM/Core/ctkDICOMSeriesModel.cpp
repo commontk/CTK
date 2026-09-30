@@ -519,21 +519,17 @@ QString ctkDICOMSeriesModelPrivate::getDICOMCenterFrameFromInstances(QStringList
   if (this->DicomDatabase && this->DicomDatabase->tagCacheExists())
   {
     // Get all instance numbers in a single efficient database query
-    QMap<QString, QString> instanceNumbers = this->DicomDatabase->instanceValues(instancesList, "0020,0013");
+    QStringList instanceNumbers = this->DicomDatabase->instanceValues(instancesList, "0020,0013");
 
-    // Build the sorted map
-    for (QMap<QString, QString>::const_iterator it = instanceNumbers.constBegin(); it != instanceNumbers.constEnd(); ++it)
+    // Build the sorted map (instances without instance number are not included)
+    for (int instanceIndex = 0; instanceIndex < instancesList.size(); ++instanceIndex)
     {
-      const QString& sopInstanceUID = it.key();
-      const QString& instanceNumberStr = it.value();
-
-      int instanceNumber = 0;
-      if (!instanceNumberStr.isEmpty())
+      const QString& instanceNumberStr = instanceNumbers[instanceIndex];
+      if (instanceNumberStr.isEmpty())
       {
-        instanceNumber = instanceNumberStr.toInt();
+        continue;
       }
-
-      sortedInstancesMap[instanceNumber] = sopInstanceUID;
+      sortedInstancesMap[instanceNumberStr.toInt()] = instancesList[instanceIndex];
     }
   }
 

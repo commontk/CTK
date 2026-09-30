@@ -2710,78 +2710,55 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
 }
 
 //------------------------------------------------------------------------------
-QMap<QString, QString> ctkDICOMDatabase::instanceValues(const QStringList& sopInstanceUIDs, const QString& tag)
+QStringList ctkDICOMDatabase::instanceValues(const QStringList& sopInstanceUIDs, const QString& tag)
 {
   Q_D(ctkDICOMDatabase);
-  QMap<QString, QString> result;
-
-  if (sopInstanceUIDs.isEmpty() || tag.isEmpty())
+  QStringList values;
+  values.reserve(sopInstanceUIDs.size());
+  if (tag.isEmpty())
   {
-    return result;
+    for (int i = 0; i < sopInstanceUIDs.size(); ++i)
+    {
+      values << QString();
+    }
+    return values;
   }
-
   QString upperTag = tag.toUpper();
 
-  // Check if tag cache exists - if not, fall back to individual queries
   if (!this->tagCacheExists())
   {
-    // Fallback to individual instanceValue calls
-    foreach (const QString& sopInstanceUID, sopInstanceUIDs)
+    // Tag cache is not available, retrieve values one by one
+    for (const QString& sopInstanceUID : sopInstanceUIDs)
     {
-      QString value = this->instanceValue(sopInstanceUID, upperTag);
-      if (!value.isEmpty())
-      {
-        result[sopInstanceUID] = value;
-      }
+      values << this->instanceValue(sopInstanceUID, upperTag);
     }
-    return result;
+    return values;
   }
 
-  // Use bulk query from TagCache database for efficiency
-  QSqlQuery query(d->TagCacheDatabase);
-
-  // Build IN clause with placeholders
-  QStringList placeholders;
-  for (int i = 0; i < sopInstanceUIDs.size(); ++i)
+  QStringList sopInstanceUIDsToQuery;
+  QSet<QString> sopInstanceUIDsToQuerySet;
+  for (const QString& sopInstanceUID : sopInstanceUIDs)
   {
-    placeholders << "?";
-  }
-
-  QString queryString = QString(
-    "SELECT SOPInstanceUID, Value FROM TagCache "
-    "WHERE SOPInstanceUID IN (%1) AND Tag = ?"
-  ).arg(placeholders.join(","));
-
-  query.prepare(queryString);
-
-  // Bind all instance UIDs first
-  foreach (const QString& sopInstanceUID, sopInstanceUIDs)
-  {
-    query.addBindValue(sopInstanceUID);
-  }
-
-  // Bind the tag last
-  query.addBindValue(upperTag);
-
-  if (d->loggedExec(query))
-  {
-    while (query.next())
+    if (!sopInstanceUID.isEmpty() && !sopInstanceUIDsToQuerySet.contains(sopInstanceUID))
     {
-      QString sopInstanceUID = query.value(0).toString();
-      QString value = query.value(1).toString();
-
-      // Only include non-empty values that are not special markers
-      if (!value.isEmpty() &&
-          value != TagNotInInstance &&
-          value != ValueIsEmptyString &&
-          value != ValueIsNotStored)
-      {
-        result[sopInstanceUID] = value;
-      }
+      sopInstanceUIDsToQuerySet.insert(sopInstanceUID);
+      sopInstanceUIDsToQuery << sopInstanceUID;
     }
   }
+  QHash<QString, QString> cachedValues = d->cachedTagValues(sopInstanceUIDsToQuery, upperTag);
 
-  return result;
+  for (const QString& sopInstanceUID : sopInstanceUIDs)
+  {
+    QHash<QString, QString>::const_iterator cachedValue = cachedValues.constFind(sopInstanceUID);
+    if (cachedValue == cachedValues.constEnd()
+      || cachedValue.value() == TagNotInInstance || cachedValue.value() == ValueIsEmptyString || cachedValue.value() == ValueIsNotStored)
+    {
+      values << QString();
+      continue;
+    }
+    values << cachedValue.value();
+  }
+  return values;
 }
 
 //------------------------------------------------------------------------------
