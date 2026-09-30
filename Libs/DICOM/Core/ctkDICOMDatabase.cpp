@@ -1065,17 +1065,9 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
     if (!alreadyInserted)
     {
       // Get filename that will be stored in the database.
-      // Use relative path if a copy is stored in the database to make the database relocatable.
-      QString storedFilePathInDatabase;
-      if (storeFile)
-      {
-        QDir databaseDirectory(q->databaseDirectory());
-        storedFilePathInDatabase = databaseDirectory.relativeFilePath(storedFilePath);
-      }
-      else
-      {
-        storedFilePathInDatabase = storedFilePath;
-      }
+      // Use relative path if the file is within the database folder (for example, a copy is stored in the database)
+      // to make the database relocatable. Files are looked up using the same conversion (see instanceForFile()).
+      QString storedFilePathInDatabase = this->internalPathFromAbsolute(storedFilePath);
 
       QSqlQuery insertImageStatement(Database);
       insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
@@ -3442,17 +3434,9 @@ ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobR
         if (!alreadyInserted)
         {
           // Get filename that will be stored in the database.
-          // Use relative path if a copy is stored in the database to make the database relocatable.
-          QString storedFilePathInDatabase;
-          if (storeFile)
-          {
-            QDir databaseDirectory(this->databaseDirectory());
-            storedFilePathInDatabase = databaseDirectory.relativeFilePath(storedFilePath);
-          }
-          else
-          {
-            storedFilePathInDatabase = storedFilePath;
-          }
+          // Use relative path if the file is within the database folder (for example, a copy is stored in the database)
+          // to make the database relocatable. Files are looked up using the same conversion (see instanceForFile()).
+          QString storedFilePathInDatabase = d->internalPathFromAbsolute(storedFilePath);
 
           QSqlQuery insertImageStatement(d->Database);
           insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
