@@ -62,6 +62,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMSeriesModel : public QAbstractTableModel
   Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged)
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers NOTIFY allowedServersChanged)
   Q_PROPERTY(bool autoGenerateThumbnails READ autoGenerateThumbnails WRITE setAutoGenerateThumbnails NOTIFY autoGenerateThumbnailsChanged)
+  Q_PROPERTY(bool autoRetrieveFullSeries READ autoRetrieveFullSeries WRITE setAutoRetrieveFullSeries NOTIFY autoRetrieveFullSeriesChanged)
   Q_PROPERTY(QThread::Priority jobPriority READ jobPriority WRITE setJobPriority NOTIFY jobPriorityChanged)
 
 public:
@@ -163,6 +164,13 @@ public:
   void setAutoGenerateThumbnails(bool enable);
   bool autoGenerateThumbnails() const;
 
+  /// Enable/disable the automatic retrieval of all the frames of a series as soon as
+  /// its thumbnail has been generated (default: true, the historical behavior).
+  /// When disabled, only the central frame of each series is fetched, and the other
+  /// frames are retrieved when the user loads the series.
+  void setAutoRetrieveFullSeries(bool enable);
+  bool autoRetrieveFullSeries() const;
+
   /// Allowed servers for query/retrieve operations
   void setAllowedServers(const QStringList& servers);
   QStringList allowedServers() const;
@@ -203,6 +211,13 @@ public:
   /// Retrieve all series from the DICOM server
   Q_INVOKABLE void retrieveAllSeries();
 
+  /// Retrieve every frame of a series that is still partially on the server, without
+  /// discarding what has already been retrieved.
+  /// Used when the automatic prefetch of the full series is disabled and the user asks
+  /// for the series to be loaded.
+  /// \sa setAutoRetrieveFullSeries, forceRetrieveSeries
+  Q_INVOKABLE void retrieveSeries(const QString& seriesInstanceUID);
+
   /// Force query stop/retry of specific seriesInstanceUID
   Q_INVOKABLE bool isSeriesCloud(const QString& seriesInstanceUID);
   Q_INVOKABLE void forceUpdateSeriesJobs(const QString& seriesInstanceUID);
@@ -236,6 +251,7 @@ signals:
 
   /// Emitted when auto-generate thumbnails setting changes
   void autoGenerateThumbnailsChanged(bool enable);
+  void autoRetrieveFullSeriesChanged(bool enable);
 
   /// Emitted when allowed servers change
   void allowedServersChanged(const QStringList& servers);

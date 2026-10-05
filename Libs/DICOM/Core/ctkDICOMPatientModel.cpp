@@ -122,6 +122,8 @@ public:
 
   // Configuration
   int NumberOfOpenedStudiesPerPatient;
+  QString CurrentPatientUID;
+  bool AutoRetrieveFullSeries{true};
   int ThumbnailSize;
 
   // State
@@ -521,8 +523,11 @@ ctkDICOMStudyModel* ctkDICOMPatientModelPrivate::createStudyModel(const QString&
   studyModel->setAllowedServers(q->allowedServers(patientUID));
   studyModel->setNumberOfOpenedStudies(this->NumberOfOpenedStudiesPerPatient);
   studyModel->setThumbnailSize(this->ThumbnailSize);
+  studyModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
   studyModel->setPatientID(patientID);
   studyModel->setPatientUID(patientUID);
+  // Only the current patient opens its studies, and therefore retrieves, on its own
+  studyModel->setAutoOpenStudiesEnabled(patientUID == this->CurrentPatientUID);
   this->StudyModels.insert(patientUID, studyModel);
 
   ctkDICOMStudyFilterProxyModel* studyFilterProxyModel = new ctkDICOMStudyFilterProxyModel(q);
@@ -550,6 +555,7 @@ void ctkDICOMPatientModelPrivate::updateStudyModelFilters(ctkDICOMStudyModel* st
   studyModel->setAllowedServers(q->allowedServers(studyModel->patientUID()));
   studyModel->setNumberOfOpenedStudies(this->NumberOfOpenedStudiesPerPatient);
   studyModel->setThumbnailSize(this->ThumbnailSize);
+  studyModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
 }
 
 //------------------------------------------------------------------------------
@@ -1150,6 +1156,37 @@ int ctkDICOMPatientModel::numberOfOpenedStudiesPerPatient() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMPatientModel::setCurrentPatientUID(const QString& patientUID)
+{
+  Q_D(ctkDICOMPatientModel);
+  if (d->CurrentPatientUID == patientUID)
+  {
+    return;
+  }
+
+  d->CurrentPatientUID = patientUID;
+
+  // Let only this patient's study model open its studies by itself. The models of
+  // the other patients keep their studies collapsed, so no series is retrieved for
+  // them until they are selected.
+  foreach (ctkDICOMStudyModel* studyModel, this->allStudyModels())
+  {
+    if (!studyModel)
+    {
+      continue;
+    }
+    studyModel->setAutoOpenStudiesEnabled(studyModel->patientUID() == patientUID);
+  }
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMPatientModel::currentPatientUID() const
+{
+  Q_D(const ctkDICOMPatientModel);
+  return d->CurrentPatientUID;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMPatientModel::setNumberOfOpenedStudiesPerPatient(int count)
 {
   Q_D(ctkDICOMPatientModel);
@@ -1161,6 +1198,32 @@ void ctkDICOMPatientModel::setNumberOfOpenedStudiesPerPatient(int count)
   d->NumberOfOpenedStudiesPerPatient = count;
   this->updateStudyModelsFilters();
   emit this->numberOfOpenedStudiesPerPatientChanged(count);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMPatientModel::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMPatientModel);
+  return d->AutoRetrieveFullSeries;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientModel::setAutoRetrieveFullSeries(bool enabled)
+{
+  Q_D(ctkDICOMPatientModel);
+  if (d->AutoRetrieveFullSeries == enabled)
+  {
+    return;
+  }
+
+  d->AutoRetrieveFullSeries = enabled;
+  foreach (ctkDICOMStudyModel* studyModel, this->allStudyModels())
+  {
+    if (studyModel)
+    {
+      studyModel->setAutoRetrieveFullSeries(enabled);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------

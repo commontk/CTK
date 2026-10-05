@@ -61,6 +61,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMPatientModel : public QAbstractListModel
   Q_PROPERTY(QString seriesDescriptionFilter READ seriesDescriptionFilter WRITE setSeriesDescriptionFilter NOTIFY seriesDescriptionFilterChanged)
   Q_PROPERTY(QStringList modalityFilter READ modalityFilter WRITE setModalityFilter NOTIFY modalityFilterChanged)
   Q_PROPERTY(int numberOfOpenedStudiesPerPatient READ numberOfOpenedStudiesPerPatient WRITE setNumberOfOpenedStudiesPerPatient NOTIFY numberOfOpenedStudiesPerPatientChanged)
+  Q_PROPERTY(QString currentPatientUID READ currentPatientUID WRITE setCurrentPatientUID)
   Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize NOTIFY thumbnailSizeChanged)
   Q_PROPERTY(bool queryInProgress READ queryInProgress WRITE setQueryInProgress NOTIFY queryInProgressChanged)
 
@@ -177,6 +178,22 @@ public:
   /// Get/Set number of studies that should be opened by default per patient
   int numberOfOpenedStudiesPerPatient() const;
   void setNumberOfOpenedStudiesPerPatient(int count);
+
+  /// Get/Set the patient currently being looked at.
+  ///
+  /// Only the study model of this patient opens its first studies on its own, and
+  /// opening a study is what starts retrieving its series. Without it, querying
+  /// several patients would fetch image data for all of them at once.
+  /// \sa ctkDICOMStudyModel::setAutoOpenStudiesEnabled
+  QString currentPatientUID() const;
+  void setCurrentPatientUID(const QString& patientUID);
+
+  /// Get/Set whether all the frames of a series are fetched automatically, or only
+  /// when the user loads the series.
+  /// default: true
+  /// \sa ctkDICOMSeriesModel::setAutoRetrieveFullSeries
+  bool autoRetrieveFullSeries() const;
+  void setAutoRetrieveFullSeries(bool enabled);
 
   /// Get/Set thumbnail size for series in pixels
   int thumbnailSize() const;

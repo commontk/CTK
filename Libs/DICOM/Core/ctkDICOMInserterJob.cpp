@@ -35,7 +35,6 @@ static ctkLogger logger ("org.commontk.dicom.DICOMInserterJob");
 ctkDICOMInserterJob::ctkDICOMInserterJob(QObject* parent)
   : Superclass(parent)
 {
-  this->MaximumConcurrentJobsPerType = 1;
 }
 
 //------------------------------------------------------------------------------
@@ -47,25 +46,36 @@ QString ctkDICOMInserterJob::loggerReport(const QString& status)
   QString fullLogMsg;
   QString logMsg;
 
-  QString uids;
-  foreach (QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet, this->JobResponseSets)
+  // One line per response set, with the instances it carries
+  QStringList responseSetReports;
+  int numberOfInstances = 0;
+  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, this->JobResponseSets)
   {
-    uids += "job type : " + JobResponseSet->jobTypeString() + ": \n" ;
-    uids += JobResponseSet->datasets().keys().join(", ") + ": \n";
+    QStringList instanceUIDs = jobResponseSet->datasets().keys();
+    numberOfInstances += instanceUIDs.count();
+    responseSetReports << QString("  %1: %2")
+                              .arg(jobResponseSet->jobTypeString())
+                              .arg(instanceUIDs.isEmpty() ? tr("no instance") : instanceUIDs.join(", "));
   }
 
-  fullLogMsg = QString("ctkDICOMInserterJob: insert job %1. "
-                       "Number of jobResponseSet processing: %2.\n "
-                       "uids: \n  %3\n")
+  fullLogMsg = QString("ctkDICOMInserterJob: insert job %1.\n"
+                       "JobUID: %2\n"
+                       "Response sets: %3\n"
+                       "Instances: %4\n"
+                       "%5")
                       .arg(status)
+                      .arg(this->jobUID())
                       .arg(this->JobResponseSets.count())
-                      .arg(uids);
-  logMsg = QString("Insert job %1. "
-                   "Number of jobResponseSet processing: %2.\n "
-                   "uids: \n %3\n")
+                      .arg(numberOfInstances)
+                      .arg(responseSetReports.isEmpty() ? QString() : responseSetReports.join("\n") + "\n");
+
+  // The per-job log is shown in the UI for every status change, so it stays a
+  // one line summary: repeating the instance UIDs on each of them made the same
+  // block appear once for the start and once for the completion of the job.
+  logMsg = QString("Insert job %1. Response sets: %2, instances: %3.\n")
                   .arg(status)
                   .arg(this->JobResponseSets.count())
-                  .arg(uids);
+                  .arg(numberOfInstances);
 
   QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
   QString logHeader = currentDateTime + " INFO: ";
@@ -119,7 +129,9 @@ ctkAbstractJob* ctkDICOMInserterJob::clone() const
   newInserterJob->setStudyInstanceUID(this->studyInstanceUID());
   newInserterJob->setSeriesInstanceUID(this->seriesInstanceUID());
   newInserterJob->setSOPInstanceUID(this->sopInstanceUID());
-  newInserterJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newInserterJob->setRetryEnabled(this->retryEnabled());
+  newInserterJob->setMaximumRetryWait(this->maximumRetryWait());
+  newInserterJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newInserterJob->setRetryDelay(this->retryDelay());
   newInserterJob->setRetryCounter(this->retryCounter());
   newInserterJob->setIsPersistent(this->isPersistent());

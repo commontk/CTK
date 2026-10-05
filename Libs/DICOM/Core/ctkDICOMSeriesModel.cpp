@@ -114,6 +114,7 @@ public:
   int ThumbnailSize;
   bool IsUpdating;
   bool AutoGenerateThumbnails;
+  bool AutoRetrieveFullSeries;
   QThread::Priority JobPriority;
 };
 
@@ -127,6 +128,7 @@ ctkDICOMSeriesModelPrivate::ctkDICOMSeriesModelPrivate(ctkDICOMSeriesModel& obj)
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
   this->AutoGenerateThumbnails = false;
+  this->AutoRetrieveFullSeries = true;
   this->JobPriority = QThread::NormalPriority;
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
@@ -777,6 +779,25 @@ bool ctkDICOMSeriesModel::autoGenerateThumbnails() const
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMSeriesModel::setAutoRetrieveFullSeries(bool enable)
+{
+  Q_D(ctkDICOMSeriesModel);
+  if (d->AutoRetrieveFullSeries == enable)
+  {
+    return;
+  }
+  d->AutoRetrieveFullSeries = enable;
+  emit this->autoRetrieveFullSeriesChanged(enable);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMSeriesModel::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMSeriesModel);
+  return d->AutoRetrieveFullSeries;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMSeriesModel::setAllowedServers(const QStringList& servers)
 {
   Q_D(ctkDICOMSeriesModel);
@@ -1021,6 +1042,40 @@ void ctkDICOMSeriesModel::forceUpdateSeriesJobs(const QString &seriesInstanceUID
     }
     d->Scheduler->retryJobs(jobUIDs);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMSeriesModel::retrieveSeries(const QString& seriesInstanceUID)
+{
+  Q_D(ctkDICOMSeriesModel);
+  if (!d->Scheduler)
+  {
+    return;
+  }
+
+  if (d->AllowedServers.isEmpty())
+  {
+    logger.warn("ctkDICOMSeriesModel::retrieveSeries: No allowed servers specified, cannot retrieve series.");
+    return;
+  }
+
+  int linearIndex = d->findSeriesLinearIndex(seriesInstanceUID);
+  if (linearIndex < 0 || linearIndex >= d->SeriesList.size())
+  {
+    return;
+  }
+
+  ctkDICOMSeriesModelPrivate::SeriesData& seriesData = d->SeriesList[linearIndex];
+  if (!seriesData.isCloud)
+  {
+    return;
+  }
+
+  d->Scheduler->retrieveSeries(seriesData.patientID,
+                               seriesData.studyInstanceUID,
+                               seriesData.seriesInstanceUID,
+                               QThread::HighPriority,
+                               d->AllowedServers);
 }
 
 //----------------------------------------------------------------------------
@@ -1664,8 +1719,9 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
     // Central instance has been retrieved, generate thumbnail
     d->generateThumbnailForSeries(seriesData.seriesInstanceUID);
 
-    // retrieve the full series if needed
-    if (seriesData.instanceCount > 1 && seriesData.isCloud)
+    // retrieve the full series if needed. When the automatic prefetch is disabled,
+    // the remaining frames are fetched only when the user loads the series.
+    if (seriesData.instanceCount > 1 && seriesData.isCloud && d->AutoRetrieveFullSeries)
     {
       // Retrieve the full series
       d->Scheduler->retrieveSeries(seriesData.patientID,
@@ -1680,8 +1736,14 @@ void ctkDICOMSeriesModel::updateGUIFromScheduler(const QVariant& data, const boo
       td.JobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance)
   {
     d->generateThumbnailForSeries(seriesData.seriesInstanceUID);
-    seriesData.operationProgress++;
-    seriesData.operationProgress = qMin(seriesData.operationProgress, seriesData.instanceCount);
+
+    // The frames are reported twice, when they arrive and when they are inserted:
+    // counting both would make the bar jump forward at every insert.
+    if (td.countsAsFrameProgress())
+    {
+      seriesData.operationProgress++;
+      seriesData.operationProgress = qMin(seriesData.operationProgress, seriesData.instanceCount);
+    }
 
     emit this->dataChanged(index, index, {OperationProgressRole});
     emit this->operationProgressChanged(index, seriesData.operationProgress);
@@ -1709,9 +1771,20 @@ void ctkDICOMSeriesModel::onJobStarted(const QVariant& data)
     return;
   }
 
-  if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
+  ctkDICOMSeriesModelPrivate::SeriesData& seriesData = d->SeriesList[linearIndex];
+
+  // A failed or stopped series is reattempted by querying its instances again, so the
+  // job that starts the new attempt is not necessarily the retrieve of the series
+  // itself: without this the thumbnail would keep the alert icon of the previous
+  // attempt while the frames are being retrieved again.
+  const bool restartsAfterFailure =
+    seriesData.operationStatus == ctkDICOMSeriesModel::Failed &&
+    (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+     td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
+
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+      restartsAfterFailure)
   {
-    ctkDICOMSeriesModelPrivate::SeriesData& seriesData = d->SeriesList[linearIndex];
     seriesData.operationStatus = ctkDICOMSeriesModel::InProgress;
     seriesData.operationProgress = 0;
     QModelIndex index = this->createIndex(linearIndex, 0);

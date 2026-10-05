@@ -133,6 +133,10 @@ Q_SIGNALS:
   /// Emitted when server settings are changed
   void serversSettingsChanged();
 
+  /// Emitted when the pending changes are discarded and the widgets are filled again
+  /// with the settings in use.
+  void settingsDiscarded();
+
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;
   enum ServerColumns
@@ -147,6 +151,8 @@ protected:
     AddressColumn,
     PortColumn,
     TimeoutColumn,
+    MaximumWorkersColumn,
+    MaximumRetryWaitColumn,
     ProtocolColumn,
     ProxyColumn
   };

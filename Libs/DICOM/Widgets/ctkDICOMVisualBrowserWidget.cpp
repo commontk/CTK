@@ -22,12 +22,15 @@
 =========================================================================*/
 
 // Qt includes
+#include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDate>
 #include <QDateEdit>
 #include <QEvent>
+#include <QFont>
 #include <QFormLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -38,6 +41,8 @@
 #include <QProgressDialog>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSet>
+#include <QSettings>
 #include <QTimer>
 
 // CTK includes
@@ -127,15 +132,27 @@ public:
   QString createPatients(bool queryRetrieve = false,
                          const QStringList& queriedPatientIDs = QStringList(),
                          bool isImport = false);
-  void updatePatientViewDisplayModeFromModel();
+  void applyPatientViewDisplayMode();
+  QStringList visiblePatientUIDs() const;
+  void createPatientLayoutActions();
+  void updatePatientLayoutMenuState();
   bool areFiltersEmpty();
   void resetFilters();
   void updateUIAfterFilters();
   void updateFiltersWarnings();
+  /// The query button shows what the browser is waiting for, which is a set of jobs
+  /// and not the last signal that arrived: the job signals are batched and reordered,
+  /// so the last one says nothing about what is still running.
+  void setQueryJobInProgress(const QString& jobUID, bool inProgress);
+  void updateQueryButtonState();
   void showQueryLimitWarnings(const QStringList& warningMessages);
+  QString retryTimeoutWarning(const ctkDICOMJobDetail& td) const;
   void setBackgroundColorToFilterWidgets(bool warning = false);
   void setBackgroundColorToWidget(QColor color, QWidget* widget);
   void updateFiltersLayoutOrientation();
+  /// Place the operations of the browser and the storage settings, which share one
+  /// group box, shown after the list of servers.
+  void layoutOperationsGroupBox(bool horizontal);
   void updateFilteringLabelsAppearance(bool horizontal);
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
@@ -204,11 +221,19 @@ public:
 
   int NumberOfOpenedStudiesPerPatient;
   ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption ThumbnailSizePreset;
+  bool AutoRetrieveFullSeries{true};
+  ctkDICOMVisualBrowserWidget::PatientLayoutMode PatientLayout;
+  QActionGroup* PatientLayoutActionGroup;
+  QMenu* PatientLayoutMenu;
   bool SendActionVisible;
   bool DeleteActionVisible;
   bool AlwaysShowQueryButton;
   bool IsGUIUpdating;
   bool IsGUIHorizontal;
+  /// The query jobs the browser is still waiting for
+  QSet<QString> QueryJobUIDsInProgress;
+  /// Icon of the query button when no query job is left
+  QString QueryIdleIconPath{":/Icons/query.svg"};
   bool IsLoading;
   DirectQueryLevelEnum DirectQueryLevel;
   QString SelectedPatientUID;
@@ -249,6 +274,9 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
 
   this->NumberOfOpenedStudiesPerPatient = 2;
   this->ThumbnailSizePreset = ctkDICOMVisualBrowserWidget::Small;
+  this->PatientLayout = ctkDICOMVisualBrowserWidget::PatientLayoutAutomatic;
+  this->PatientLayoutActionGroup = nullptr;
+  this->PatientLayoutMenu = nullptr;
   this->SendActionVisible = false;
   this->DeleteActionVisible = true;
   this->AlwaysShowQueryButton = true;
@@ -441,11 +469,56 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->PatientModel->setScheduler(this->Scheduler);
   this->PatientModel->setNumberOfOpenedStudiesPerPatient(this->NumberOfOpenedStudiesPerPatient);
 
+  // Restore the automatic prefetch preference before any model is populated, so that
+  // the series models are created with the value the user chose.
+  QSettings prefetchSettings;
+  this->AutoRetrieveFullSeries =
+    prefetchSettings.value("DICOM/AutoRetrieveFullSeries", true).toBool();
+  this->PatientModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
+  this->AutoRetrieveFullSeriesCheckBox->setChecked(this->AutoRetrieveFullSeries);
+  this->SendActionVisibleCheckBox->setChecked(this->SendActionVisible);
+
+  // These two check boxes share the section, and the Apply and Discard buttons, of the
+  // server settings: changing one marks the settings as modified, and the change takes
+  // effect when the settings are applied.
+  QObject::connect(this->AutoRetrieveFullSeriesCheckBox, SIGNAL(toggled(bool)),
+                   this->ServerNodeWidget, SLOT(onSettingsModified()));
+  QObject::connect(this->SendActionVisibleCheckBox, SIGNAL(toggled(bool)),
+                   this->ServerNodeWidget, SLOT(onSettingsModified()));
+  QObject::connect(this->ServerNodeWidget, SIGNAL(settingsDiscarded()),
+                   q, SLOT(onServersSettingsDiscarded()));
+
+  // The operations of the browser and the storage settings of the server widget are
+  // one and the same section for the user, shown after the list of servers. The two
+  // check boxes move into the group box of the storage settings, which is laid out
+  // again with them by updateFiltersLayoutOrientation().
+  ctkCollapsibleGroupBox* operationsGroupBox = this->ServerNodeWidget->storageCollapsibleGroupBox();
+  QGridLayout* operationsLayout = operationsGroupBox ?
+    qobject_cast<QGridLayout*>(operationsGroupBox->layout()) : nullptr;
+  if (operationsLayout)
+  {
+    operationsGroupBox->setTitle(ctkDICOMVisualBrowserWidget::tr("Operations"));
+    operationsLayout->addWidget(this->AutoRetrieveFullSeriesCheckBox, 0, 0, 1, 2);
+    operationsLayout->addWidget(this->SendActionVisibleCheckBox, 1, 0, 1, 2);
+    // Emptied by the two lines above
+    delete this->OperationsCollapsibleGroupBox;
+    this->OperationsCollapsibleGroupBox = nullptr;
+    // The storage settings still sit in the row the check boxes now occupy
+    this->layoutOperationsGroupBox(this->IsGUIHorizontal);
+  }
+
   // Create and set the delegate for patient rendering
   ctkDICOMPatientDelegate* patientDelegate = new ctkDICOMPatientDelegate(q);
   this->PatientView->setItemDelegate(patientDelegate);
 
-  this->PatientView->setDisplayMode(ctkDICOMPatientView::TabMode);
+  // Restore the patient layout preference. The mode itself is applied further
+  // below, once the view has a model: switching it needs a selection model.
+  QSettings layoutSettings;
+  this->PatientLayout = static_cast<ctkDICOMVisualBrowserWidget::PatientLayoutMode>(
+    layoutSettings.value("DICOM/PatientViewLayoutMode",
+                         static_cast<int>(ctkDICOMVisualBrowserWidget::PatientLayoutAutomatic)).toInt());
+
+  this->createPatientLayoutActions();
 
   // Create filter proxy model for patients
   this->PatientFilterProxyModel->setSourceModel(this->PatientModel.data());
@@ -460,9 +533,16 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   // Set the proxy model on the view
   this->PatientView->setModel(this->PatientFilterProxyModel.data());
 
+  // Now that the view has a model, the restored layout preference can be applied
+  this->applyPatientViewDisplayMode();
+
   // Connect display mode changes to update proxy model
   QObject::connect(this->PatientView, &ctkDICOMPatientView::displayModeChanged,
                    q, &ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged);
+
+  // Connect current patient changes: only the current patient retrieves its studies
+  QObject::connect(this->PatientView, &ctkDICOMPatientView::currentPatientChanged,
+                   q, &ctkDICOMVisualBrowserWidget::onCurrentPatientChanged);
 
   // Connect patient model's studyModelCreated signal to handle study signals
   QObject::connect(this->PatientModel.data(), &ctkDICOMPatientModel::studyModelCreated,
@@ -571,6 +651,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::disconnectScheduler()
                       q, SLOT(onJobFailed(QList<QVariant>)));
   QObject::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
                       q, SLOT(onJobFinished(QList<QVariant>)));
+  QObject::disconnect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                      q, SLOT(onJobAttemptFailed(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -592,6 +674,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::connectScheduler()
                    q, SLOT(onJobFailed(QList<QVariant>)));
   QObject::connect(this->Scheduler.data(), SIGNAL(jobFinished(QList<QVariant>)),
                    q, SLOT(onJobFinished(QList<QVariant>)));
+  // A job that will be reattempted is replaced by a copy of itself with a new UID, so
+  // the browser stops waiting for the one that failed.
+  QObject::connect(this->Scheduler.data(), SIGNAL(jobAttemptFailed(QList<QVariant>)),
+                   q, SLOT(onJobAttemptFailed(QList<QVariant>)));
 }
 
 //----------------------------------------------------------------------------
@@ -913,25 +999,64 @@ bool ctkDICOMVisualBrowserWidgetPrivate::dispatchFilteredQuery(
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidgetPrivate::updatePatientViewDisplayModeFromModel()
+QStringList ctkDICOMVisualBrowserWidgetPrivate::visiblePatientUIDs() const
 {
-  if (!this->PatientModel || !this->PatientView)
+  QStringList patientUIDs;
+  if (!this->PatientModel)
+  {
+    return patientUIDs;
+  }
+
+  for (int row = 0; row < this->PatientModel->rowCount(); ++row)
+  {
+    QModelIndex patientIndex = this->PatientModel->index(row, 0);
+    if (!patientIndex.data(ctkDICOMPatientModel::IsVisibleRole).toBool())
+    {
+      continue;
+    }
+
+    QString patientUID = this->PatientModel->patientUID(patientIndex);
+    if (!patientUID.isEmpty() && !patientUIDs.contains(patientUID))
+    {
+      patientUIDs.append(patientUID);
+    }
+  }
+
+  return patientUIDs;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::applyPatientViewDisplayMode()
+{
+  if (!this->PatientView)
   {
     return;
   }
 
-  int visiblePatientCount = 0;
-  for (int row = 0; row < this->PatientModel->rowCount(); ++row)
+  ctkDICOMPatientView::DisplayMode viewMode = ctkDICOMPatientView::TabMode;
+  switch (this->PatientLayout)
   {
-    QModelIndex patientIndex = this->PatientModel->index(row, 0);
-    if (patientIndex.data(ctkDICOMPatientModel::IsVisibleRole).toBool())
+    case ctkDICOMVisualBrowserWidget::PatientLayoutTabs:
+      viewMode = ctkDICOMPatientView::TabMode;
+      break;
+    case ctkDICOMVisualBrowserWidget::PatientLayoutList:
+      viewMode = ctkDICOMPatientView::ListMode;
+      break;
+    case ctkDICOMVisualBrowserWidget::PatientLayoutAutomatic:
+    default:
     {
-      visiblePatientCount++;
+      if (!this->PatientModel)
+      {
+        return;
+      }
+
+      // Tabs stop being readable once there are too many patients to fit a single row
+      int visiblePatientCount = this->visiblePatientUIDs().count();
+      viewMode = visiblePatientCount > 5 ? ctkDICOMPatientView::ListMode : ctkDICOMPatientView::TabMode;
+      break;
     }
   }
 
-  ctkDICOMPatientView::DisplayMode viewMode =
-    visiblePatientCount > 5 ? ctkDICOMPatientView::ListMode : ctkDICOMPatientView::TabMode;
   this->PatientView->setDisplayMode(viewMode);
 
   if (this->PatientFilterProxyModel)
@@ -940,6 +1065,88 @@ void ctkDICOMVisualBrowserWidgetPrivate::updatePatientViewDisplayModeFromModel()
       viewMode == ctkDICOMPatientView::TabMode
         ? ctkDICOMPatientFilterProxyModel::TabMode
         : ctkDICOMPatientFilterProxyModel::ListMode);
+  }
+
+  this->updatePatientLayoutMenuState();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::createPatientLayoutActions()
+{
+  Q_Q(ctkDICOMVisualBrowserWidget);
+
+  this->PatientLayoutActionGroup = new QActionGroup(q);
+
+  struct
+  {
+    ctkDICOMVisualBrowserWidget::PatientLayoutMode mode;
+    QString text;
+    QString toolTip;
+    QString iconPath;
+  } layouts[] = {
+    { ctkDICOMVisualBrowserWidget::PatientLayoutAutomatic,
+      ctkDICOMVisualBrowserWidget::tr("Automatic"),
+      ctkDICOMVisualBrowserWidget::tr("Show the patients as tabs, switching to a list when there are too many of them"),
+      ":/Icons/auto.svg" },
+    { ctkDICOMVisualBrowserWidget::PatientLayoutTabs,
+      ctkDICOMVisualBrowserWidget::tr("Tabs"),
+      ctkDICOMVisualBrowserWidget::tr("Always show the patients as tabs"),
+      ":/Icons/tab.svg" },
+    { ctkDICOMVisualBrowserWidget::PatientLayoutList,
+      ctkDICOMVisualBrowserWidget::tr("List"),
+      ctkDICOMVisualBrowserWidget::tr("Always show the patients as a list"),
+      ":/Icons/list.svg" },
+  };
+
+  for (const auto& layout : layouts)
+  {
+    QAction* action = new QAction(layout.text, this->PatientLayoutActionGroup);
+    if (!layout.iconPath.isEmpty())
+    {
+      action->setIcon(QIcon(layout.iconPath));
+    }
+    action->setToolTip(layout.toolTip);
+    // The actions are deliberately not checkable: a checkable action is drawn
+    // with a check indicator next to its icon, and styling that away forces the
+    // whole menu through the stylesheet style, which washes out the entries that
+    // are not checked. The active layout is marked with a bold label instead,
+    // which keeps the menu rendered by the application style.
+    action->setData(static_cast<int>(layout.mode));
+    this->PatientLayoutActionGroup->addAction(action);
+  }
+
+  // The menu only references the actions, it does not own them: the same actions
+  // are reused by the patient context menu, so both stay in sync automatically.
+  this->PatientLayoutMenu = new QMenu(q);
+  this->PatientLayoutMenu->addActions(this->PatientLayoutActionGroup->actions());
+  this->LayoutPushButton->setMenu(this->PatientLayoutMenu);
+
+  QObject::connect(this->PatientLayoutActionGroup, SIGNAL(triggered(QAction*)),
+                   q, SLOT(onPatientLayoutActionTriggered(QAction*)));
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updatePatientLayoutMenuState()
+{
+  if (!this->PatientLayoutActionGroup)
+  {
+    return;
+  }
+
+  foreach (QAction* action, this->PatientLayoutActionGroup->actions())
+  {
+    bool isActiveLayout = action->data().toInt() == static_cast<int>(this->PatientLayout);
+    QFont font = action->font();
+    font.setBold(isActiveLayout);
+    action->setFont(font);
+  }
+
+  // The button icon shows the layout currently in effect, which under
+  // PatientLayoutAutomatic is not implied by the selected action.
+  if (this->LayoutPushButton && this->PatientView)
+  {
+    bool isTabMode = this->PatientView->displayMode() == ctkDICOMPatientView::TabMode;
+    this->LayoutPushButton->setIcon(QIcon(isTabMode ? ":/Icons/tab.svg" : ":/Icons/list.svg"));
   }
 }
 
@@ -987,7 +1194,7 @@ QString ctkDICOMVisualBrowserWidgetPrivate::createPatients(bool queryRetrieve,
 
   // Refresh the model to populate with filtered patients
   this->PatientModel->refresh();
-  this->updatePatientViewDisplayModeFromModel();
+  this->applyPatientViewDisplayMode();
 
   QString patientUIDToShow;
   // If this is an import and we have new patients, select the most recent one
@@ -1152,6 +1359,64 @@ void ctkDICOMVisualBrowserWidgetPrivate::showQueryLimitWarnings(const QStringLis
 }
 
 //----------------------------------------------------------------------------
+QString ctkDICOMVisualBrowserWidgetPrivate::retryTimeoutWarning(const ctkDICOMJobDetail& td) const
+{
+  if (!td.retryWaitElapsed())
+  {
+    return QString();
+  }
+
+  const int secondsWaited = qMax(1, td.MaximumRetryWait / 1000);
+  if (td.ConnectionName.isEmpty())
+  {
+    return ctkDICOMVisualBrowserWidget::tr("The server did not answer and the operation was given up after "
+                                           "retrying for %1 s. Check the server settings or increase the "
+                                           "maximum retry wait.").arg(secondsWaited);
+  }
+
+  return ctkDICOMVisualBrowserWidget::tr("The server %1 did not answer and the operation was given up after "
+                                         "retrying for %2 s. Check the settings of %1 or increase its "
+                                         "maximum retry wait.").arg(td.ConnectionName).arg(secondsWaited);
+}
+
+void ctkDICOMVisualBrowserWidgetPrivate::setQueryJobInProgress(const QString& jobUID, bool inProgress)
+{
+  if (jobUID.isEmpty())
+  {
+    return;
+  }
+
+  if (inProgress)
+  {
+    this->QueryJobUIDsInProgress.insert(jobUID);
+  }
+  else
+  {
+    this->QueryJobUIDsInProgress.remove(jobUID);
+  }
+
+  this->updateQueryButtonState();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::updateQueryButtonState()
+{
+  const bool queryInProgress = !this->QueryJobUIDsInProgress.isEmpty();
+  this->SearchPushButton->setIcon(QIcon(queryInProgress ?
+    QString(":/Icons/wait.svg") : this->QueryIdleIconPath));
+
+  if (this->PatientModel)
+  {
+    this->PatientModel->setQueryInProgress(queryInProgress);
+  }
+  if (this->PatientView)
+  {
+    this->PatientView->viewport()->update();
+  }
+}
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 {
   if (!this->DicomDatabase)
@@ -1312,6 +1577,58 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFilteringLabelsAppearance(bool ho
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::layoutOperationsGroupBox(bool horizontal)
+{
+  ctkCollapsibleGroupBox* operationsGroupBox = this->ServerNodeWidget ?
+    this->ServerNodeWidget->storageCollapsibleGroupBox() : nullptr;
+  QGridLayout* operationsLayout = operationsGroupBox ?
+    qobject_cast<QGridLayout*>(operationsGroupBox->layout()) : nullptr;
+  if (!operationsLayout)
+  {
+    return;
+  }
+
+  // Get the widgets of the storage settings by their object names
+  ctkCheckBox* storageEnabledCheckBox = operationsGroupBox->findChild<ctkCheckBox*>("StorageEnabledCheckBox");
+  QLabel* storageAETitleLabel = operationsGroupBox->findChild<QLabel*>("StorageAETitleLabel");
+  QLineEdit* storageAETitle = operationsGroupBox->findChild<QLineEdit*>("StorageAETitle");
+  QLabel* storagePortLabel = operationsGroupBox->findChild<QLabel*>("StoragePortLabel");
+  QLineEdit* storagePort = operationsGroupBox->findChild<QLineEdit*>("StoragePort");
+  QLabel* storageStatusLabel = operationsGroupBox->findChild<QLabel*>("StorageStatusLabel");
+  QLabel* storageStatusValueLabel = operationsGroupBox->findChild<QLabel*>("StorageStatusValueLabel");
+
+  // The operations of the browser share this group box with the storage settings and
+  // take the first rows, unless the merge done in init() did not take place.
+  int storageRow = 0;
+  if (!this->OperationsCollapsibleGroupBox)
+  {
+    this->setGridWidget(operationsLayout, this->AutoRetrieveFullSeriesCheckBox, storageRow++, 0, 1, 2);
+    this->setGridWidget(operationsLayout, this->SendActionVisibleCheckBox, storageRow++, 0, 1, 2);
+  }
+
+  if (!horizontal)
+  {
+    this->setGridWidget(operationsLayout, storageEnabledCheckBox, storageRow, 0, 1, 2);
+    this->setGridWidget(operationsLayout, storageAETitleLabel, storageRow + 1, 0);
+    this->setGridWidget(operationsLayout, storageAETitle, storageRow + 1, 1);
+    this->setGridWidget(operationsLayout, storagePortLabel, storageRow + 2, 0);
+    this->setGridWidget(operationsLayout, storagePort, storageRow + 2, 1);
+    this->setGridWidget(operationsLayout, storageStatusLabel, storageRow + 3, 0);
+    this->setGridWidget(operationsLayout, storageStatusValueLabel, storageRow + 3, 1);
+  }
+  else
+  {
+    this->setGridWidget(operationsLayout, storageEnabledCheckBox, storageRow, 0);
+    this->setGridWidget(operationsLayout, storageAETitleLabel, storageRow, 1);
+    this->setGridWidget(operationsLayout, storageAETitle, storageRow, 2);
+    this->setGridWidget(operationsLayout, storagePortLabel, storageRow, 3);
+    this->setGridWidget(operationsLayout, storagePort, storageRow, 4);
+    this->setGridWidget(operationsLayout, storageStatusLabel, storageRow, 5);
+    this->setGridWidget(operationsLayout, storageStatusValueLabel, storageRow, 6);
+  }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
@@ -1347,6 +1664,11 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
   {
     horizontal = false;
   }
+
+  // The operations group is placed on every pass: its widgets come from two different
+  // widgets and are put together at run time, so they must be arranged whether or not
+  // the orientation changed.
+  this->layoutOperationsGroupBox(horizontal);
 
   if (this->IsGUIHorizontal == horizontal)
   {
@@ -1397,54 +1719,26 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersLayoutOrientation()
   QWidget* searchPushButton = this->SearchPushButton;
   QWidget* closePushButton = this->ClosePushButton;
   QWidget* importPushButton = this->ImportPushButton;
+  QWidget* layoutPushButton = this->LayoutPushButton;
   ctkDynamicSpacer *actionsDynamicSpacer = this->ActionsDynamicSpacer;
 
+  // Every widget of the group is placed: one left out keeps the cell it had in the
+  // other arrangement, which another widget is then drawn on top of.
   if (!this->IsGUIHorizontal)
   {
     this->setGridWidget(actionGridLayout, searchPushButton, 0, 0);
     this->setGridWidget(actionGridLayout, closePushButton, 1, 0);
     this->setGridWidget(actionGridLayout, importPushButton, 2, 0);
-    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 3, 0);
+    this->setGridWidget(actionGridLayout, layoutPushButton, 3, 0);
+    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 4, 0);
   }
   else
   {
     this->setGridWidget(actionGridLayout, searchPushButton, 0, 0, 2, 1);
     this->setGridWidget(actionGridLayout, closePushButton, 0, 1);
     this->setGridWidget(actionGridLayout, importPushButton, 1, 1);
-    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 2, 0);
-  }
-
-  // Get widgets from the storageGridLayout by their object names
-  QLabel* storageEnabledLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageEnabledLabel");
-  ctkCheckBox* storageEnabledCheckBox = storageCollapsibleGroupBox->findChild<ctkCheckBox*>("StorageEnabledCheckBox");
-  QLabel* storageAETitleLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageAETitleLabel");
-  QLineEdit* storageAETitle = storageCollapsibleGroupBox->findChild<QLineEdit*>("StorageAETitle");
-  QLabel* storagePortLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StoragePortLabel");
-  QLineEdit* storagePort = storageCollapsibleGroupBox->findChild<QLineEdit*>("StoragePort");
-  QLabel* storageStatusLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageStatusLabel");
-  QLabel* storageStatusValueLabel = storageCollapsibleGroupBox->findChild<QLabel*>("StorageStatusValueLabel");
-
-  if (!this->IsGUIHorizontal)
-  {
-    this->setGridWidget(storageGridLayout, storageEnabledLabel, 0, 0);
-    this->setGridWidget(storageGridLayout, storageEnabledCheckBox, 0, 1);
-    this->setGridWidget(storageGridLayout, storageAETitleLabel, 1, 0);
-    this->setGridWidget(storageGridLayout, storageAETitle, 1, 1);
-    this->setGridWidget(storageGridLayout, storagePortLabel, 2, 0);
-    this->setGridWidget(storageGridLayout, storagePort, 2, 1);
-    this->setGridWidget(storageGridLayout, storageStatusLabel, 3, 0);
-    this->setGridWidget(storageGridLayout, storageStatusValueLabel, 3, 1);
-  }
-  else
-  {
-    this->setGridWidget(storageGridLayout, storageEnabledLabel, 0, 0);
-    this->setGridWidget(storageGridLayout, storageEnabledCheckBox, 0, 1);
-    this->setGridWidget(storageGridLayout, storageAETitleLabel, 0, 2);
-    this->setGridWidget(storageGridLayout, storageAETitle, 0, 3);
-    this->setGridWidget(storageGridLayout, storagePortLabel, 0, 4);
-    this->setGridWidget(storageGridLayout, storagePort, 0, 5);
-    this->setGridWidget(storageGridLayout, storageStatusLabel, 0, 6);
-    this->setGridWidget(storageGridLayout, storageStatusValueLabel, 0, 7);
+    this->setGridWidget(actionGridLayout, layoutPushButton, 2, 0, 1, 2);
+    this->setGridWidget(actionGridLayout, actionsDynamicSpacer, 3, 0, 1, 2);
   }
 
   q->setUpdatesEnabled(true);
@@ -1766,7 +2060,6 @@ CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QStringList, filteringModalities, Filte
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, int, setNumberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, int, numberOfOpenedStudiesPerPatient, NumberOfOpenedStudiesPerPatient);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMVisualBrowserWidget::ThumbnailSizePresetOption, thumbnailSizePreset, ThumbnailSizePreset);
-CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionVisible);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isSendActionVisible, SendActionVisible);
 CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible);
 CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isDeleteActionVisible, DeleteActionVisible);
@@ -1799,6 +2092,79 @@ void ctkDICOMVisualBrowserWidget::setThumbnailSizePreset(ctkDICOMVisualBrowserWi
   {
     d->PatientModel->setThumbnailSize(d->computeThumbnailSizeInPixels(thumbnailSizePreset));
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::setSendActionVisible(bool visible)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  d->SendActionVisible = visible;
+
+  // The application can show or hide the action on its own, so the check box follows
+  // the property rather than being the only one to set it.
+  if (d->SendActionVisibleCheckBox->isChecked() != visible)
+  {
+    bool wasBlocking = d->SendActionVisibleCheckBox->blockSignals(true);
+    d->SendActionVisibleCheckBox->setChecked(visible);
+    d->SendActionVisibleCheckBox->blockSignals(wasBlocking);
+  }
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMVisualBrowserWidget::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMVisualBrowserWidget);
+  return d->AutoRetrieveFullSeries;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::setAutoRetrieveFullSeries(bool enable)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (d->AutoRetrieveFullSeries == enable)
+  {
+    return;
+  }
+
+  d->AutoRetrieveFullSeries = enable;
+  if (d->PatientModel)
+  {
+    d->PatientModel->setAutoRetrieveFullSeries(enable);
+  }
+
+  if (d->AutoRetrieveFullSeriesCheckBox->isChecked() != enable)
+  {
+    bool wasBlocking = d->AutoRetrieveFullSeriesCheckBox->blockSignals(true);
+    d->AutoRetrieveFullSeriesCheckBox->setChecked(enable);
+    d->AutoRetrieveFullSeriesCheckBox->blockSignals(wasBlocking);
+  }
+
+  QSettings settings;
+  settings.setValue("DICOM/AutoRetrieveFullSeries", enable);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::setPatientLayoutMode(ctkDICOMVisualBrowserWidget::PatientLayoutMode mode)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (d->PatientLayout == mode)
+  {
+    return;
+  }
+
+  d->PatientLayout = mode;
+
+  QSettings settings;
+  settings.setValue("DICOM/PatientViewLayoutMode", static_cast<int>(mode));
+
+  d->applyPatientViewDisplayMode();
+}
+
+//----------------------------------------------------------------------------
+ctkDICOMVisualBrowserWidget::PatientLayoutMode ctkDICOMVisualBrowserWidget::patientLayoutMode() const
+{
+  Q_D(const ctkDICOMVisualBrowserWidget);
+  return d->PatientLayout;
 }
 
 //----------------------------------------------------------------------------
@@ -2166,6 +2532,7 @@ void ctkDICOMVisualBrowserWidget::refreshBrowser(bool isImport)
   // Update the number of opened studies for each patient in the view,
   // since some studies may have been closed during refresh
   d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(this->numberOfOpenedStudiesPerPatient());
+  d->PatientView->studyListView()->updateLoadButton();
 }
 
 //------------------------------------------------------------------------------
@@ -2975,9 +3342,7 @@ void ctkDICOMVisualBrowserWidget::onJobStarted(QList<QVariant> datas)
         d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
-      d->SearchPushButton->setIcon(QIcon(":/Icons/wait.svg"));
-      d->PatientModel->setQueryInProgress(true);
-      d->PatientView->viewport()->update();
+      d->setQueryJobInProgress(td.JobUID, true);
       continue;
     }
 
@@ -3013,9 +3378,8 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
         d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
-      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-      d->PatientModel->setQueryInProgress(false);
-      d->PatientView->viewport()->update();
+      d->QueryIdleIconPath = ":/Icons/query_failed.svg";
+      d->setQueryJobInProgress(td.JobUID, false);
       if (d->isInitialDirectQueryJob(td.JobType, td))
       {
         d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
@@ -3034,6 +3398,24 @@ void ctkDICOMVisualBrowserWidget::onJobUserStopped(QList<QVariant> datas)
   }
 }
 
+void ctkDICOMVisualBrowserWidget::onJobAttemptFailed(QList<QVariant> datas)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // The job is being reattempted under a new UID: the browser is no longer waiting for
+  // this one, and the new attempt announces itself when it starts.
+  foreach (QVariant data, datas)
+  {
+    ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+    if (td.JobUID.isEmpty())
+    {
+      continue;
+    }
+    d->setQueryJobInProgress(td.JobUID, false);
+  }
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
 {
@@ -3051,22 +3433,29 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
       continue;
     }
 
+    // A job that exhausted its retry waiting time deserves a more specific message
+    // than the generic failure one: the server never answered.
+    const QString retryTimeoutWarning = d->retryTimeoutWarning(td);
+
     if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
       d->updateFiltersWarnings();
-      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-      d->WarningPushButton->setText(tr("The patients query failed. Please check the servers settings."));
+      d->WarningPushButton->setText(retryTimeoutWarning.isEmpty() ?
+        tr("The patients query failed. Please check the servers settings.") : retryTimeoutWarning);
       d->WarningPushButton->show();
-      d->PatientModel->setQueryInProgress(false);
-      d->PatientView->viewport()->update();
+      d->QueryIdleIconPath = ":/Icons/query_failed.svg";
+      d->setQueryJobInProgress(td.JobUID, false);
       continue;
     }
 
     if (d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
-      d->SearchPushButton->setIcon(QIcon(":/Icons/query_failed.svg"));
-      if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
+      if (!retryTimeoutWarning.isEmpty())
+      {
+        d->WarningPushButton->setText(retryTimeoutWarning);
+      }
+      else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
       {
         d->WarningPushButton->setText(tr("The studies query failed. Please check the servers settings."));
       }
@@ -3075,8 +3464,8 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
         d->WarningPushButton->setText(tr("The series query failed. Please check the servers settings."));
       }
       d->WarningPushButton->show();
-      d->PatientModel->setQueryInProgress(false);
-      d->PatientView->viewport()->update();
+      d->QueryIdleIconPath = ":/Icons/query_failed.svg";
+      d->setQueryJobInProgress(td.JobUID, false);
       d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
       continue;
     }
@@ -3088,6 +3477,13 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(QList<QVariant> datas)
         td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries)
     {
       d->PatientModel->onJobFailed(data);
+      if (!retryTimeoutWarning.isEmpty())
+      {
+        // Retrieves fail silently in the thumbnails, so an unreachable server is
+        // reported here as well.
+        d->WarningPushButton->setText(retryTimeoutWarning);
+        d->WarningPushButton->show();
+      }
     }
   }
 }
@@ -3134,9 +3530,8 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
         d->isInitialDirectQueryJob(td.JobType, td))
     {
       d->updateFiltersWarnings();
-      d->SearchPushButton->setIcon(QIcon(":/Icons/query_success.svg"));
-      d->PatientModel->setQueryInProgress(false);
-      d->PatientView->viewport()->update();
+      d->QueryIdleIconPath = ":/Icons/query_success.svg";
+      d->setQueryJobInProgress(td.JobUID, false);
       if (d->isInitialDirectQueryJob(td.JobType, td))
       {
         d->DirectQueryLevel = ctkDICOMVisualBrowserWidgetPrivate::DirectQueryLevelNone;
@@ -3157,9 +3552,30 @@ void ctkDICOMVisualBrowserWidget::onJobFinished(QList<QVariant> datas)
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onServersSettingsDiscarded()
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  // The operations share the Discard button of the server settings: the check boxes go
+  // back to what the browser is doing.
+  bool wasBlocking = d->AutoRetrieveFullSeriesCheckBox->blockSignals(true);
+  d->AutoRetrieveFullSeriesCheckBox->setChecked(d->AutoRetrieveFullSeries);
+  d->AutoRetrieveFullSeriesCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->SendActionVisibleCheckBox->blockSignals(true);
+  d->SendActionVisibleCheckBox->setChecked(d->SendActionVisible);
+  d->SendActionVisibleCheckBox->blockSignals(wasBlocking);
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onServersSettingsChanged()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+
+  // The operations share the Apply button of the server settings
+  this->setAutoRetrieveFullSeries(d->AutoRetrieveFullSeriesCheckBox->isChecked());
+  this->setSendActionVisible(d->SendActionVisibleCheckBox->isChecked());
+
   if (!d->PatientModel)
   {
     return;
@@ -3224,6 +3640,23 @@ void ctkDICOMVisualBrowserWidget::onPatientViewDisplayModeChanged(ctkDICOMPatien
           ? ctkDICOMPatientFilterProxyModel::TabMode
           : ctkDICOMPatientFilterProxyModel::ListMode
       );
+  d->updatePatientLayoutMenuState();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onPatientLayoutActionTriggered(QAction* action)
+{
+  if (!action)
+  {
+    return;
+  }
+
+  PatientLayoutMode mode = static_cast<PatientLayoutMode>(action->data().toInt());
+
+  // Switching the layout reparents the patient view in and out of a splitter.
+  // When the action comes from the context menu, that menu's event loop is still
+  // running, so defer the change until the menu has been closed and deleted.
+  QTimer::singleShot(0, this, [this, mode]() { this->setPatientLayoutMode(mode); });
 }
 
 //----------------------------------------------------------------------------
@@ -3318,9 +3751,51 @@ void ctkDICOMVisualBrowserWidget::onStudyReadyToOpen(const QString& studyInstanc
   }
 }
 
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onCurrentPatientChanged(const QString& patientUID)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  if (!d->PatientModel)
+  {
+    return;
+  }
+
+  // From now on only this patient opens its studies by itself
+  d->PatientModel->setCurrentPatientUID(patientUID);
+
+  if (patientUID.isEmpty())
+  {
+    return;
+  }
+
+  ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
+  if (!studyModel)
+  {
+    return;
+  }
+
+  // The studies of this patient were left collapsed while another patient was
+  // current, so open the first ones now. If they were queried while this patient
+  // was already current they are open already, and setStudyCollapsed() returns
+  // early for them, so nothing is retrieved twice.
+  // If the studies have not been queried yet there is nothing to open here: the
+  // query results will open them, now that this patient is the current one.
+  QStringList studiesToOpen = d->StudiesToOpenPerPatient.value(studyModel->patientID(), QStringList());
+  foreach (const QString& studyInstanceUID, studiesToOpen)
+  {
+    QModelIndex studyIndex = studyModel->indexFromStudyInstanceUID(studyInstanceUID);
+    if (studyIndex.isValid())
+    {
+      studyModel->setStudyCollapsed(studyIndex, false);
+    }
+  }
+}
+
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos, const QStringList& selectedPatientUIDs)
 {
+  Q_D(ctkDICOMVisualBrowserWidget);
+
   if (selectedPatientUIDs.isEmpty())
   {
     return;
@@ -3379,6 +3854,16 @@ void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos
   deleteAction->setVisible(this->isDeleteActionVisible());
   patientMenu->addAction(deleteAction);
 
+  // Delete all action, only worth offering when it deletes more than the selection
+  QStringList allPatientUIDs = d->visiblePatientUIDs();
+  QAction* deleteAllAction = nullptr;
+  if (this->isDeleteActionVisible() && allPatientUIDs.count() > patientCount)
+  {
+    QString deleteAllString = tr("Delete all %1 patients from local database").arg(allPatientUIDs.count());
+    deleteAllAction = new QAction(QIcon(":/Icons/delete.svg"), deleteAllString, patientMenu);
+    patientMenu->addAction(deleteAllAction);
+  }
+
   // Export action
   QString exportString = patientCount == 1 ? tr("Export patient to file system") :
     tr("Export %1 patients to file system").arg(patientCount);
@@ -3391,6 +3876,22 @@ void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos
   QAction* sendAction = new QAction(QIcon(":/Icons/upload.svg"), sendString, patientMenu);
   sendAction->setVisible(this->isSendActionVisible());
   patientMenu->addAction(sendAction);
+
+  // Patient layout submenu. The actions are owned by the widget and shared with the
+  // layout button menu, so adding them here does not transfer their ownership and
+  // their checked state stays in sync with the button.
+  if (d->PatientLayoutActionGroup)
+  {
+    patientMenu->addSeparator();
+    QMenu* layoutMenu = patientMenu->addMenu(tr("Patient layout"));
+    // The submenu is a popup of its own: without the same frameless translucent
+    // window as its parent, the rounded background of the stylesheet is drawn
+    // inside an opaque square native frame.
+    layoutMenu->setWindowFlags(layoutMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    layoutMenu->setAttribute(Qt::WA_TranslucentBackground);
+    layoutMenu->setStyleSheet(patientMenu->styleSheet());
+    layoutMenu->addActions(d->PatientLayoutActionGroup->actions());
+  }
 
   // Execute menu
   QAction* selectedAction = patientMenu->exec(globalPos);
@@ -3407,6 +3908,10 @@ void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos
   else if (selectedAction == deleteAction)
   {
     this->removePatients(selectedPatientUIDs);
+  }
+  else if (deleteAllAction && selectedAction == deleteAllAction)
+  {
+    this->removePatients(allPatientUIDs);
   }
   else if (selectedAction == exportAction)
   {
@@ -3767,6 +4272,10 @@ void ctkDICOMVisualBrowserWidget::removePatients(const QStringList& patientUIDs)
   // Refresh the patient model
   d->PatientModel->refresh();
   d->PatientView->selectPatientUID("");
+  if (d->PatientView->studyListView())
+  {
+    d->PatientView->studyListView()->updateLoadButton();
+  }
   QApplication::restoreOverrideCursor();
 }
 
@@ -3882,6 +4391,7 @@ void ctkDICOMVisualBrowserWidget::removeStudies(const QStringList& studyInstance
   }
   QString patientUID = d->PatientView->currentPatientUID();
   d->PatientModel->refreshPatient(patientUID);
+  studyListView->updateLoadButton();
   QApplication::restoreOverrideCursor();
 }
 
@@ -3997,20 +4507,32 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
   {
     int numberOfRunningJobsPerSeries = d->Scheduler->getJobsByDICOMUIDs({}, {}, {seriesInstanceUID}).count();
     bool seriesIsCloud = false;
+    ctkDICOMSeriesModel* seriesModel = nullptr;
 
     QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
     QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
     ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
     if (studyModel)
     {
-      ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
+      seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
       if (seriesModel)
       {
         seriesIsCloud = seriesModel->isSeriesCloud(seriesInstanceUID);
       }
     }
 
-    if (numberOfRunningJobsPerSeries == 0 && seriesIsCloud)
+    if (numberOfRunningJobsPerSeries != 0 || !seriesIsCloud)
+    {
+      continue;
+    }
+
+    if (seriesModel && !seriesModel->autoRetrieveFullSeries())
+    {
+      // The frames were never prefetched by design, so nothing is wrong with what is
+      // already in the database: fetch the missing frames instead of starting over.
+      seriesModel->retrieveSeries(seriesInstanceUID);
+    }
+    else
     {
       seriesToForceRetrieve.append(seriesInstanceUID);
     }
@@ -4120,6 +4642,14 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
       }
 
       d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+    }
+
+    // The series have been handed over to the application: the selection that asked
+    // for them is done with, and keeping it would load it again at the next click on
+    // Load. A load that was canceled keeps its selection, so that it can be retried.
+    if (d->PatientView && d->PatientView->studyListView())
+    {
+      d->PatientView->studyListView()->clearSelection();
     }
   }
 }
@@ -4306,6 +4836,7 @@ void ctkDICOMVisualBrowserWidget::removeSeries(const QStringList& seriesInstance
   }
   QString patientUID = d->PatientView->currentPatientUID();
   d->PatientModel->refreshPatient(patientUID);
+  studyListView->updateLoadButton();
   QApplication::restoreOverrideCursor();
 }
 

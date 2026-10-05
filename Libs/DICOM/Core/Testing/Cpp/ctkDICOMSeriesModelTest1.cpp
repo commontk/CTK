@@ -24,6 +24,7 @@
 // Qt includes
 #include <QApplication>
 #include <QDir>
+#include <QSignalSpy>
 #include <QTimer>
 
 // ctkCore includes
@@ -76,6 +77,20 @@ int ctkDICOMSeriesModelTest1(int argc, char* argv[])
     CHECK_QSTRING(model.studyFilter(), "");
     CHECK_INT(model.thumbnailSize(), 128);
     CHECK_BOOL(model.autoGenerateThumbnails(), false);
+    // All the frames of a series are prefetched by default
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
+
+    // Test the automatic prefetch of the full series
+    QSignalSpy autoRetrieveFullSeriesSpy(&model, SIGNAL(autoRetrieveFullSeriesChanged(bool)));
+    model.setAutoRetrieveFullSeries(false);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), false);
+    CHECK_INT(autoRetrieveFullSeriesSpy.count(), 1);
+    // Setting the same value again does not notify
+    model.setAutoRetrieveFullSeries(false);
+    CHECK_INT(autoRetrieveFullSeriesSpy.count(), 1);
+    model.setAutoRetrieveFullSeries(true);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
+    CHECK_INT(autoRetrieveFullSeriesSpy.count(), 2);
 
     // Test setting patient ID and study filter
     model.setPatientID("TestPatient");

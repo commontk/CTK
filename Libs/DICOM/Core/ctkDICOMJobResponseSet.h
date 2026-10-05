@@ -41,6 +41,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMJobResponseSet : public QObject
   Q_OBJECT
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath);
   Q_PROPERTY(bool copyFile READ copyFile WRITE setCopyFile);
+  Q_PROPERTY(bool insertionCompleted READ insertionCompleted WRITE setInsertionCompleted);
   Q_PROPERTY(bool overwriteExistingDataset READ overwriteExistingDataset WRITE setOverwriteExistingDataset);
   Q_PROPERTY(JobType jobType READ jobType WRITE setJobType);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
@@ -65,6 +66,16 @@ public:
   /// false as default
   void setCopyFile(bool copyFile);
   bool copyFile() const;
+  ///@}
+
+  ///@{
+  /// True when this response set is reported after its datasets have been inserted
+  /// in the database, false when it is reported as the datasets arrive.
+  /// The same datasets are reported twice, once on arrival and once on insertion, so
+  /// whatever counts frames must count only one of the two.
+  /// false as default
+  void setInsertionCompleted(bool insertionCompleted);
+  bool insertionCompleted() const;
   ///@}
 
   ///@{

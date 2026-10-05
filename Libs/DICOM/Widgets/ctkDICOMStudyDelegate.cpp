@@ -575,7 +575,7 @@ void ctkDICOMStudyDelegate::paintCardBackground(QPainter* painter,
   else if (isHovered)
   {
     backgroundColor = QColor(200, 200, 200, 25);
-    borderColor = QColor(200, 200, 200);
+    borderColor = QColor(150, 150, 150);
   }
   else
   {

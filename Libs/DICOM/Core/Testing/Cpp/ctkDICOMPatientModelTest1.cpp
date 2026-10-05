@@ -77,6 +77,10 @@ int ctkDICOMPatientModelTest1(int argc, char* argv[])
     CHECK_INT(model.dateFilter(), ctkDICOMPatientModel::Any);
     CHECK_INT(model.numberOfOpenedStudiesPerPatient(), 2);
     CHECK_INT(model.thumbnailSize(), 128);
+    // Series are prefetched in full by default, and no patient is current until one
+    // is selected, so a query does not retrieve image data for every patient it found
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
+    CHECK_QSTRING(model.currentPatientUID(), "");
 
     // Test patient ID filter
     model.setPatientIDFilter("TestPatient");
@@ -107,6 +111,16 @@ int ctkDICOMPatientModelTest1(int argc, char* argv[])
     // Test number of opened studies
     model.setNumberOfOpenedStudiesPerPatient(5);
     CHECK_INT(model.numberOfOpenedStudiesPerPatient(), 5);
+
+    // Test the automatic prefetch of the full series, forwarded to the study models
+    model.setAutoRetrieveFullSeries(false);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), false);
+    model.setAutoRetrieveFullSeries(true);
+    CHECK_BOOL(model.autoRetrieveFullSeries(), true);
+
+    // Test the current patient
+    model.setCurrentPatientUID("TestPatientUID");
+    CHECK_QSTRING(model.currentPatientUID(), "TestPatientUID");
 
     // Test thumbnail size
     model.setThumbnailSize(256);

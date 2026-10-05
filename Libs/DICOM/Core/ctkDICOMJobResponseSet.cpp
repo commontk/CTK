@@ -48,6 +48,7 @@ public:
 
   QString FilePath;
   bool CopyFile;
+  bool InsertionCompleted;
   bool OverwriteExistingDataset;
 
   ctkDICOMJobResponseSet::JobType JobType;
@@ -70,6 +71,7 @@ ctkDICOMJobResponseSetPrivate::ctkDICOMJobResponseSetPrivate(ctkDICOMJobResponse
 {
   this->JobType = ctkDICOMJobResponseSet::JobType::None;
   this->CopyFile = false;
+  this->InsertionCompleted = false;
   this->OverwriteExistingDataset = false;
 }
 
@@ -96,6 +98,8 @@ ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet() = default;
 CTK_GET_CPP(ctkDICOMJobResponseSet, QString, filePath, FilePath);
 CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setCopyFile, CopyFile);
 CTK_GET_CPP(ctkDICOMJobResponseSet, bool, copyFile, CopyFile);
+CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setInsertionCompleted, InsertionCompleted);
+CTK_GET_CPP(ctkDICOMJobResponseSet, bool, insertionCompleted, InsertionCompleted);
 CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setOverwriteExistingDataset, OverwriteExistingDataset);
 CTK_GET_CPP(ctkDICOMJobResponseSet, bool, overwriteExistingDataset, OverwriteExistingDataset);
 CTK_SET_CPP(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, setJobType, JobType);
@@ -265,6 +269,7 @@ ctkDICOMJobResponseSet* ctkDICOMJobResponseSet::clone()
 
   newJobResponseSet->setFilePath(this->filePath());
   newJobResponseSet->setCopyFile(this->copyFile());
+  newJobResponseSet->setInsertionCompleted(this->insertionCompleted());
   newJobResponseSet->setOverwriteExistingDataset(this->overwriteExistingDataset());
   newJobResponseSet->setJobType(this->jobType());
   newJobResponseSet->setJobUID(this->jobUID());

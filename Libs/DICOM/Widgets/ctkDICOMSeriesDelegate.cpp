@@ -50,6 +50,30 @@
 // STD includes
 #include <cmath>
 
+namespace
+{
+/// The blue of the selection. The border of a selected card and the badge that marks
+/// it are the same blue, written once and used opaque: it is the steel blue of the
+/// current card, lightened as if drawn over white, rather than a transparent colour
+/// that changes with whatever happens to be behind it.
+const QColor ctkDICOMSeriesSelectionColor(117, 162, 199);
+/// The same blue, solid, for the card the user is on
+const QColor ctkDICOMSeriesCurrentSelectionColor(70, 130, 180);
+/// Background of a card under the pointer: the same blue lightened as if drawn over
+/// white, so that it is a colour of its own and not a veil over the card
+const QColor ctkDICOMSeriesHoverBackgroundColor(219, 230, 240);
+/// A card that is neither selected nor hovered shows the view behind it
+const QColor ctkDICOMSeriesNoBackgroundColor(Qt::transparent);
+/// Border of a card under the pointer, and of a card at rest
+const QColor ctkDICOMSeriesHoverBorderColor(150, 150, 150);
+const QColor ctkDICOMSeriesBorderColor(220, 220, 220);
+/// The badge of the selection is drawn over the thumbnail, which can be of any
+/// brightness: these two keep their transparency so that the image stays visible
+/// through them.
+const QColor ctkDICOMSeriesBadgeHoverFillColor(220, 220, 220, 70);
+const QColor ctkDICOMSeriesBadgeHaloColor(0, 0, 0, 60);
+}
+
 //------------------------------------------------------------------------------
 class ctkDICOMSeriesDelegatePrivate
 {
@@ -109,6 +133,7 @@ void ctkDICOMSeriesDelegate::paint(QPainter* painter, const QStyleOptionViewItem
   QRect progressBarRect = this->progressBarRect(itemRect, index);
   QRect textRect = this->textRect(itemRect, index);
   QRect statusButtonRect = this->statusButtonRect(itemRect, index);
+  QRect selectionBadgeRect = this->selectionBadgeRect(itemRect, index);
   QRect contextMenuButtonRect = this->contextMenuButtonRect(itemRect, index);
 
   // Draw selection highlight
@@ -122,6 +147,9 @@ void ctkDICOMSeriesDelegate::paint(QPainter* painter, const QStyleOptionViewItem
 
   // Draw cloud/downloading status icon
   this->paintStatusButton(painter, statusButtonRect, index, option);
+
+  // Draw the selection badge
+  this->paintSelectionBadge(painter, selectionBadgeRect, index, option);
 
   // Draw progress bar if downloading
   this->paintProgressBar(painter, progressBarRect, index);
@@ -539,28 +567,35 @@ void ctkDICOMSeriesDelegate::paintSelection(QPainter* painter, const QRect& rect
 
   if (isSelected && isHovered)
   {
-    backgroundColor = QColor(70, 130, 180, 100);
-    borderColor = QColor(160, 160, 160);
+    backgroundColor = ctkDICOMSeriesHoverBackgroundColor;
+    borderColor = ctkDICOMSeriesSelectionColor;
   }
   else if (isSelected)
   {
-    backgroundColor = QColor(70, 130, 180, 70);
-    borderColor = QColor(180, 180, 180);
+    backgroundColor = ctkDICOMSeriesNoBackgroundColor;
+    borderColor = ctkDICOMSeriesSelectionColor;
   }
   else if (isHovered)
   {
-    backgroundColor = QColor(70, 130, 180, 35);
-    borderColor = QColor(200, 200, 200);
+    backgroundColor = ctkDICOMSeriesHoverBackgroundColor;
+    borderColor = ctkDICOMSeriesHoverBorderColor;
   }
   else
   {
-    backgroundColor = QColor(70, 130, 180, 0);
-    borderColor = QColor(220, 220, 220);
+    backgroundColor = ctkDICOMSeriesNoBackgroundColor;
+    borderColor = ctkDICOMSeriesBorderColor;
   }
 
   if (isCurrent)
   {
-    borderColor = QColor(70, 130, 180);
+    if (isSelected)
+    {
+      borderColor = ctkDICOMSeriesCurrentSelectionColor;
+    }
+    else
+    {
+      borderColor = ctkDICOMSeriesHoverBorderColor;
+    }
   }
 
   painter->setBrush(QBrush(backgroundColor));
@@ -774,6 +809,19 @@ QRect ctkDICOMSeriesDelegate::statusButtonRect(const QRect &itemRect, const QMod
 {
   Q_D(const ctkDICOMSeriesDelegate);
   QRect thumbRect = this->thumbnailRect(itemRect, index);
+  // Lower-left corner: the modality overlay takes the upper-left, the selection
+  // badge the upper-right and the context menu button the lower-right.
+  return QRect(thumbRect.left() + d->Spacing,
+               thumbRect.bottom() - d->ContextIconSize - d->Spacing,
+               d->ContextIconSize,
+               d->ContextIconSize);
+}
+
+//------------------------------------------------------------------------------
+QRect ctkDICOMSeriesDelegate::selectionBadgeRect(const QRect& itemRect, const QModelIndex& index) const
+{
+  Q_D(const ctkDICOMSeriesDelegate);
+  QRect thumbRect = this->thumbnailRect(itemRect, index);
   return QRect(thumbRect.right() - d->ContextIconSize - d->Spacing,
                thumbRect.top() + d->Spacing,
                d->ContextIconSize,
@@ -863,7 +911,7 @@ void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& r
   {
     if (operationProgress > 0)
     {
-      iconResource = QIcon(":/Icons/downloading.svg");
+      iconResource = QIcon(":/Icons/cloud_download.svg");
     }
     else
     {
@@ -872,7 +920,7 @@ void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& r
   }
   else if (operationStatus == ctkDICOMSeriesModel::Failed)
   {
-    iconResource = QIcon(":/Icons/error_red.svg");
+    iconResource = QIcon(":/Icons/cloud_alert.svg");
   }
   else if (operationStatus == ctkDICOMSeriesModel::Completed)
   {
@@ -882,6 +930,9 @@ void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& r
     }
     else
     {
+      // A circled checkmark here would read as the selection badge drawn in the
+      // opposite corner, so the retrieved state uses the cloud done icon,
+      // in the same blue as the other query/retrieve status icons
       iconResource = QIcon(":/Icons/accept2.svg");
       bool seriesHoveredState = option.state & QStyle::State_MouseOver;
       if (!seriesHoveredState &&
@@ -904,6 +955,77 @@ void ctkDICOMSeriesDelegate::paintStatusButton(QPainter* painter, const QRect& r
 
   // Draw icon
   iconResource.paint(painter, rect);
+
+  painter->restore();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMSeriesDelegate::paintSelectionBadge(QPainter* painter, const QRect& rect,
+                                                 const QModelIndex& index, const QStyleOptionViewItem& option) const
+{
+  QSize thumbnailSize(128, 128);
+  if (index.model())
+  {
+    QVariant sizeData = index.model()->data(index, ctkDICOMSeriesModel::ThumbnailSizeRole);
+    if (sizeData.isValid())
+    {
+      thumbnailSize = sizeData.toSize();
+    }
+  }
+
+  if (thumbnailSize.width() == 0)
+  {
+    // No badge when no thumbnail is generated
+    return;
+  }
+
+  bool isSelected = option.state & QStyle::State_Selected;
+  bool isHovered = option.state & QStyle::State_MouseOver;
+  if (!isSelected && !isHovered)
+  {
+    // The badge only shows the selection and invites to select while hovering
+    return;
+  }
+
+  painter->save();
+  painter->setRenderHint(QPainter::Antialiasing, true);
+
+  // Inset the circle so that it sits inside the icon box used by the other corners
+  QRectF badgeRect = QRectF(rect).adjusted(2, 2, -2, -2);
+
+  // A soft dark halo keeps the white outline readable on light thumbnails
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(ctkDICOMSeriesBadgeHaloColor, 3));
+  painter->drawEllipse(badgeRect);
+
+  if (isSelected)
+  {
+    // A white disc behind the icon, so that the ring of the radio button reads on a
+    // thumbnail of any brightness
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::white);
+    painter->drawEllipse(badgeRect);
+
+    // The icon of the resource is recoloured with the selection blue, so that the
+    // badge and the border of the card cannot drift apart
+    QPixmap badgePixmap = QIcon(":/Icons/radio_button_checked.svg").pixmap(rect.size());
+    if (!badgePixmap.isNull())
+    {
+      QPainter badgePainter(&badgePixmap);
+      badgePainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+      badgePainter.fillRect(badgePixmap.rect(), ctkDICOMSeriesSelectionColor);
+      badgePainter.end();
+      painter->drawPixmap(rect, badgePixmap);
+    }
+  }
+  else
+  {
+    // Hovered but not selected: an empty circle, kept light grey so that it reads
+    // as an invitation to select rather than as a state of its own
+    painter->setPen(QPen(ctkDICOMSeriesBorderColor, 2));
+    painter->setBrush(ctkDICOMSeriesBadgeHoverFillColor);
+    painter->drawEllipse(badgeRect);
+  }
 
   painter->restore();
 }

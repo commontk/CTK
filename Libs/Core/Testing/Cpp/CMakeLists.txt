@@ -31,6 +31,7 @@ set(KITTests_SRCS
   ctkExceptionTest.cpp
   ctkFileLoggerTest.cpp
   ctkHighPrecisionTimerTest.cpp
+  ctkJobSchedulerTest1.cpp
   ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -115,6 +116,7 @@ endif()
 #
 
 SIMPLE_TEST( ctkAbstractFactoryTest1 )
+SIMPLE_TEST( ctkJobSchedulerTest1 )
 SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
 SIMPLE_TEST( ctkAbstractPluginFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )

@@ -78,6 +78,13 @@ ctkDICOMServer* ctkDICOMEchoJob::server() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkDICOMEchoJob::concurrencyGroup() const
+{
+  Q_D(const ctkDICOMEchoJob);
+  return d->Server ? d->Server->connectionName() : QString();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMEchoJob::setServer(const ctkDICOMServer& server)
 {
   Q_D(ctkDICOMEchoJob);
@@ -102,11 +109,14 @@ ctkAbstractJob* ctkDICOMEchoJob::clone() const
 {
   ctkDICOMEchoJob* newEchoJob = new ctkDICOMEchoJob;
   newEchoJob->setServer(*this->server());
-  newEchoJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newEchoJob->setRetryEnabled(this->retryEnabled());
+  newEchoJob->setMaximumRetryWait(this->maximumRetryWait());
+  newEchoJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newEchoJob->setRetryDelay(this->retryDelay());
   newEchoJob->setRetryCounter(this->retryCounter());
   newEchoJob->setIsPersistent(this->isPersistent());
   newEchoJob->setMaximumConcurrentJobsPerType(this->maximumConcurrentJobsPerType());
+  newEchoJob->setMaximumConcurrentJobsPerGroup(this->maximumConcurrentJobsPerGroup());
   newEchoJob->setPriority(this->priority());
 
   return newEchoJob;
