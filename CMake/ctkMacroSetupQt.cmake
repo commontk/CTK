@@ -115,10 +115,8 @@ macro(ctkMacroSetupQt)
       endif()
     endif()
 
-    if(CTK_QT_VERSION VERSION_LESS "6")
-      if(CTK_LIB_XNAT/Core)
-        list(APPEND CTK_QT_COMPONENTS Script)
-      endif()
+    if(CTK_LIB_XNAT/Core)
+      list(APPEND CTK_QT_COMPONENTS Qml)
     endif()
 
     if(CTK_BUILD_QTDESIGNER_PLUGINS)
