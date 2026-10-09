@@ -4,14 +4,16 @@
 #
 
 # Python3 is required
-if(NOT Python3_FOUND)
+if(PYTHON_INCLUDE_DIR AND PYTHON_LIBRARY)
   # Variable expected by FindPython3 CMake module
-  if(DEFINED PYTHON_INCLUDE_DIR AND DEFINED PYTHON_LIBRARY)
-    set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-    set(Python3_LIBRARY ${PYTHON_LIBRARY})
-    set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
-    set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
+  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  set(Python3_LIBRARY ${PYTHON_LIBRARY})
+  set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
+  set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
+  if(NOT Python3_INCLUDE_DIRS)
+    set(Python3_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
   endif()
+elseif(NOT Python3_FOUND)
   find_package(Python3 COMPONENTS Development)
   if(NOT Python3_FOUND)
     message(FATAL_ERROR "error: Python3 is required to build PythonQt")

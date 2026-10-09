@@ -62,17 +62,18 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
-    set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+    if(NOT PYTHON_INCLUDE_DIR OR NOT PYTHON_LIBRARY)
+      find_package(Python3 COMPONENTS Interpreter Development)
+      set(PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS})
+      ctkFunctionExtractOptimizedLibrary(Python3_LIBRARIES PYTHON_LIBRARY)
+    endif()
     set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
     set(Python3_LIBRARY ${PYTHON_LIBRARY})
     set(Python3_LIBRARY_DEBUG ${PYTHON_LIBRARY})
     set(Python3_LIBRARY_RELEASE ${PYTHON_LIBRARY})
-    find_package(Python3 COMPONENTS Interpreter Development)
-
-    ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
     list(APPEND additional_vtk_cmakevars
       # FindPythonInterp, FindPythonLibs
-      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      -DPython3_EXECUTABLE:PATH=${Python3_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_DEBUG_LIBRARIES:FILEPATH=${PYTHON_DEBUG_LIBRARIES}
