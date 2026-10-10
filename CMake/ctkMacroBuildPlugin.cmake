@@ -160,9 +160,6 @@ macro(ctkMacroBuildPlugin)
   set(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-  # Make sure variable are cleared
-  set(MY_RESOURCES)
-
   # Add the generated manifest qrc file
   set(manifest_qrc_filepath )
   ctkFunctionGeneratePluginManifest(manifest_qrc_filepath
