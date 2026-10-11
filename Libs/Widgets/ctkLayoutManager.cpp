@@ -478,7 +478,15 @@ void ctkLayoutManager::setLayout(const QDomDocument& newLayout)
   {
     return;
   }
+  // QDomDocument::operator==() only checks if the two documents refer to the same underlying data,
+  // therefore the content is compared, too. This avoids rebuilding the layout (removing all views and
+  // adding them again) when a new document with the same content is set.
+  bool sameContent = (newLayout.toString() == d->Layout.toString());
   d->Layout = newLayout;
+  if (sameContent)
+  {
+    return;
+  }
   this->refresh();
 }
 

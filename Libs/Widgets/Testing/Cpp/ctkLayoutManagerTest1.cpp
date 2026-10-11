@@ -21,6 +21,8 @@
 // Qt includse
 #include <QApplication>
 #include <QDebug>
+#include <QEvent>
+#include <QPointer>
 #include <QPushButton>
 #include <QTimer>
 
@@ -101,6 +103,24 @@ public:
 };
 }
 
+namespace
+{
+/// Count hide events received by a widget
+class ctkHideEventCounter : public QObject
+{
+public:
+  bool eventFilter(QObject* object, QEvent* event) override
+  {
+    if (event->type() == QEvent::Hide)
+    {
+      ++this->Count;
+    }
+    return QObject::eventFilter(object, event);
+  }
+  int Count{ 0 };
+};
+} // namespace
+
 /// \ingroup Widgets
 
 //-----------------------------------------------------------------------------
@@ -156,6 +176,47 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
   viewport.show();
+
+  // Setting a layout document with the same content must not rebuild the layout
+  // (rebuilding removes all views from the layout and adds them again, which hides and shows them).
+  QList<QPointer<QPushButton>> views;
+  for (QPushButton* view : viewport.findChildren<QPushButton*>())
+  {
+    views << view;
+  }
+  if (views.isEmpty() || !views[0]->isVisible())
+  {
+    std::cerr << __LINE__ << ": ctkLayoutFactory::setLayout() failed to show the view." << std::endl;
+    return EXIT_FAILURE;
+  }
+  ctkHideEventCounter hideEventCounter;
+  views[0]->installEventFilter(&hideEventCounter);
+  QDomDocument simpleLayoutDocCopy("simplelayout");
+  res = bool(simpleLayoutDocCopy.setContent(simpleLayout));
+  Q_ASSERT(res);
+  layoutManager.setLayout(simpleLayoutDocCopy);
+  if (layoutManager.layout() != simpleLayoutDocCopy)
+  {
+    std::cerr << __LINE__ << ": ctkLayoutFactory::setLayout() failed to set layout with same content." << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (hideEventCounter.Count != 0 || !views[0]->isVisible())
+  {
+    std::cerr << __LINE__ << ": ctkLayoutFactory::setLayout() rebuilt the layout when content did not change." << std::endl;
+    return EXIT_FAILURE;
+  }
+  // A layout with different content is applied
+  layoutManager.setLayout(vboxLayoutDoc);
+  if (hideEventCounter.Count == 0)
+  {
+    std::cerr << __LINE__ << ": ctkLayoutFactory::setLayout() did not rebuild the layout when content changed." << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (!views.isEmpty() && !views[0].isNull())
+  {
+    views[0]->removeEventFilter(&hideEventCounter);
+  }
+  layoutManager.setLayout(simpleLayoutDoc);
 
   QWidget vbox;
   vbox.setWindowTitle("Vertical Box Layout");
