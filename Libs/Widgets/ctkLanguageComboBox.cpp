@@ -146,8 +146,13 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
   // we now sort based on the displayed text.
   q->model()->sort(0, Qt::AscendingOrder);
 
-  // Restore selection
-  q->setCurrentIndex(q->findData(selectedLocaleCode));
+  // Restore selection (or select default language if no prior selection)
+  int restoredIndex = q->findData(selectedLocaleCode);
+  if (restoredIndex < 0 && !this->DefaultLanguage.isEmpty())
+  {
+    restoredIndex = q->findData(this->DefaultLanguage);
+  }
+  q->setCurrentIndex(restoredIndex);
 
   q->update();
 
@@ -251,7 +256,29 @@ QString ctkLanguageComboBox::defaultLanguage() const
 void ctkLanguageComboBox::setDefaultLanguage(const QString& localeCode)
 {
   Q_D(ctkLanguageComboBox);
-  d->DefaultLanguage = localeCode;
+  if (localeCode.isNull())
+  {
+    d->DefaultLanguage = QString();
+  }
+  else if (localeCode.isEmpty())
+  {
+    d->DefaultLanguage = localeCode;
+  }
+  else
+  {
+    // Normalize the locale code via QLocale. This expands bare language
+    // codes (e.g. "en" → "en_US") and rejects invalid codes.
+    QLocale locale(localeCode);
+    if (locale.name() == "C")
+    {
+      // QLocale returns "C" for unrecognized locale codes
+      d->DefaultLanguage = QString();
+    }
+    else
+    {
+      d->DefaultLanguage = locale.name();
+    }
+  }
   d->updateLanguageItems();
 }
 
