@@ -24,7 +24,10 @@
 
 // Qt includes
 #include <QCoreApplication>
+#include <QElapsedTimer>
+#include <QSignalSpy>
 #include <QTemporaryDir>
+#include <QThread>
 
 // ctkCore includes
 #include <ctkCoreTestingMacros.h>
@@ -65,19 +68,25 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
 
   // Test the default values
   CHECK_INT(scheduler.maximumThreadCount(), 20);
-  CHECK_INT(scheduler.maximumNumberOfRetry(), 3);
-  CHECK_INT(scheduler.retryDelay(), 100);
+  CHECK_INT(scheduler.maximumRetryWait(), 60000);
+  CHECK_INT(scheduler.retryDelay(), 1000);
   CHECK_INT(scheduler.maximumPatientsQuery(), 0);
+  CHECK_INT(scheduler.framesBatchLimit(), 25);
+  CHECK_INT(scheduler.framesBatchesPerSeries(), 10);
 
   // Test setting and getting
   scheduler.setMaximumThreadCount(19);
   CHECK_INT(scheduler.maximumThreadCount(), 19);
-  scheduler.setMaximumNumberOfRetry(5);
-  CHECK_INT(scheduler.maximumNumberOfRetry(), 5);
+  scheduler.setMaximumRetryWait(5000);
+  CHECK_INT(scheduler.maximumRetryWait(), 5000);
   scheduler.setRetryDelay(300);
   CHECK_INT(scheduler.retryDelay(), 300);
   scheduler.setMaximumPatientsQuery(30);
   CHECK_INT(scheduler.maximumPatientsQuery(), 30);
+  scheduler.setFramesBatchLimit(100);
+  CHECK_INT(scheduler.framesBatchLimit(), 100);
+  scheduler.setFramesBatchesPerSeries(4);
+  CHECK_INT(scheduler.framesBatchesPerSeries(), 4);
 
   // Test scheduler
   std::cout << qPrintable(testName) << ": Setting up scheduler" << std::endl;
@@ -166,6 +175,44 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
   CHECK_INT(instances.count(), numberOfImages);
   CHECK_INT(files.count(), numberOfImages);
   CHECK_INT(urls.count(), 0);
+  CHECK_BOOL(scheduler.isRetrievingSeries(QStringList() << seriesIstanceUID), false);
+
+  //
+  // A retrieve that failed an attempt waits for the next one out of the queue: the
+  // series is still being retrieved, and a load waiting for it must not give up.
+  //
+  ctkDICOMScheduler retryingScheduler;
+  retryingScheduler.setDicomDatabase(database);
+  retryingScheduler.setRetryDelay(3000);
+  ctkDICOMServer unreachableServer;
+  unreachableServer.setConnectionName("Unreachable");
+  unreachableServer.setCallingAETitle("CTK_AE");
+  unreachableServer.setCalledAETitle("UNREACHABLE");
+  unreachableServer.setHost("127.0.0.1");
+  unreachableServer.setPort(1);
+  unreachableServer.setQueryRetrieveEnabled(true);
+  unreachableServer.setTrustedEnabled(true);
+  unreachableServer.setConnectionTimeout(1);
+  unreachableServer.setMaximumRetryWait(60);
+  retryingScheduler.addServer(unreachableServer);
+
+  QSignalSpy attemptFailedSpy(&retryingScheduler, SIGNAL(jobAttemptFailed(QList<QVariant>)));
+  retryingScheduler.retrieveSeries(patientID, studyIstanceUID, seriesIstanceUID, QThread::HighPriority);
+  CHECK_BOOL(retryingScheduler.isRetrievingSeries(QStringList() << seriesIstanceUID), true);
+  QElapsedTimer attemptTimer;
+  attemptTimer.start();
+  while (attemptFailedSpy.count() == 0 && attemptTimer.elapsed() < 10000)
+  {
+    QCoreApplication::processEvents();
+    QThread::msleep(10);
+  }
+  CHECK_BOOL(attemptFailedSpy.count() > 0, true);
+  // the next attempt is at least 2.25 s (3 s minus its jitter) after the failure
+  CHECK_BOOL(retryingScheduler.isRetrievingSeries(QStringList() << seriesIstanceUID), true);
+  CHECK_BOOL(retryingScheduler.isRetrievingSeries(QStringList() << "1.2.3.4"), false);
+
+  retryingScheduler.stopAllJobs(true);
+  CHECK_BOOL(retryingScheduler.isRetrievingSeries(QStringList() << seriesIstanceUID), false);
 
   return EXIT_SUCCESS;
 }

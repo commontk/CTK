@@ -210,9 +210,6 @@ protected:
   void paintEvent(QPaintEvent* event) override;
   void changeEvent(QEvent* event) override;
 
-  /// Event filter to handle display mode button events
-  bool eventFilter(QObject* watched, QEvent* event) override;
-
   /// Get the delegate as ctkDICOMPatientDelegate
   ctkDICOMPatientDelegate* patientDelegate() const;
 
@@ -247,15 +244,17 @@ protected slots:
   /// Called when study selection changes in the embedded study view
   void onStudySelectionChanged();
 
-  /// Called when the display Mode button is clicked
-  void onDisplayModeButtonClicked();
-
   /// Called when allowed servers combo box selection changes
   void onAllowedServersComboBoxChanged();
 
 signals:
   /// Emitted when selection changes
   void studiesSelectionChanged(const QStringList& selectedStudiesInstanceUIDs);
+
+  /// Emitted when the current patient changes, by a click or programmatically.
+  /// The browser uses it to open the first studies of that patient, which is what
+  /// starts retrieving their series.
+  void currentPatientChanged(const QString& patientUID);
 
   /// Emitted when context menu is requested for patient(s) (from 3-dot button or right-click)
   void patientContextMenuRequested(const QPoint& globalPos, const QStringList& selectedPatientUIDs);

@@ -27,6 +27,7 @@
 #include <QIntValidator>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QAbstractButton>
 #include <QLineEdit>
 #include <QList>
 #include <QMap>
@@ -55,8 +56,6 @@
 #include "ui_ctkDICOMServerNodeWidget2.h"
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMServerNodeWidget2");
-QColor ctkDICOMServerNodeWidget2DefaultColor(Qt::white);
-QColor ctkDICOMServerNodeWidget2DarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMServerNodeWidget2ModifiedColor(Qt::darkYellow);
 QColor ctkDICOMServerNodeWidget2ServerSuccesColor(Qt::darkGreen);
 QColor ctkDICOMServerNodeWidget2ServerProgressColor(Qt::darkCyan);
@@ -78,7 +77,8 @@ public:
     }
 
     QTableWidgetItem* item = table->item(index.row(), index.column());
-    if (!item || item->background() == ctkDICOMServerNodeWidget2DefaultColor || item->background() == ctkDICOMServerNodeWidget2DarkModeDefaultColor)
+    // The items without a status color are painted with the palette of the table
+    if (!item || item->background().style() == Qt::NoBrush)
     {
       return;
     }
@@ -105,7 +105,8 @@ public:
     }
 
     QTableWidgetItem* item = table->item(index.row(), index.column());
-    if (!item || item->background() == ctkDICOMServerNodeWidget2DefaultColor || item->background() == ctkDICOMServerNodeWidget2DarkModeDefaultColor)
+    // The items without a status color are painted with the palette of the table
+    if (!item || item->background().style() == Qt::NoBrush)
     {
       return;
     }
@@ -264,6 +265,10 @@ public:
   int addServerNode(const QMap<QString, QVariant>& parameters);
   int addServerNode(ctkDICOMServer* server);
   QSharedPointer<ctkDICOMServer> createServerFromServerNode(const QMap<QString, QVariant>& node);
+  /// Spin boxes of the per server scheduling settings
+  /// \sa ctkDICOMServer::maximumConcurrentWorkers, ctkDICOMServer::maximumRetryWait
+  QSpinBox* createMaximumWorkersSpinBox(int value) const;
+  QSpinBox* createMaximumRetryWaitSpinBox(int value) const;
   void updateProxyComboBoxes() const;
   QStringList getAllServerNames();
 
@@ -276,6 +281,11 @@ public:
                     int verticalScrollBarValue,
                     bool resetServerStatus = true);
   void setDynamicPaletteColorToWidget(QPalette* palette, QWidget* widget);
+
+  /// Used both as the value of a new server node and as the fallback for the
+  /// server nodes saved before these settings existed.
+  static const int DefaultMaximumWorkers = 8;
+  static const int DefaultMaximumRetryWait = 60;
 
   bool SettingsModified;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -296,8 +306,9 @@ ctkDICOMServerNodeWidget2Private::ctkDICOMServerNodeWidget2Private(ctkDICOMServe
   this->Scheduler = nullptr;
   this->CancelButton = nullptr;
   this->SaveButton = nullptr;
-  this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
-  this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
+  // The colors of the widgets without a status follow the palette, light or dark
+  this->DefaultPalette.setColor(QPalette::Button, obj.palette().color(QPalette::Button));
+  this->DefaultPalette.setColor(QPalette::Base, obj.palette().color(QPalette::Base));
   this->ModifiedPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ModifiedColor);
   this->ModifiedPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ModifiedColor);
   this->ServerSuccessPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerSuccesColor);
@@ -519,6 +530,16 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
   {
     node["Timeout"] = timeoutSpinBox->value();
   }
+  QSpinBox* maximumWorkersSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::MaximumWorkersColumn));
+  if (maximumWorkersSpinBox)
+  {
+    node["Max Workers"] = maximumWorkersSpinBox->value();
+  }
+  QSpinBox* maximumRetryWaitSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn));
+  if (maximumRetryWaitSpinBox)
+  {
+    node["Max Retry Wait"] = maximumRetryWaitSpinBox->value();
+  }
   QComboBox* protocolComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProtocolColumn));
   if (protocolComboBox)
   {
@@ -662,6 +683,18 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox = this->createMaximumWorkersSpinBox(
+    node.value("Max Workers", ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers).toInt());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox = this->createMaximumRetryWaitSpinBox(
+    node.value("Max Retry Wait", ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait).toInt());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
   proxyComboBox->setObjectName("proxyComboBox");
   QStringListModel* cbModel = new QStringListModel();
@@ -783,6 +816,15 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, timeoutSpinBox);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox = this->createMaximumWorkersSpinBox(server->maximumConcurrentWorkers());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox = this->createMaximumRetryWaitSpinBox(server->maximumRetryWait());
+  this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
@@ -833,9 +875,54 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFro
   server->setPort(node["Port"].toInt());
   server->setRetrieveProtocolAsString(node["Retrieve Protocol"].toString());
   server->setConnectionTimeout(node["Timeout"].toInt());
+  server->setMaximumConcurrentWorkers(
+    node.value("Max Workers", ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers).toInt());
+  server->setMaximumRetryWait(
+    node.value("Max Retry Wait", ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait).toInt());
   server->setMoveDestinationAETitle(this->StorageAETitle->text());
 
   return server;
+}
+
+//----------------------------------------------------------------------------
+QSpinBox* ctkDICOMServerNodeWidget2Private::createMaximumWorkersSpinBox(int value) const
+{
+  Q_Q(const ctkDICOMServerNodeWidget2);
+
+  QSpinBox* spinBox = new QSpinBox();
+  spinBox->setObjectName("maximumWorkersSpinBox");
+  spinBox->setToolTip(ctkDICOMServerNodeWidget2::tr(
+    "Maximum number of jobs running at the same time against this server."));
+  spinBox->setMinimum(1);
+  spinBox->setMaximum(INT_MAX);
+  spinBox->setSingleStep(1);
+  spinBox->setValue(value > 0 ? value : ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers);
+  spinBox->setAlignment(Qt::AlignLeft);
+  QObject::connect(spinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(onSettingsModified()));
+  return spinBox;
+}
+
+//----------------------------------------------------------------------------
+QSpinBox* ctkDICOMServerNodeWidget2Private::createMaximumRetryWaitSpinBox(int value) const
+{
+  Q_Q(const ctkDICOMServerNodeWidget2);
+
+  QSpinBox* spinBox = new QSpinBox();
+  spinBox->setObjectName("maximumRetryWaitSpinBox");
+  spinBox->setToolTip(ctkDICOMServerNodeWidget2::tr(
+    "Total time spent retrying a job that fails against this server. Each attempt waits "
+    "longer than the previous one; when this time is over, the job fails and a warning is "
+    "shown. Zero means that a failed job is never retried."));
+  spinBox->setMinimum(0);
+  spinBox->setMaximum(INT_MAX);
+  spinBox->setSingleStep(10);
+  spinBox->setSuffix(ctkDICOMServerNodeWidget2::tr(" s"));
+  spinBox->setValue(value >= 0 ? value : ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait);
+  spinBox->setAlignment(Qt::AlignLeft);
+  QObject::connect(spinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(onSettingsModified()));
+  return spinBox;
 }
 
 //----------------------------------------------------------------------------
@@ -963,17 +1050,9 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
     lineEdit->clearFocus();
   }
 
-  QColor serverNodeWidgetColor = q->palette().color(QPalette::Normal, q->backgroundRole());
-  if (serverNodeWidgetColor.lightnessF() < 0.5)
-  {
-    this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
-    this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
-  }
-  else
-  {
-    this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
-    this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
-  }
+  // The colors of the widgets without a status follow the palette, light or dark
+  this->DefaultPalette.setColor(QPalette::Button, q->palette().color(QPalette::Button));
+  this->DefaultPalette.setColor(QPalette::Base, q->palette().color(QPalette::Base));
 
   for (int row = 0; row < rowCount; ++row)
   {
@@ -982,14 +1061,8 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
       QTableWidgetItem *item = this->NodeTable->item(row, column);
       if (item)
       {
-        if (serverNodeWidgetColor.lightnessF() < 0.5)
-        {
-          item->setBackground(ctkDICOMServerNodeWidget2DarkModeDefaultColor);
-        }
-        else
-        {
-          item->setBackground(ctkDICOMServerNodeWidget2DefaultColor);
-        }
+        // No status color: the table paints the item with its palette
+        item->setBackground(QBrush());
       }
 
       if (column == ctkDICOMServerNodeWidget2::VerificationColumn && !resetServerStatus)
@@ -1002,9 +1075,15 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
     }
   }
 
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageEnabledCheckBox);
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageAETitle);
-  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StoragePort);
+  // Every editable widget of the storage group, including the ones that another widget
+  // added to it, such as the operations check boxes of the visual browser.
+  foreach (QWidget* widget, this->StorageCollapsibleGroupBox->findChildren<QWidget*>())
+  {
+    if (qobject_cast<QAbstractButton*>(widget) || qobject_cast<QLineEdit*>(widget))
+    {
+      this->setDynamicPaletteColorToWidget(&this->DefaultPalette, widget);
+    }
+  }
 
   this->NodeTable->horizontalScrollBar()->setValue(horizontalScrollBarValue);
   this->NodeTable->verticalScrollBar()->setValue(verticalScrollBarValue);
@@ -1128,6 +1207,18 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
                    this, SLOT(onSettingsModified()));
   d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, timeoutSpinBox);
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumWorkersSpinBox =
+    d->createMaximumWorkersSpinBox(ctkDICOMServerNodeWidget2Private::DefaultMaximumWorkers);
+  d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, maximumWorkersSpinBox);
+  d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumWorkersColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  QSpinBox* maximumRetryWaitSpinBox =
+    d->createMaximumRetryWaitSpinBox(ctkDICOMServerNodeWidget2Private::DefaultMaximumRetryWait);
+  d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, maximumRetryWaitSpinBox);
+  d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::MaximumRetryWaitColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
   QComboBox* proxyComboBox = new QComboBox();
@@ -1351,17 +1442,8 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
     lineEdit->setText(tr("unknown"));
     lineEdit->setReadOnly(true);
 
-    QColor serverNodeWidgetColor = this->palette().color(QPalette::Normal, this->backgroundRole());
-    if (serverNodeWidgetColor.lightnessF() < 0.5)
-    {
-      d->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
-      d->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
-    }
-    else
-    {
-      d->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
-      d->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
-    }
+    d->DefaultPalette.setColor(QPalette::Button, this->palette().color(QPalette::Button));
+    d->DefaultPalette.setColor(QPalette::Base, this->palette().color(QPalette::Base));
 
     d->setDynamicPaletteColorToWidget(&d->DefaultPalette, lineEdit);
   }
@@ -1567,6 +1649,8 @@ void ctkDICOMServerNodeWidget2::readSettings()
 
   d->NodeTable->selectionModel()->clearSelection();
   d->restoreFocus(selectedIndexes, horizontalScrollBarValue, verticalScrollBarValue);
+
+  emit settingsDiscarded();
 }
 
 //----------------------------------------------------------------------------

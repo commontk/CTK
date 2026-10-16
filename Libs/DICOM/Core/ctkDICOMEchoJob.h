@@ -53,6 +53,11 @@ public:
   Q_INVOKABLE void setServer(const ctkDICOMServer& server);
   ///@}
 
+  /// The connection name of the server, so that the scheduler limits how many
+  /// jobs run at the same time against the same server.
+  /// \sa ctkAbstractJob::concurrencyGroup, ctkDICOMServer::maximumConcurrentWorkers
+  QString concurrencyGroup() const override;
+
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) override;
 

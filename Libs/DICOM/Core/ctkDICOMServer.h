@@ -47,6 +47,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMServer : public QObject
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
   Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(int maximumConcurrentWorkers READ maximumConcurrentWorkers WRITE setMaximumConcurrentWorkers);
+  Q_PROPERTY(int maximumRetryWait READ maximumRetryWait WRITE setMaximumRetryWait);
 
 public:
   explicit ctkDICOMServer(QObject* parent = 0);
@@ -141,6 +143,27 @@ public:
   /// connection timeout in seconds, default 10 s.
   void setConnectionTimeout(const int& timeout);
   int connectionTimeout() const;
+  ///}@
+
+  ///@{
+  /// Maximum number of jobs (query, retrieve, echo) running at the same time
+  /// against this server, default 8.
+  /// Zero or a negative value means unlimited, in which case only the per job
+  /// type limit applies.
+  /// \sa ctkAbstractJob::maximumConcurrentJobsPerGroup
+  void setMaximumConcurrentWorkers(const int& maximumConcurrentWorkers);
+  int maximumConcurrentWorkers() const;
+  ///}@
+
+  ///@{
+  /// Maximum total time in seconds spent waiting between the retries of a job
+  /// that failed against this server, default 60 s.
+  /// The delay between two attempts grows exponentially; once this budget is
+  /// spent the job fails and the user is warned.
+  /// Zero or a negative value disables retrying.
+  /// \sa ctkAbstractJob::maximumRetryWait
+  void setMaximumRetryWait(const int& maximumRetryWait);
+  int maximumRetryWait() const;
   ///}@
 
   ///@{

@@ -119,6 +119,12 @@ public:
 
   /// Get number of selected items
   Q_INVOKABLE int selectedCount() const;
+
+  /// Refresh the visibility and the count shown by the floating load button.
+  /// Selection changes update it automatically; this is only needed when the
+  /// selection is invalidated without a selection change signal, e.g. after
+  /// series have been deleted from the database.
+  Q_INVOKABLE void updateLoadButton();
   ///@}
 
   /// \name Data access
@@ -238,6 +244,7 @@ protected:
   /// Reimplemented from QListView
   void resizeEvent(QResizeEvent* event) override;
   void wheelEvent(QWheelEvent* event) override;
+  void changeEvent(QEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseMoveEvent(QMouseEvent* event) override;

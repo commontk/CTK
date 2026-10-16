@@ -82,6 +82,9 @@ public:
   /// Get the status button rect
   QRect statusButtonRect(const QRect& itemRect, const QModelIndex& index) const;
 
+  /// Get the selection badge rect
+  QRect selectionBadgeRect(const QRect& itemRect, const QModelIndex& index) const;
+
 Q_SIGNALS:
   /// Emitted when spacing changes
   void spacingChanged(int spacing);
@@ -90,20 +93,30 @@ Q_SIGNALS:
   void cornerRadiusChanged(int radius);
 
 protected:
+  /// Color of the border of a selected card and of its badge
+  QColor selectionColor(const QPalette& palette) const;
+
   /// Paint the thumbnail area
-  void paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                      const QStyleOptionViewItem& option) const;
 
   /// Paint the text information
   void paintText(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint overlay information on thumbnail
-  void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                             const QStyleOptionViewItem& option) const;
 
-  /// Paint cloud/downloading status button in top-right corner of thumbnail
+  /// Paint cloud/downloading status button in lower-left corner of thumbnail
   void paintStatusButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
+  /// Paint the selection badge in the top-right corner of the thumbnail: a filled
+  /// circled checkmark when the series is selected, an empty circle when hovered
+  void paintSelectionBadge(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
+
   /// Paint progress bar below thumbnail when downloading
-  void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                        const QStyleOptionViewItem& option) const;
 
   /// Paint the selection state
   void paintSelection(QPainter* painter, const QRect& rect, const QStyleOptionViewItem& option) const;

@@ -24,7 +24,11 @@
 #include "ctkAbstractJob.h"
 
 // Qt includes
+#include <QRandomGenerator>
 #include <QUuid>
+
+// STD includes
+#include <cmath>
 
 // --------------------------------------------------------------------------
 ctkAbstractJob::ctkAbstractJob(QObject* parent)
@@ -34,9 +38,13 @@ ctkAbstractJob::ctkAbstractJob(QObject* parent)
   this->Persistent = false;
   this->JobUID = QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
   this->RetryCounter = 0;
-  this->RetryDelay = 100;
-  this->MaximumNumberOfRetry = 3;
+  this->RetryEnabled = true;
+  this->RetryDelay = 1000;
+  this->RetryBackoffFactor = 2.5;
+  this->MaximumRetryWait = 60000;
+  this->AccumulatedRetryWait = 0;
   this->MaximumConcurrentJobsPerType = 20;
+  this->MaximumConcurrentJobsPerGroup = 8;
   this->Priority = QThread::Priority::LowPriority;
   this->CreationDateTime = QDateTime::currentDateTime();
   this->DestroyAfterUse = false;
@@ -148,15 +156,95 @@ void ctkAbstractJob::setMaximumConcurrentJobsPerType(int maximumConcurrentJobsPe
 }
 
 //----------------------------------------------------------------------------
-int ctkAbstractJob::maximumNumberOfRetry() const
+QString ctkAbstractJob::concurrencyGroup() const
 {
-  return this->MaximumNumberOfRetry;
+  return QString();
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setMaximumNumberOfRetry(int maximumNumberOfRetry)
+int ctkAbstractJob::maximumConcurrentJobsPerGroup() const
 {
-  this->MaximumNumberOfRetry = maximumNumberOfRetry;
+  return this->MaximumConcurrentJobsPerGroup;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setMaximumConcurrentJobsPerGroup(int maximumConcurrentJobsPerGroup)
+{
+  this->MaximumConcurrentJobsPerGroup = maximumConcurrentJobsPerGroup;
+}
+
+//----------------------------------------------------------------------------
+bool ctkAbstractJob::retryEnabled() const
+{
+  return this->RetryEnabled;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setRetryEnabled(bool retryEnabled)
+{
+  this->RetryEnabled = retryEnabled;
+}
+
+//----------------------------------------------------------------------------
+double ctkAbstractJob::retryBackoffFactor() const
+{
+  return this->RetryBackoffFactor;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setRetryBackoffFactor(double retryBackoffFactor)
+{
+  this->RetryBackoffFactor = retryBackoffFactor;
+}
+
+//----------------------------------------------------------------------------
+int ctkAbstractJob::maximumRetryWait() const
+{
+  return this->MaximumRetryWait;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setMaximumRetryWait(int maximumRetryWait)
+{
+  this->MaximumRetryWait = maximumRetryWait;
+}
+
+//----------------------------------------------------------------------------
+int ctkAbstractJob::accumulatedRetryWait() const
+{
+  return this->AccumulatedRetryWait;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractJob::setAccumulatedRetryWait(int accumulatedRetryWait)
+{
+  this->AccumulatedRetryWait = accumulatedRetryWait;
+}
+
+//----------------------------------------------------------------------------
+int ctkAbstractJob::nextRetryDelay() const
+{
+  if (!this->RetryEnabled || this->MaximumRetryWait <= 0 || this->RetryDelay <= 0)
+  {
+    return -1;
+  }
+
+  int remainingWait = this->MaximumRetryWait - this->AccumulatedRetryWait;
+  if (remainingWait <= 0)
+  {
+    return -1;
+  }
+
+  double factor = this->RetryBackoffFactor > 1. ? this->RetryBackoffFactor : 1.;
+  double delay = this->RetryDelay * std::pow(factor, qMax(0, this->RetryCounter));
+
+  // Randomize by +/-25%, so that all the jobs that failed together (typically every
+  // job of a server that went down) do not come back to the server at the same time.
+  delay *= 1. + (QRandomGenerator::global()->generateDouble() - 0.5) * 0.5;
+
+  // Waiting longer than the remaining budget would overshoot the maximum waiting
+  // time, so the last attempt is made as soon as the budget ends.
+  return qMin(static_cast<int>(qMax(1., delay)), remainingWait);
 }
 
 //----------------------------------------------------------------------------

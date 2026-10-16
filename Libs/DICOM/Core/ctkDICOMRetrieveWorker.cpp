@@ -94,6 +94,17 @@ void ctkDICOMRetrieveWorkerPrivate::setRetrieveParameters()
   QObject::connect(this->Retrieve.data(), SIGNAL(progressJobDetail(QVariant)),
                    retrieveJob.data(), SIGNAL(progressJobDetail(QVariant)), Qt::DirectConnection);
 
+  this->Retrieve->setFramesBatchLimit(retrieveJob->framesBatchLimit());
+
+  // Only C-GET accumulates the received frames in the retriever: with C-MOVE they
+  // reach the database through the storage listener instead.
+  if (server->retrieveProtocol() == ctkDICOMServer::CGET)
+  {
+    // Direct connection: the batch has to be inserted and released in the thread
+    // that is receiving the frames, before the retrieve operation goes on.
+    QObject::connect(this->Retrieve.data(), &ctkDICOMRetrieve::framesBatchReady,
+                     q, &ctkDICOMRetrieveWorker::onFramesBatchReady, Qt::DirectConnection);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -113,6 +124,33 @@ ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker(ctkDICOMRetrieveWorkerPrivate* pi
 
 //------------------------------------------------------------------------------
 ctkDICOMRetrieveWorker::~ctkDICOMRetrieveWorker() = default;
+
+//----------------------------------------------------------------------------
+void ctkDICOMRetrieveWorker::onFramesBatchReady(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets)
+{
+  Q_D(ctkDICOMRetrieveWorker);
+
+  if (jobResponseSets.isEmpty())
+  {
+    return;
+  }
+
+  QSharedPointer<ctkDICOMRetrieveJob> retrieveJob =
+    qSharedPointerObjectCast<ctkDICOMRetrieveJob>(this->Job);
+  QSharedPointer<ctkDICOMScheduler> scheduler =
+    qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
+  if (!retrieveJob || !scheduler)
+  {
+    return;
+  }
+
+  // Take a copy: dropping them from the retriever below releases its references,
+  // and the inserter job holds its own copy of the response sets.
+  const QList<QSharedPointer<ctkDICOMJobResponseSet>> batch = jobResponseSets;
+  retrieveJob->setReferenceInserterJobUID(scheduler->insertJobResponseSets(batch));
+
+  d->Retrieve->removeJobResponseSets(batch);
+}
 
 //----------------------------------------------------------------------------
 void ctkDICOMRetrieveWorker::requestCancel()

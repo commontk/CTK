@@ -52,7 +52,10 @@ public:
       return;
     }
 
-    int progress = ceil(float(data.at(0).toInt()) / data.at(1).toInt() * 100);
+    const int completedSteps = data.at(0).toInt();
+    const int totalSteps = data.at(1).toInt();
+    // The total is not known until the job reports its first step
+    int progress = totalSteps > 0 ? ceil(float(completedSteps) / totalSteps * 100) : 0;
     progress = progress < 0 ? 0 : progress;
     progress = progress > 100 ? 100 : progress;
 
@@ -228,7 +231,8 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
 
   QList<QVariant> data;
   data.append(0);
-  data.append(100);
+  // The total number of steps is known when the job starts reporting its progress
+  data.append(0);
   if (td.JobClass == "ctkDICOMStorageListenerJob")
   {
     data[0] = -1;
@@ -305,7 +309,7 @@ void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobS
     statusText = ctkDICOMJobListWidget::tr("queued");
     QList<QVariant> data;
     data.append(0);
-    data.append(100);
+    data.append(0);
     this->setData(this->index(row, Columns::Progress), data);
   }
   else if (status == Running)
@@ -376,6 +380,13 @@ void QCenteredItemModel::updateProgressBar(const ctkDICOMJobDetail &td, ctkDICOM
     return;
   }
 
+  // Each frame is reported on arrival and again on insertion: only one of the two
+  // moves the bar, otherwise a batch insert makes it jump by the size of the batch.
+  if (!td.countsAsFrameProgress())
+  {
+    return;
+  }
+
   QList<QStandardItem*> itemList = this->findItems(td.JobUID, Qt::MatchExactly, Columns::JobUID);
   if (itemList.empty())
   {
@@ -421,6 +432,16 @@ void QCenteredItemModel::setProgressBar(int row, const ctkDICOMJobDetail &td, ct
     return;
   }
 
+  // A job that already reached a final state shows the progress of that state, and a
+  // progress report that arrives late must not take the bar back to a partial value.
+  QString status = this->index(row, QCenteredItemModel::Columns::Status).data().toString();
+  if (status == ctkDICOMJobListWidget::tr("completed") ||
+      status == ctkDICOMJobListWidget::tr("failed") ||
+      status == ctkDICOMJobListWidget::tr("user-stopped"))
+  {
+    return;
+  }
+
   QList<QVariant> data = this->index(row, QCenteredItemModel::Columns::Progress).data().toList();
   if (data.count() != 2)
   {
@@ -428,11 +449,22 @@ void QCenteredItemModel::setProgressBar(int row, const ctkDICOMJobDetail &td, ct
   }
 
   int progress = data.at(0).toInt();
+  int numberOfInstances = data.at(1).toInt();
+
+  // The total is the number of instances of the series, which the instances query
+  // wrote in the database before the retrieve started. It is read once and kept:
+  // reading it again on every frame would make the bar jump, because the database
+  // only grows when a batch of frames is inserted, well after they were received.
+  if (numberOfInstances <= 0)
+  {
+    numberOfInstances = database->instancesForSeries(td.SeriesInstanceUID).count();
+  }
+
   progress += 1;
   data[0] = progress;
-  int numberOfInstances = data.at(1).toInt();
-  numberOfInstances = database->instancesForSeries(td.SeriesInstanceUID).count();
-  data[1] = numberOfInstances;
+  // If the instances were never queried the total is unknown, and the frames that
+  // have been received are all that is known about the series.
+  data[1] = qMax(numberOfInstances, progress);
   this->setData(this->index(row, Columns::Progress), data);
 }
 

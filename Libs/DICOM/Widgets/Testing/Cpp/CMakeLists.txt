@@ -24,6 +24,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMTableManagerTest.cpp
   ctkDICOMThumbnailListWidgetTest1.cpp
   ctkDICOMVisualBrowserWidgetTest1.cpp
+  ctkDICOMVisualBrowserWidgetTest2.cpp
   )
 
 include_directories(
@@ -95,4 +96,5 @@ if(EXISTS "${CTKData_DIR}")
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
     )
   SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
+  SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD)
 endif()
