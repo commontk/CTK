@@ -509,6 +509,8 @@ protected:
   void keyPressEvent(QKeyEvent* event) override;
   /// Custom resize event to adjust filter layout orientation
   void resizeEvent(QResizeEvent* event) override;
+  /// Follow the light and dark styles of the application
+  void changeEvent(QEvent* event) override;
   /// Event filter to handle Enter key in search boxes
   bool eventFilter(QObject* object, QEvent* event) override;
 

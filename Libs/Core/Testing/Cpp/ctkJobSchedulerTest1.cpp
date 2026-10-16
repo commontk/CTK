@@ -25,7 +25,9 @@
 #include <QAtomicInt>
 #include <QCoreApplication>
 #include <QElapsedTimer>
+#include <QEventLoop>
 #include <QThread>
+#include <QTimer>
 
 // CTK includes
 #include "ctkAbstractJob.h"
@@ -52,10 +54,14 @@ QAtomicInt Release(0);
 /// Number of attempts run by the failing job of the retry test
 QAtomicInt FailingJobAttempts(0);
 
+/// Number of jobs that ran to the end
+QAtomicInt FinishedJobs(0);
+
 //------------------------------------------------------------------------------
 void resetCounters()
 {
   FailingJobAttempts.storeRelaxed(0);
+  FinishedJobs.storeRelaxed(0);
   RunningJobsOfGroupA.storeRelaxed(0);
   RunningJobsOfGroupB.storeRelaxed(0);
   MaximumRunningJobsOfGroupA.storeRelaxed(0);
@@ -79,6 +85,9 @@ public:
   /// scheduler reattempts the job.
   bool AlwaysFails{false};
 
+  /// If false, the job does not wait for Release
+  bool Blocks{true};
+
   QString concurrencyGroup() const override { return this->Group; }
 
   ctkAbstractWorker* createWorker() override;
@@ -87,6 +96,7 @@ public:
   {
     ctkTestJob* newJob = new ctkTestJob(this->Group);
     newJob->AlwaysFails = this->AlwaysFails;
+    newJob->Blocks = this->Blocks;
     newJob->setRetryEnabled(this->retryEnabled());
     newJob->setRetryDelay(this->retryDelay());
     newJob->setRetryBackoffFactor(this->retryBackoffFactor());
@@ -144,13 +154,14 @@ public:
     // Hold the job running until the test has looked at how many jobs run together
     QElapsedTimer timer;
     timer.start();
-    while (Release.loadAcquire() == 0 && timer.elapsed() < 10000)
+    while (job->Blocks && Release.loadAcquire() == 0 && timer.elapsed() < 10000)
     {
       QThread::msleep(5);
     }
 
     running.fetchAndSubOrdered(1);
     job->setStatus(ctkAbstractJob::JobStatus::Finished);
+    FinishedJobs.fetchAndAddOrdered(1);
   }
 };
 
@@ -177,6 +188,26 @@ bool waitFor(const std::function<bool()>& condition, int timeoutMsec = 10000)
     QCoreApplication::processEvents();
     QThread::msleep(5);
   }
+  return condition();
+}
+
+//------------------------------------------------------------------------------
+/// Run the event loop until the condition is met or the timeout elapses. Unlike
+/// waitFor(), events are processed as soon as they are posted.
+bool runEventLoopUntil(const std::function<bool()>& condition, int timeoutMsec)
+{
+  QEventLoop loop;
+  QTimer poll;
+  QObject::connect(&poll, &QTimer::timeout, [&]()
+    {
+      if (condition())
+      {
+        loop.quit();
+      }
+    });
+  poll.start(1);
+  QTimer::singleShot(timeoutMsec, &loop, &QEventLoop::quit);
+  loop.exec();
   return condition();
 }
 
@@ -357,6 +388,59 @@ int ctkJobSchedulerTest1(int argc, char* argv[])
   // The delay of the second attempt elapses, but that attempt never runs
   waitFor([]() { return false; }, 800);
   CHECK_INT(FailingJobAttempts.loadAcquire(), 1);
+
+  //
+  // Many jobs held back by their group: the queue is swept each time a job finishes,
+  // and the sweep counted the running jobs again for each waiting job. With the jobs
+  // of a slow server waiting, each finished job froze the GUI for a while, which added
+  // up to seconds while hundreds of studies were queried.
+  //
+  ctkJobScheduler throttledScheduler;
+  resetCounters(); // the first job of group A blocks, the others wait for it
+
+  const int numberOfWaitingJobs = 3000;
+  for (int i = 0; i < numberOfWaitingJobs; ++i)
+  {
+    ctkTestJob* waitingJob = new ctkTestJob("A");
+    waitingJob->setRetryEnabled(false);
+    waitingJob->setMaximumConcurrentJobsPerGroup(1);
+    throttledScheduler.addJob(waitingJob);
+  }
+  CHECK_BOOL(waitFor([]()
+    {
+      return RunningJobsOfGroupA.loadAcquire() == 1;
+    }), true);
+
+  // Each of these jobs sweeps the queue when it finishes
+  const int numberOfSweeps = 20;
+  QElapsedTimer sweepsTimer;
+  sweepsTimer.start();
+  for (int i = 0; i < numberOfSweeps; ++i)
+  {
+    ctkTestJob* quickJob = new ctkTestJob("B");
+    quickJob->Blocks = false;
+    quickJob->setRetryEnabled(false);
+    quickJob->setMaximumConcurrentJobsPerGroup(0);
+    throttledScheduler.addJob(quickJob);
+    CHECK_BOOL(runEventLoopUntil([i]()
+      {
+        return FinishedJobs.loadAcquire() == i + 1;
+      }, 30000), true);
+  }
+  // let the scheduler handle the last job that finished
+  QCoreApplication::processEvents();
+  const qint64 sweepsDuration = sweepsTimer.elapsed();
+  std::cout << numberOfSweeps << " sweeps of " << numberOfWaitingJobs
+            << " waiting jobs took " << sweepsDuration << " ms" << std::endl;
+  // A few milliseconds per sweep, against more than a second when the sweep was
+  // quadratic in the number of waiting jobs.
+  CHECK_BOOL(sweepsDuration < 5000, true);
+  // and the group limit still holds
+  CHECK_INT(RunningJobsOfGroupA.loadAcquire(), 1);
+  CHECK_INT(MaximumRunningJobsOfGroupA.loadAcquire(), 1);
+
+  throttledScheduler.stopAllJobs(true);
+  Release.storeRelease(1);
 
   return EXIT_SUCCESS;
 }

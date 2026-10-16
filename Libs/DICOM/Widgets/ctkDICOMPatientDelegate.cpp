@@ -42,6 +42,7 @@
 
 // CTK includes
 #include "ctkDICOMPatientDelegate.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 #include "ctkDICOMPatientModel.h"
 #include "ctkDICOMPatientView.h"
 #include "ctkDICOMStudyListView.h"
@@ -84,8 +85,13 @@ ctkDICOMPatientDelegate::~ctkDICOMPatientDelegate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void ctkDICOMPatientDelegate::paint(QPainter* painter, const QStyleOptionViewItem& styleOption, const QModelIndex& index) const
 {
+  // The colors are derived from the palette of the view, unless a style sheet made
+  // them transparent
+  QStyleOptionViewItem option(styleOption);
+  option.palette = ctkDICOMVisualBrowserColors::palette(styleOption.palette, styleOption.widget);
+
   if (!index.isValid())
   {
     return;
@@ -176,29 +182,8 @@ void ctkDICOMPatientDelegate::paintPatientsTabs(QPainter *painter, const QRect &
 
   QColor backgroundColor;
   QColor borderColor;
-
-  if (isSelected && isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 100);
-    borderColor = QColor(160, 160, 160);
-  }
-  else if (isSelected)
-  {
-    backgroundColor = QColor(70, 130, 180, 70);
-    borderColor = QColor(180, 180, 180);
-  }
-  else if (isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 35);
-    borderColor = QColor(200, 200, 200);
-  }
-  else
-  {
-    backgroundColor = QColor(250, 250, 250);
-    borderColor = QColor(220, 220, 220);
-  }
-
-  QColor textColor = QColor(0, 0, 0, 150);
+  QColor textColor;
+  this->cardColors(option.palette, isSelected, isHovered, backgroundColor, borderColor, textColor);
   int borderWidth = 2;
 
   QPainterPath path;
@@ -271,10 +256,10 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
 {
   painter->save();
 
-  QColor bgColor = QColor(248, 249, 250);
-  QColor borderColor = QColor(225, 228, 232);
-  QColor textColor = QColor(0, 0, 0);
-  QColor secondaryTextColor = QColor(108, 117, 125);
+  QColor bgColor = ctkDICOMVisualBrowserColors::cardInner(option.palette);
+  QColor borderColor = ctkDICOMVisualBrowserColors::border(option.palette);
+  QColor textColor = ctkDICOMVisualBrowserColors::text(option.palette);
+  QColor secondaryTextColor = ctkDICOMVisualBrowserColors::secondaryText(option.palette);
 
   // Draw background with subtle border
   int cornerRadius = 6;
@@ -409,35 +394,14 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
 
   QColor backgroundColor;
   QColor borderColor;
-
-  if (isSelected && isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 100);
-    borderColor = QColor(160, 160, 160);
-  }
-  else if (isSelected)
-  {
-    backgroundColor = QColor(70, 130, 180, 70);
-    borderColor = QColor(180, 180, 180);
-  }
-  else if (isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 35);
-    borderColor = QColor(200, 200, 200);
-  }
-  else
-  {
-    backgroundColor = QColor(250, 250, 250);
-    borderColor = QColor(220, 220, 220);
-  }
-
+  QColor textColor;
+  this->cardColors(option.palette, isSelected, isHovered, backgroundColor, borderColor, textColor);
+  textColor = ctkDICOMVisualBrowserColors::text(option.palette);
   if (isCurrent)
   {
-    borderColor = QColor(70, 130, 180);
+    borderColor = ctkDICOMVisualBrowserColors::accent(option.palette);
   }
-
-  QColor textColor = QColor(0, 0, 0);
-  QColor secondaryTextColor = QColor(108, 117, 125);
+  QColor secondaryTextColor = ctkDICOMVisualBrowserColors::secondaryText(option.palette);
   int borderWidth = 2;
 
   // Calculate patient item rect (single line height)
@@ -582,6 +546,32 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
   // Draw interactive icons when hovering or when context menu is active
   this->paintSelectAllIcon(painter, itemRect, index, option);
   this->paintContextMenuButton(painter, itemRect, index, option);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientDelegate::cardColors(const QPalette& palette, bool isSelected, bool isHovered,
+                                         QColor& backgroundColor, QColor& borderColor,
+                                         QColor& textColor) const
+{
+  // Opaque colors, blended from the palette: the cards are drawn over the background
+  // of the view, which can be anything from white to almost black.
+  const QColor card = ctkDICOMVisualBrowserColors::card(palette);
+  const QColor accent = ctkDICOMVisualBrowserColors::accent(palette);
+  backgroundColor = card;
+  borderColor = ctkDICOMVisualBrowserColors::border(palette);
+  textColor = ctkDICOMVisualBrowserColors::secondaryText(palette);
+  if (isSelected)
+  {
+    backgroundColor = ctkDICOMVisualBrowserColors::blend(card, accent, isHovered ? 0.32 : 0.24);
+    borderColor = ctkDICOMVisualBrowserColors::blend(borderColor, accent, 0.5);
+    textColor = ctkDICOMVisualBrowserColors::text(palette);
+  }
+  else if (isHovered)
+  {
+    backgroundColor = ctkDICOMVisualBrowserColors::blend(card, accent, 0.12);
+    borderColor = ctkDICOMVisualBrowserColors::borderStrong(palette);
+    textColor = ctkDICOMVisualBrowserColors::text(palette);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -869,20 +859,8 @@ void ctkDICOMPatientDelegate::paintContextMenuButton(QPainter* painter,
 
   painter->save();
 
-  QColor bgColor;
-  if (isPressed || hasActiveContextMenu)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (isHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(
+    option.palette, isHovered, isPressed || hasActiveContextMenu);
 
   QPainterPath bgPath;
   int bgRadius = d->CornerRadius * 0.5;
@@ -953,20 +931,7 @@ void ctkDICOMPatientDelegate::paintSelectAllIcon(QPainter* painter,
   painter->save();
 
   // Draw background when hovered or pressed
-  QColor bgColor;
-  if (isPressed)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (isHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(option.palette, isHovered, isPressed);
 
   QPainterPath bgPath;
   int bgRadius = d->CornerRadius * 0.5;

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QSignalSpy>
 #include <QTimer>
 
 // ctkCore includes
@@ -30,10 +31,58 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
+#include "ctkDICOMJob.h"
+#include "ctkDICOMScheduler.h"
 #include "ctkDICOMStudyModel.h"
+
+// DCMTK includes
+#include <dcmtk/dcmdata/dcdatset.h>
+#include <dcmtk/dcmdata/dcdeftag.h>
+#include <dcmtk/dcmdata/dcuid.h>
 
 // STD includes
 #include <iostream>
+
+namespace
+{
+
+//------------------------------------------------------------------------------
+/// Insert a study of one series and one instance, without file
+void insertStudy(ctkDICOMDatabase& database, const QString& studyInstanceUID, const QString& studyDate)
+{
+  DcmDataset dataset;
+  dataset.putAndInsertString(DCM_PatientName, "Sorted^Studies");
+  dataset.putAndInsertString(DCM_PatientID, "SORTED");
+  dataset.putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toLatin1().constData());
+  dataset.putAndInsertString(DCM_StudyDate, studyDate.toLatin1().constData());
+  dataset.putAndInsertString(DCM_StudyTime, "120000");
+  dataset.putAndInsertString(DCM_SeriesInstanceUID, (studyInstanceUID + ".1").toLatin1().constData());
+  dataset.putAndInsertString(DCM_Modality, "MR");
+  dataset.putAndInsertString(DCM_SOPClassUID, UID_MRImageStorage);
+  dataset.putAndInsertString(DCM_SOPInstanceUID, (studyInstanceUID + ".1.1").toLatin1().constData());
+  database.insert(&dataset, /*storeFile=*/false, /*generateThumbnail=*/false);
+}
+
+//------------------------------------------------------------------------------
+/// Order of the studies reported by the model once the series of a study are queried
+QString studiesSortedByDateAfterSeriesQuery(ctkDICOMStudyModel& model, const QString& studyInstanceUID)
+{
+  QSignalSpy studiesSortedByDateSpy(&model, SIGNAL(studiesSortedByDate(QStringList)));
+  ctkDICOMJobDetail seriesQueried;
+  seriesQueried.JobUID = "SeriesQueryJob";
+  seriesQueried.JobType = ctkDICOMJobResponseSet::JobType::QuerySeries;
+  seriesQueried.PatientID = model.patientID();
+  seriesQueried.StudyInstanceUID = studyInstanceUID;
+  seriesQueried.QueriedSeriesInstanceUIDs = QStringList() << studyInstanceUID + ".1";
+  model.updateGUIFromScheduler(QVariant::fromValue(seriesQueried));
+  if (studiesSortedByDateSpy.count() != 1)
+  {
+    return QString("%1 signals").arg(studiesSortedByDateSpy.count());
+  }
+  return studiesSortedByDateSpy.at(0).at(0).toStringList().join(",");
+}
+
+} // end of anonymous namespace
 
 int ctkDICOMStudyModelTest1(int argc, char* argv[])
 {
@@ -152,6 +201,47 @@ int ctkDICOMStudyModelTest1(int argc, char* argv[])
     // Test collapsed state
     model.setAllStudiesCollapsed(true);
     model.setAllStudiesCollapsed(false);
+
+    //
+    // The studies are sorted by date to open the most recent ones first. The order is
+    // kept from one series query to the next: it must follow the studies added since,
+    // and the dates that changed.
+    //
+    {
+      ctkDICOMDatabase sortedDatabase;
+      sortedDatabase.openDatabase(":memory:");
+      const QString oldStudy("1.2.826.0.1.3680043.10.3.1");
+      const QString recentStudy("1.2.826.0.1.3680043.10.3.2");
+      insertStudy(sortedDatabase, oldStudy, "20100101");
+      insertStudy(sortedDatabase, recentStudy, "20120101");
+
+      ctkDICOMScheduler scheduler;
+      ctkDICOMStudyModel sortedModel;
+      sortedModel.setDicomDatabase(sortedDatabase);
+      sortedModel.setScheduler(scheduler);
+      CHECK_INT(sortedDatabase.patients().count(), 1);
+      sortedModel.setPatientID("SORTED");
+      sortedModel.setPatientUID(sortedDatabase.patients().first());
+      sortedModel.refresh();
+      CHECK_INT(sortedModel.rowCount(), 2);
+
+      CHECK_QSTRING(studiesSortedByDateAfterSeriesQuery(sortedModel, oldStudy),
+                    recentStudy + "," + oldStudy);
+
+      // A study found by a later query
+      const QString mostRecentStudy("1.2.826.0.1.3680043.10.3.3");
+      insertStudy(sortedDatabase, mostRecentStudy, "20140101");
+      sortedModel.refresh();
+      CHECK_INT(sortedModel.rowCount(), 3);
+      CHECK_QSTRING(studiesSortedByDateAfterSeriesQuery(sortedModel, oldStudy),
+                    mostRecentStudy + "," + recentStudy + "," + oldStudy);
+
+      // A date that changed
+      CHECK_BOOL(sortedModel.setData(sortedModel.indexFromStudyInstanceUID(oldStudy),
+                                     "20200101", ctkDICOMStudyModel::StudyDateRole), true);
+      CHECK_QSTRING(studiesSortedByDateAfterSeriesQuery(sortedModel, recentStudy),
+                    oldStudy + "," + mostRecentStudy + "," + recentStudy);
+    }
 
     if (!interactive)
     {

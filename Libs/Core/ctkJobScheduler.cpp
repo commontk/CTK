@@ -24,6 +24,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
+#include <QHash>
 #include <QPointer>
 #include <QReadLocker>
 #include <QWriteLocker>
@@ -81,6 +82,29 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
     // The QWriteLocker is enclosed within brackets to restrict its scope and
     // prevent conflicts with other QWriteLockers within the scheduler's methods.
     QWriteLocker locker(&this->QueueLock);
+
+    // Count the queued and running jobs once per sweep, and keep the counts up to date
+    // while jobs are started: counting them again for each candidate job made a sweep
+    // quadratic in the number of jobs, and a sweep runs each time a job finishes, which
+    // froze the GUI while hundreds of studies were queried.
+    QHash<QString, int> numberOfRunningJobsPerType;
+    QHash<QString, int> numberOfRunningJobsPerGroup;
+    foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
+    {
+      if (job->status() != ctkAbstractJob::JobStatus::Queued &&
+          job->status() != ctkAbstractJob::JobStatus::Running)
+      {
+        continue;
+      }
+
+      numberOfRunningJobsPerType[job->className()]++;
+      QString group = job->concurrencyGroup();
+      if (!group.isEmpty())
+      {
+        numberOfRunningJobsPerGroup[group]++;
+      }
+    }
+
     foreach (QThread::Priority priority, (QList<QThread::Priority>()
                                           << QThread::Priority::HighestPriority
                                           << QThread::Priority::HighPriority
@@ -105,8 +129,8 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
           continue;
         }
 
-        int numberOfRunningJobsWithSameType = this->getSameTypeJobsInThreadPoolQueueOrRunning(job);
-        if (numberOfRunningJobsWithSameType >= job->maximumConcurrentJobsPerType())
+        QString className = job->className();
+        if (numberOfRunningJobsPerType.value(className) >= job->maximumConcurrentJobsPerType())
         {
           // When the maximum number of concurrent jobs of the same type is reached,
           // return early instead of adding more jobs to an already crowded queue.
@@ -115,7 +139,10 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
           return;
         }
 
-        if (this->isGroupConcurrencyLimitReached(job))
+        // Jobs without a group (the default) are only limited per job type.
+        QString group = job->concurrencyGroup();
+        bool hasGroupLimit = !group.isEmpty() && job->maximumConcurrentJobsPerGroup() > 0;
+        if (hasGroupLimit && numberOfRunningJobsPerGroup.value(group) >= job->maximumConcurrentJobsPerGroup())
         {
           // The endpoint this job talks to (e.g. a DICOM server) is already running
           // as many jobs as it allows. Skip this job only: jobs of other groups can
@@ -132,6 +159,11 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
         this->Workers.insert(job->jobUID(), worker);
 
         job->setStatus(ctkAbstractJob::JobStatus::Queued);
+        numberOfRunningJobsPerType[className]++;
+        if (!group.isEmpty())
+        {
+          numberOfRunningJobsPerGroup[group]++;
+        }
         emit q->jobQueued(job->toVariant());
 
         this->ThreadPool->start(worker.data(), job->priority());

@@ -1028,14 +1028,24 @@ bool ctkDICOMScheduler::isRetrievingSeries(const QStringList& seriesInstanceUIDs
   // The QReadLocker is enclosed within brackets to restrict its scope and
   // prevent conflicts with other QReadLockers within the scheduler's methods.
   QReadLocker locker(&d->QueueLock);
+
+  // A job that failed an attempt waits for its next one out of the queue: it is still
+  // retrieving the series.
+  QList<QSharedPointer<ctkAbstractJob>> jobs = d->PendingRetryJobs;
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+  {
+    jobs.append(job);
+  }
+
+  foreach (QSharedPointer<ctkAbstractJob> job, jobs)
   {
     if (!job || job->isPersistent())
     {
       continue;
     }
 
-    // A job that failed an attempt is reset to Initialized when it is retried.
+    // The attempts that failed stay in the queue, as AttemptFailed: their next attempt
+    // is the job waiting in the pending retries.
     if (job->status() > ctkAbstractJob::JobStatus::Running)
     {
       continue;

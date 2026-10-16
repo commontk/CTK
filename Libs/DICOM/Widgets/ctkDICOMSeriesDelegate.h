@@ -93,14 +93,19 @@ Q_SIGNALS:
   void cornerRadiusChanged(int radius);
 
 protected:
+  /// Color of the border of a selected card and of its badge
+  QColor selectionColor(const QPalette& palette) const;
+
   /// Paint the thumbnail area
-  void paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnail(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                      const QStyleOptionViewItem& option) const;
 
   /// Paint the text information
   void paintText(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint overlay information on thumbnail
-  void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintThumbnailOverlay(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                             const QStyleOptionViewItem& option) const;
 
   /// Paint cloud/downloading status button in lower-left corner of thumbnail
   void paintStatusButton(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
@@ -110,7 +115,8 @@ protected:
   void paintSelectionBadge(QPainter* painter, const QRect& rect, const QModelIndex& index, const QStyleOptionViewItem& option) const;
 
   /// Paint progress bar below thumbnail when downloading
-  void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index) const;
+  void paintProgressBar(QPainter* painter, const QRect& rect, const QModelIndex& index,
+                        const QStyleOptionViewItem& option) const;
 
   /// Paint the selection state
   void paintSelection(QPainter* painter, const QRect& rect, const QStyleOptionViewItem& option) const;

@@ -49,6 +49,7 @@
 
 // CTK includes
 #include "ctkDICOMStudyDelegate.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 #include "ctkDICOMStudyModel.h"
 #include "ctkDICOMStudyFilterProxyModel.h"
 #include "ctkDICOMSeriesModel.h"
@@ -99,8 +100,13 @@ ctkDICOMStudyDelegate::~ctkDICOMStudyDelegate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void ctkDICOMStudyDelegate::paint(QPainter* painter, const QStyleOptionViewItem& styleOption, const QModelIndex& index) const
 {
+  // The colors are derived from the palette of the view, unless a style sheet made
+  // them transparent
+  QStyleOptionViewItem option(styleOption);
+  option.palette = ctkDICOMVisualBrowserColors::palette(styleOption.palette, styleOption.widget);
+
   if (!index.isValid())
   {
     return;
@@ -289,17 +295,8 @@ void ctkDICOMStudyDelegate::paintCollapseIndicator(QPainter* painter, const QRec
   if (collapseIconHovered || collapseIconPressed)
   {
     // Draw background for hover/press effect
-    QColor bgColor;
-    // Press effect - darker background
-    if (collapseIconPressed)
-    {
-      bgColor = QColor(0, 0, 0, 40);
-    }
-    // Hover effect - lighter background
-    else if (collapseIconHovered)
-    {
-      bgColor = QColor(0, 0, 0, 20);
-    }
+    QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(
+      option.palette, collapseIconHovered, collapseIconPressed);
 
     // Draw rounded background using the exact icon rect
     QPainterPath bgPath;
@@ -336,8 +333,7 @@ void ctkDICOMStudyDelegate::paintStudyInfo(QPainter* painter, const QRect& rect,
 
   // Color scheme
   QColor textColor = option.palette.color(QPalette::Text);
-  QColor secondaryTextColor = textColor;
-  secondaryTextColor.setAlpha(180);
+  QColor secondaryTextColor = ctkDICOMVisualBrowserColors::secondaryText(option.palette);
 
   // Layout variables
   int currentY = rect.top() + d->Spacing;
@@ -438,7 +434,7 @@ void ctkDICOMStudyDelegate::paintSeriesInfo(QPainter* painter, const QRect& rect
   painter->setFont(font);
 
   // Color
-  painter->setPen(QColor(70, 130, 180)); // Steel blue
+  painter->setPen(ctkDICOMVisualBrowserColors::icon());
 
   // Create series count text
   QString seriesText;
@@ -510,20 +506,7 @@ void ctkDICOMStudyDelegate::paintSelectAllIcon(QPainter* painter,
   painter->save();
 
 
-  QColor bgColor;
-  if (selectIconPressed)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (selectIconHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(option.palette, selectIconHovered, selectIconPressed);
 
   // Draw rounded background using the exact icon rect
   QPainterPath bgPath;
@@ -559,33 +542,26 @@ void ctkDICOMStudyDelegate::paintCardBackground(QPainter* painter,
   cardPath.addRoundedRect(rect, d->CornerRadius, d->CornerRadius);
 
   int borderWidth = 2;
-  QColor backgroundColor;
-  QColor borderColor;
-
-  if (isSelected && isHovered)
+  // Opaque colors, blended from the palette: the cards are drawn over the background
+  // of the view, which can be anything from white to almost black.
+  const QColor card = ctkDICOMVisualBrowserColors::card(option.palette);
+  const QColor accent = ctkDICOMVisualBrowserColors::accent(option.palette);
+  QColor backgroundColor = card;
+  QColor borderColor = ctkDICOMVisualBrowserColors::border(option.palette);
+  if (isSelected)
   {
-    backgroundColor = QColor(200, 200, 200, 75);
-    borderColor = QColor(160, 160, 160);
-  }
-  else if (isSelected)
-  {
-    backgroundColor = QColor(200, 200, 200, 50);
-    borderColor = QColor(180, 180, 180);
+    backgroundColor = ctkDICOMVisualBrowserColors::blend(card, accent, isHovered ? 0.14 : 0.10);
+    borderColor = ctkDICOMVisualBrowserColors::blend(borderColor, accent, 0.4);
   }
   else if (isHovered)
   {
-    backgroundColor = QColor(200, 200, 200, 25);
-    borderColor = QColor(150, 150, 150);
-  }
-  else
-  {
-    backgroundColor = QColor(200, 200, 200, 0);
-    borderColor = QColor(220, 220, 220);
+    backgroundColor = ctkDICOMVisualBrowserColors::blend(card, ctkDICOMVisualBrowserColors::text(option.palette), 0.03);
+    borderColor = ctkDICOMVisualBrowserColors::borderStrong(option.palette);
   }
 
   if (isCurrent)
   {
-    borderColor = QColor(70, 130, 180);
+    borderColor = accent;
   }
 
   // Fill card background
@@ -893,20 +869,8 @@ void ctkDICOMStudyDelegate::paintContextMenuButton(QPainter* painter,
 
   painter->save();
 
-  QColor bgColor;
-  if (isPressed || hasActiveContextMenu)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (isHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(
+    option.palette, isHovered, isPressed || hasActiveContextMenu);
 
   // Draw rounded background using the exact icon rect
   QPainterPath bgPath;
@@ -953,20 +917,8 @@ void ctkDICOMStudyDelegate::paintOperationStatusButton(QPainter* painter,
 
   painter->save();
 
-  QColor bgColor;
-  if (operationStatusIconPressed)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (operationStatusIconHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(
+    option.palette, operationStatusIconHovered, operationStatusIconPressed);
 
   int operationStatus = index.data(ctkDICOMStudyModel::OperationStatusRole).toInt();
   QIcon iconResource;

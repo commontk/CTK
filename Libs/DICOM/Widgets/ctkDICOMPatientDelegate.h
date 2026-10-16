@@ -132,6 +132,9 @@ Q_SIGNALS:
 
 protected:
   /// Format patient birth date for display
+  /// Colors of a patient card, following the palette of the view
+  void cardColors(const QPalette& palette, bool isSelected, bool isHovered,
+                  QColor& backgroundColor, QColor& borderColor, QColor& textColor) const;
   QString formatPatientBirthDate(const QString& date) const;
 
   /// Paint for TabMode

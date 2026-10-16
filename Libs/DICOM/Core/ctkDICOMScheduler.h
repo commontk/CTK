@@ -209,7 +209,8 @@ public:
   /// True while the files of any of these series are still on their way into the
   /// database: a retrieve job for one of them is queued or running (including the
   /// C-GET from the proxy server that follows a C-MOVE through it), or an inserter job
-  /// still has frames of one of them to write.
+  /// still has frames of one of them to write, or one of these jobs failed an attempt
+  /// and waits for the next one.
   ///
   /// A finished retrieve job alone does not mean the series is in the database: behind
   /// a proxy server the C-MOVE job only asks PACS to send the series to the proxy, and

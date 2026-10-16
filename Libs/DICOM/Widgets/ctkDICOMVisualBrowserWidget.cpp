@@ -40,6 +40,7 @@
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QScrollArea>
+#include <QScopeGuard>
 #include <QScrollBar>
 #include <QSet>
 #include <QSettings>
@@ -73,6 +74,7 @@
 #include "ctkDICOMPatientFilterProxyModel.h"
 #include "ctkDICOMPatientView.h"
 #include "ctkDICOMVisualBrowserWidget.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 #include "ctkDICOMSeriesModel.h"
 #include "ctkDICOMSeriesTableView.h"
 #include "ctkDICOMServerNodeWidget2.h"
@@ -85,8 +87,6 @@
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
 
-QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
-QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
 QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
 QColor ctkDICOMVisualBrowserWidgetWarningPlaceholderTextColor(0, 0, 0, 128);
 int ctkDICOMVisualBrowserWidgetThumbnailSizePixelsNone = 0;
@@ -144,6 +144,13 @@ public:
   /// and not the last signal that arrived: the job signals are batched and reordered,
   /// so the last one says nothing about what is still running.
   void setQueryJobInProgress(const QString& jobUID, bool inProgress);
+
+  /// Number of instances of the series in the database, and how many of them have a
+  /// file: the instances found by a query have none until they are retrieved.
+  void seriesFileCounts(const QString& seriesInstanceUID, int& numberOfFiles, int& numberOfInstances) const;
+  /// Retrieve all the instances of the series from the servers allowed for its patient.
+  /// Return false when no job could be scheduled (e.g. no server is allowed).
+  bool retrieveSeriesToLoad(const QString& seriesInstanceUID);
   void updateQueryButtonState();
   void showQueryLimitWarnings(const QStringList& warningMessages);
   QString retryTimeoutWarning(const ctkDICOMJobDetail& td) const;
@@ -334,6 +341,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->setupUi(q);
 
   this->DatabaseDirectoryProblemFrame->hide();
+  this->DatabaseDirectoryProblemFrame->setStyleSheet(ctkDICOMVisualBrowserColors::warningStyleSheet(ctkDICOMVisualBrowserColors::palette(q)));
   QObject::connect(this->SelectDatabaseDirectoryButton, SIGNAL(clicked()),
                    q, SLOT(selectDatabaseDirectory()));
   QObject::connect(this->CreateNewDatabaseButton, SIGNAL(clicked()),
@@ -1399,6 +1407,55 @@ void ctkDICOMVisualBrowserWidgetPrivate::setQueryJobInProgress(const QString& jo
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::seriesFileCounts(const QString& seriesInstanceUID,
+                                                          int& numberOfFiles,
+                                                          int& numberOfInstances) const
+{
+  numberOfFiles = 0;
+  numberOfInstances = 0;
+  if (!this->DicomDatabase)
+  {
+    return;
+  }
+
+  const QStringList files = this->DicomDatabase->filesForSeries(seriesInstanceUID);
+  numberOfInstances = files.count();
+  for (const QString& file : files)
+  {
+    if (!file.isEmpty())
+    {
+      ++numberOfFiles;
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMVisualBrowserWidgetPrivate::retrieveSeriesToLoad(const QString& seriesInstanceUID)
+{
+  if (!this->Scheduler || !this->DicomDatabase || !this->PatientModel)
+  {
+    return false;
+  }
+
+  QString studyInstanceUID = this->DicomDatabase->studyForSeries(seriesInstanceUID);
+  QString patientUID = this->DicomDatabase->patientForStudy(studyInstanceUID);
+  QString patientID = this->DicomDatabase->fieldForPatient("PatientID", patientUID);
+  QStringList allowedServers = this->PatientModel->allowedServers(patientUID);
+  ctkDICOMStudyModel* studyModel = this->PatientModel->studyModelForPatientUID(patientUID);
+  ctkDICOMSeriesModel* seriesModel = studyModel ? studyModel->seriesModelForStudyInstanceUID(studyInstanceUID) : nullptr;
+  if (seriesModel && !seriesModel->allowedServers().isEmpty())
+  {
+    allowedServers = seriesModel->allowedServers();
+  }
+
+  // The whole series, not only the frames found by a query of its instances: the
+  // instances of a study that was never opened have not been queried.
+  this->Scheduler->retrieveSeries(patientID, studyInstanceUID, seriesInstanceUID,
+                                  QThread::HighestPriority, allowedServers);
+  return this->Scheduler->isRetrievingSeries(QStringList() << seriesInstanceUID);
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::updateQueryButtonState()
 {
   const bool queryInProgress = !this->QueryJobUIDsInProgress.isEmpty();
@@ -1483,7 +1540,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToFilterWidgets(bool warning)
 {
-  Q_Q(ctkDICOMVisualBrowserWidget);
   if (warning)
   {
     this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringPatientIDSearchBox);
@@ -1495,18 +1551,27 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToFilterWidgets(bool 
   }
   else
   {
-    QColor color(ctkDICOMVisualBrowserWidgetDefaultColor);
-    QColor visualDICOMBrowserColor = q->palette().color(QPalette::Normal, q->backgroundRole());
-    if (visualDICOMBrowserColor.lightnessF() < 0.5)
+    // Back to the palette of the application, light or dark
+    QList<QWidget*> filterWidgets = QList<QWidget*>()
+      << this->FilteringPatientIDSearchBox
+      << this->FilteringPatientNameSearchBox
+      << this->FilteringDateComboBox
+      << this->FilteringStudyDescriptionSearchBox
+      << this->FilteringSeriesDescriptionSearchBox
+      << this->FilteringModalityCheckableComboBox;
+    foreach (QWidget* widget, filterWidgets)
     {
-      color = ctkDICOMVisualBrowserWidgetDarkModeDefaultColor;
+      if (widget)
+      {
+        widget->setPalette(QPalette());
+        // the style sheet of the field before any warning
+        QVariant filterStyleSheet = widget->property("ctkFilterStyleSheet");
+        if (filterStyleSheet.isValid() && widget->styleSheet() != filterStyleSheet.toString())
+        {
+          widget->setStyleSheet(filterStyleSheet.toString());
+        }
+      }
     }
-    this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringDateComboBox);
-    this->setBackgroundColorToWidget(color, this->FilteringStudyDescriptionSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringSeriesDescriptionSearchBox);
-    this->setBackgroundColorToWidget(color, this->FilteringModalityCheckableComboBox);
   }
 }
 
@@ -1543,6 +1608,20 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(QColor color
     }
   }
   widget->setPalette(pal);
+
+  // The style sheet of an application (e.g. SlicerHIVEApp) paints the background of the
+  // fields itself, ignoring their palette: the warning goes in their own style sheet,
+  // which comes first.
+  if (qApp && !qApp->styleSheet().isEmpty() && !widget->objectName().isEmpty())
+  {
+    if (!widget->property("ctkFilterStyleSheet").isValid())
+    {
+      widget->setProperty("ctkFilterStyleSheet", widget->styleSheet());
+    }
+    widget->setStyleSheet(widget->property("ctkFilterStyleSheet").toString() +
+      QString(" #%1 { background-color: %2; }")
+        .arg(widget->objectName(), ctkDICOMVisualBrowserColors::styleSheetColor(color)));
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -2516,10 +2595,9 @@ void ctkDICOMVisualBrowserWidget::refreshBrowser(bool isImport)
 
   // Reset the studies-to-open list for all patients since we're starting a new query
   d->StudiesToOpenPerPatient.clear();
-  // Hide warning button and update warnings because the previous warnings may no longer be relevant after refresh
+  // Hide warning button: the previous warnings may no longer be relevant after refresh
   d->SearchPushButton->setIcon(QIcon(":/Icons/query.svg"));
   d->WarningPushButton->hide();
-  d->updateFiltersWarnings();
 
   // Clean the view (this will clean study view and all series views as well)
   d->PatientView->clean();
@@ -2533,6 +2611,10 @@ void ctkDICOMVisualBrowserWidget::refreshBrowser(bool isImport)
   // since some studies may have been closed during refresh
   d->PatientView->studyListView()->onNumberOfOpenedStudiesChanged(this->numberOfOpenedStudiesPerPatient());
   d->PatientView->studyListView()->updateLoadButton();
+  // The warnings of the filters tell which filters leave no patient, study or series:
+  // they are computed from the patients that have just been repopulated, otherwise
+  // the filters of a database opened with patients were flagged as matching nothing.
+  d->updateFiltersWarnings();
 }
 
 //------------------------------------------------------------------------------
@@ -3810,30 +3892,7 @@ void ctkDICOMVisualBrowserWidget::showPatientContextMenu(const QPoint& globalPos
   patientMenu->setWindowFlags(patientMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
   patientMenu->setAttribute(Qt::WA_TranslucentBackground);
   // To Do: add an option to disable styling
-  patientMenu->setStyleSheet(
-    "QMenu {"
-    "  background-color: #ffffff;"
-    "  border-radius: 8px;"
-    "  border: 1px solid #e0e0e0;"
-    "  padding: 4px;"
-    "}"
-    "QMenu::item {"
-    "  padding: 8px 32px 8px 16px;"
-    "  border-radius: 4px;"
-    "  color: #212121;"
-    "  background-color: transparent;"
-    "  margin: 2px 4px;"
-    "}"
-    "QMenu::item:selected {"
-    "  background-color: #f5f5f5;"
-    "  color: #1976d2;"
-    "}"
-    "QMenu::separator {"
-    "  height: 1px;"
-    "  background: #eeeeee;"
-    "  margin: 4px 8px;"
-    "}"
-  );
+  patientMenu->setStyleSheet(ctkDICOMVisualBrowserColors::menuStyleSheet(ctkDICOMVisualBrowserColors::palette(this)));
 
   // Load action
   QString loadString = patientCount == 1 ? tr("Load patient") :
@@ -3946,30 +4005,7 @@ void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& globalPos, 
   studyMenu->setWindowFlags(studyMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
   studyMenu->setAttribute(Qt::WA_TranslucentBackground);
   // To Do: add an option to disable styling
-  studyMenu->setStyleSheet(
-    "QMenu {"
-    "  background-color: #ffffff;"
-    "  border-radius: 8px;"
-    "  border: 1px solid #e0e0e0;"
-    "  padding: 4px;"
-    "}"
-    "QMenu::item {"
-    "  padding: 8px 32px 8px 16px;"
-    "  border-radius: 4px;"
-    "  color: #212121;"
-    "  background-color: transparent;"
-    "  margin: 2px 4px;"
-    "}"
-    "QMenu::item:selected {"
-    "  background-color: #f5f5f5;"
-    "  color: #1976d2;"
-    "}"
-    "QMenu::separator {"
-    "  height: 1px;"
-    "  background: #eeeeee;"
-    "  margin: 4px 8px;"
-    "}"
-  );
+  studyMenu->setStyleSheet(ctkDICOMVisualBrowserColors::menuStyleSheet(ctkDICOMVisualBrowserColors::palette(this)));
 
   // Load action
   QString loadString = numberOfStudies == 1 ? tr("Load study") :
@@ -4060,30 +4096,7 @@ void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& globalPos,
   seriesMenu->setWindowFlags(seriesMenu->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
   seriesMenu->setAttribute(Qt::WA_TranslucentBackground);
   // To Do: add an option to disable styling
-  seriesMenu->setStyleSheet(
-    "QMenu {"
-    "  background-color: #ffffff;"
-    "  border-radius: 8px;"
-    "  border: 1px solid #e0e0e0;"
-    "  padding: 4px;"
-    "}"
-    "QMenu::item {"
-    "  padding: 8px 32px 8px 16px;"
-    "  border-radius: 4px;"
-    "  color: #212121;"
-    "  background-color: transparent;"
-    "  margin: 2px 4px;"
-    "}"
-    "QMenu::item:selected {"
-    "  background-color: #f5f5f5;"
-    "  color: #1976d2;"
-    "}"
-    "QMenu::separator {"
-    "  height: 1px;"
-    "  background: #eeeeee;"
-    "  margin: 4px 8px;"
-    "}"
-  );
+  seriesMenu->setStyleSheet(ctkDICOMVisualBrowserColors::menuStyleSheet(ctkDICOMVisualBrowserColors::palette(this)));
 
   // Load action
   QString loadString = numberOfSelectedSeries == 1 ? tr("Load series") :
@@ -4444,6 +4457,17 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
     return;
   }
 
+  // The events are processed while the series are retrieved, and while the application
+  // loads them: a second click on Load (the progress dialog only shows up after a
+  // second) would start a nested load of the same series, which would be handed over
+  // to the application twice.
+  if (d->IsLoading)
+  {
+    return;
+  }
+  d->IsLoading = true;
+  auto resetIsLoading = qScopeGuard([d]() { d->IsLoading = false; });
+
   // Update UI - disable delete action and search button during load
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   bool deleteActionWasVisible = d->DeleteActionVisible;
@@ -4501,48 +4525,6 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesToStop);
   }
 
-  // For cloud series that haven't been retrieved or failed, force retrieve if no jobs running
-  QStringList seriesToForceRetrieve;
-  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
-  {
-    int numberOfRunningJobsPerSeries = d->Scheduler->getJobsByDICOMUIDs({}, {}, {seriesInstanceUID}).count();
-    bool seriesIsCloud = false;
-    ctkDICOMSeriesModel* seriesModel = nullptr;
-
-    QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
-    QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
-    ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
-    if (studyModel)
-    {
-      seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
-      if (seriesModel)
-      {
-        seriesIsCloud = seriesModel->isSeriesCloud(seriesInstanceUID);
-      }
-    }
-
-    if (numberOfRunningJobsPerSeries != 0 || !seriesIsCloud)
-    {
-      continue;
-    }
-
-    if (seriesModel && !seriesModel->autoRetrieveFullSeries())
-    {
-      // The frames were never prefetched by design, so nothing is wrong with what is
-      // already in the database: fetch the missing frames instead of starting over.
-      seriesModel->retrieveSeries(seriesInstanceUID);
-    }
-    else
-    {
-      seriesToForceRetrieve.append(seriesInstanceUID);
-    }
-  }
-
-  if (!seriesToForceRetrieve.isEmpty())
-  {
-    this->forceRetrieveSeries(seriesToForceRetrieve);
-  }
-
   // Create progress dialog
   QProgressDialog loadSeriesProgress(
     ctkDICOMVisualBrowserWidget::tr("Retrieving and processing selected series..."),
@@ -4554,11 +4536,54 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
   loadSeriesProgress.setBar(bar);
   loadSeriesProgress.setValue(0);
 
-  // Wait for selected series to be fully retrieved
-  bool wait = true;
+  // Wait until every instance of the selected series has its file in the database.
+  // Whether a series is in the cloud, or which jobs ran for it, tells little: the jobs
+  // that finished stay in the queue, the thumbnail of a series is retrieved alone, and
+  // the frames are written by inserter jobs after the retrieve. A series that is still
+  // incomplete when nothing retrieves it anymore is retrieved by this load, once: if it
+  // is still incomplete after that retrieve, waiting longer would not change anything.
+  QSet<QString> seriesRetrievedByThisLoad;
+  QStringList seriesWithoutServer;
   int progress = 0;
-  while (wait)
+  while (true)
   {
+    QStringList seriesToWaitFor;
+    foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
+    {
+      int numberOfFiles = 0;
+      int numberOfInstances = 0;
+      d->seriesFileCounts(seriesInstanceUID, numberOfFiles, numberOfInstances);
+      if (numberOfInstances > 0 && numberOfFiles == numberOfInstances)
+      {
+        continue;
+      }
+
+      if (d->Scheduler->isRetrievingSeries(QStringList() << seriesInstanceUID))
+      {
+        seriesToWaitFor.append(seriesInstanceUID);
+        continue;
+      }
+
+      if (!seriesRetrievedByThisLoad.contains(seriesInstanceUID) &&
+          !seriesWithoutServer.contains(seriesInstanceUID))
+      {
+        if (d->retrieveSeriesToLoad(seriesInstanceUID))
+        {
+          seriesRetrievedByThisLoad.insert(seriesInstanceUID);
+          seriesToWaitFor.append(seriesInstanceUID);
+        }
+        else
+        {
+          seriesWithoutServer.append(seriesInstanceUID);
+        }
+      }
+    }
+
+    if (seriesToWaitFor.isEmpty())
+    {
+      break;
+    }
+
     qApp->processEvents();
     d->Scheduler->waitForDone(300);
     progress++;
@@ -4572,87 +4597,142 @@ void ctkDICOMVisualBrowserWidget::onLoadSeries(const QStringList& seriesInstance
     {
       break;
     }
-
-    // Check if all selected series have been retrieved and inserted. A series stops
-    // being "cloud" when its retrieve job is done, which is not when its files are in
-    // the database: behind a proxy server that job is the C-MOVE to the proxy, and the
-    // C-GET from the proxy is a second job; either way the files are written by
-    // inserter jobs that run after the retrieve.
-    wait = d->Scheduler->isRetrievingSeries(seriesInstanceUIDs);
-    if (!wait && d->DicomDatabase)
-    {
-      foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
-      {
-        QString studyInstanceUID = d->DicomDatabase->studyForSeries(seriesInstanceUID);
-        QString patientUID = d->DicomDatabase->patientForStudy(studyInstanceUID);
-        ctkDICOMStudyModel* studyModel = d->PatientModel->studyModelForPatientUID(patientUID);
-        if (studyModel)
-        {
-          ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
-          if (seriesModel)
-          {
-            if (seriesModel->isSeriesCloud(seriesInstanceUID))
-            {
-              wait = true;
-              break;
-            }
-          }
-        }
-      }
-    }
   }
 
   // Restore UI
   d->DeleteActionVisible = deleteActionWasVisible;
   QApplication::restoreOverrideCursor();
 
-  // Finalize
-  QStringList retrievedSeriesInstanceUIDs;
   if (loadSeriesProgress.wasCanceled())
   {
     // Stop jobs for selected series
     d->Scheduler->stopJobsByDICOMUIDs(QStringList(), QStringList(), seriesInstanceUIDs);
     d->Scheduler->waitForDone(300);
+    return;
   }
-  else
+  loadSeriesProgress.close();
+
+  // Only the complete series are handed over: a series with missing frames would be
+  // loaded as a volume with holes, or as the single frame of its thumbnail.
+  QStringList retrievedSeriesInstanceUIDs;
+  QStringList missingSeriesInstanceUIDs;
+  QStringList partialSeriesInstanceUIDs;
+  QStringList partialSeriesDetails;
+  int numberOfPartialFiles = 0;
+  int numberOfPartialInstances = 0;
+  foreach (const QString& seriesInstanceUID, seriesInstanceUIDs)
   {
-    loadSeriesProgress.close();
-
-    // Collect successfully retrieved series
-    if (d->DicomDatabase)
+    int numberOfFiles = 0;
+    int numberOfInstances = 0;
+    d->seriesFileCounts(seriesInstanceUID, numberOfFiles, numberOfInstances);
+    if (numberOfInstances > 0 && numberOfFiles == numberOfInstances)
     {
-      foreach (const QString& seriesUID, seriesInstanceUIDs)
+      retrievedSeriesInstanceUIDs.append(seriesInstanceUID);
+    }
+    else if (numberOfFiles == 0)
+    {
+      missingSeriesInstanceUIDs.append(seriesInstanceUID);
+    }
+    else
+    {
+      partialSeriesInstanceUIDs.append(seriesInstanceUID);
+      partialSeriesDetails.append(QString("%1 (%2 of %3 images)")
+        .arg(seriesInstanceUID).arg(numberOfFiles).arg(numberOfInstances));
+      numberOfPartialFiles += numberOfFiles;
+      numberOfPartialInstances += numberOfInstances;
+    }
+  }
+
+  // Emit signal with retrieved series
+  if (!retrievedSeriesInstanceUIDs.isEmpty())
+  {
+    emit seriesRetrieved(retrievedSeriesInstanceUIDs);
+    QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
+    for (const QString& uid : std::as_const(retrievedSeriesInstanceUIDs))
+    {
+      if (!loadedSeriesInstanceUIDs.contains(uid))
       {
-        // If series has instances, it was successfully retrieved
-        if (d->DicomDatabase->instancesForSeries(seriesUID).count() > 0)
-        {
-          retrievedSeriesInstanceUIDs.append(seriesUID);
-        }
+        loadedSeriesInstanceUIDs.append(uid);
       }
     }
 
-    // Emit signal with retrieved series
-    if (!retrievedSeriesInstanceUIDs.isEmpty())
-    {
-      emit seriesRetrieved(retrievedSeriesInstanceUIDs);
-      QStringList loadedSeriesInstanceUIDs = d->DicomDatabase->loadedSeriesInstanceUIDs();
-      for (const QString& uid : std::as_const(retrievedSeriesInstanceUIDs))
-      {
-        if (!loadedSeriesInstanceUIDs.contains(uid))
-        {
-          loadedSeriesInstanceUIDs.append(uid);
-        }
-      }
+    d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+  }
 
-      d->DicomDatabase->setLoadedSeriesInstanceUIDs(loadedSeriesInstanceUIDs);
+  // Without a word, a load that could not retrieve everything looks like a click on
+  // Load that was ignored, or like a series that was loaded in full.
+  if (!missingSeriesInstanceUIDs.isEmpty() || !partialSeriesInstanceUIDs.isEmpty())
+  {
+    QStringList reasons;
+    if (!missingSeriesInstanceUIDs.isEmpty())
+    {
+      reasons << tr("%n series could not be retrieved", "", missingSeriesInstanceUIDs.count());
+    }
+    if (!partialSeriesInstanceUIDs.isEmpty())
+    {
+      reasons << tr("%n series could only be partially retrieved (%1 of %2 images)", "",
+                    partialSeriesInstanceUIDs.count())
+                   .arg(numberOfPartialFiles).arg(numberOfPartialInstances);
     }
 
-    // The series have been handed over to the application: the selection that asked
-    // for them is done with, and keeping it would load it again at the next click on
-    // Load. A load that was canceled keeps its selection, so that it can be retried.
-    if (d->PatientView && d->PatientView->studyListView())
+    QString warningText;
+    if (retrievedSeriesInstanceUIDs.isEmpty())
     {
-      d->PatientView->studyListView()->clearSelection();
+      warningText = tr("Nothing has been loaded: %1.").arg(reasons.join(tr(", and ")));
+    }
+    else
+    {
+      warningText = tr("%1 of the %2 selected series have not been loaded: %3.")
+        .arg(seriesInstanceUIDs.count() - retrievedSeriesInstanceUIDs.count())
+        .arg(seriesInstanceUIDs.count())
+        .arg(reasons.join(tr(", and ")));
+    }
+    if (!seriesWithoutServer.isEmpty())
+    {
+      warningText += "\n" + tr("No server allowed for the patient can retrieve them: verify the allowed servers of the patient.");
+    }
+    else if (partialSeriesInstanceUIDs.isEmpty())
+    {
+      warningText += "\n" + tr("Verify that the servers are reachable, then load them again.");
+    }
+    else if (missingSeriesInstanceUIDs.isEmpty())
+    {
+      warningText += "\n" + tr("The servers did not send all the images: load them again, or verify the series on the servers.");
+    }
+    else
+    {
+      warningText += "\n" + tr("Verify that the servers are reachable and have all the images, then load them again.");
+    }
+
+    QString details;
+    if (!missingSeriesInstanceUIDs.isEmpty())
+    {
+      details += QString("\nSeries not retrieved: %1").arg(missingSeriesInstanceUIDs.join(", "));
+    }
+    if (!partialSeriesDetails.isEmpty())
+    {
+      details += QString("\nSeries partially retrieved: %1").arg(partialSeriesDetails.join(", "));
+    }
+    if (!seriesWithoutServer.isEmpty())
+    {
+      details += QString("\nSeries without an allowed server: %1").arg(seriesWithoutServer.join(", "));
+    }
+    logger.warn(warningText + details);
+    d->WarningPushButton->setText(warningText);
+    d->WarningPushButton->show();
+  }
+
+  // The series that have been handed over to the application are done with: keeping
+  // their selection would load them again at the next click on Load. The series that
+  // could not be loaded stay selected, so that the load can be retried.
+  if (d->PatientView && d->PatientView->studyListView())
+  {
+    ctkDICOMStudyListView* studyListView = d->PatientView->studyListView();
+    studyListView->clearSelection();
+    QStringList notLoadedSeriesInstanceUIDs = missingSeriesInstanceUIDs + partialSeriesInstanceUIDs;
+    if (!notLoadedSeriesInstanceUIDs.isEmpty())
+    {
+      studyListView->selectSeriesInstanceUIDs(notLoadedSeriesInstanceUIDs);
     }
   }
 }
@@ -5090,6 +5170,23 @@ void ctkDICOMVisualBrowserWidget::resizeEvent(QResizeEvent* event)
   Q_D(ctkDICOMVisualBrowserWidget);
   Superclass::resizeEvent(event);
   d->updateFiltersLayoutOrientation();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::changeEvent(QEvent* event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  Superclass::changeEvent(event);
+
+  if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange)
+  {
+    // The warning follows the light and dark styles of the application
+    QString warningStyleSheet = ctkDICOMVisualBrowserColors::warningStyleSheet(ctkDICOMVisualBrowserColors::palette(this));
+    if (d->DatabaseDirectoryProblemFrame->styleSheet() != warningStyleSheet)
+    {
+      d->DatabaseDirectoryProblemFrame->setStyleSheet(warningStyleSheet);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------

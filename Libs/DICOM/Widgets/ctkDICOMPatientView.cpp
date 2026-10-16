@@ -53,6 +53,7 @@
 #include "ctkDICOMStudyDelegate.h"
 #include "ctkSplitter.h"
 #include "ctkDICOMStudyListView.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 #include "ctkDICOMStudyModel.h"
 #include "ctkDICOMStudyFilterProxyModel.h"
 #include "ctkDICOMStudyMergedFilterProxyModel.h"
@@ -129,6 +130,20 @@ public:
   void updateSelectedPatientsCache();
   void setupSplitter();
   void restoreTabModeParenting();
+
+  // TabMode helpers. The item of a patient spans the whole column below its tab, but
+  // only the tab is drawn there, and the header of the current patient is drawn across
+  // the columns of all the patients.
+  ctkDICOMPatientDelegate* patientDelegate() const;
+  QStyleOptionViewItem tabModeOption(const QModelIndex& index) const;
+  int tabRowHeight() const;
+  int tabModeHeaderBottom() const;
+  /// Patient of the tab at \a pos, the current patient in the header area, or an
+  /// invalid index elsewhere.
+  QModelIndex tabModeIndexAt(const QPoint& pos) const;
+  /// Repaint what the hover state changes: the tabs and the header in TabMode, the
+  /// items in ListMode.
+  void updateHoveredArea(const QModelIndex& previousIndex, const QModelIndex& index);
 };
 
 //------------------------------------------------------------------------------
@@ -222,6 +237,89 @@ void ctkDICOMPatientViewPrivate::restoreTabModeParenting()
   {
     container->setParent(nullptr);
     delete container;
+  }
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMPatientDelegate* ctkDICOMPatientViewPrivate::patientDelegate() const
+{
+  Q_Q(const ctkDICOMPatientView);
+  return qobject_cast<ctkDICOMPatientDelegate*>(q->itemDelegate());
+}
+
+//------------------------------------------------------------------------------
+QStyleOptionViewItem ctkDICOMPatientViewPrivate::tabModeOption(const QModelIndex& index) const
+{
+  Q_Q(const ctkDICOMPatientView);
+  QStyleOptionViewItem option;
+  option.initFrom(q);
+  option.widget = q;
+  option.font = q->font();
+  option.rect = q->visualRect(index);
+  if (q->selectionModel() && q->selectionModel()->isSelected(index))
+  {
+    option.state |= QStyle::State_Selected;
+  }
+  return option;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMPatientViewPrivate::tabRowHeight() const
+{
+  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
+  return delegate ? delegate->tabModeHeight() + delegate->spacing() * 2 : 0;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMPatientViewPrivate::tabModeHeaderBottom() const
+{
+  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
+  return delegate ? this->tabRowHeight() + delegate->patientHeaderHeight() + delegate->spacing() * 2 : 0;
+}
+
+//------------------------------------------------------------------------------
+QModelIndex ctkDICOMPatientViewPrivate::tabModeIndexAt(const QPoint& pos) const
+{
+  Q_Q(const ctkDICOMPatientView);
+  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
+  if (!delegate || pos.y() >= this->tabModeHeaderBottom())
+  {
+    return QModelIndex();
+  }
+
+  if (pos.y() >= this->tabRowHeight())
+  {
+    return q->currentIndex();
+  }
+
+  // indexAt() returns the patient of the column, also around and below its tab
+  QModelIndex index = q->indexAt(pos);
+  if (!index.isValid())
+  {
+    return QModelIndex();
+  }
+  QStyleOptionViewItem option = this->tabModeOption(index);
+  QRect tabRect = delegate->patientsRect(option.rect, option, index);
+  return tabRect.contains(pos) ? index : QModelIndex();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientViewPrivate::updateHoveredArea(const QModelIndex& previousIndex, const QModelIndex& index)
+{
+  Q_Q(ctkDICOMPatientView);
+  if (this->DisplayMode == ctkDICOMPatientView::TabMode)
+  {
+    q->viewport()->update(QRect(0, 0, q->viewport()->width(), this->tabModeHeaderBottom()));
+    return;
+  }
+
+  if (previousIndex.isValid())
+  {
+    q->viewport()->update(q->visualRect(previousIndex));
+  }
+  if (index.isValid())
+  {
+    q->viewport()->update(q->visualRect(index));
   }
 }
 
@@ -770,40 +868,7 @@ ctkDICOMPatientView::ctkDICOMPatientView(QWidget* parent)
 
   // Configure list appearance
   this->setAlternatingRowColors(false);
-  this->verticalScrollBar()->setStyleSheet(QString(R"(
-    QScrollBar:vertical {
-      border: none;
-      width: 10px;
-      margin: 0px 0px 0px 0px;
-      background: none;
-    }
-    QScrollBar::handle:vertical {
-      min-height: 50px;
-      margin: 4px 0px 4px 0px;
-      width: 10px;
-      border-width: 1px;
-      border-radius: 2px;
-      background-color: #808080;
-    }
-    QScrollBar::handle:vertical:hover {
-      background-color: #5A5A5A;
-    }
-    QScrollBar::handle:vertical:pressed {
-      background-color: #75a7ff;
-    }
-
-    QScrollBar::add-line:vertical {
-      height: 0px;
-      subcontrol-position: bottom;
-      subcontrol-origin: margin;
-    }
-    QScrollBar::sub-line:vertical {
-      height: 0 px;
-      subcontrol-position: top;
-      subcontrol-origin: margin;
-    }
-  )"
-  ));
+  this->verticalScrollBar()->setStyleSheet(ctkDICOMVisualBrowserColors::scrollBarStyleSheet(ctkDICOMVisualBrowserColors::palette(this)));
 
   // Set size policy
   this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
@@ -1490,8 +1555,29 @@ void ctkDICOMPatientView::wheelEvent(QWheelEvent *event)
 //------------------------------------------------------------------------------
 void ctkDICOMPatientView::paintEvent(QPaintEvent* event)
 {
+  Q_D(ctkDICOMPatientView);
+
   // Call base class paint
   Superclass::paintEvent(event);
+
+  // In TabMode the header of the current patient is painted by its item, across the
+  // columns of the other patients. QListView only paints the items whose rect is in the
+  // repainted region, so repainting the column of another patient (e.g. when its hover
+  // or its status changes) erased a strip of the header, which then stayed white.
+  QModelIndex current = this->currentIndex();
+  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
+  if (d->DisplayMode == ctkDICOMPatientView::TabMode && delegate && current.isValid() &&
+      !event->region().intersects(this->visualRect(current)))
+  {
+    QRect headerAreaRect(0, d->tabRowHeight(), this->viewport()->width(),
+                         d->tabModeHeaderBottom() - d->tabRowHeight());
+    if (event->region().intersects(headerAreaRect))
+    {
+      QPainter painter(this->viewport());
+      painter.setClipRegion(event->region());
+      delegate->paint(&painter, d->tabModeOption(current), current);
+    }
+  }
 
   QAbstractItemModel* model = this->model();
   int visibleCount = 0;
@@ -1531,7 +1617,7 @@ void ctkDICOMPatientView::paintEvent(QPaintEvent* event)
     font.setPointSize(font.pointSize() + 4);
     font.setBold(true);
     painter.setFont(font);
-    painter.setPen(QColor(128, 128, 128));
+    painter.setPen(ctkDICOMVisualBrowserColors::secondaryText(ctkDICOMVisualBrowserColors::palette(this)));
     QRect rect = this->viewport()->rect();
     painter.drawText(rect, Qt::AlignCenter, message);
   }
@@ -1567,18 +1653,10 @@ void ctkDICOMPatientView::mousePressEvent(QMouseEvent* event)
   {
     if (d->DisplayMode == ctkDICOMPatientView::TabMode)
     {
-      int spacing = delegate->spacing();
-      int tabRowHeight = delegate->tabModeHeight() + spacing * 2;
-      int patientHeaderHeight = delegate->patientHeaderHeight() + spacing * 2;
-      int totalHeight = tabRowHeight + patientHeaderHeight;
-
-      if (event->pos().y() >= totalHeight)
+      // A press around a tab, and not on it, does not select its patient
+      index = d->tabModeIndexAt(event->pos());
+      if (index.isValid() && event->pos().y() >= d->tabRowHeight())
       {
-        index = QModelIndex();
-      }
-      else if (event->pos().y() >= tabRowHeight)
-      {
-        index = this->currentIndex();
         QRect itemRect = this->visualRect(index);
         QStyleOptionViewItem option;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -1644,84 +1722,64 @@ void ctkDICOMPatientView::mouseMoveEvent(QMouseEvent* event)
 {
   Q_D(ctkDICOMPatientView);
 
+  const QPersistentModelIndex previousHoveredIndex = d->HoveredIndex;
+  const QPersistentModelIndex previousContextMenuButtonHoveredIndex = d->ContextMenuButtonHoveredIndex;
+  const QPersistentModelIndex previousSelectAllIconHoveredIndex = d->SelectAllIconHoveredIndex;
+  const QPersistentModelIndex previousActiveContextMenuIndex = d->ActiveContextMenuIndex;
+
   d->ContextMenuButtonHoveredIndex = QModelIndex();
   d->SelectAllIconHoveredIndex = QModelIndex();
   d->ActiveContextMenuIndex = QModelIndex();
 
-  d->HoveredIndex = this->indexAt(event->pos());
-
-  // In TabMode, check if hovering in study area
   if (d->DisplayMode == ctkDICOMPatientView::TabMode)
   {
-    ctkDICOMPatientDelegate* delegate = this->patientDelegate();
-    if (delegate)
-    {
-      int spacing = delegate->spacing();
-      int tabRowHeight = delegate->tabModeHeight() + spacing * 2;
-      int patientHeaderHeight = delegate->patientHeaderHeight() + spacing * 2;
-      int totalHeight = tabRowHeight + patientHeaderHeight;
-
-      if (event->pos().y() >= totalHeight)
-      {
-        d->HoveredIndex = QModelIndex();
-      }
-      else if (event->pos().y() >= tabRowHeight)
-      {
-        d->HoveredIndex =  this->currentIndex();
-      }
-    }
-  }
-
-  if (!d->HoveredIndex.isValid())
-  {
-    event->accept();
-    return;
-  }
-
-  d->updateAllowedServersComboBoxGeometry(d->HoveredIndex);
-  d->updateAllowedServersComboBoxFromModel(d->HoveredIndex);
-
-  // Check if hovering over interactive icons
-  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
-  if (delegate)
-  {
-    QStyleOptionViewItem option;
-    option.rect = this->visualRect(d->HoveredIndex);
-    option.widget = this;
-
-    // Check select all icon first
-    if (delegate->isSelectAllIconAt(event->pos(), option.rect, option))
-    {
-      d->SelectAllIconHoveredIndex = d->HoveredIndex;
-      d->ContextMenuButtonHoveredIndex = QModelIndex();
-    }
-    // Then check context menu button
-    else if (delegate->isContextMenuButtonAt(event->pos(), option.rect, option))
-    {
-      d->ContextMenuButtonHoveredIndex = d->HoveredIndex;
-      d->SelectAllIconHoveredIndex = QModelIndex();
-    }
-    else
-    {
-      d->ContextMenuButtonHoveredIndex = QModelIndex();
-      d->SelectAllIconHoveredIndex = QModelIndex();
-    }
-  }
-
-  if (d->MousePressed)
-  {
-    event->accept();
-    return;
-  }
-
-  // Update only affected areas
-  if (d->DisplayMode == ctkDICOMPatientView::TabMode)
-  {
-    this->viewport()->update();
+    d->HoveredIndex = d->tabModeIndexAt(event->pos());
   }
   else
   {
-    this->viewport()->update(this->visualRect(d->HoveredIndex));
+    d->HoveredIndex = this->indexAt(event->pos());
+  }
+
+  ctkDICOMPatientDelegate* delegate = this->patientDelegate();
+  if (d->HoveredIndex.isValid())
+  {
+    d->updateAllowedServersComboBoxGeometry(d->HoveredIndex);
+    d->updateAllowedServersComboBoxFromModel(d->HoveredIndex);
+
+    // Check if hovering over interactive icons
+    if (delegate)
+    {
+      QStyleOptionViewItem option;
+      option.rect = this->visualRect(d->HoveredIndex);
+      option.widget = this;
+
+      // Check select all icon first
+      if (delegate->isSelectAllIconAt(event->pos(), option.rect, option))
+      {
+        d->SelectAllIconHoveredIndex = d->HoveredIndex;
+      }
+      // Then check context menu button
+      else if (delegate->isContextMenuButtonAt(event->pos(), option.rect, option))
+      {
+        d->ContextMenuButtonHoveredIndex = d->HoveredIndex;
+      }
+    }
+  }
+
+  // Repaint whenever the hover state changes, also when nothing is hovered anymore:
+  // moving from a tab to an empty area used to leave the tab painted as hovered.
+  if (previousHoveredIndex != d->HoveredIndex ||
+      previousContextMenuButtonHoveredIndex != d->ContextMenuButtonHoveredIndex ||
+      previousSelectAllIconHoveredIndex != d->SelectAllIconHoveredIndex ||
+      previousActiveContextMenuIndex != d->ActiveContextMenuIndex)
+  {
+    d->updateHoveredArea(previousHoveredIndex, d->HoveredIndex);
+  }
+
+  if (!d->HoveredIndex.isValid() || d->MousePressed)
+  {
+    event->accept();
+    return;
   }
 
   Superclass::mouseMoveEvent(event);
@@ -1739,19 +1797,11 @@ void ctkDICOMPatientView::mouseReleaseEvent(QMouseEvent* event)
   {
     QModelIndex index = this->indexAt(event->pos());
 
-    // In TabMode, check if click is in patient header area
-    if (d->DisplayMode == ctkDICOMPatientView::TabMode && !index.isValid())
+    // In TabMode, a click in the patient header area is for the current patient, even
+    // where the column of another patient goes through the header.
+    if (d->DisplayMode == ctkDICOMPatientView::TabMode)
     {
-      ctkDICOMPatientDelegate* delegate = this->patientDelegate();
-      if (delegate)
-      {
-        int spacing = delegate->spacing();
-        int tabRowHeight = delegate->tabModeHeight() + spacing * 2;
-        if (event->pos().y() >= tabRowHeight)
-        {
-          index = this->currentIndex();
-        }
-      }
+      index = d->tabModeIndexAt(event->pos());
     }
 
     if (index.isValid() && this->patientDelegate())
@@ -1836,24 +1886,7 @@ void ctkDICOMPatientView::contextMenuEvent(QContextMenuEvent* event)
   // In TabMode, if right-click is in patient header area (below tab row), use current patient
   if (d->DisplayMode == ctkDICOMPatientView::TabMode)
   {
-    ctkDICOMPatientDelegate* delegate = this->patientDelegate();
-    if (delegate)
-    {
-      int spacing = delegate->spacing();
-      int tabRowHeight = delegate->tabModeHeight() + spacing * 2;
-      int patientHeaderHeight = delegate->patientHeaderHeight() + spacing * 2;
-      int totalHeight = tabRowHeight + patientHeaderHeight;
-
-      if (event->pos().y() >= totalHeight)
-      {
-        index = QModelIndex();
-      }
-      else if (event->pos().y() >= tabRowHeight)
-      {
-        index = this->currentIndex();
-      }
-    }
-
+    index = d->tabModeIndexAt(event->pos());
     if (!index.isValid())
     {
       event->accept();
@@ -1938,6 +1971,16 @@ void ctkDICOMPatientView::contextMenuEvent(QContextMenuEvent* event)
 void ctkDICOMPatientView::changeEvent(QEvent* event)
 {
   Superclass::changeEvent(event);
+
+  if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange)
+  {
+    // The colors of the scroll bar follow the light and dark styles of the application
+    QString scrollBarStyleSheet = ctkDICOMVisualBrowserColors::scrollBarStyleSheet(ctkDICOMVisualBrowserColors::palette(this));
+    if (this->verticalScrollBar()->styleSheet() != scrollBarStyleSheet)
+    {
+      this->verticalScrollBar()->setStyleSheet(scrollBarStyleSheet);
+    }
+  }
 
   if (event->type() == QEvent::FontChange)
   {
