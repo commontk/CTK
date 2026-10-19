@@ -42,6 +42,7 @@
 
 // CTK includes
 #include "ctkDICOMPatientDelegate.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 #include "ctkDICOMPatientModel.h"
 #include "ctkDICOMPatientView.h"
 #include "ctkDICOMStudyListView.h"
@@ -84,8 +85,13 @@ ctkDICOMPatientDelegate::~ctkDICOMPatientDelegate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void ctkDICOMPatientDelegate::paint(QPainter* painter, const QStyleOptionViewItem& styleOption, const QModelIndex& index) const
 {
+  // The colors are derived from the palette of the view, unless a style sheet made
+  // them transparent
+  QStyleOptionViewItem option(styleOption);
+  option.palette = ctkDICOMVisualBrowserColors::palette(styleOption.palette, styleOption.widget);
+
   if (!index.isValid())
   {
     return;
@@ -176,29 +182,8 @@ void ctkDICOMPatientDelegate::paintPatientsTabs(QPainter *painter, const QRect &
 
   QColor backgroundColor;
   QColor borderColor;
-
-  if (isSelected && isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 100);
-    borderColor = QColor(160, 160, 160);
-  }
-  else if (isSelected)
-  {
-    backgroundColor = QColor(70, 130, 180, 70);
-    borderColor = QColor(180, 180, 180);
-  }
-  else if (isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 35);
-    borderColor = QColor(200, 200, 200);
-  }
-  else
-  {
-    backgroundColor = QColor(250, 250, 250);
-    borderColor = QColor(220, 220, 220);
-  }
-
-  QColor textColor = QColor(0, 0, 0, 150);
+  QColor textColor;
+  this->cardColors(option.palette, isSelected, isHovered, backgroundColor, borderColor, textColor);
   int borderWidth = 2;
 
   QPainterPath path;
@@ -271,10 +256,10 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
 {
   painter->save();
 
-  QColor bgColor = QColor(248, 249, 250);
-  QColor borderColor = QColor(225, 228, 232);
-  QColor textColor = QColor(0, 0, 0);
-  QColor secondaryTextColor = QColor(108, 117, 125);
+  QColor bgColor = ctkDICOMVisualBrowserColors::cardInner(option.palette);
+  QColor borderColor = ctkDICOMVisualBrowserColors::border(option.palette);
+  QColor textColor = ctkDICOMVisualBrowserColors::text(option.palette);
+  QColor secondaryTextColor = ctkDICOMVisualBrowserColors::secondaryText(option.palette);
 
   // Draw background with subtle border
   int cornerRadius = 6;
@@ -298,25 +283,31 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
     patientName = "Unknown Patient";
   }
 
-  // Calculate text areas with better padding
-  QRect contentRect = rect.adjusted(16, 12, -16, -12);
-  int currentY = contentRect.top();
-
-  // Draw patient name (bold, slightly larger)
+  // The name (bold, slightly larger) above the info line, centered in the header
   QFont nameFont = painter->font();
   nameFont.setPointSize(nameFont.pointSize() + 1);
   nameFont.setBold(true);
-  painter->setFont(nameFont);
-  painter->setPen(textColor);
-
-  QRect nameRect(contentRect.left(), currentY, contentRect.width(), 22);
-  painter->drawText(nameRect, Qt::AlignLeft | Qt::AlignVCenter, patientName);
-  currentY += 28;
-
-  // Draw patient info line (ID, Birth Date, Sex, study count)
   QFont infoFont = painter->font();
   infoFont.setPointSize(nameFont.pointSize() - 1);
   infoFont.setBold(false);
+  const QFontMetrics nameFm(nameFont);
+  const QFontMetrics infoFm(infoFont);
+  const int lineSpacing = 4;
+  QRect contentRect = rect.adjusted(16, 0, -16, 0);
+  QRect nameRect = this->patientNameLineRect(rect, painter->font());
+  int currentY = nameRect.top();
+  // The name ends before the actions of the patient, on its line
+  const QRect actionsRect = this->patientHeaderActionsRect(rect, painter->font());
+  nameRect.setRight(qMin(nameRect.right(), actionsRect.left() - 16));
+
+  // Draw patient name
+  painter->setFont(nameFont);
+  painter->setPen(textColor);
+  painter->drawText(nameRect, Qt::AlignLeft | Qt::AlignVCenter,
+                    nameFm.elidedText(patientName, Qt::ElideRight, nameRect.width()));
+  currentY += nameFm.height() + lineSpacing;
+
+  // Draw patient info line (ID, Birth Date, Sex, study count)
   painter->setFont(infoFont);
   painter->setPen(secondaryTextColor);
 
@@ -367,18 +358,9 @@ void ctkDICOMPatientDelegate::paintPatientHeader(QPainter *painter, const QRect 
   }
 
   QString infoText = infoParts.join("  |  ");
-  QRect infoRect(contentRect.left(), currentY, contentRect.width(), 18);
-  QFontMetrics infoFm(infoFont);
-  if (infoFm.horizontalAdvance(infoText) > infoRect.width())
-  {
-    QString elidedInfoText = infoFm.elidedText(infoText, Qt::ElideRight, infoRect.width());
-    elidedInfoText += "...";
-    painter->drawText(infoRect, Qt::AlignLeft | Qt::AlignVCenter, elidedInfoText);
-  }
-  else
-  {
-    painter->drawText(infoRect, Qt::AlignLeft | Qt::AlignVCenter, infoText);
-  }
+  QRect infoRect(contentRect.left(), currentY, contentRect.width(), infoFm.height());
+  painter->drawText(infoRect, Qt::AlignLeft | Qt::AlignVCenter,
+                    infoFm.elidedText(infoText, Qt::ElideRight, infoRect.width()));
 
   painter->restore();
 }
@@ -409,35 +391,14 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
 
   QColor backgroundColor;
   QColor borderColor;
-
-  if (isSelected && isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 100);
-    borderColor = QColor(160, 160, 160);
-  }
-  else if (isSelected)
-  {
-    backgroundColor = QColor(70, 130, 180, 70);
-    borderColor = QColor(180, 180, 180);
-  }
-  else if (isHovered)
-  {
-    backgroundColor = QColor(70, 130, 180, 35);
-    borderColor = QColor(200, 200, 200);
-  }
-  else
-  {
-    backgroundColor = QColor(250, 250, 250);
-    borderColor = QColor(220, 220, 220);
-  }
-
+  QColor textColor;
+  this->cardColors(option.palette, isSelected, isHovered, backgroundColor, borderColor, textColor);
+  textColor = ctkDICOMVisualBrowserColors::text(option.palette);
   if (isCurrent)
   {
-    borderColor = QColor(70, 130, 180);
+    borderColor = ctkDICOMVisualBrowserColors::accent(option.palette);
   }
-
-  QColor textColor = QColor(0, 0, 0);
-  QColor secondaryTextColor = QColor(108, 117, 125);
+  QColor secondaryTextColor = ctkDICOMVisualBrowserColors::secondaryText(option.palette);
   int borderWidth = 2;
 
   // Calculate patient item rect (single line height)
@@ -582,6 +543,32 @@ void ctkDICOMPatientDelegate::paintListMode(QPainter* painter, const QStyleOptio
   // Draw interactive icons when hovering or when context menu is active
   this->paintSelectAllIcon(painter, itemRect, index, option);
   this->paintContextMenuButton(painter, itemRect, index, option);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientDelegate::cardColors(const QPalette& palette, bool isSelected, bool isHovered,
+                                         QColor& backgroundColor, QColor& borderColor,
+                                         QColor& textColor) const
+{
+  // Opaque colors, blended from the palette: the cards are drawn over the background
+  // of the view, which can be anything from white to almost black.
+  const QColor card = ctkDICOMVisualBrowserColors::card(palette);
+  const QColor accent = ctkDICOMVisualBrowserColors::accent(palette);
+  backgroundColor = card;
+  borderColor = ctkDICOMVisualBrowserColors::border(palette);
+  textColor = ctkDICOMVisualBrowserColors::secondaryText(palette);
+  if (isSelected)
+  {
+    backgroundColor = ctkDICOMVisualBrowserColors::selectionBackground(palette, isHovered);
+    borderColor = ctkDICOMVisualBrowserColors::selection(palette);
+    textColor = ctkDICOMVisualBrowserColors::text(palette);
+  }
+  else if (isHovered)
+  {
+    backgroundColor = ctkDICOMVisualBrowserColors::blend(card, accent, 0.12);
+    borderColor = ctkDICOMVisualBrowserColors::borderStrong(palette);
+    textColor = ctkDICOMVisualBrowserColors::text(palette);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -761,6 +748,42 @@ int ctkDICOMPatientDelegate::patientHeaderHeight() const
 }
 
 //------------------------------------------------------------------------------
+QRect ctkDICOMPatientDelegate::patientNameLineRect(const QRect& patientHeaderRect, const QFont& font) const
+{
+  // The lines are as tall as their font: with a fixed height, the descenders of a
+  // larger font were cut.
+  QFont nameFont = font;
+  nameFont.setPointSize(nameFont.pointSize() + 1);
+  nameFont.setBold(true);
+  QFont infoFont = font;
+  infoFont.setPointSize(nameFont.pointSize() - 1);
+  const QFontMetrics nameFm(nameFont);
+  const QFontMetrics infoFm(infoFont);
+  const int lineSpacing = 4;
+  const int textHeight = nameFm.height() + lineSpacing + infoFm.height();
+  const QRect contentRect = patientHeaderRect.adjusted(16, 0, -16, 0);
+  const int top = contentRect.top() + qMax(0, (contentRect.height() - textHeight) / 2);
+  return QRect(contentRect.left(), top, contentRect.width(), nameFm.height());
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMPatientDelegate::allowedServersComboBoxWidth() const
+{
+  return 200;
+}
+
+//------------------------------------------------------------------------------
+QRect ctkDICOMPatientDelegate::patientHeaderActionsRect(const QRect& patientHeaderRect, const QFont& font) const
+{
+  Q_D(const ctkDICOMPatientDelegate);
+  // From the right: the context menu button, the select all icon, the combo box
+  const int iconsWidth = d->Spacing + d->IconSize + d->Spacing * 0.5 + d->IconSize;
+  const int width = iconsWidth + d->Spacing * 2 + this->allowedServersComboBoxWidth();
+  const QRect nameLineRect = this->patientNameLineRect(patientHeaderRect, font);
+  return QRect(patientHeaderRect.right() - width, nameLineRect.top(), width, nameLineRect.height());
+}
+
+//------------------------------------------------------------------------------
 QRect ctkDICOMPatientDelegate::contextMenuButtonRect(const QRect& itemRect, const QStyleOptionViewItem& option) const
 {
   Q_D(const ctkDICOMPatientDelegate);
@@ -769,11 +792,13 @@ QRect ctkDICOMPatientDelegate::contextMenuButtonRect(const QRect& itemRect, cons
 
   if (displayMode == ctkDICOMPatientView::TabMode)
   {
-    // For TabMode, position button at right edge of the patient header, vertically centered
+    // For TabMode, position button at right edge of the patient header, on the line of
+    // the patient name
     QRect tabRect = this->patientsRect(itemRect, option, QModelIndex());
     QRect patientHeaderRect = this->patientHeaderRect(tabRect, option);
+    QRect nameLineRect = this->patientNameLineRect(patientHeaderRect, option.font);
     return QRect(patientHeaderRect.right() - d->IconSize - d->Spacing,
-                patientHeaderRect.top() + (patientHeaderRect.height() - d->IconSize) / 2,
+                nameLineRect.center().y() - d->IconSize / 2 + 1,
                 d->IconSize,
                 d->IconSize);
   }
@@ -869,20 +894,8 @@ void ctkDICOMPatientDelegate::paintContextMenuButton(QPainter* painter,
 
   painter->save();
 
-  QColor bgColor;
-  if (isPressed || hasActiveContextMenu)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (isHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(
+    option.palette, isHovered, isPressed || hasActiveContextMenu);
 
   QPainterPath bgPath;
   int bgRadius = d->CornerRadius * 0.5;
@@ -953,20 +966,7 @@ void ctkDICOMPatientDelegate::paintSelectAllIcon(QPainter* painter,
   painter->save();
 
   // Draw background when hovered or pressed
-  QColor bgColor;
-  if (isPressed)
-  {
-    bgColor = Qt::gray;
-  }
-  else if (isHovered)
-  {
-    bgColor = Qt::lightGray;
-  }
-  else
-  {
-    bgColor = Qt::white;
-  }
-  bgColor.setAlpha(200);
+  QColor bgColor = ctkDICOMVisualBrowserColors::buttonBackground(option.palette, isHovered, isPressed);
 
   QPainterPath bgPath;
   int bgRadius = d->CornerRadius * 0.5;

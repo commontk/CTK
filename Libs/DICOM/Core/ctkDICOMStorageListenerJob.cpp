@@ -93,7 +93,9 @@ ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const
   newListenerJob->setAETitle(this->AETitle());
   newListenerJob->setPort(this->port());
   newListenerJob->setConnectionTimeout(this->connectionTimeout());
-  newListenerJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newListenerJob->setRetryEnabled(this->retryEnabled());
+  newListenerJob->setMaximumRetryWait(this->maximumRetryWait());
+  newListenerJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newListenerJob->setRetryDelay(this->retryDelay());
   newListenerJob->setRetryCounter(this->retryCounter());
   newListenerJob->setIsPersistent(this->isPersistent());

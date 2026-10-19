@@ -24,6 +24,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDate>
+#include <QRegularExpression>
 #include <QStringList>
 
 // CTK includes
@@ -35,6 +36,7 @@
 #include "ctkDICOMModalities.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMSeriesModel.h"
+#include "ctkDICOMServer.h"
 #include "ctkDICOMSeriesFilterProxyModel.h"
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMJob.h"
@@ -69,12 +71,27 @@ public:
   QString formatTime(const QString& time) const;
   bool matchesDateFilter(const QString& studyDate) const;
   bool matchesDescriptionFilter(const QString& description) const;
+  struct StudyData;
+  /// The study matches the study filters (date and description)
+  bool matchesStudyFilters(const StudyData& study) const;
+  /// The study is shown: it matches the study filters, and its series match the series
+  /// filters. When its series are not known yet (e.g. a study found by a query), the
+  /// modality filter is checked on the modalities of the study, and a series description
+  /// filter, which cannot be checked, hides it until its series are known.
+  bool isStudyVisible(const StudyData& study, int seriesCount, int filteredSeriesCount) const;
   int getSeriesCountForStudy(const QString& studyInstanceUID) const;
   int getFilteredSeriesCountForStudy(const QString& studyInstanceUID) const;
   QString getPatientUIDFromPatientID(const QString& patientID) const;
   void updateFilteredSeriesCounts();
   void updateStudyCountsAndVisibility(int studyIndex);
   void clean();
+
+  /// Sort the given studies by date and time, the most recent first
+  QStringList sortStudyInstanceUIDsByDate(const QStringList& studyInstanceUIDs) const;
+  /// All the studies sorted by date and time, the most recent first. The order is
+  /// cached until studies are added or removed: it was computed again for each series
+  /// query, which took a while for a patient with hundreds of studies.
+  QStringList allStudyInstanceUIDsSortedByDate();
 
   // Data storage
   struct StudyData {
@@ -99,12 +116,22 @@ public:
   };
 
   QList<StudyData> Studies;
+  QStringList StudyInstanceUIDsSortedByDate;
+  bool StudyInstanceUIDsSortedByDateNeedUpdate;
 
   // Series model management
   QHash<QString, ctkDICOMSeriesModel*> SeriesModels; // StudyInstanceUID -> SeriesModel
   QHash<QString, ctkDICOMSeriesFilterProxyModel*> SeriesFilterProxyModels; // StudyInstanceUID -> SeriesFilterProxyModel
   ctkDICOMSeriesModel* createSeriesModel(const QString& studyInstanceUID);
+  /// Filter proxy model of the series model of a study, created the first time it is
+  /// asked for: only the studies that a view shows need one, and creating one for
+  /// each study of each patient slowed down the population of the models.
+  ctkDICOMSeriesFilterProxyModel* seriesFilterProxyModel(const QString& studyInstanceUID);
   void updateSeriesModelFilters(ctkDICOMSeriesModel* seriesModel);
+  /// True if the jobs of the server \a connectionName are reported for the patient: an
+  /// allowed server, or the proxy of an allowed server (which retrieves its series
+  /// with C-GET after their C-MOVE, without being a server of the scheduler).
+  bool isAllowedServerOrProxy(const QString& connectionName) const;
 
   // Database and scheduler
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
@@ -123,6 +150,8 @@ public:
 
   // Configuration
   int NumberOfOpenedStudies;
+  bool AutoOpenStudiesEnabled;
+  bool AutoRetrieveFullSeries;
   int ThumbnailSize;
 
   // State
@@ -139,9 +168,12 @@ ctkDICOMStudyModelPrivate::ctkDICOMStudyModelPrivate(ctkDICOMStudyModel& obj)
   this->SeriesDescriptionFilter = "";
   this->DateFilter = ctkDICOMStudyModel::Any;
   this->NumberOfOpenedStudies = 2;
+  this->AutoOpenStudiesEnabled = true;
+  this->AutoRetrieveFullSeries = true;
   this->ThumbnailSize = 128;
   this->IsUpdating = false;
   this->ModalityFilter = ctkDICOMModalities::AllModalities;
+  this->StudyInstanceUIDsSortedByDateNeedUpdate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -185,6 +217,7 @@ void ctkDICOMStudyModelPrivate::clean()
   // Clear the studies list
   q->beginResetModel();
   this->Studies.clear();
+  this->StudyInstanceUIDsSortedByDateNeedUpdate = true;
   q->endResetModel();
 
   this->IsUpdating = false;
@@ -261,11 +294,11 @@ void ctkDICOMStudyModelPrivate::populateStudies()
     return;
   }
 
-  // Create a set of existing study instance UIDs for quick lookup
-  QSet<QString> existingStudyUIDs;
-  for (const StudyData& study : std::as_const(this->Studies))
+  // Index of the existing studies, for quick lookup
+  QHash<QString, int> existingStudyIndexes;
+  for (int index = 0; index < this->Studies.size(); ++index)
   {
-    existingStudyUIDs.insert(study.studyInstanceUID);
+    existingStudyIndexes.insert(this->Studies[index].studyInstanceUID, index);
   }
 
   // Create a set of database study UIDs that match filters
@@ -286,13 +319,12 @@ void ctkDICOMStudyModelPrivate::populateStudies()
 
     int filteredSeriesCount = this->getFilteredSeriesCountForStudy(studyInstanceUID);
     int seriesCount = this->getSeriesCountForStudy(studyInstanceUID);
-    // Allow query results with zero series to be visible
+    // A study found by a query has no series until they are queried
     bool isQueryResult = (seriesCount == 0);
-    bool isVisible = q->studyMatchesFilters(studyInstanceUID) &&
-                      (seriesCount == 0 || (seriesCount > 0 && filteredSeriesCount != 0));
 
     // Only add if it's a new study
-    if (!existingStudyUIDs.contains(studyInstanceUID))
+    const int existingIndex = existingStudyIndexes.value(studyInstanceUID, -1);
+    if (existingIndex < 0)
     {
       StudyData study;
       study.studyInstanceUID = studyInstanceUID;
@@ -315,7 +347,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
       // Get series counts using database methods
       study.filteredSeriesCount = filteredSeriesCount;
       study.seriesCount = seriesCount;
-      study.isVisible = isVisible;
+      study.isVisible = this->isStudyVisible(study, seriesCount, filteredSeriesCount);
       study.isQueryResult = isQueryResult;
       study.operationStatus = ctkDICOMStudyModel::NoOperation;
       study.stoppedJobUID = "";
@@ -326,31 +358,25 @@ void ctkDICOMStudyModelPrivate::populateStudies()
     else
     {
       // Update series counts for existing studies
-      for (int existingIndex = 0; existingIndex < this->Studies.size(); ++existingIndex)
+      StudyData& study = this->Studies[existingIndex];
+      const bool isVisible = this->isStudyVisible(study, seriesCount, filteredSeriesCount);
+      // Only update and emit dataChanged if something actually changed
+      bool hasChanges = (study.seriesCount != seriesCount ||
+                         study.filteredSeriesCount != filteredSeriesCount ||
+                         study.isVisible != isVisible);
+
+      if (hasChanges)
       {
-        StudyData study = this->Studies[existingIndex];
-        if (study.studyInstanceUID == studyInstanceUID)
-        {
-          // Only update and emit dataChanged if something actually changed
-          bool hasChanges = (study.seriesCount != seriesCount ||
-                             study.filteredSeriesCount != filteredSeriesCount ||
-                             study.isVisible != isVisible);
+        study.seriesCount = seriesCount;
+        study.filteredSeriesCount = filteredSeriesCount;
+        study.isVisible = isVisible;
 
-          if (hasChanges)
-          {
-            this->Studies[existingIndex].seriesCount = seriesCount;
-            this->Studies[existingIndex].filteredSeriesCount = filteredSeriesCount;
-            this->Studies[existingIndex].isVisible = isVisible;
-
-            // Emit data changed for updated counts and visibility
-            QModelIndex idx = q->index(existingIndex);
-            emit q->dataChanged(idx, idx, QVector<int>() <<
-              ctkDICOMStudyModel::SeriesCountRole <<
-              ctkDICOMStudyModel::FilteredSeriesCountRole <<
-              ctkDICOMStudyModel::IsVisibleRole);
-          }
-          break;
-        }
+        // Emit data changed for updated counts and visibility
+        QModelIndex idx = q->index(existingIndex);
+        emit q->dataChanged(idx, idx, QVector<int>() <<
+          ctkDICOMStudyModel::SeriesCountRole <<
+          ctkDICOMStudyModel::FilteredSeriesCountRole <<
+          ctkDICOMStudyModel::IsVisibleRole);
       }
     }
   }
@@ -377,6 +403,7 @@ void ctkDICOMStudyModelPrivate::populateStudies()
     delete this->SeriesFilterProxyModels.take(studyInstanceUID);
 
     this->Studies.removeAt(indexToRemove);
+    this->StudyInstanceUIDsSortedByDateNeedUpdate = true;
 
     q->endRemoveRows();
   }
@@ -393,12 +420,65 @@ void ctkDICOMStudyModelPrivate::populateStudies()
     {
       this->Studies.append(newStudy);
     }
+    this->StudyInstanceUIDsSortedByDateNeedUpdate = true;
     q->endInsertRows();
   }
 
   this->IsUpdating = false;
 
   emit q->modelRefreshed();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMStudyModelPrivate::sortStudyInstanceUIDsByDate(const QStringList& studyInstanceUIDs) const
+{
+  QHash<QString, int> rowsByStudyInstanceUID;
+  for (int row = 0; row < this->Studies.size(); ++row)
+  {
+    rowsByStudyInstanceUID.insert(this->Studies[row].studyInstanceUID, row);
+  }
+
+  QList<QPair<QDateTime, QString>> studyDateTimePairs;
+  for (const QString& studyInstanceUID : studyInstanceUIDs)
+  {
+    QDateTime studyDateTime;
+    int row = rowsByStudyInstanceUID.value(studyInstanceUID, -1);
+    if (row >= 0 && !this->Studies[row].studyDate.isEmpty())
+    {
+      QString dateTimeStr = this->Studies[row].studyDate + this->Studies[row].studyTime;
+      studyDateTime = QDateTime::fromString(dateTimeStr, "yyyyMMddHHmmss");
+    }
+    studyDateTimePairs.append(qMakePair(studyDateTime, studyInstanceUID));
+  }
+
+  // Most recent first
+  std::sort(studyDateTimePairs.begin(), studyDateTimePairs.end(),
+            [](const QPair<QDateTime, QString>& a, const QPair<QDateTime, QString>& b) {
+              return a.first > b.first;
+            });
+
+  QStringList sortedStudyInstanceUIDs;
+  for (const QPair<QDateTime, QString>& pair : std::as_const(studyDateTimePairs))
+  {
+    sortedStudyInstanceUIDs.append(pair.second);
+  }
+  return sortedStudyInstanceUIDs;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMStudyModelPrivate::allStudyInstanceUIDsSortedByDate()
+{
+  if (this->StudyInstanceUIDsSortedByDateNeedUpdate)
+  {
+    QStringList studyInstanceUIDs;
+    for (const StudyData& study : std::as_const(this->Studies))
+    {
+      studyInstanceUIDs.append(study.studyInstanceUID);
+    }
+    this->StudyInstanceUIDsSortedByDate = this->sortStudyInstanceUIDsByDate(studyInstanceUIDs);
+    this->StudyInstanceUIDsSortedByDateNeedUpdate = false;
+  }
+  return this->StudyInstanceUIDsSortedByDate;
 }
 
 //------------------------------------------------------------------------------
@@ -512,7 +592,7 @@ int ctkDICOMStudyModelPrivate::getSeriesCountForStudy(const QString& studyInstan
     return 0;
   }
 
-  return seriesModel->seriesInstanceUIDs().count();
+  return seriesModel->rowCount();
 }
 
 //------------------------------------------------------------------------------
@@ -528,7 +608,48 @@ int ctkDICOMStudyModelPrivate::getFilteredSeriesCountForStudy(const QString& stu
     return 0;
   }
 
-  return seriesModel->filteredSeriesInstanceUIDs().count();
+  return seriesModel->filteredSeriesCount();
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModelPrivate::matchesStudyFilters(const StudyData& study) const
+{
+  return this->matchesDateFilter(study.studyDate) &&
+         this->matchesDescriptionFilter(study.studyDescription);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModelPrivate::isStudyVisible(const StudyData& study, int seriesCount,
+                                               int filteredSeriesCount) const
+{
+  if (!this->matchesStudyFilters(study))
+  {
+    return false;
+  }
+
+  if (seriesCount > 0)
+  {
+    return filteredSeriesCount > 0;
+  }
+
+  // The series are not known yet
+  if (!this->SeriesDescriptionFilter.isEmpty())
+  {
+    return false;
+  }
+  if (this->ModalityFilter.isEmpty() || this->ModalityFilter.contains("Any"))
+  {
+    return true;
+  }
+  const QStringList modalities = study.modalitiesInStudy.split(QRegularExpression("[\\\\,]"), Qt::SkipEmptyParts);
+  foreach (const QString& modality, modalities)
+  {
+    if (this->ModalityFilter.contains(modality.trimmed()))
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -569,14 +690,10 @@ void ctkDICOMStudyModelPrivate::updateFilteredSeriesCounts()
   for (int index = 0; index < this->Studies.size(); ++index)
   {
     ctkDICOMStudyModelPrivate::StudyData& study = this->Studies[index];
-    int seriesCount = this->getSeriesCountForStudy(study.studyInstanceUID);
+    study.seriesCount = this->getSeriesCountForStudy(study.studyInstanceUID);
     study.filteredSeriesCount = this->getFilteredSeriesCountForStudy(study.studyInstanceUID);
-    // Allow query results with zero series to be visible
-    bool isQueryResult = (seriesCount == 0);
-    study.seriesCount = seriesCount;
-    study.isVisible = q->studyMatchesFilters(study.studyInstanceUID) &&
-                      (seriesCount == 0 || (seriesCount > 0 && study.filteredSeriesCount != 0));
-    study.isQueryResult = isQueryResult;
+    study.isVisible = this->isStudyVisible(study, study.seriesCount, study.filteredSeriesCount);
+    study.isQueryResult = (study.seriesCount == 0);
   }
 
   q->emit dataChanged(topLeft, bottomRight, QVector<int>() << q->FilteredSeriesCountRole << q->IsVisibleRole);
@@ -590,11 +707,8 @@ void ctkDICOMStudyModelPrivate::updateStudyCountsAndVisibility(int studyIndex)
 
   study.seriesCount = this->getSeriesCountForStudy(study.studyInstanceUID);
   study.filteredSeriesCount = this->getFilteredSeriesCountForStudy(study.studyInstanceUID);
-  // Allow query results with zero series to be visible
-  bool isQueryResult = (study.seriesCount == 0);
-  study.isVisible = q->studyMatchesFilters(study.studyInstanceUID) &&
-                    (study.seriesCount == 0 || (study.seriesCount > 0 && study.filteredSeriesCount != 0));
-  study.isQueryResult = isQueryResult;
+  study.isVisible = this->isStudyVisible(study, study.seriesCount, study.filteredSeriesCount);
+  study.isQueryResult = (study.seriesCount == 0);
 }
 
 //------------------------------------------------------------------------------
@@ -620,16 +734,28 @@ ctkDICOMSeriesModel* ctkDICOMStudyModelPrivate::createSeriesModel(const QString&
   seriesModel->setSeriesDescriptionFilter(this->SeriesDescriptionFilter);
   seriesModel->setAllowedServers(this->AllowedServers);
   seriesModel->setThumbnailSize(this->ThumbnailSize);
+  seriesModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
   seriesModel->setPatientID(this->PatientID);
   seriesModel->setStudyFilter(studyInstanceUID);
   this->SeriesModels.insert(studyInstanceUID, seriesModel);
 
-  ctkDICOMSeriesFilterProxyModel* seriesFilterProxyModel = new ctkDICOMSeriesFilterProxyModel(q);
-  seriesFilterProxyModel->setSourceModel(seriesModel);
-  this->SeriesFilterProxyModels.insert(studyInstanceUID, seriesFilterProxyModel);
-
   emit q->seriesModelCreated(studyInstanceUID, seriesModel);
   return seriesModel;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMSeriesFilterProxyModel* ctkDICOMStudyModelPrivate::seriesFilterProxyModel(const QString& studyInstanceUID)
+{
+  Q_Q(ctkDICOMStudyModel);
+  ctkDICOMSeriesFilterProxyModel* seriesFilterProxyModel = this->SeriesFilterProxyModels.value(studyInstanceUID, nullptr);
+  ctkDICOMSeriesModel* seriesModel = this->SeriesModels.value(studyInstanceUID, nullptr);
+  if (!seriesFilterProxyModel && seriesModel)
+  {
+    seriesFilterProxyModel = new ctkDICOMSeriesFilterProxyModel(q);
+    seriesFilterProxyModel->setSourceModel(seriesModel);
+    this->SeriesFilterProxyModels.insert(studyInstanceUID, seriesFilterProxyModel);
+  }
+  return seriesFilterProxyModel;
 }
 
 //------------------------------------------------------------------------------
@@ -837,6 +963,7 @@ bool ctkDICOMStudyModel::setData(const QModelIndex& index, const QVariant& value
         study.studyDate  = value.toString();
         // Fix YYYY-MM-DD format in YYYYMMDD
         study.studyDate .remove('-');
+        d->StudyInstanceUIDsSortedByDateNeedUpdate = true;
         changed = true;
       }
       break;
@@ -846,6 +973,7 @@ bool ctkDICOMStudyModel::setData(const QModelIndex& index, const QVariant& value
       if (study.studyTime != value.toString())
       {
         study.studyTime = value.toString();
+        d->StudyInstanceUIDsSortedByDateNeedUpdate = true;
         changed = true;
       }
       break;
@@ -1267,6 +1395,20 @@ int ctkDICOMStudyModel::numberOfOpenedStudies() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMStudyModel::setAutoOpenStudiesEnabled(bool enabled)
+{
+  Q_D(ctkDICOMStudyModel);
+  d->AutoOpenStudiesEnabled = enabled;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModel::autoOpenStudiesEnabled() const
+{
+  Q_D(const ctkDICOMStudyModel);
+  return d->AutoOpenStudiesEnabled;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMStudyModel::setNumberOfOpenedStudies(int count)
 {
   Q_D(ctkDICOMStudyModel);
@@ -1280,6 +1422,34 @@ void ctkDICOMStudyModel::setNumberOfOpenedStudies(int count)
 
   // Emit signal to let views handle the collapsed state based on their proxy models
   emit this->numberOfOpenedStudiesChanged(count);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModel::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMStudyModel);
+  return d->AutoRetrieveFullSeries;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyModel::setAutoRetrieveFullSeries(bool enabled)
+{
+  Q_D(ctkDICOMStudyModel);
+  if (d->AutoRetrieveFullSeries == enabled)
+  {
+    return;
+  }
+
+  d->AutoRetrieveFullSeries = enabled;
+  for (QHash<QString, ctkDICOMSeriesModel*>::iterator it = d->SeriesModels.begin();
+       it != d->SeriesModels.end(); ++it)
+  {
+    ctkDICOMSeriesModel* seriesModel = it.value();
+    if (seriesModel)
+    {
+      seriesModel->setAutoRetrieveFullSeries(enabled);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1432,9 +1602,7 @@ bool ctkDICOMStudyModel::studyMatchesFilters(const QString& studyInstanceUID) co
   {
     if (d->Studies[row].studyInstanceUID == studyInstanceUID)
     {
-      const ctkDICOMStudyModelPrivate::StudyData& study = d->Studies.at(row);
-      return d->matchesDateFilter(study.studyDate) &&
-             d->matchesDescriptionFilter(study.studyDescription);
+      return d->matchesStudyFilters(d->Studies.at(row));
     }
   }
 
@@ -1463,21 +1631,13 @@ QStringList ctkDICOMStudyModel::filteredStudyInstanceUIDs(bool filterSeries) con
   QStringList filteredUIDs;
   for (const ctkDICOMStudyModelPrivate::StudyData& study : d->Studies)
   {
-    if (d->matchesDateFilter(study.studyDate) &&
-        d->matchesDescriptionFilter(study.studyDescription))
+    const bool accepted = filterSeries ?
+      d->isStudyVisible(study, d->getSeriesCountForStudy(study.studyInstanceUID),
+                        d->getFilteredSeriesCountForStudy(study.studyInstanceUID)) :
+      d->matchesStudyFilters(study);
+    if (accepted)
     {
-      if (filterSeries)
-      {
-        int filteredSeriesCount = d->getFilteredSeriesCountForStudy(study.studyInstanceUID);
-        if (filteredSeriesCount > 0)
-        {
-          filteredUIDs.append(study.studyInstanceUID);
-        }
-      }
-      else
-      {
-        filteredUIDs.append(study.studyInstanceUID);
-      }
+      filteredUIDs.append(study.studyInstanceUID);
     }
   }
 
@@ -1610,49 +1770,15 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
     this->refresh();
 
     // Sort study UIDs by date/time (most recent first) using the same logic as proxy models
-    QList<QPair<QDateTime, QString>> studyDateTimePairs;
-    for (const QString& studyInstanceUID : std::as_const(td.QueriedStudyInstanceUIDs))
-    {
-      QModelIndex idx = this->indexFromStudyInstanceUID(studyInstanceUID);
-      QString studyDate = this->data(idx, ctkDICOMStudyModel::StudyDateRole).toString();
-      QString studyTime = this->data(idx, ctkDICOMStudyModel::StudyTimeRole).toString();
-
-      // Parse date/time
-      QDateTime studyDateTime;
-      if (!studyDate.isEmpty())
-      {
-        QString dateTimeStr = studyDate;
-        if (!studyTime.isEmpty())
-        {
-          dateTimeStr += studyTime;
-        }
-        studyDateTime = QDateTime::fromString(dateTimeStr, "yyyyMMddHHmmss");
-      }
-
-      studyDateTimePairs.append(qMakePair(studyDateTime, studyInstanceUID));
-    }
-
-    // Sort by date/time (most recent first)
-    std::sort(studyDateTimePairs.begin(), studyDateTimePairs.end(),
-              [](const QPair<QDateTime, QString>& a, const QPair<QDateTime, QString>& b) {
-                return a.first > b.first;
-              });
-
-    // Build the sorted list of study UIDs
-    QStringList sortedStudyUIDs;
-    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
-    {
-      sortedStudyUIDs.append(pair.second);
-    }
+    QStringList sortedStudyUIDs = d->sortStudyInstanceUIDsByDate(td.QueriedStudyInstanceUIDs);
 
     // Emit the sorted list so views can determine which studies to open
     emit this->studiesSortedByDate(sortedStudyUIDs);
 
     // Query series for each study, using HighPriority for the first N studies
     int studyIndex = 0;
-    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
+    for (const QString& studyInstanceUID : std::as_const(sortedStudyUIDs))
     {
-      const QString& studyInstanceUID = pair.second;
       ctkDICOMSeriesModel* seriesModel = this->seriesModelForStudyInstanceUID(studyInstanceUID);
       if (!seriesModel)
       {
@@ -1689,43 +1815,16 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
       idx = this->indexFromStudyInstanceUID(td.StudyInstanceUID);
     }
 
-    QList<QPair<QDateTime, QString>> studyDateTimePairs;
-    for (int row = 0; row < this->rowCount(); ++row)
-    {
-      QModelIndex studyIdx = this->index(row, 0);
-      const QString studyInstanceUID = this->studyInstanceUID(studyIdx);
-      QString studyDate = this->data(studyIdx, ctkDICOMStudyModel::StudyDateRole).toString();
-      QString studyTime = this->data(studyIdx, ctkDICOMStudyModel::StudyTimeRole).toString();
-
-      QDateTime studyDateTime;
-      if (!studyDate.isEmpty())
-      {
-        QString dateTimeStr = studyDate;
-        if (!studyTime.isEmpty())
-        {
-          dateTimeStr += studyTime;
-        }
-        studyDateTime = QDateTime::fromString(dateTimeStr, "yyyyMMddHHmmss");
-      }
-
-      studyDateTimePairs.append(qMakePair(studyDateTime, studyInstanceUID));
-    }
-
-    std::sort(studyDateTimePairs.begin(), studyDateTimePairs.end(),
-              [](const QPair<QDateTime, QString>& a, const QPair<QDateTime, QString>& b) {
-                return a.first > b.first;
-              });
-
-    QStringList sortedStudyUIDs;
-    for (const QPair<QDateTime, QString>& pair : studyDateTimePairs)
-    {
-      sortedStudyUIDs.append(pair.second);
-    }
+    QStringList sortedStudyUIDs = d->allStudyInstanceUIDsSortedByDate();
 
     emit this->studiesSortedByDate(sortedStudyUIDs);
 
     const int studyOpenIndex = sortedStudyUIDs.indexOf(td.StudyInstanceUID);
-    const bool shouldOpenStudy = (studyOpenIndex >= 0 && studyOpenIndex < d->NumberOfOpenedStudies);
+    // Opening a study retrieves its series, so it is only done on its own for the
+    // patient being looked at. For the others the study stays collapsed until its
+    // patient is selected, which opens it explicitly.
+    const bool shouldOpenStudy = d->AutoOpenStudiesEnabled &&
+                                 (studyOpenIndex >= 0 && studyOpenIndex < d->NumberOfOpenedStudies);
     if (shouldOpenStudy && idx.isValid())
     {
       this->setStudyCollapsed(idx, false);
@@ -1770,12 +1869,41 @@ void ctkDICOMStudyModel::updateGUIFromScheduler(const QVariant& data)
     seriesModel->updateGUIFromScheduler(data, studyIsCollapsed);
   }
 
+  if (td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
+  {
+    // The series found decide whether the study is shown
+    this->refreshStudy(td.StudyInstanceUID);
+  }
+
   if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
   {
     this->refreshStudy(td.StudyInstanceUID);
     // Emit signal to notify that this study is ready to be opened
     emit this->studyReadyToOpen(td.StudyInstanceUID);
   }
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMStudyModelPrivate::isAllowedServerOrProxy(const QString& connectionName) const
+{
+  if (this->AllowedServers.contains(connectionName))
+  {
+    return true;
+  }
+  if (!this->Scheduler)
+  {
+    return false;
+  }
+  for (const QString& allowedServer : std::as_const(this->AllowedServers))
+  {
+    ctkDICOMServer* server = this->Scheduler->server(allowedServer);
+    ctkDICOMServer* proxyServer = server ? server->proxyServer() : nullptr;
+    if (proxyServer && proxyServer->connectionName() == connectionName)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1799,9 +1927,12 @@ void ctkDICOMStudyModel::onJobStarted(const QVariant& data)
     this->setData(idx, int(OperationStatus::InProgress), ctkDICOMStudyModel::OperationStatusRole);
   }
 
+  // The retrieve of a series through a proxy runs on the proxy: without it, the retry of
+  // a stopped or failed retrieve did not reach the series, which kept the alert icon and
+  // the progress of the previous attempt.
   if ((td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
        td.JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries) &&
-      !d->AllowedServers.contains(td.ConnectionName))
+      !d->isAllowedServerOrProxy(td.ConnectionName))
   {
     return;
   }
@@ -1941,7 +2072,7 @@ ctkDICOMSeriesFilterProxyModel* ctkDICOMStudyModel::seriesFilterProxyModelForStu
     return nullptr;
   }
 
-  return d->SeriesFilterProxyModels.value(studyInstanceUID, nullptr);
+  return d->seriesFilterProxyModel(studyInstanceUID);
 }
 
 //------------------------------------------------------------------------------
@@ -2000,12 +2131,13 @@ QList<ctkDICOMSeriesModel*> ctkDICOMStudyModel::allSeriesModels() const
 //------------------------------------------------------------------------------
 QList<ctkDICOMSeriesFilterProxyModel*> ctkDICOMStudyModel::allSeriesFilterProxyModels() const
 {
-  Q_D(const ctkDICOMStudyModel);
+  // The proxy models are created when first asked for: create the missing ones
+  ctkDICOMStudyModelPrivate* d = const_cast<ctkDICOMStudyModelPrivate*>(this->d_func());
   QList<ctkDICOMSeriesFilterProxyModel*> models;
-  for (QHash<QString, ctkDICOMSeriesFilterProxyModel*>::const_iterator it = d->SeriesFilterProxyModels.constBegin();
-       it != d->SeriesFilterProxyModels.constEnd(); ++it)
+  for (QHash<QString, ctkDICOMSeriesModel*>::const_iterator it = d->SeriesModels.constBegin();
+       it != d->SeriesModels.constEnd(); ++it)
   {
-    models.append(it.value());
+    models.append(d->seriesFilterProxyModel(it.key()));
   }
   return models;
 }

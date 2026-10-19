@@ -20,12 +20,15 @@
 
 // Qt includes
 #include <QApplication>
+#include <QCheckBox>
 #include <QLabel>
 #include <QDir>
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QResource>
 #include <QSettings>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QVBoxLayout>
 
 // CTK widget includes
@@ -35,6 +38,43 @@
 
 // STD includes
 #include <iostream>
+
+namespace
+{
+
+//----------------------------------------------------------------------------
+QPalette darkPalette()
+{
+  QPalette palette;
+  palette.setColor(QPalette::Window, QColor(50, 50, 50));
+  palette.setColor(QPalette::WindowText, Qt::white);
+  palette.setColor(QPalette::Base, QColor(30, 30, 30));
+  palette.setColor(QPalette::AlternateBase, QColor(50, 50, 50));
+  palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 220));
+  palette.setColor(QPalette::ToolTipText, Qt::black);
+  palette.setColor(QPalette::Text, Qt::white);
+  palette.setColor(QPalette::Button, QColor(50, 50, 50));
+  palette.setColor(QPalette::ButtonText, Qt::white);
+  palette.setColor(QPalette::BrightText, QColor(255, 80, 80));
+  palette.setColor(QPalette::Light, QColor(70, 70, 70));
+  palette.setColor(QPalette::Midlight, QColor(60, 60, 60));
+  palette.setColor(QPalette::Mid, QColor(40, 40, 40));
+  palette.setColor(QPalette::Dark, QColor(30, 30, 30));
+  palette.setColor(QPalette::Shadow, Qt::black);
+  palette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+  palette.setColor(QPalette::HighlightedText, Qt::white);
+  palette.setColor(QPalette::Link, QColor(42, 130, 218));
+  palette.setColor(QPalette::LinkVisited, QColor(120, 100, 220));
+  palette.setColor(QPalette::PlaceholderText, QColor(160, 160, 160));
+  foreach (QPalette::ColorRole role, QList<QPalette::ColorRole>()
+           << QPalette::WindowText << QPalette::Text << QPalette::ButtonText)
+  {
+    palette.setColor(QPalette::Disabled, role, QColor(127, 127, 127));
+  }
+  return palette;
+}
+
+} // end of anonymous namespace
 
 int main(int argc, char** argv)
 {
@@ -102,6 +142,23 @@ int main(int argc, char** argv)
   directoryButton.setDirectory(databaseDirectory);
 
   topLayout.addWidget(&directoryButton);
+
+  // Light and dark styles, switched while the browser is shown: the browser follows
+  // the palette of the application. The dark style uses Fusion, which paints with the
+  // palette, while the style of the platform may not.
+  const QString lightStyleName = app.style()->objectName();
+  const QPalette lightPalette = app.palette();
+  QCheckBox darkModeCheckBox(QObject::tr("Dark mode"));
+  darkModeCheckBox.setObjectName(QString::fromUtf8("DarkModeCheckBox"));
+  darkModeCheckBox.setToolTip(QObject::tr("Switch between the light and dark styles of the application"));
+  QObject::connect(&darkModeCheckBox, &QCheckBox::toggled, [&](bool dark)
+  {
+    app.setStyle(QStyleFactory::create(dark ? QString("Fusion") : lightStyleName));
+    app.setPalette(dark ? darkPalette() : lightPalette);
+    settings.setValue("DarkMode", dark);
+  });
+  darkModeCheckBox.setChecked(settings.value("DarkMode", false).toBool());
+  topLayout.addWidget(&darkModeCheckBox);
 
   mainLayout.addLayout(&topLayout);
 

@@ -24,6 +24,8 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
+#include <QHash>
+#include <QPointer>
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QSharedPointer>
@@ -80,6 +82,29 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
     // The QWriteLocker is enclosed within brackets to restrict its scope and
     // prevent conflicts with other QWriteLockers within the scheduler's methods.
     QWriteLocker locker(&this->QueueLock);
+
+    // Count the queued and running jobs once per sweep, and keep the counts up to date
+    // while jobs are started: counting them again for each candidate job made a sweep
+    // quadratic in the number of jobs, and a sweep runs each time a job finishes, which
+    // froze the GUI while hundreds of studies were queried.
+    QHash<QString, int> numberOfRunningJobsPerType;
+    QHash<QString, int> numberOfRunningJobsPerGroup;
+    foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
+    {
+      if (job->status() != ctkAbstractJob::JobStatus::Queued &&
+          job->status() != ctkAbstractJob::JobStatus::Running)
+      {
+        continue;
+      }
+
+      numberOfRunningJobsPerType[job->className()]++;
+      QString group = job->concurrencyGroup();
+      if (!group.isEmpty())
+      {
+        numberOfRunningJobsPerGroup[group]++;
+      }
+    }
+
     foreach (QThread::Priority priority, (QList<QThread::Priority>()
                                           << QThread::Priority::HighestPriority
                                           << QThread::Priority::HighPriority
@@ -104,14 +129,25 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
           continue;
         }
 
-        int numberOfRunningJobsWithSameType = this->getSameTypeJobsInThreadPoolQueueOrRunning(job);
-        if (numberOfRunningJobsWithSameType >= job->maximumConcurrentJobsPerType())
+        QString className = job->className();
+        if (numberOfRunningJobsPerType.value(className) >= job->maximumConcurrentJobsPerType())
         {
           // When the maximum number of concurrent jobs of the same type is reached,
           // return early instead of adding more jobs to an already crowded queue.
           // This allows the scheduler time to finish the currently running jobs,
           // preventing a jobs traffic jam.
           return;
+        }
+
+        // Jobs without a group (the default) are only limited per job type.
+        QString group = job->concurrencyGroup();
+        bool hasGroupLimit = !group.isEmpty() && job->maximumConcurrentJobsPerGroup() > 0;
+        if (hasGroupLimit && numberOfRunningJobsPerGroup.value(group) >= job->maximumConcurrentJobsPerGroup())
+        {
+          // The endpoint this job talks to (e.g. a DICOM server) is already running
+          // as many jobs as it allows. Skip this job only: jobs of other groups can
+          // still be started in this sweep.
+          continue;
         }
 
         logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
@@ -123,6 +159,11 @@ void ctkJobSchedulerPrivate::queueJobsInThreadPool()
         this->Workers.insert(job->jobUID(), worker);
 
         job->setStatus(ctkAbstractJob::JobStatus::Queued);
+        numberOfRunningJobsPerType[className]++;
+        if (!group.isEmpty())
+        {
+          numberOfRunningJobsPerGroup[group]++;
+        }
         emit q->jobQueued(job->toVariant());
 
         this->ThreadPool->start(worker.data(), job->priority());
@@ -199,6 +240,11 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 
     int numberOfRunningJobsWithSameType = this->getSameTypeJobsInThreadPoolQueueOrRunning(job);
     if (numberOfRunningJobsWithSameType >= job->maximumConcurrentJobsPerType())
+    {
+      return false;
+    }
+
+    if (this->isGroupConcurrencyLimitReached(job))
     {
       return false;
     }
@@ -333,6 +379,18 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
 }
 
 //------------------------------------------------------------------------------
+void ctkJobSchedulerPrivate::dropPendingRetryJobs()
+{
+  // The jobs are destroyed with the list: they were never queued, the GUI has already
+  // been told that their previous attempt failed, so there is nothing else to report.
+  QList<QSharedPointer<ctkAbstractJob>> droppedJobs;
+  {
+    QWriteLocker locker(&this->QueueLock);
+    droppedJobs.swap(this->PendingRetryJobs);
+  }
+}
+
+//------------------------------------------------------------------------------
 int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
 {
   int count = 0;
@@ -352,6 +410,41 @@ int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPoi
   }
 
   return count;
+}
+
+//------------------------------------------------------------------------------
+int ctkJobSchedulerPrivate::getSameGroupJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
+{
+  int count = 0;
+  QString group = job->concurrencyGroup();
+  foreach (QSharedPointer<ctkAbstractJob> queuedJob, this->JobsQueue)
+  {
+    if (queuedJob->jobUID() == job->jobUID())
+    {
+      continue;
+    }
+
+    if ((queuedJob->status() == ctkAbstractJob::JobStatus::Queued ||
+         queuedJob->status() == ctkAbstractJob::JobStatus::Running) &&
+        queuedJob->concurrencyGroup() == group)
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+//------------------------------------------------------------------------------
+bool ctkJobSchedulerPrivate::isGroupConcurrencyLimitReached(QSharedPointer<ctkAbstractJob> job)
+{
+  // Jobs without a group (the default) are only limited per job type.
+  if (job->concurrencyGroup().isEmpty() || job->maximumConcurrentJobsPerGroup() <= 0)
+  {
+    return false;
+  }
+
+  return this->getSameGroupJobsInThreadPoolQueueOrRunning(job) >= job->maximumConcurrentJobsPerGroup();
 }
 
 //------------------------------------------------------------------------------
@@ -407,8 +500,8 @@ ctkJobScheduler::~ctkJobScheduler()
 //------------------------------------------------------------------------------
 CTK_SET_CPP(ctkJobScheduler, const bool&, setFreezeJobsScheduling, FreezeJobsScheduling);
 CTK_GET_CPP(ctkJobScheduler, bool, freezeJobsScheduling, FreezeJobsScheduling)
-CTK_SET_CPP(ctkJobScheduler, const int&, setMaximumNumberOfRetry, MaximumNumberOfRetry);
-CTK_GET_CPP(ctkJobScheduler, int, maximumNumberOfRetry, MaximumNumberOfRetry)
+CTK_SET_CPP(ctkJobScheduler, const int&, setMaximumRetryWait, MaximumRetryWait);
+CTK_GET_CPP(ctkJobScheduler, int, maximumRetryWait, MaximumRetryWait)
 CTK_SET_CPP(ctkJobScheduler, const int&, setRetryDelay, RetryDelay);
 CTK_GET_CPP(ctkJobScheduler, int, retryDelay, RetryDelay)
 
@@ -467,6 +560,60 @@ int ctkJobScheduler::numberOfRunningJobs()
   }
 
   return numberOfRunningJobs;
+}
+
+//----------------------------------------------------------------------------
+void ctkJobScheduler::scheduleRetry(ctkAbstractJob* job, int delayMsec)
+{
+  Q_D(ctkJobScheduler);
+
+  if (!job)
+  {
+    return;
+  }
+
+  QSharedPointer<ctkAbstractJob> jobShared = QSharedPointer<ctkAbstractJob>(job);
+  if (d->FreezeJobsScheduling)
+  {
+    return;
+  }
+
+  if (delayMsec <= 0)
+  {
+    d->insertJob(jobShared);
+    return;
+  }
+
+  {
+    QWriteLocker locker(&d->QueueLock);
+    d->PendingRetryJobs.append(jobShared);
+  }
+
+  // The timer belongs to the scheduler, so the wait survives the worker that failed
+  // and never outlives the scheduler itself.
+  QPointer<ctkJobScheduler> self(this);
+  QTimer::singleShot(delayMsec, this, [self, jobShared]()
+  {
+    if (!self)
+    {
+      return;
+    }
+
+    ctkJobSchedulerPrivate* d = self->d_func();
+    bool stillPending = false;
+    {
+      QWriteLocker locker(&d->QueueLock);
+      stillPending = d->PendingRetryJobs.removeOne(jobShared);
+    }
+
+    // The jobs have been stopped while this one was waiting for its next attempt
+    if (!stillPending || d->FreezeJobsScheduling)
+    {
+      return;
+    }
+
+    d->insertJob(jobShared);
+  });
 }
 
 //----------------------------------------------------------------------------
@@ -584,6 +731,7 @@ QStringList ctkJobScheduler::stopAllJobs(bool stopPersistentJobs, bool removeJob
   Q_D(ctkJobScheduler);
 
   d->FreezeJobsScheduling = true;
+  d->dropPendingRetryJobs();
   QStringList stoppedJobsUIDs;
   {
     // The QReadLocker is enclosed within brackets to restrict its scope and
@@ -948,6 +1096,14 @@ void ctkJobScheduler::emitThrottledSignals()
 {
   Q_D(ctkJobScheduler);
 
+  // The progress of the jobs is reported first: a job that finished in this same
+  // interval must not be told about after it has been reported as completed.
+  if (!d->BatchedJobsProgress.isEmpty())
+  {
+    emit this->progressJobDetail(d->BatchedJobsProgress);
+    d->BatchedJobsProgress.clear();
+  }
+
   int totalEmitted = 0;
   if (!d->BatchedJobsStarted.isEmpty() && totalEmitted < d->MaximumBatchedSignalsForTimeInterval)
   {
@@ -984,9 +1140,6 @@ void ctkJobScheduler::emitThrottledSignals()
     d->BatchedJobsFailed = d->BatchedJobsFailed.mid(count);
     totalEmitted += count;
   }
-
-  emit this->progressJobDetail(d->BatchedJobsProgress);
-  d->BatchedJobsProgress.clear();
 
   int numberOfSignalsNotSent = d->BatchedJobsStarted.size() + d->BatchedJobsUserStopped.size() +
     d->BatchedJobsFinished.size() + d->BatchedJobsAttemptFailed.size() +

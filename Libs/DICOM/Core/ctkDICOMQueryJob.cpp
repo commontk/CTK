@@ -97,6 +97,13 @@ ctkDICOMServer* ctkDICOMQueryJob::server() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkDICOMQueryJob::concurrencyGroup() const
+{
+  Q_D(const ctkDICOMQueryJob);
+  return d->Server ? d->Server->connectionName() : QString();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMQueryJob::setServer(const ctkDICOMServer& server)
 {
   Q_D(ctkDICOMQueryJob);
@@ -165,7 +172,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status)
 ctkAbstractJob* ctkDICOMQueryJob::clone() const
 {
   ctkDICOMQueryJob* newQueryJob = new ctkDICOMQueryJob;
-  newQueryJob->setMaximumPatientsQuery(this->maximumConcurrentJobsPerType());
+  newQueryJob->setMaximumPatientsQuery(this->maximumPatientsQuery());
   newQueryJob->setServer(*this->server());
   newQueryJob->setFilters(this->filters());
   newQueryJob->setDICOMLevel(this->dicomLevel());
@@ -173,11 +180,14 @@ ctkAbstractJob* ctkDICOMQueryJob::clone() const
   newQueryJob->setStudyInstanceUID(this->studyInstanceUID());
   newQueryJob->setSeriesInstanceUID(this->seriesInstanceUID());
   newQueryJob->setSOPInstanceUID(this->sopInstanceUID());
-  newQueryJob->setMaximumNumberOfRetry(this->maximumNumberOfRetry());
+  newQueryJob->setRetryEnabled(this->retryEnabled());
+  newQueryJob->setMaximumRetryWait(this->maximumRetryWait());
+  newQueryJob->setRetryBackoffFactor(this->retryBackoffFactor());
   newQueryJob->setRetryDelay(this->retryDelay());
   newQueryJob->setRetryCounter(this->retryCounter());
   newQueryJob->setIsPersistent(this->isPersistent());
   newQueryJob->setMaximumConcurrentJobsPerType(this->maximumConcurrentJobsPerType());
+  newQueryJob->setMaximumConcurrentJobsPerGroup(this->maximumConcurrentJobsPerGroup());
   newQueryJob->setPriority(this->priority());
 
   return newQueryJob;

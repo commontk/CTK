@@ -58,6 +58,7 @@ set(KIT_SRCS
   ctkDICOMTableView.h
   ctkDICOMThumbnailListWidget.cpp
   ctkDICOMThumbnailListWidget.h
+  ctkDICOMVisualBrowserColors_p.h
   ctkDICOMVisualBrowserWidget.cpp
   ctkDICOMVisualBrowserWidget.h
   )

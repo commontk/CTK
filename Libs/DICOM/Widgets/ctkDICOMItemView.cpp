@@ -272,7 +272,7 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
     EI_Status result = dcmImage.getStatus();
     if (result != EIS_Normal)
     {
-      logger.error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
+      logger.error(QString("Rendering of DICOM image for thumbnail failed: ") + DicomImage::getString(result));
       return;
     }
     // Select first window defined in image. If none, compute min/max window as best guess.

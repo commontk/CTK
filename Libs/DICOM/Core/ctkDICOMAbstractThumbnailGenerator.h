@@ -48,6 +48,11 @@ public:
   virtual void generateDocumentThumbnail(const QString &thumbnailPath,
                                          QColor backgroundColor = Qt::white) = 0;
 
+  /// False for the DICOM objects without image (e.g. structured reports, encapsulated
+  /// documents, presentation states), which have no thumbnail to render: DicomImage
+  /// only fails on them, and logs that as an error. Only the header of the file is read.
+  static bool hasPixelData(const QString& dicomFilePath);
+
 protected:
   QScopedPointer<ctkDICOMAbstractThumbnailGeneratorPrivate> d_ptr;
 

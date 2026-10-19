@@ -175,6 +175,7 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
     this->SOPInstanceUID = responseSet.sopInstanceUID();
     this->ConnectionName = responseSet.connectionName();
     this->NumberOfDataSets = responseSet.datasets().count();
+    this->InsertionCompleted = responseSet.insertionCompleted();
     if (this->JobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
       this->QueriedPatientIDs = responseSet.datasets().keys();
@@ -213,6 +214,27 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
   // Specific to DICOM JobResponseSet
   ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
   int NumberOfDataSets{0};
+
+  // True when the datasets are reported after having been inserted in the database,
+  // false when they are reported as they arrive. Every dataset is reported both ways.
+  /// \sa ctkDICOMJobResponseSet::insertionCompleted
+  bool InsertionCompleted{false};
+
+  /// True when this report is the one that must advance the progress of the frames it
+  /// carries, so that a frame is counted once and not twice.
+  ///
+  /// The frames pulled by a C-GET arrive through the retrieve job itself and are
+  /// counted as they arrive; their insertion is only an echo of what was counted.
+  /// The frames pushed by a C-MOVE arrive at the storage listener instead, and the
+  /// retrieve job that asked for them only learns about them once they are inserted.
+  bool countsAsFrameProgress() const
+  {
+    const bool isRetrieveReport =
+      this->JobType == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
+      this->JobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+      this->JobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance;
+    return isRetrieveReport ? !this->InsertionCompleted : this->InsertionCompleted;
+  }
 
   // User-facing query warnings (e.g. result limits) reported to the GUI
   QStringList QueryWarningMessages;

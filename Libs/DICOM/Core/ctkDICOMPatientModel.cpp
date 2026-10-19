@@ -24,6 +24,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDate>
+#include <QSqlDatabase>
 #include <QStringList>
 
 // CTK includes
@@ -75,6 +76,13 @@ public:
   int getFilteredStudyCountForPatient(const QString& patientUID, bool filterSeries = true) const;
   int getSeriesCountForPatient(const QString& patientUID) const;
   int getFilteredSeriesCountForPatient(const QString& patientUID) const;
+  /// A filter of the studies or of the series is set
+  bool studyOrSeriesFiltersSet() const;
+  /// The patient is shown: it matches the patient filters, and at least one of its
+  /// studies is shown. A patient without studies yet (e.g. found by a query of the
+  /// patients) is shown only when no filter of the studies or series could hide it.
+  bool isPatientVisible(const QString& patientID, const QString& patientName,
+                        int studyCount, int filteredStudyCount) const;
   void updatePatientCountsAndVisibility(int patientIndex);
 
   // Data storage
@@ -104,6 +112,10 @@ public:
   QHash<QString, ctkDICOMStudyModel*> StudyModels; // patientUID -> StudyModel
   QHash<QString, ctkDICOMStudyFilterProxyModel*> StudyFilterProxyModels; // patientUID -> StudyFilterProxyModel
   ctkDICOMStudyModel* createStudyModel(const QString& patientUID, const QString& patientID);
+  /// Filter proxy model of the study model of a patient, created the first time it is
+  /// asked for: only the patients that a view shows need one, and creating one for
+  /// each patient slowed down the population of the models.
+  ctkDICOMStudyFilterProxyModel* studyFilterProxyModel(const QString& patientUID);
   void updateStudyModelFilters(ctkDICOMStudyModel* studyModel);
 
   // Database and scheduler
@@ -122,6 +134,8 @@ public:
 
   // Configuration
   int NumberOfOpenedStudiesPerPatient;
+  QString CurrentPatientUID;
+  bool AutoRetrieveFullSeries{true};
   int ThumbnailSize;
 
   // State
@@ -233,8 +247,32 @@ void ctkDICOMPatientModelPrivate::populatePatients()
   QSet<QString> validPatientUIDs = QSet<QString>(patientUIDs.begin(), patientUIDs.end());
   QList<PatientData> newPatients;
 
+  // Read the database in transactions: outside of a transaction, each statement locks
+  // the database file and checks its journal again, which took a third of the time of
+  // the population. The transaction is renewed every so many patients, so that the
+  // writers of the database (e.g. the import and retrieve jobs) wait a short while at
+  // most.
+  QSqlDatabase readDatabase = this->DicomDatabase->database();
+  bool readTransaction = readDatabase.transaction();
+  auto endReadTransaction = [&readDatabase, &readTransaction]()
+  {
+    if (readTransaction && !readDatabase.commit())
+    {
+      readDatabase.rollback();
+    }
+    readTransaction = false;
+  };
+  const int patientsPerReadTransaction = 100;
+  int patientsRead = 0;
+
   foreach (const QString& patientUID, patientUIDs)
   {
+    if (readTransaction && ++patientsRead % patientsPerReadTransaction == 0)
+    {
+      endReadTransaction();
+      readTransaction = readDatabase.transaction();
+    }
+
     QString patientID = this->DicomDatabase->fieldForPatient("PatientID", patientUID);
     this->createStudyModel(patientUID, patientID);
 
@@ -244,11 +282,9 @@ void ctkDICOMPatientModelPrivate::populatePatients()
     int filteredStudyCount = this->getFilteredStudyCountForPatient(patientUID);
     int seriesCount = this->getSeriesCountForPatient(patientUID);
     int filteredSeriesCount = this->getFilteredSeriesCountForPatient(patientUID);
-    // Allow query results to be visible even with zero data
+    // A patient found by a query has no studies until they are queried
     bool isQueryResult = (studyCount == 0 && seriesCount == 0);
-    bool isVisible = ((studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) || isQueryResult) &&
-                     this->matchesPatientIDFilter(patientID) &&
-                     this->matchesPatientNameFilter(patientName);
+    bool isVisible = this->isPatientVisible(patientID, patientName, studyCount, filteredStudyCount);
 
     // Only add if it's a new patient
     if (!existingPatientUIDs.contains(patientUID))
@@ -305,6 +341,8 @@ void ctkDICOMPatientModelPrivate::populatePatients()
       }
     }
   }
+
+  endReadTransaction();
 
   // Remove patients that are no longer in the database
   QList<int> indicesToRemove;
@@ -440,7 +478,7 @@ int ctkDICOMPatientModelPrivate::getSeriesCountForPatient(const QString& patient
     ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
     if (seriesModel)
     {
-      totalSeriesCount += seriesModel->seriesInstanceUIDs().count();
+      totalSeriesCount += seriesModel->rowCount();
     }
   }
   return totalSeriesCount;
@@ -465,16 +503,35 @@ int ctkDICOMPatientModelPrivate::getFilteredSeriesCountForPatient(const QString&
     ctkDICOMSeriesModel* seriesModel = studyModel->seriesModelForStudyInstanceUID(studyInstanceUID);
     if (seriesModel)
     {
-      totalFilteredSeriesCount += seriesModel->filteredSeriesInstanceUIDs().count();
+      totalFilteredSeriesCount += seriesModel->filteredSeriesCount();
     }
   }
   return totalFilteredSeriesCount;
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMPatientModelPrivate::studyOrSeriesFiltersSet() const
+{
+  return !this->StudyDescriptionFilter.isEmpty() ||
+         this->DateFilter != ctkDICOMPatientModel::Any ||
+         !this->SeriesDescriptionFilter.isEmpty() ||
+         !(this->ModalityFilter.isEmpty() || this->ModalityFilter.contains("Any"));
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMPatientModelPrivate::isPatientVisible(const QString& patientID, const QString& patientName,
+                                                   int studyCount, int filteredStudyCount) const
+{
+  if (!this->matchesPatientIDFilter(patientID) || !this->matchesPatientNameFilter(patientName))
+  {
+    return false;
+  }
+  return studyCount > 0 ? filteredStudyCount > 0 : !this->studyOrSeriesFiltersSet();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMPatientModelPrivate::updatePatientCountsAndVisibility(int patientIndex)
 {
-  Q_Q(ctkDICOMPatientModel);
   ctkDICOMPatientModelPrivate::PatientData& patient = this->Patients[patientIndex];
   QString patientUID = patient.patientUID;
   int studyCount = this->getStudyCountForPatient(patientUID);
@@ -486,11 +543,9 @@ void ctkDICOMPatientModelPrivate::updatePatientCountsAndVisibility(int patientIn
   patient.filteredStudyCount = filteredStudyCount;
   patient.seriesCount = seriesCount;
   patient.filteredSeriesCount = filteredSeriesCount;
-  // Allow query results to be visible even with zero data
-  bool isQueryResult = (studyCount == 0 && seriesCount == 0);
-  patient.isVisible = ((studyCount > 0 && filteredStudyCount != 0 && seriesCount > 0 && filteredSeriesCount != 0) || isQueryResult) &&
-                      q->patientMatchesFilters(patient.patientUID);
-  patient.isQueryResult = isQueryResult;
+  patient.isVisible = this->isPatientVisible(patient.patientID, patient.patientName,
+                                             studyCount, filteredStudyCount);
+  patient.isQueryResult = (studyCount == 0 && seriesCount == 0);
 }
 
 //------------------------------------------------------------------------------
@@ -521,16 +576,30 @@ ctkDICOMStudyModel* ctkDICOMPatientModelPrivate::createStudyModel(const QString&
   studyModel->setAllowedServers(q->allowedServers(patientUID));
   studyModel->setNumberOfOpenedStudies(this->NumberOfOpenedStudiesPerPatient);
   studyModel->setThumbnailSize(this->ThumbnailSize);
+  studyModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
   studyModel->setPatientID(patientID);
   studyModel->setPatientUID(patientUID);
+  // Only the current patient opens its studies, and therefore retrieves, on its own
+  studyModel->setAutoOpenStudiesEnabled(patientUID == this->CurrentPatientUID);
   this->StudyModels.insert(patientUID, studyModel);
-
-  ctkDICOMStudyFilterProxyModel* studyFilterProxyModel = new ctkDICOMStudyFilterProxyModel(q);
-  studyFilterProxyModel->setSourceModel(studyModel);
-  this->StudyFilterProxyModels.insert(patientUID, studyFilterProxyModel);
 
   emit q->studyModelCreated(patientUID, studyModel);
   return studyModel;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMStudyFilterProxyModel* ctkDICOMPatientModelPrivate::studyFilterProxyModel(const QString& patientUID)
+{
+  Q_Q(ctkDICOMPatientModel);
+  ctkDICOMStudyFilterProxyModel* studyFilterProxyModel = this->StudyFilterProxyModels.value(patientUID, nullptr);
+  ctkDICOMStudyModel* studyModel = this->StudyModels.value(patientUID, nullptr);
+  if (!studyFilterProxyModel && studyModel)
+  {
+    studyFilterProxyModel = new ctkDICOMStudyFilterProxyModel(q);
+    studyFilterProxyModel->setSourceModel(studyModel);
+    this->StudyFilterProxyModels.insert(patientUID, studyFilterProxyModel);
+  }
+  return studyFilterProxyModel;
 }
 
 //------------------------------------------------------------------------------
@@ -550,6 +619,7 @@ void ctkDICOMPatientModelPrivate::updateStudyModelFilters(ctkDICOMStudyModel* st
   studyModel->setAllowedServers(q->allowedServers(studyModel->patientUID()));
   studyModel->setNumberOfOpenedStudies(this->NumberOfOpenedStudiesPerPatient);
   studyModel->setThumbnailSize(this->ThumbnailSize);
+  studyModel->setAutoRetrieveFullSeries(this->AutoRetrieveFullSeries);
 }
 
 //------------------------------------------------------------------------------
@@ -1150,6 +1220,37 @@ int ctkDICOMPatientModel::numberOfOpenedStudiesPerPatient() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMPatientModel::setCurrentPatientUID(const QString& patientUID)
+{
+  Q_D(ctkDICOMPatientModel);
+  if (d->CurrentPatientUID == patientUID)
+  {
+    return;
+  }
+
+  d->CurrentPatientUID = patientUID;
+
+  // Let only this patient's study model open its studies by itself. The models of
+  // the other patients keep their studies collapsed, so no series is retrieved for
+  // them until they are selected.
+  foreach (ctkDICOMStudyModel* studyModel, this->allStudyModels())
+  {
+    if (!studyModel)
+    {
+      continue;
+    }
+    studyModel->setAutoOpenStudiesEnabled(studyModel->patientUID() == patientUID);
+  }
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMPatientModel::currentPatientUID() const
+{
+  Q_D(const ctkDICOMPatientModel);
+  return d->CurrentPatientUID;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMPatientModel::setNumberOfOpenedStudiesPerPatient(int count)
 {
   Q_D(ctkDICOMPatientModel);
@@ -1161,6 +1262,32 @@ void ctkDICOMPatientModel::setNumberOfOpenedStudiesPerPatient(int count)
   d->NumberOfOpenedStudiesPerPatient = count;
   this->updateStudyModelsFilters();
   emit this->numberOfOpenedStudiesPerPatientChanged(count);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMPatientModel::autoRetrieveFullSeries() const
+{
+  Q_D(const ctkDICOMPatientModel);
+  return d->AutoRetrieveFullSeries;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientModel::setAutoRetrieveFullSeries(bool enabled)
+{
+  Q_D(ctkDICOMPatientModel);
+  if (d->AutoRetrieveFullSeries == enabled)
+  {
+    return;
+  }
+
+  d->AutoRetrieveFullSeries = enabled;
+  foreach (ctkDICOMStudyModel* studyModel, this->allStudyModels())
+  {
+    if (studyModel)
+    {
+      studyModel->setAutoRetrieveFullSeries(enabled);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1300,7 +1427,7 @@ ctkDICOMStudyFilterProxyModel* ctkDICOMPatientModel::studyFilterProxyModelForPat
   {
     return nullptr;
   }
-  return d->StudyFilterProxyModels.value(patientUID, nullptr);
+  return d->studyFilterProxyModel(patientUID);
 }
 
 //------------------------------------------------------------------------------
@@ -1372,12 +1499,13 @@ QList<ctkDICOMStudyModel*> ctkDICOMPatientModel::allStudyModels() const
 //------------------------------------------------------------------------------
 QList<ctkDICOMStudyFilterProxyModel*> ctkDICOMPatientModel::allStudyFilterProxyModels() const
 {
-  Q_D(const ctkDICOMPatientModel);
+  // The proxy models are created when first asked for: create the missing ones
+  ctkDICOMPatientModelPrivate* d = const_cast<ctkDICOMPatientModelPrivate*>(this->d_func());
   QList<ctkDICOMStudyFilterProxyModel*> models;
-  for (QHash<QString, ctkDICOMStudyFilterProxyModel*>::const_iterator it = d->StudyFilterProxyModels.constBegin();
-       it != d->StudyFilterProxyModels.constEnd(); ++it)
+  for (QHash<QString, ctkDICOMStudyModel*>::const_iterator it = d->StudyModels.constBegin();
+       it != d->StudyModels.constEnd(); ++it)
   {
-    models.append(it.value());
+    models.append(d->studyFilterProxyModel(it.key()));
   }
   return models;
 }
@@ -1947,14 +2075,8 @@ void ctkDICOMPatientModel::saveAllowedServersToDB(const QString& patientUID, con
   // Update database
   d->DicomDatabase->updateConnectionsForPatient(patientUID, databaseAllowList, databaseDenyList);
 
-  // Update the model
-  QModelIndex idx = this->index(patientIndex, 0);
-  this->setData(idx, allowedServers, AllowedServersRole);
-
-  // Propagate to study model
-  ctkDICOMStudyModel* studyModel = d->StudyModels.value(patientUID, nullptr);
-  if (studyModel)
-  {
-    studyModel->setAllowedServers(allowedServers);
-  }
+  // Update the model and the study model from the database: \a allowedServers holds
+  // only the servers checked explicitly, while the trusted servers that are neither
+  // allowed nor denied explicitly are allowed as well.
+  this->updateAllowedServersFromDB(patientUID);
 }

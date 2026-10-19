@@ -731,8 +731,14 @@ bool ctkDICOMQuery::queryPatients()
   }
 
   Uint16 presentationContext = 0;
-  // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  // The PATIENT level is defined by the Patient Root model only: servers that follow the
+  // standard (e.g. dcmqrscp) refuse it in the Study Root model, which others accept.
+  // Check for any accepted presentation context for FIND (don't care about transfer syntax)
+  presentationContext = d->SCU->findPresentationContextID(UID_FINDPatientRootQueryRetrieveInformationModel, "");
+  if (presentationContext == 0)
+  {
+    presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  }
   if (presentationContext == 0)
   {
     LOG_AND_EMIT_ERROR(QString("Failed to find acceptable presentation context"), error)
@@ -1445,6 +1451,8 @@ bool ctkDICOMQuery::initializeSCU()
   transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
 
   d->SCU->addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
+  // The PATIENT level belongs to the Patient Root model only
+  d->SCU->addPresentationContext(UID_FINDPatientRootQueryRetrieveInformationModel, transferSyntaxes);
   if (!d->SCU->initNetwork().good())
   {
     LOG_AND_EMIT_ERROR(QString("Error initializing the network"), error)

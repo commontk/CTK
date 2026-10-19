@@ -73,6 +73,7 @@ public Q_SLOTS:
   void onRetryButtonClicked();
   void onResetFiltersButtonClicked();
   void onShowCompletedButtonToggled(bool);
+  void onShowInserterButtonToggled(bool);
   void onClearCompletedButtonClicked();
   void onClearAllButtonClicked();
 

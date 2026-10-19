@@ -33,6 +33,7 @@
 //
 
 // Qt includes
+#include <QDateTime>
 #include <QHash>
 
 // ctkDICOM includes
@@ -184,6 +185,10 @@ public:
   QString TagCacheDatabaseFilename;
   QStringList TagsToPrecache;
   QStringList TagsToExcludeFromStorage;
+  /// Files whose values could not be read, with their last modification time
+  /// (invalid if they did not exist): they are not read again, and their failure is
+  /// not reported again, until they change (e.g. they are restored).
+  QHash<QString, QDateTime> UnreadableFiles;
   bool openTagCacheDatabase();
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 

@@ -44,11 +44,28 @@ public:
   ctkDICOMPatientFilterProxyModelPrivate(ctkDICOMPatientFilterProxyModel& object);
   ~ctkDICOMPatientFilterProxyModelPrivate();
 
+  /// Filter all the rows again. In TabMode, the first row that does not fit is found
+  /// again: it depends on the visibility and the names of all the rows before it.
+  void refilter();
+  /// Filter all the rows again in TabMode when the first row that does not fit may
+  /// have changed with a change of the rows from \a firstChangedRow
+  void refilterTabsFromRow(int firstChangedRow);
+
+  void onSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight,
+                           const QVector<int>& roles);
+  void onSourceRowsInserted(const QModelIndex& parent, int first, int last);
+  void onSourceRowsRemoved(const QModelIndex& parent, int first, int last);
+
+  QList<QMetaObject::Connection> SourceModelConnections;
+
   ctkDICOMPatientFilterProxyModel::DisplayMode DisplayMode;
   int WidgetWidth = 0;
   int MaxTextWidth = 200;
   int IconSize = 24;
   int Spacing = 4;
+  /// First row (of the source model) that does not fit the widget width in TabMode,
+  /// -1 if all the visible rows fit. Found when the rows are filtered in order, it
+  /// rejects the rows after it without computing their width.
   mutable int FirstOutOfBoundsRow = -1;
 
   QFont ViewWidgetFont;
@@ -66,10 +83,135 @@ ctkDICOMPatientFilterProxyModelPrivate::ctkDICOMPatientFilterProxyModelPrivate(
 ctkDICOMPatientFilterProxyModelPrivate::~ctkDICOMPatientFilterProxyModelPrivate() = default;
 
 //------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModelPrivate::refilter()
+{
+  Q_Q(ctkDICOMPatientFilterProxyModel);
+  this->FirstOutOfBoundsRow = -1;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  q->beginFilterChange();
+  q->endFilterChange();
+#else
+  q->invalidateFilter();
+#endif
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModelPrivate::refilterTabsFromRow(int firstChangedRow)
+{
+  if (this->DisplayMode != ctkDICOMPatientFilterProxyModel::TabMode)
+  {
+    return;
+  }
+  // The rows that changed have been filtered again (dynamic filtering), but not the
+  // rows after them, whose position depends on the width of the rows before. When all
+  // the rows fit, a change may push the next rows out; otherwise, only a change up to
+  // the first row that does not fit may change the rows that fit.
+  if (this->FirstOutOfBoundsRow >= 0 && firstChangedRow > this->FirstOutOfBoundsRow)
+  {
+    return;
+  }
+  this->refilter();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModelPrivate::onSourceDataChanged(
+  const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
+{
+  Q_UNUSED(bottomRight);
+  if (!roles.isEmpty() &&
+      !roles.contains(ctkDICOMPatientModel::IsVisibleRole) &&
+      !roles.contains(ctkDICOMPatientModel::PatientNameRole))
+  {
+    return;
+  }
+  this->refilterTabsFromRow(topLeft.row());
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModelPrivate::onSourceRowsInserted(
+  const QModelIndex& parent, int first, int last)
+{
+  Q_Q(ctkDICOMPatientFilterProxyModel);
+  Q_UNUSED(parent);
+  // Rows appended after the first row that does not fit do not fit either, and rows
+  // appended while all the rows fit have been filtered with the rows before them
+  if (this->FirstOutOfBoundsRow < 0 && last + 1 >= q->sourceModel()->rowCount())
+  {
+    return;
+  }
+  this->refilterTabsFromRow(first);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModelPrivate::onSourceRowsRemoved(
+  const QModelIndex& parent, int first, int last)
+{
+  Q_UNUSED(parent);
+  Q_UNUSED(last);
+  // Removing rows while all the rows fit leaves them all fitting
+  if (this->FirstOutOfBoundsRow < 0)
+  {
+    return;
+  }
+  this->refilterTabsFromRow(first);
+}
+
+//------------------------------------------------------------------------------
 // ctkDICOMPatientFilterProxyModel methods
 
-CTK_SET_CPP(ctkDICOMPatientFilterProxyModel, const QFont&, setViewWidgetFont, ViewWidgetFont);
 CTK_GET_CPP(ctkDICOMPatientFilterProxyModel, QFont, viewWidgetFont, ViewWidgetFont)
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModel::setViewWidgetFont(const QFont& font)
+{
+  Q_D(ctkDICOMPatientFilterProxyModel);
+  if (d->ViewWidgetFont == font)
+  {
+    return;
+  }
+  d->ViewWidgetFont = font;
+  if (d->DisplayMode == TabMode)
+  {
+    d->refilter();
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientFilterProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
+{
+  Q_D(ctkDICOMPatientFilterProxyModel);
+  for (const QMetaObject::Connection& connection : std::as_const(d->SourceModelConnections))
+  {
+    QObject::disconnect(connection);
+  }
+  d->SourceModelConnections.clear();
+  d->FirstOutOfBoundsRow = -1;
+
+  this->Superclass::setSourceModel(sourceModel);
+  if (!sourceModel)
+  {
+    return;
+  }
+
+  // Connected after the superclass, so that the rows are filtered again once the
+  // superclass has filtered the rows that changed
+  d->SourceModelConnections
+    << QObject::connect(sourceModel, &QAbstractItemModel::dataChanged, this,
+         [d](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
+         { d->onSourceDataChanged(topLeft, bottomRight, roles); })
+    << QObject::connect(sourceModel, &QAbstractItemModel::rowsInserted, this,
+         [d](const QModelIndex& parent, int first, int last)
+         { d->onSourceRowsInserted(parent, first, last); })
+    << QObject::connect(sourceModel, &QAbstractItemModel::rowsRemoved, this,
+         [d](const QModelIndex& parent, int first, int last)
+         { d->onSourceRowsRemoved(parent, first, last); })
+    << QObject::connect(sourceModel, &QAbstractItemModel::rowsMoved, this,
+         [d]() { d->refilterTabsFromRow(0); })
+    << QObject::connect(sourceModel, &QAbstractItemModel::modelReset, this,
+         [d]() { d->refilterTabsFromRow(0); })
+    << QObject::connect(sourceModel, &QAbstractItemModel::layoutChanged, this,
+         [d]() { d->refilterTabsFromRow(0); });
+}
 
 //------------------------------------------------------------------------------
 ctkDICOMPatientFilterProxyModel::ctkDICOMPatientFilterProxyModel(QObject* parent)
@@ -105,14 +247,7 @@ void ctkDICOMPatientFilterProxyModel::setDisplayMode(DisplayMode mode)
   }
 
   d->DisplayMode = mode;
-
-  // Trigger re-filtering
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-  this->beginFilterChange();
-  this->endFilterChange();
-#else
-  this->invalidateFilter();
-#endif
+  d->refilter();
 
   emit displayModeChanged(mode);
 }
@@ -141,8 +276,8 @@ bool ctkDICOMPatientFilterProxyModel::filterAcceptsRow(int source_row,
     return false;
   }
 
-  // In TabMode, filter out items that do not fit the widget width
-  if (d->DisplayMode == ctkDICOMPatientFilterProxyModel::TabMode)
+  // In TabMode, filter out items that do not fit the widget width, if any is set
+  if (d->DisplayMode == ctkDICOMPatientFilterProxyModel::TabMode && d->WidgetWidth > 0)
   {
     // Optimization: if we've already found the first out-of-bounds row, skip all after
     if (d->FirstOutOfBoundsRow >= 0 && source_row >= d->FirstOutOfBoundsRow)
@@ -221,13 +356,7 @@ void ctkDICOMPatientFilterProxyModel::setWidgetWidth(int width)
   if (d->WidgetWidth != width)
   {
     d->WidgetWidth = width;
-    d->FirstOutOfBoundsRow = -1;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-    this->beginFilterChange();
-    this->endFilterChange();
-#else
-    this->invalidateFilter();
-#endif
+    d->refilter();
   }
 }
 
@@ -245,13 +374,7 @@ void ctkDICOMPatientFilterProxyModel::setMaxTextWidth(int width)
   if (d->MaxTextWidth != width)
   {
     d->MaxTextWidth = width;
-    d->FirstOutOfBoundsRow = -1;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-    this->beginFilterChange();
-    this->endFilterChange();
-#else
-    this->invalidateFilter();
-#endif
+    d->refilter();
   }
 }
 
@@ -269,13 +392,7 @@ void ctkDICOMPatientFilterProxyModel::setIconSize(int size)
   if (d->IconSize != size)
   {
     d->IconSize = size;
-    d->FirstOutOfBoundsRow = -1;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-    this->beginFilterChange();
-    this->endFilterChange();
-#else
-    this->invalidateFilter();
-#endif
+    d->refilter();
   }
 }
 
@@ -293,13 +410,7 @@ void ctkDICOMPatientFilterProxyModel::setSpacing(int spacing)
   if (d->Spacing != spacing)
   {
     d->Spacing = spacing;
-    d->FirstOutOfBoundsRow = -1;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-    this->beginFilterChange();
-    this->endFilterChange();
-#else
-    this->invalidateFilter();
-#endif
+    d->refilter();
   }
 }
 

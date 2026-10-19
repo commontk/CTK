@@ -102,6 +102,18 @@ public:
   Q_INVOKABLE QRect patientHeaderRect(const QRect& patientsRect,
                                       const QStyleOptionViewItem& option) const;
 
+  /// Get the line of the patient name in the patient header (TabMode), the name and
+  /// the info line below it being centered in the header. \a font is the font of the
+  /// view, the name being drawn a little larger and bold.
+  Q_INVOKABLE QRect patientNameLineRect(const QRect& patientHeaderRect, const QFont& font) const;
+
+  /// Get the area of the actions of the patient (allowed servers, select all, context
+  /// menu) on the line of the patient name, at the right of the patient header (TabMode)
+  Q_INVOKABLE QRect patientHeaderActionsRect(const QRect& patientHeaderRect, const QFont& font) const;
+
+  /// Width of the allowed servers combo box in the patient header (TabMode)
+  Q_INVOKABLE int allowedServersComboBoxWidth() const;
+
   /// Get the context menu button rect (3-dots) within the patient item
   Q_INVOKABLE QRect contextMenuButtonRect(const QRect& itemRect, const QStyleOptionViewItem& option) const;
 
@@ -132,6 +144,9 @@ Q_SIGNALS:
 
 protected:
   /// Format patient birth date for display
+  /// Colors of a patient card, following the palette of the view
+  void cardColors(const QPalette& palette, bool isSelected, bool isHovered,
+                  QColor& backgroundColor, QColor& borderColor, QColor& textColor) const;
   QString formatPatientBirthDate(const QString& date) const;
 
   /// Paint for TabMode
