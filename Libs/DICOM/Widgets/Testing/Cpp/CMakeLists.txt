@@ -24,6 +24,9 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMTableManagerTest.cpp
   ctkDICOMThumbnailListWidgetTest1.cpp
   ctkDICOMVisualBrowserWidgetTest1.cpp
+  ctkDICOMVisualBrowserWidgetTest2.cpp
+  ctkDICOMVisualBrowserWidgetTest3.cpp
+  ctkDICOMVisualBrowserWidgetTest4.cpp
   )
 
 include_directories(
@@ -95,4 +98,20 @@ if(EXISTS "${CTKData_DIR}")
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
     )
   SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
+  SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD)
+  SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest3
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000050.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000051.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000052.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000053.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000054.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000057.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000058.IMA
+    ${CTKData_DIR}/Data/DICOM/MRHEAD/000059.IMA
+    )
+  set_property(TEST "ctkDICOMVisualBrowserWidgetTest3" PROPERTY RESOURCE_LOCK "dcmqrscp")
+  SIMPLE_TEST(ctkDICOMVisualBrowserWidgetTest4 ${CTKData_DIR}/Data/DICOM/MRHEAD/000050.IMA)
+  set_property(TEST "ctkDICOMVisualBrowserWidgetTest4" PROPERTY RESOURCE_LOCK "dcmqrscp")
 endif()

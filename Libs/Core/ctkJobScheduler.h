@@ -51,7 +51,7 @@ class CTK_CORE_EXPORT ctkJobScheduler : public QObject
   Q_PROPERTY(int numberOfRunningJobs READ numberOfRunningJobs);
   Q_PROPERTY(int freezeJobsScheduling READ freezeJobsScheduling WRITE setFreezeJobsScheduling);
   Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
-  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
+  Q_PROPERTY(int maximumRetryWait READ maximumRetryWait WRITE setMaximumRetryWait);
   Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
 
 public:
@@ -78,6 +78,11 @@ public:
   Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs, bool removeJobs = false);
   Q_INVOKABLE bool retryJob(const QString& jobUID);
   Q_INVOKABLE void retryJobs(const QStringList& jobUIDs);
+  /// Queue a new attempt of a job once delayMsec has elapsed, without blocking the
+  /// thread the failed job was running in. The scheduler owns the job while it waits,
+  /// and drops it if the jobs are stopped in the meantime.
+  /// \sa ctkAbstractJob::nextRetryDelay(), ctkAbstractWorker::startNextJob(int)
+  Q_INVOKABLE void scheduleRetry(ctkAbstractJob* job, int delayMsec);
   ///@}
 
   ///@{
@@ -95,15 +100,19 @@ public:
   ///@}
 
   ///@{
-  /// Maximum number of retries that the Job pool will try on each failed Job
-  /// default: 3
-  int maximumNumberOfRetry() const;
-  void setMaximumNumberOfRetry(const int& maximumNumberOfRetry);
+  /// Maximum total time in millisec that the Job pool will spend waiting between
+  /// the retries of a failed Job before giving up.
+  /// default: 60000 msec (1 minute)
+  /// \sa ctkAbstractJob::maximumRetryWait
+  int maximumRetryWait() const;
+  void setMaximumRetryWait(const int& maximumRetryWait);
   ///@}
 
   ///@{
-  /// Retry delay in millisec
-  /// default: 100 msec
+  /// Delay in millisec before the first retry. The following retries wait
+  /// exponentially longer.
+  /// default: 1000 msec
+  /// \sa ctkAbstractJob::nextRetryDelay
   int retryDelay() const;
   void setRetryDelay(const int& retryDelay);
   ///@}
@@ -166,20 +175,24 @@ public:
   virtual bool removeJob(const QString& jobUID);
   virtual void removeJobs(const QStringList& jobUIDs);
   virtual int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
+  virtual int getSameGroupJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
+  virtual bool isGroupConcurrencyLimitReached(QSharedPointer<ctkAbstractJob> job);
   virtual QString generateUniqueJobUID();
   virtual void queueJobsInThreadPool();
+  virtual void dropPendingRetryJobs();
   virtual void clearBactchedJobsLists();
 
   QReadWriteLock QueueLock;
 
-  int RetryDelay{100};
-  int MaximumNumberOfRetry{3};
+  int RetryDelay{1000};
+  int MaximumRetryWait{60000};
   bool FreezeJobsScheduling{false};
 
   QSharedPointer<QThreadPool> ThreadPool;
   QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
   QMap<QString, QMap<QString, QMetaObject::Connection>> JobsConnections;
   QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
+  QList<QSharedPointer<ctkAbstractJob>> PendingRetryJobs;
   QMap<QString, int> RunningJobsByJobClass;
   QList<QVariant> BatchedJobsStarted;
   QList<QVariant> BatchedJobsUserStopped;

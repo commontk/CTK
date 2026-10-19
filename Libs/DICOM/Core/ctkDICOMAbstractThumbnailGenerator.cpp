@@ -23,6 +23,13 @@
 #include "ctkDICOMAbstractThumbnailGenerator.h"
 #include "ctkLogger.h"
 
+// Qt includes
+#include <QDir>
+
+// DCMTK includes
+#include <dcmtk/dcmdata/dcdeftag.h>
+#include <dcmtk/dcmdata/dcfilefo.h>
+
 static ctkLogger logger ( "org.commontk.dicom.DICOMAbstractThumbnailGenerator" );
 struct Node;
 
@@ -61,4 +68,21 @@ ctkDICOMAbstractThumbnailGenerator::ctkDICOMAbstractThumbnailGenerator(QObject* 
 //------------------------------------------------------------------------------
 ctkDICOMAbstractThumbnailGenerator::~ctkDICOMAbstractThumbnailGenerator()
 {
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMAbstractThumbnailGenerator::hasPixelData(const QString& dicomFilePath)
+{
+  // The values larger than 4 kB (the pixel data of an image) are left in the file
+  DcmFileFormat fileFormat;
+  if (fileFormat.loadFile(QDir::toNativeSeparators(dicomFilePath).toUtf8().data(),
+                          EXS_Unknown, EGL_noChange, 4096).bad())
+  {
+    // Not readable: let the rendering report it
+    return true;
+  }
+  DcmDataset* dataset = fileFormat.getDataset();
+  return dataset->tagExists(DCM_PixelData) ||
+         dataset->tagExists(DCM_FloatPixelData) ||
+         dataset->tagExists(DCM_DoubleFloatPixelData);
 }

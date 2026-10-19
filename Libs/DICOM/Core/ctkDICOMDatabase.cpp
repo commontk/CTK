@@ -229,13 +229,26 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
   //   -- if so, keep looking for the requested group/element
   //   -- if not, start again from the beginning
 
+  // A file that could not be read is not read again until it changes: the values of
+  // the files that are missing (e.g. moved or deleted) are asked again each time the
+  // models are populated, and each failure was reported again.
+  QFileInfo fileInfo(fileName);
+  QDateTime lastModified = fileInfo.exists() ? fileInfo.lastModified() : QDateTime();
+  QHash<QString, QDateTime>::const_iterator unreadableFile = this->UnreadableFiles.constFind(fileName);
+  if (unreadableFile != this->UnreadableFiles.constEnd() && unreadableFile.value() == lastModified)
+  {
+    return "";
+  }
+
   ctkDICOMItem dataset;
   dataset.InitializeFromFile(fileName);
   if (!dataset.IsInitialized())
   {
+    this->UnreadableFiles.insert(fileName, lastModified);
     logger.error("File " + fileName + " could not be initialized.");
     return "";
   }
+  this->UnreadableFiles.remove(fileName);
 
   QString upperTag = tag.toUpper();
   QString value;
@@ -2502,6 +2515,12 @@ bool ctkDICOMDatabase::storeThumbnailFile(const QString &originalFilePath,
   }
   else
   {
+    if (!ctkDICOMAbstractThumbnailGenerator::hasPixelData(originalFilePath))
+    {
+      // e.g. a structured report: there is no image to render
+      logger.debug(QString("No thumbnail for %1: no pixel data").arg(originalFilePath));
+      return false;
+    }
     DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8().data());
     return d->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
   }
@@ -3017,6 +3036,15 @@ void ctkDICOMDatabase::prepareInsert()
 }
 
 //------------------------------------------------------------------------------
+QRecursiveMutex& ctkDICOMDatabase::writeMutex()
+{
+  // Function-local static: thread-safe initialization without depending on the
+  // order in which translation units are initialized.
+  static QRecursiveMutex mutex;
+  return mutex;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( DcmItem *item, bool storeFile, bool generateThumbnail)
 {
   if (!item)
@@ -3066,6 +3094,7 @@ void ctkDICOMDatabase::insert( const QString& filePath, bool storeFile, bool gen
 void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker locker(&ctkDICOMDatabase::writeMutex());
   ctkDICOMDatabase::InsertResult insertOperationResult =
     ctkDICOMDatabase::InsertResult::NotInserted;
 
@@ -3208,6 +3237,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 ctkDICOMDatabase::InsertResult ctkDICOMDatabase::insert(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker locker(&ctkDICOMDatabase::writeMutex());
 
   bool databaseWasChanged = false;
   bool insertFailed = false;
@@ -3618,26 +3648,33 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
     }
   }
 
-  QSqlQuery fileRemove(d->Database);
-  fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == :seriesID");
-  fileRemove.bindValue(":seriesID", seriesInstanceUID);
-  logger.debug("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
-  success = fileRemove.exec();
-  if (!success)
   {
-    logger.error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
-    logger.error("SQLITE ERROR: " + fileRemove.lastError().driverText());
-  }
+    // This is the part of the removal that writes to the databases, and the only
+    // one that takes the write mutex. The queries above only read, and the file
+    // and folder removal below touches the file system rather than the databases.
+    QMutexLocker locker(&ctkDICOMDatabase::writeMutex());
 
-  if (!removeTagCacheSOPInstanceUIDs.isEmpty())
-  {
-    d->TagCacheDatabase.transaction();
-    // Remove values from tag cache (may be important for patient confidentiality)
-    foreach(QString sopInstanceUID, removeTagCacheSOPInstanceUIDs)
+    QSqlQuery fileRemove(d->Database);
+    fileRemove.prepare("DELETE FROM Images WHERE SeriesInstanceUID == :seriesID");
+    fileRemove.bindValue(":seriesID", seriesInstanceUID);
+    logger.debug("SQLITE: removing seriesInstanceUID " + seriesInstanceUID);
+    success = fileRemove.exec();
+    if (!success)
     {
-      removeCachedTags(sopInstanceUID);
+      logger.error("SQLITE ERROR: could not remove seriesInstanceUID " + seriesInstanceUID);
+      logger.error("SQLITE ERROR: " + fileRemove.lastError().driverText());
     }
-    d->TagCacheDatabase.commit();
+
+    if (!removeTagCacheSOPInstanceUIDs.isEmpty())
+    {
+      d->TagCacheDatabase.transaction();
+      // Remove values from tag cache (may be important for patient confidentiality)
+      foreach(QString sopInstanceUID, removeTagCacheSOPInstanceUIDs)
+      {
+        removeCachedTags(sopInstanceUID);
+      }
+      d->TagCacheDatabase.commit();
+    }
   }
 
   QPair<QString,QString> fileToRemove;
@@ -4184,6 +4221,8 @@ void ctkDICOMDatabase::updateDisplayedFields()
   // Update/insert the display values
   if (displayedFieldsMapSeries.count() > 0)
   {
+    QMutexLocker locker(&ctkDICOMDatabase::writeMutex());
+
     d->Database.transaction();
 
     if (d->applyDisplayedFieldsChanges(displayedFieldsMapSeries, displayedFieldsMapStudy, displayedFieldsMapPatient))

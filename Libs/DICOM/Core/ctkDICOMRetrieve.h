@@ -48,6 +48,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
   Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(int framesBatchLimit READ framesBatchLimit WRITE setFramesBatchLimit);
   Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
@@ -128,6 +129,28 @@ public:
   Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
   void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
+  void removeJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
+  ///@}
+
+  ///@{
+  /// Number of received frames that are kept in memory before framesBatchReady()
+  /// is emitted, asking the owner to insert and release them.
+  ///
+  /// Retrieving a whole series and only inserting it once the last frame has
+  /// arrived makes the peak memory usage proportional to the size of the series,
+  /// which is untenable for large series (a 1 GB series costs 1 GB of RAM).
+  /// Inserting in batches instead keeps the peak bounded by the batch size.
+  ///
+  /// A value of 0 or less disables batching, restoring the previous behavior of
+  /// a single insert at the end of the retrieve operation.
+  ///
+  /// The value is used as-is here: it is the scheduler that decides it per series,
+  /// using its own framesBatchLimit() as a lower limit and enlarging it proportionally
+  /// for series with a large number of frames.
+  /// \sa ctkDICOMScheduler::setFramesBatchLimit, ctkDICOMScheduler::setFramesBatchesPerSeries
+  /// default: 25
+  void setFramesBatchLimit(const int& framesBatchLimit);
+  int framesBatchLimit() const;
   ///@}
 
   ///@{
@@ -204,6 +227,12 @@ Q_SIGNALS:
   void done(const bool& error);
   /// Signal is emitted inside the retrieve() function when a frame has been fetched
   void progressJobDetail(QVariant data);
+  /// Signal is emitted when framesBatchLimit() frames have been accumulated.
+  /// The owner is expected to insert the given response sets and to drop them
+  /// from this object (removeJobResponseSets), so that their memory is released
+  /// instead of being held until the end of the retrieve operation.
+  /// It is emitted from the thread running the retrieve operation.
+  void framesBatchReady(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
 
 protected:
   QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;

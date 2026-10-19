@@ -163,6 +163,36 @@ bool ctkDICOMSchedulerPrivate::isServerAllowed(ctkDICOMServer *server,
 }
 
 //------------------------------------------------------------------------------
+int ctkDICOMSchedulerPrivate::computeFramesBatchLimit(const QString& seriesInstanceUID) const
+{
+  if (this->FramesBatchLimit <= 0)
+  {
+    // Batching is disabled: insert once, at the end of the retrieve operation
+    return 0;
+  }
+
+  if (this->FramesBatchesPerSeries < 1 || seriesInstanceUID.isEmpty() || !this->DicomDatabase)
+  {
+    // The proportional batch is disabled or cannot be computed: the lower limit is the batch
+    return this->FramesBatchLimit;
+  }
+
+  // The instances of the series are known from the query that precedes the retrieve.
+  // Scaling the batch with them keeps the number of insert operations bounded by
+  // FramesBatchesPerSeries, instead of growing with the length of the series.
+  int instanceCount = this->DicomDatabase->instancesForSeries(seriesInstanceUID).count();
+  if (instanceCount <= 0)
+  {
+    // Not queried yet, fall back on the minimum
+    return this->FramesBatchLimit;
+  }
+
+  // FramesBatchLimit is the lower limit: short series keep it, long ones are batched
+  // proportionally to their length
+  return qMax(this->FramesBatchLimit, instanceCount / this->FramesBatchesPerSeries);
+}
+
+//------------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMSchedulerPrivate::getServerFromProxyServersByConnectionName(const QString& connectionName)
 {
   foreach (QSharedPointer<ctkDICOMServer> server, this->Servers)
@@ -214,10 +244,11 @@ void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
     QSharedPointer<ctkDICOMQueryJob> job =
       QSharedPointer<ctkDICOMQueryJob>(new ctkDICOMQueryJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setMaximumPatientsQuery(d->MaximumPatientsQuery);
     job->setFilters(d->Filters);
     job->setDICOMLevel(ctkDICOMQueryJob::DICOMLevels::Patients);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
     job->setPriority(priority);
 
@@ -251,10 +282,11 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
     QSharedPointer<ctkDICOMQueryJob> job =
       QSharedPointer<ctkDICOMQueryJob>(new ctkDICOMQueryJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setFilters(d->Filters);
     job->setDICOMLevel(ctkDICOMQueryJob::DICOMLevels::Studies);
     job->setPatientID(patientID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
     job->setPriority(priority);
 
@@ -291,11 +323,12 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
     QSharedPointer<ctkDICOMQueryJob> job =
       QSharedPointer<ctkDICOMQueryJob>(new ctkDICOMQueryJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setFilters(d->Filters);
     job->setDICOMLevel(ctkDICOMQueryJob::DICOMLevels::Series);
     job->setPatientID(patientID);
     job->setStudyInstanceUID(studyInstanceUID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
     job->setPriority(priority);
 
@@ -322,12 +355,13 @@ void ctkDICOMScheduler::queryInstances(const QString& patientID,
     QSharedPointer<ctkDICOMQueryJob> job =
       QSharedPointer<ctkDICOMQueryJob>(new ctkDICOMQueryJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setFilters(d->Filters);
     job->setDICOMLevel(ctkDICOMQueryJob::DICOMLevels::Instances);
     job->setPatientID(patientID);
     job->setStudyInstanceUID(studyInstanceUID);
     job->setSeriesInstanceUID(seriesInstanceUID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
     job->setPriority(priority);
 
@@ -353,11 +387,15 @@ void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
     QSharedPointer<ctkDICOMRetrieveJob> job =
       QSharedPointer<ctkDICOMRetrieveJob>(new ctkDICOMRetrieveJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setDICOMLevel(ctkDICOMRetrieveJob::DICOMLevels::Studies);
     job->setPatientID(patientID);
     job->setStudyInstanceUID(studyInstanceUID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
+    // The frames of a study span several series, so there is no single instance
+    // count to scale on: use the minimum batch size.
+    job->setFramesBatchLimit(d->computeFramesBatchLimit(QString()));
     job->setPriority(priority);
 
     d->insertJob(job);
@@ -383,12 +421,14 @@ void ctkDICOMScheduler::retrieveSeries(const QString& patientID,
     QSharedPointer<ctkDICOMRetrieveJob> job =
       QSharedPointer<ctkDICOMRetrieveJob>(new ctkDICOMRetrieveJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setDICOMLevel(ctkDICOMRetrieveJob::DICOMLevels::Series);
     job->setPatientID(patientID);
     job->setStudyInstanceUID(studyInstanceUID);
     job->setSeriesInstanceUID(seriesInstanceUID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
+    job->setFramesBatchLimit(d->computeFramesBatchLimit(seriesInstanceUID));
     job->setPriority(priority);
 
     d->insertJob(job);
@@ -415,13 +455,15 @@ void ctkDICOMScheduler::retrieveSOPInstance(const QString& patientID,
     QSharedPointer<ctkDICOMRetrieveJob> job =
       QSharedPointer<ctkDICOMRetrieveJob>(new ctkDICOMRetrieveJob);
     job->setServer(*server);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
     job->setDICOMLevel(ctkDICOMRetrieveJob::DICOMLevels::Instances);
     job->setPatientID(patientID);
     job->setStudyInstanceUID(studyInstanceUID);
     job->setSeriesInstanceUID(seriesInstanceUID);
     job->setSOPInstanceUID(SOPInstanceUID);
-    job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+    job->setMaximumRetryWait(server->maximumRetryWait() * 1000);
     job->setRetryDelay(d->RetryDelay);
+    job->setFramesBatchLimit(d->computeFramesBatchLimit(QString()));
     job->setPriority(priority);
 
     d->insertJob(job);
@@ -439,7 +481,7 @@ void ctkDICOMScheduler::startListener(int port,
     QSharedPointer<ctkDICOMStorageListenerJob>(new ctkDICOMStorageListenerJob);
   job->setPort(port);
   job->setAETitle(AETitle);
-  job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+  job->setMaximumRetryWait(d->MaximumRetryWait);
   job->setRetryDelay(d->RetryDelay);
   job->setPriority(priority);
 
@@ -463,7 +505,8 @@ void ctkDICOMScheduler::echo(const QString &connectionName,
       QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
 
     job->setServer(*server);
-    job->setMaximumNumberOfRetry(0);
+    job->setMaximumConcurrentJobsPerGroup(server->maximumConcurrentWorkers());
+    job->setRetryEnabled(false);
     job->setPriority(priority);
 
     d->insertJob(job);
@@ -480,7 +523,8 @@ void ctkDICOMScheduler::echo(ctkDICOMServer &server, QThread::Priority priority)
     QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
 
   job->setServer(server);
-  job->setMaximumNumberOfRetry(0);
+  job->setMaximumConcurrentJobsPerGroup(server.maximumConcurrentWorkers());
+  job->setRetryEnabled(false);
   job->setPriority(priority);
 
   d->insertJob(job);
@@ -516,7 +560,7 @@ void ctkDICOMScheduler::generateThumbnail(const QString &originalFilePath,
   job->setStudyInstanceUID(studyInstanceUID);
   job->setSeriesInstanceUID(seriesInstanceUID);
   job->setSOPInstanceUID(sopInstanceUID);
-  job->setMaximumNumberOfRetry(0);
+  job->setRetryEnabled(false);
   job->setPriority(priority);
 
   d->insertJob(job);
@@ -540,12 +584,23 @@ QString ctkDICOMScheduler::insertJobResponseSets(const QList<QSharedPointer<ctkD
   QSharedPointer<ctkDICOMInserterJob> job =
     QSharedPointer<ctkDICOMInserterJob>(new ctkDICOMInserterJob);
   job->copyJobResponseSets(jobResponseSets);
-  job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
+  job->setMaximumRetryWait(d->MaximumRetryWait);
   job->setRetryDelay(d->RetryDelay);
   job->setDatabaseFilename(d->DicomDatabase->databaseFilename());
   job->setTagsToPrecache(d->DicomDatabase->tagsToPrecache());
   job->setTagsToExcludeFromStorage(d->DicomDatabase->tagsToExcludeFromStorage());
   job->setPriority(priority);
+
+  QStringList insertedSeriesInstanceUIDs;
+  foreach (const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet, jobResponseSets)
+  {
+    const QString seriesInstanceUID = jobResponseSet ? jobResponseSet->seriesInstanceUID() : QString();
+    if (!seriesInstanceUID.isEmpty() && !insertedSeriesInstanceUIDs.contains(seriesInstanceUID))
+    {
+      insertedSeriesInstanceUIDs.append(seriesInstanceUID);
+    }
+  }
+  job->setInsertedSeriesInstanceUIDs(insertedSeriesInstanceUIDs);
 
   QString inserterJobUID = job->jobUID();
   d->insertJob(job);
@@ -961,6 +1016,64 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
 }
 
 //----------------------------------------------------------------------------
+bool ctkDICOMScheduler::isRetrievingSeries(const QStringList& seriesInstanceUIDs)
+{
+  Q_D(ctkDICOMScheduler);
+
+  if (seriesInstanceUIDs.isEmpty())
+  {
+    return false;
+  }
+
+  // The QReadLocker is enclosed within brackets to restrict its scope and
+  // prevent conflicts with other QReadLockers within the scheduler's methods.
+  QReadLocker locker(&d->QueueLock);
+
+  // A job that failed an attempt waits for its next one out of the queue: it is still
+  // retrieving the series.
+  QList<QSharedPointer<ctkAbstractJob>> jobs = d->PendingRetryJobs;
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+  {
+    jobs.append(job);
+  }
+
+  foreach (QSharedPointer<ctkAbstractJob> job, jobs)
+  {
+    if (!job || job->isPersistent())
+    {
+      continue;
+    }
+
+    // The attempts that failed stay in the queue, as AttemptFailed: their next attempt
+    // is the job waiting in the pending retries.
+    if (job->status() > ctkAbstractJob::JobStatus::Running)
+    {
+      continue;
+    }
+
+    ctkDICOMRetrieveJob* retrieveJob = qobject_cast<ctkDICOMRetrieveJob*>(job.data());
+    if (retrieveJob && seriesInstanceUIDs.contains(retrieveJob->seriesInstanceUID()))
+    {
+      return true;
+    }
+
+    ctkDICOMInserterJob* inserterJob = qobject_cast<ctkDICOMInserterJob*>(job.data());
+    if (inserterJob)
+    {
+      foreach (const QString& seriesInstanceUID, inserterJob->insertedSeriesInstanceUIDs())
+      {
+        if (seriesInstanceUIDs.contains(seriesInstanceUID))
+        {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
                                             const QStringList& studyInstanceUIDs,
                                             const QStringList& seriesInstanceUIDs,
@@ -1073,6 +1186,34 @@ int ctkDICOMScheduler::maximumPatientsQuery()
 {
   Q_D(const ctkDICOMScheduler);
   return d->MaximumPatientsQuery;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMScheduler::setFramesBatchLimit(int framesBatchLimit)
+{
+  Q_D(ctkDICOMScheduler);
+  d->FramesBatchLimit = framesBatchLimit;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMScheduler::framesBatchLimit()
+{
+  Q_D(const ctkDICOMScheduler);
+  return d->FramesBatchLimit;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMScheduler::setFramesBatchesPerSeries(int framesBatchesPerSeries)
+{
+  Q_D(ctkDICOMScheduler);
+  d->FramesBatchesPerSeries = framesBatchesPerSeries;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMScheduler::framesBatchesPerSeries()
+{
+  Q_D(const ctkDICOMScheduler);
+  return d->FramesBatchesPerSeries;
 }
 
 //----------------------------------------------------------------------------

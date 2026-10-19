@@ -77,6 +77,10 @@ public:
   void setMaxTextWidth(int maxTextWidth);
   int maxTextWidth() const;
 
+  /// Reimplemented from QSortFilterProxyModel to filter the rows again in TabMode
+  /// when the rows that fit the widget width may have changed
+  void setSourceModel(QAbstractItemModel* sourceModel) override;
+
   /// Reimplemented from QSortFilterProxyModel
   bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
   bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QColor>
+#include <QMutex>
 #include <QObject>
 #include <QStringList>
 #include <QSqlDatabase>
@@ -284,6 +285,23 @@ public:
                            bool createHierarchy = true,
                            const QString& destinationDirectoryName = QString());
   Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
+
+  /// Mutex serializing every write to a DICOM database.
+  ///
+  /// It is static, and therefore shared by all the ctkDICOMDatabase objects of the
+  /// process: SQLite allows a single writer per database file, while the insert and
+  /// remove jobs each hold their own ctkDICOMDatabase instance opened on the same
+  /// file. Serializing on the job side alone (by allowing a single inserter job at
+  /// a time) does not cover the writes issued outside of the inserter jobs.
+  ///
+  /// Every write entry point of this class already takes it. It is exposed so that
+  /// a caller can also hold it across a sequence of writes that must not be
+  /// interleaved with another writer.
+  ///
+  /// The mutex is recursive, because the write entry points call one another
+  /// (e.g. insert(DcmItem*) delegates to insert(const ctkDICOMItem&)).
+  static QRecursiveMutex& writeMutex();
+
   /// Insert operation
   enum InsertResult
   {

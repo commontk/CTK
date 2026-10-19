@@ -135,7 +135,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    QString warn = QString("Rendering of DICOM image failed for thumbnail failed: %1").arg(DicomImage::getString(result));
+    QString warn = QString("Rendering of DICOM image for thumbnail failed: %1").arg(DicomImage::getString(result));
     DCMTK_LOG4CPLUS_WARN_STR(rootLogThumbnailGenerator, warn.toStdString().c_str());
     return false;
   }
@@ -209,6 +209,12 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, QImage& image)
 {
+  if (!ctkDICOMAbstractThumbnailGenerator::hasPixelData(dcmImagePath))
+  {
+    DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator,
+      QString("No thumbnail for %1: no pixel data").arg(dcmImagePath).toStdString().c_str());
+    return false;
+  }
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8().data());
   return this->generateThumbnail(&dcmImage, image);
 }
@@ -216,6 +222,12 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, 
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString& dcmImagePath, const QString& thumbnailPath)
 {
+  if (!ctkDICOMAbstractThumbnailGenerator::hasPixelData(dcmImagePath))
+  {
+    DCMTK_LOG4CPLUS_DEBUG_STR(rootLogThumbnailGenerator,
+      QString("No thumbnail for %1: no pixel data").arg(dcmImagePath).toStdString().c_str());
+    return false;
+  }
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8().data());
   return this->generateThumbnail(&dcmImage, thumbnailPath);
 }

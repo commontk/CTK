@@ -49,6 +49,7 @@
 #include "ctkDICOMSeriesModel.h"
 #include "ctkDICOMSeriesDelegate.h"
 #include "ctkDICOMSeriesFilterProxyModel.h"
+#include "ctkDICOMVisualBrowserColors_p.h"
 
 //------------------------------------------------------------------------------
 class ctkDICOMStudyListViewPrivate
@@ -103,6 +104,7 @@ public:
   void updateSeriesViewPositions();
   void updateLoadButtonPosition();
   void updateLoadButtonVisibility();
+  void updateLoadButtonStyle();
   QPair<ctkDICOMStudyModel*, QModelIndex> mapToStudyModelAndIndex(const QModelIndex& proxyIndex) const;
 };
 
@@ -156,6 +158,10 @@ void ctkDICOMStudyListViewPrivate::cleanupSeriesView(const QString& studyInstanc
 
       seriesView->deleteLater();
     }
+
+    // The selection held by the removed view is gone, but no selection change was
+    // emitted for it: refresh the load button so it does not keep a stale count.
+    this->updateLoadButtonVisibility();
   }
 }
 
@@ -170,6 +176,8 @@ void ctkDICOMStudyListViewPrivate::clearSeriesViewCache()
   {
     this->cleanupSeriesView(studyUID);
   }
+
+  this->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -341,6 +349,14 @@ void ctkDICOMStudyListViewPrivate::updateSeriesViewPositions()
       seriesView->setVisible(false);
     }
   }
+
+  // The series views are raised above the load button: put it back on top, otherwise
+  // it is still drawn (the series views are transparent) but a series view below it
+  // gets the click.
+  if (this->LoadSeriesButton)
+  {
+    this->LoadSeriesButton->raise();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -372,6 +388,30 @@ void ctkDICOMStudyListViewPrivate::updateLoadButtonPosition()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMStudyListViewPrivate::updateLoadButtonStyle()
+{
+  if (!this->LoadSeriesButton)
+  {
+    return;
+  }
+
+  // The colors of the window: the palette of an item view can be changed by a style
+  // sheet for its own items (e.g. its selection-color), which is not meant for a button
+  // drawn over it. The window, and not the application, since the browser can be given
+  // a theme of its own.
+  QPalette palette = this->LoadSeriesButton->window()->palette();
+  QString styleSheet = ctkDICOMVisualBrowserColors::actionButtonStyleSheet(palette);
+  if (this->LoadSeriesButton->styleSheet() == styleSheet && !this->LoadSeriesButton->icon().isNull())
+  {
+    return;
+  }
+  this->LoadSeriesButton->setStyleSheet(styleSheet);
+  // The icon is drawn in the color of the text, on the highlight color of the button
+  this->LoadSeriesButton->setIcon(ctkDICOMVisualBrowserColors::tintedIcon(
+    QIcon(":/Icons/load.svg"), palette.color(QPalette::HighlightedText), this->LoadSeriesButton->iconSize()));
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMStudyListViewPrivate::updateLoadButtonVisibility()
 {
   if (!this->LoadSeriesButton)
@@ -391,8 +431,8 @@ void ctkDICOMStudyListViewPrivate::updateLoadButtonVisibility()
     }
   }
 
-  // Show button only if more than 1 series is selected
-  bool shouldShow = totalSelectedSeries > 1;
+  // Show button as soon as at least one series is selected
+  bool shouldShow = totalSelectedSeries > 0;
   this->LoadSeriesButton->setVisible(shouldShow);
 
   if (shouldShow)
@@ -413,6 +453,7 @@ void ctkDICOMStudyListViewPrivate::updateLoadButtonVisibility()
       buttonText = ctkDICOMStudyListView::tr("Load (%1)").arg(totalSelectedSeries);
     }
     this->LoadSeriesButton->setText(buttonText);
+    this->updateLoadButtonStyle(); // the window can have changed since it was built
     this->updateLoadButtonPosition(); // Update position when showing
   }
 }
@@ -450,7 +491,11 @@ ctkDICOMStudyListView::ctkDICOMStudyListView(QWidget* parent)
   // Configure list view for vertical study display
   this->setSelectionMode(QAbstractItemView::NoSelection);
   this->setDragDropMode(QAbstractItemView::NoDragDrop);
-  this->setLayoutMode(QListView::Batched);
+  // A batched layout paints no study at all when a layout is requested while the
+  // previous one is still in progress (QListView restarts it from the first row but
+  // only lays out on its next timer event), which made the list flicker while a
+  // patient with more studies than a batch was queried.
+  this->setLayoutMode(QListView::SinglePass);
 
   // Enable mouse tracking for hover effects
   this->setMouseTracking(true);
@@ -461,40 +506,7 @@ ctkDICOMStudyListView::ctkDICOMStudyListView(QWidget* parent)
   // Remove frame border
   this->setFrameShape(QFrame::NoFrame);
   this->setFrameShadow(QFrame::Plain);
-  this->verticalScrollBar()->setStyleSheet(QString(R"(
-      QScrollBar:vertical {
-        border: none;
-        width: 10px;
-        margin: 0px 0px 0px 0px;
-        background: none;
-      }
-      QScrollBar::handle:vertical {
-        min-height: 50px;
-        margin: 4px 0px 4px 0px;
-        width: 10px;
-        border-width: 1px;
-        border-radius: 2px;
-        background-color: #808080;
-      }
-      QScrollBar::handle:vertical:hover {
-        background-color: #5A5A5A;
-      }
-      QScrollBar::handle:vertical:pressed {
-        background-color: #75a7ff;
-      }
-
-      QScrollBar::add-line:vertical {
-        height: 0px;
-        subcontrol-position: bottom;
-        subcontrol-origin: margin;
-      }
-      QScrollBar::sub-line:vertical {
-        height: 0 px;
-        subcontrol-position: top;
-        subcontrol-origin: margin;
-      }
-    )"
-  ));
+  this->verticalScrollBar()->setStyleSheet(ctkDICOMVisualBrowserColors::scrollBarStyleSheet(ctkDICOMVisualBrowserColors::palette(this)));
 
   // Ensure the list view always shows at least one study
   this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
@@ -523,36 +535,17 @@ ctkDICOMStudyListView::ctkDICOMStudyListView(QWidget* parent)
   // Create floating load button for loading multiple selected series
   Q_D(ctkDICOMStudyListView);
   d->LoadSeriesButton = new QPushButton(this->viewport());
+  d->LoadSeriesButton->setObjectName("LoadSeriesButton");
   d->LoadSeriesButton->setToolTip(tr("Load selected series"));
   d->LoadSeriesButton->setCursor(Qt::PointingHandCursor);
   d->LoadSeriesButton->setAttribute(Qt::WA_Hover, true);
   d->LoadSeriesButton->hide();
 
-  // FAB-style button with solid color and transparency
-  d->LoadSeriesButton->setStyleSheet(QString(R"(
-    QPushButton {
-      background: rgba(33, 150, 243, 0.92);
-      border: none;
-      border-radius: 24px;
-      font-size: 14px;
-      font-weight: 600;
-      color: white;
-      padding: 14px 32px;
-      min-width: 90px;
-    }
-    QPushButton:hover {
-      background: rgba(33, 150, 243, 1.0);
-    }
-    QPushButton:pressed {
-      background: rgba(21, 101, 192, 1.0);
-      padding: 15px 31px 13px 33px;
-    }
-  )"));
-
-  QIcon loadIcon(":/Icons/load.svg");
-  d->LoadSeriesButton->setIcon(loadIcon);
   d->LoadSeriesButton->setIconSize(QSize(20, 20));
   d->LoadSeriesButton->setText(tr("Load"));
+
+  // FAB-style button, in the highlight color of the palette
+  d->updateLoadButtonStyle();
 
   // Connect button to emit signal
   this->connect(d->LoadSeriesButton, &QPushButton::clicked,
@@ -579,8 +572,17 @@ void ctkDICOMStudyListView::setModel(QAbstractItemModel* model)
     disconnect(this->model(), nullptr, this, nullptr);
   }
 
-  // Set new model
+  // Set new model. QAbstractItemView::setModel() creates a selection model (a child of
+  // the view) for the new model, and keeps the previous one: it is deleted with its
+  // model, except the one of the empty model set by setModel(nullptr), which is never
+  // deleted. The previous selection model is not shared with another view: delete it.
+  QItemSelectionModel* previousSelectionModel = this->selectionModel();
   Superclass::setModel(model);
+  if (previousSelectionModel && previousSelectionModel != this->selectionModel() &&
+      previousSelectionModel->parent() == this)
+  {
+    delete previousSelectionModel;
+  }
 
   // Connect to new model
   if (model)
@@ -697,6 +699,13 @@ void ctkDICOMStudyListView::clearSelection()
 int ctkDICOMStudyListView::selectedCount() const
 {
   return this->selectedStudyInstanceUIDs().count();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListView::updateLoadButton()
+{
+  Q_D(ctkDICOMStudyListView);
+  d->updateLoadButtonVisibility();
 }
 
 //------------------------------------------------------------------------------
@@ -1159,6 +1168,33 @@ void ctkDICOMStudyListView::resizeEvent(QResizeEvent* event)
   Superclass::resizeEvent(event);
   this->refreshLayout();
   d->updateLoadButtonPosition();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMStudyListView::changeEvent(QEvent* event)
+{
+  Q_D(ctkDICOMStudyListView);
+  Superclass::changeEvent(event);
+
+  if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange)
+  {
+    // The colors of the scroll bar and of the load button follow the light and dark
+    // styles of the application
+    QString scrollBarStyleSheet = ctkDICOMVisualBrowserColors::scrollBarStyleSheet(ctkDICOMVisualBrowserColors::palette(this));
+    if (this->verticalScrollBar()->styleSheet() != scrollBarStyleSheet)
+    {
+      this->verticalScrollBar()->setStyleSheet(scrollBarStyleSheet);
+    }
+    d->updateLoadButtonStyle();
+
+    // Qt does not pass a new palette down to the widgets that have their own style
+    // sheet, as the series views: their text kept the color of the previous style.
+    // Setting their style sheet again polishes them with the new palette.
+    foreach (ctkDICOMSeriesTableView* seriesView, this->viewport()->findChildren<ctkDICOMSeriesTableView*>())
+    {
+      seriesView->setStyleSheet(seriesView->styleSheet());
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1951,10 +1987,22 @@ void ctkDICOMStudyListView::onNumberOfOpenedStudiesChanged(int count)
       QPair<ctkDICOMStudyModel*, QModelIndex> sourceInfo = mergedStudyModel->mapToSource(mergedIndex);
       ctkDICOMStudyModel* sourceStudyModel = sourceInfo.first;
       QModelIndex sourceIndex = sourceInfo.second;
-      if (sourceStudyModel)
+      if (!sourceStudyModel)
       {
-        sourceStudyModel->setStudyCollapsed(sourceIndex, row >= count);
+        continue;
       }
+
+      // The merged model spans the study models of several patients. Opening a
+      // study retrieves its series, so only the current patient is opened here:
+      // the others are opened when they become the current patient.
+      // \sa ctkDICOMStudyModel::setAutoOpenStudiesEnabled
+      bool collapsed = row >= count;
+      if (!collapsed && !sourceStudyModel->autoOpenStudiesEnabled())
+      {
+        continue;
+      }
+
+      sourceStudyModel->setStudyCollapsed(sourceIndex, collapsed);
     }
   }
 }

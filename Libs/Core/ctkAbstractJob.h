@@ -45,10 +45,15 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(QString className READ className);
   Q_PROPERTY(JobStatus status READ status WRITE setStatus);
   Q_PROPERTY(bool persistent READ isPersistent WRITE setIsPersistent);
-  Q_PROPERTY(bool retryCounter READ retryCounter WRITE setRetryCounter);
-  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
+  Q_PROPERTY(int retryCounter READ retryCounter WRITE setRetryCounter);
+  Q_PROPERTY(bool retryEnabled READ retryEnabled WRITE setRetryEnabled);
   Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
-  Q_PROPERTY(bool maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType);
+  Q_PROPERTY(double retryBackoffFactor READ retryBackoffFactor WRITE setRetryBackoffFactor);
+  Q_PROPERTY(int maximumRetryWait READ maximumRetryWait WRITE setMaximumRetryWait);
+  Q_PROPERTY(int accumulatedRetryWait READ accumulatedRetryWait WRITE setAccumulatedRetryWait);
+  Q_PROPERTY(int maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType);
+  Q_PROPERTY(QString concurrencyGroup READ concurrencyGroup);
+  Q_PROPERTY(int maximumConcurrentJobsPerGroup READ maximumConcurrentJobsPerGroup WRITE setMaximumConcurrentJobsPerGroup);
   Q_PROPERTY(QThread::Priority priority READ priority WRITE setPriority);
   Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
   Q_PROPERTY(QDateTime startDateTime READ startDateTime);
@@ -115,19 +120,71 @@ public:
   void setMaximumConcurrentJobsPerType(int maximumConcurrentJobsPerType);
   ///@}
 
+  /// Name of the group of jobs this job competes with for resources, typically
+  /// the remote endpoint the job talks to (e.g. the connection name of a DICOM
+  /// server). Jobs of the same group are limited by maximumConcurrentJobsPerGroup,
+  /// in addition to the per job type limit.
+  ///
+  /// An empty group name (the default) means that the job does not belong to any
+  /// group and is therefore only limited per job type.
+  virtual QString concurrencyGroup() const;
+
   ///@{
-  /// Maximum number of retries that the Job pool will try on each failed Job
-  /// default: 3
-  int maximumNumberOfRetry() const;
-  void setMaximumNumberOfRetry(int maximumNumberOfRetry);
+  /// Set the maximum concurrent jobs sharing the same concurrency group.
+  /// Ignored if the job has no concurrency group or if the value is zero or negative.
+  /// Default value is 8.
+  /// \sa concurrencyGroup()
+  int maximumConcurrentJobsPerGroup() const;
+  void setMaximumConcurrentJobsPerGroup(int maximumConcurrentJobsPerGroup);
   ///@}
 
   ///@{
-  /// Retry delay in millisec
-  /// default: 100 msec
+  /// If false, a failed job is never reattempted.
+  /// default: true
+  bool retryEnabled() const;
+  void setRetryEnabled(bool retryEnabled);
+  ///@}
+
+  ///@{
+  /// Delay in millisec before the first retry. Each following retry waits
+  /// retryDelay * retryBackoffFactor^retryCounter, with some randomness.
+  /// default: 1000 msec
+  /// \sa nextRetryDelay()
   int retryDelay() const;
   void setRetryDelay(int retryDelay);
   ///@}
+
+  ///@{
+  /// Factor by which the retry delay grows at each attempt.
+  /// default: 2.5
+  /// \sa nextRetryDelay()
+  double retryBackoffFactor() const;
+  void setRetryBackoffFactor(double retryBackoffFactor);
+  ///@}
+
+  ///@{
+  /// Maximum total time in millisec spent waiting between the retries of a job.
+  /// Retrying stops when this budget is exhausted, and the job fails.
+  /// Zero or a negative value disables retrying.
+  /// default: 60000 msec (1 minute)
+  int maximumRetryWait() const;
+  void setMaximumRetryWait(int maximumRetryWait);
+  ///@}
+
+  ///@{
+  /// Time in millisec already spent waiting between the previous retries of this
+  /// job. It is carried over when a job is reattempted, so that the sum of the
+  /// delays of the whole chain of attempts is bounded by maximumRetryWait.
+  int accumulatedRetryWait() const;
+  void setAccumulatedRetryWait(int accumulatedRetryWait);
+  ///@}
+
+  /// Delay in millisec to wait before the next attempt of this job, or -1 if the
+  /// job should not be reattempted (retrying disabled or retry budget exhausted).
+  /// The delay grows exponentially with the number of attempts, is randomized by
+  /// +/-25% so that the jobs of an unresponsive server do not all come back at the
+  /// same time, and never exceeds the remaining part of maximumRetryWait.
+  Q_INVOKABLE int nextRetryDelay() const;
 
   ///@{
   /// Priority
@@ -201,8 +258,12 @@ protected:
   bool Persistent;
   int RetryDelay;
   int RetryCounter;
-  int MaximumNumberOfRetry;
+  bool RetryEnabled;
+  double RetryBackoffFactor;
+  int MaximumRetryWait;
+  int AccumulatedRetryWait;
   int MaximumConcurrentJobsPerType;
+  int MaximumConcurrentJobsPerGroup;
   QThread::Priority Priority;
   QDateTime CreationDateTime;
   QDateTime StartDateTime;
@@ -228,6 +289,9 @@ struct CTK_CORE_EXPORT ctkJobDetail {
     this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
     this->RunningThreadID = job.runningThreadID();
     this->Logging = job.log();
+    this->RetryCounter = job.retryCounter();
+    this->AccumulatedRetryWait = job.accumulatedRetryWait();
+    this->MaximumRetryWait = job.maximumRetryWait();
   }
   virtual ~ctkJobDetail() = default;
 
@@ -238,6 +302,21 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   QString CompletionDateTime;
   QString RunningThreadID;
   QString Logging;
+
+  /// Retry bookkeeping, so that the GUI can tell a job that failed once from a job
+  /// that kept failing until its retry window elapsed.
+  /// \sa ctkAbstractJob::nextRetryDelay
+  int RetryCounter{0};
+  int AccumulatedRetryWait{0};
+  int MaximumRetryWait{0};
+
+  /// True if the job failed after having spent its whole retry waiting time.
+  bool retryWaitElapsed() const
+  {
+    return this->MaximumRetryWait > 0 &&
+           this->RetryCounter > 0 &&
+           this->AccumulatedRetryWait >= this->MaximumRetryWait;
+  }
 };
 Q_DECLARE_METATYPE(ctkJobDetail);
 
