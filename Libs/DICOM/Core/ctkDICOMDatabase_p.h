@@ -143,6 +143,7 @@ public:
 
   bool UseShortStoragePath;
   bool UseSystemFileCopy;
+  int IndexingThreadCount{0};
 
   ctkDICOMAbstractThumbnailGenerator* ThumbnailGenerator;
 

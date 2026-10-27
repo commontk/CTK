@@ -86,6 +86,18 @@ public:
     this->TagsToPrecache = tags;
   }
 
+  int indexingThreadCount()
+  {
+    QMutexLocker locker(&this->Mutex);
+    return this->IndexingThreadCount;
+  }
+
+  void setIndexingThreadCount(int indexingThreadCount)
+  {
+    QMutexLocker locker(&this->Mutex);
+    this->IndexingThreadCount = indexingThreadCount;
+  }
+
   QStringList tagsToExcludeFromStorage()
   {
     QMutexLocker locker(&this->Mutex);
@@ -198,6 +210,7 @@ protected:
   QString DatabaseFilename;
   QStringList TagsToPrecache;
   QStringList TagsToExcludeFromStorage;
+  int IndexingThreadCount{0}; // number of threads of the database (0: automatic)
 
   bool IsIndexing;
   bool StopRequested;

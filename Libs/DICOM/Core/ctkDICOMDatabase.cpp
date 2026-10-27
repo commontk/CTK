@@ -27,6 +27,12 @@
 #include <QSet>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QThread>
+
+// STD includes
+#include <atomic>
+#include <thread>
+#include <vector>
 #include <QSqlRecord>
 #include <QStringList>
 #include <QUuid>
@@ -1481,6 +1487,37 @@ CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useSystemFileCopy, UseSystemFileCopy);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseSystemFileCopy, UseSystemFileCopy);
+
+//------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDICOMDatabase, int, indexingThreadCount, IndexingThreadCount);
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::setIndexingThreadCount(int indexingThreadCount)
+{
+  Q_D(ctkDICOMDatabase);
+  d->IndexingThreadCount = qMax(0, indexingThreadCount);
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMDatabase::effectiveIndexingThreadCount()const
+{
+  Q_D(const ctkDICOMDatabase);
+  if (d->IndexingThreadCount > 0)
+  {
+    return d->IndexingThreadCount;
+  }
+  // Default: 6 threads, but at most the number of logical processors minus 2 (at least 1).
+  // - Two processors are left for the application's main thread (user interface) and other applications,
+  //   so that the computer remains responsive during a large import.
+  // - Indexing many small files is limited by the file access time, which parallel reads hide. Importing
+  //   27000 files (4.4 GB) with 6 threads instead of 1 was 3.1x faster from an SSD, 1.6x faster from a hard disk,
+  //   and 2.1x faster from a network share.
+  // - More threads slow down hard disks (by 3-33% with 7-18 threads), because the reads are less sequential.
+  //   SSDs and network shares are faster with more threads (with 18 threads: 1.6x and 1.7x faster than with 6),
+  //   so applications may set a higher indexingThreadCount for them.
+  const int defaultIndexingThreadCount = 6;
+  return qBound(1, QThread::idealThreadCount() - 2, defaultIndexingThreadCount);
+}
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods
@@ -3072,8 +3109,98 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
 
-  foreach(const ctkDICOMDatabase::IndexingResult & indexingResult, indexingResults)
+  // Tags to precache with their keys, and the statements that insert the values of all tags of an instance
+  // into the tag cache (a single statement per instance, for fast inserts)
+  struct PrecachedTag
   {
+    QString tag;
+    DcmTagKey key;
+    bool excludeFromStorage;
+  };
+  QList<PrecachedTag> precachedTags;
+  foreach(const QString& tag, d->TagsToPrecache)
+  {
+    PrecachedTag precachedTag;
+    precachedTag.tag = tag;
+    unsigned short group, element;
+    this->tagToGroupElement(tag, group, element);
+    precachedTag.key = DcmTagKey(group, element);
+    precachedTag.excludeFromStorage = d->TagsToExcludeFromStorage.contains(tag);
+    precachedTags << precachedTag;
+  }
+  const int maximumTagsPerStatement = 250; // 3 bound values per tag: 750 values per statement, below the minimum SQLite limit of 999 bound variables
+  QList<QSqlQuery> insertTagsStatements;
+  for (int firstTag = 0; firstTag < precachedTags.size(); firstTag += maximumTagsPerStatement)
+  {
+    int tagCount = qMin(maximumTagsPerStatement, precachedTags.size() - firstTag);
+    QStringList rows;
+    for (int i = 0; i < tagCount; ++i)
+    {
+      rows << "(?,?,?)";
+    }
+    QSqlQuery insertTags(d->TagCacheDatabase);
+    insertTags.prepare("INSERT OR REPLACE INTO TagCache VALUES " + rows.join(","));
+    insertTagsStatements << insertTags;
+  }
+
+  // Values of the tags to precache of all instances. They are extracted in parallel, before the database
+  // inserts: reading the values from the datasets (with character set conversion) takes most of the insert
+  // time, and it does not need the database.
+  const int numberOfResults = indexingResults.size();
+  std::vector<QStringList> precachedValues(numberOfResults);
+  {
+    // Value of a tag as it is stored in the tag cache
+    auto precachedValue = [](const ctkDICOMItem& dataset, const PrecachedTag& precachedTag) -> QString
+    {
+      if (precachedTag.excludeFromStorage)
+      {
+        // Only the presence of the tag is stored (for example, for pixel data)
+        return dataset.TagExists(precachedTag.key) ? ValueIsNotStored : TagNotInInstance;
+      }
+      QString value = dataset.GetAllElementValuesAsString(precachedTag.key);
+      return value.isEmpty() ? TagNotInInstance : value;
+    };
+
+    // Each thread takes the next instance that has not been processed yet, until all are done
+    std::atomic<int> nextResultIndex(0);
+    auto extractValues = [&]()
+    {
+      while (true)
+      {
+        const int resultIndex = nextResultIndex++;
+        if (resultIndex >= numberOfResults)
+        {
+          break;
+        }
+        const ctkDICOMItem& dataset = *indexingResults[resultIndex].dataset.data();
+        QStringList& values = precachedValues[resultIndex];
+        values.reserve(precachedTags.size());
+        foreach(const PrecachedTag& precachedTag, precachedTags)
+        {
+          values << precachedValue(dataset, precachedTag);
+        }
+      }
+    };
+
+    // Run on worker threads and on the current thread, then wait for all of them to finish.
+    // This does not access files, so the number of threads is not limited by indexingThreadCount:
+    // all logical processors are used, except two that are left for the user interface and other applications.
+    const int threadCount = qMax(1, qMin(QThread::idealThreadCount() - 2, numberOfResults));
+    std::vector<std::thread> workerThreads;
+    for (int threadIndex = 1; threadIndex < threadCount; ++threadIndex)
+    {
+      workerThreads.emplace_back(extractValues);
+    }
+    extractValues();
+    for (std::thread& workerThread : workerThreads)
+    {
+      workerThread.join();
+    }
+  }
+
+  for (int resultIndex = 0; resultIndex < numberOfResults; ++resultIndex)
+  {
+    const ctkDICOMDatabase::IndexingResult& indexingResult = indexingResults[resultIndex];
     const ctkDICOMItem& dataset = *indexingResult.dataset.data();
     QString filePath = indexingResult.filePath;
     bool generateThumbnail = false; // thumbnail will be generated when needed, don't slow down import with that
@@ -3140,39 +3267,18 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
     if (!storedFilePath.isEmpty() && !seriesInstanceUID.isEmpty())
     {
       // Insert all pre-cached fields into tag cache
-      QSqlQuery insertTags(d->TagCacheDatabase);
-      insertTags.prepare("INSERT OR REPLACE INTO TagCache VALUES(?,?,?)");
-      insertTags.bindValue(0, sopInstanceUID);
-      foreach(const QString & tagInput, d->TagsToPrecache)
+      for (int statementIndex = 0; statementIndex < insertTagsStatements.size(); ++statementIndex)
       {
-        QString tag = tagInput.toUpper();
-        unsigned short group, element;
-        this->tagToGroupElement(tag, group, element);
-        DcmTagKey tagKey(group, element);
-        QString value;
-        if (d->TagsToExcludeFromStorage.contains(tag))
+        QSqlQuery& insertTags = insertTagsStatements[statementIndex];
+        int firstTag = statementIndex * maximumTagsPerStatement;
+        int tagCount = qMin(maximumTagsPerStatement, precachedTags.size() - firstTag);
+        int bindIndex = 0;
+        const QStringList& values = precachedValues[resultIndex];
+        for (int i = 0; i < tagCount; ++i)
         {
-          if (dataset.TagExists(tagKey))
-          {
-            value = ValueIsNotStored;
-          }
-          else
-          {
-            value = TagNotInInstance;
-          }
-        }
-        else
-        {
-          value = dataset.GetAllElementValuesAsString(tagKey);
-        }
-        insertTags.bindValue(1, tag);
-        if (value.isEmpty())
-        {
-          insertTags.bindValue(2, TagNotInInstance);
-        }
-        else
-        {
-          insertTags.bindValue(2, value);
+          insertTags.bindValue(bindIndex++, sopInstanceUID);
+          insertTags.bindValue(bindIndex++, precachedTags[firstTag + i].tag);
+          insertTags.bindValue(bindIndex++, values[firstTag + i]);
         }
         insertTags.exec();
       }

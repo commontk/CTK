@@ -105,6 +105,20 @@ int ctkDICOMDatabaseTest4( int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
+  // Number of threads: automatic by default (between 1 and 6), or the specified number
+  if (database.indexingThreadCount() != 0 || database.effectiveIndexingThreadCount() < 1 || database.effectiveIndexingThreadCount() > 6)
+  {
+    std::cerr << "ctkDICOMDatabase: default number of threads is not correct" << std::endl;
+    return EXIT_FAILURE;
+  }
+  database.setIndexingThreadCount(3);
+  if (database.indexingThreadCount() != 3 || database.effectiveIndexingThreadCount() != 3)
+  {
+    std::cerr << "ctkDICOMDatabase: number of threads is not set" << std::endl;
+    return EXIT_FAILURE;
+  }
+  database.setIndexingThreadCount(0);
+
   // check the insert timestamp
   QDateTime beforeInsert = QDateTime::currentDateTime();
   std::cerr << "Current dateTime " << beforeInsert.toString().toStdString() << std::endl;
