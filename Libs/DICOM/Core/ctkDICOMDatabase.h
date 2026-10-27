@@ -249,7 +249,8 @@ public:
   /// tags so that subsequent calls to fileValue or instanceValue will
   /// be able to use the cache rather than re-reading the file.
   /// @param tags should be a list of ascii hex group/element tags
-  ///  like "0008,0008" as in the instanceValue and fileValue calls
+  ///  like "0008,0008" as in the instanceValue and fileValue calls.
+  ///  Tags are stored in upper case, without duplicates.
   void setTagsToPrecache(const QStringList tags);
   const QStringList tagsToPrecache();
 

@@ -98,7 +98,8 @@ int ctkDICOMDatabaseTest4( int argc, char * argv [] )
   tagsToPrecache << tag;
   database.setTagsToPrecache(tagsToPrecache);
 
-  if (database.tagsToPrecache() != tagsToPrecache)
+  // Tags to precache are stored in upper case (hex digits are case-insensitive)
+  if (database.tagsToPrecache() != (QStringList() << tag.toUpper()))
   {
     std::cerr << "ctkDICOMDatabase: tags to precache not correct" << std::endl;
     return EXIT_FAILURE;
