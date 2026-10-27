@@ -32,6 +32,8 @@
 #include <QDebug>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 #include <QElapsedTimer>
+#include <QThread>
+#include <QVector>
 #endif
 
 // ctkDICOM includes
@@ -39,6 +41,11 @@
 #include "ctkDICOMIndexer.h"
 #include "ctkDICOMIndexer_p.h"
 #include "ctkDICOMDatabase.h"
+
+// STD includes
+#include <atomic>
+#include <thread>
+#include <vector>
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -91,6 +98,7 @@ void ctkDICOMIndexerPrivateWorker::start()
   database.openDatabase(this->RequestQueue->databaseFilename());
   database.setTagsToPrecache(this->RequestQueue->tagsToPrecache());
   database.setTagsToExcludeFromStorage(this->RequestQueue->tagsToExcludeFromStorage());
+  database.setIndexingThreadCount(this->RequestQueue->indexingThreadCount());
 
   int patientsCountBefore = database.patientsCount();
   int studiesCountBefore = database.studiesCount();
@@ -187,13 +195,12 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   int currentFileIndex = 0;
   int alreadyAddedFileCount = 0;
   QStringList alreadyAddedFiles;
+
+  // Files to parse: files that are already in the database and have not been modified since are skipped
+  QStringList filesToParse;
+  QVector<bool> datasetsAlreadyInDatabase;
   foreach(const QString& filePath, indexingRequest.inputFilesPath)
   {
-    int percent = int(this->TimePercentageIndexing * (this->CompletedRequestCount + double(currentFileIndex++) / double(indexingRequest.inputFilesPath.size()))
-      / double(this->CompletedRequestCount + this->RemainingRequestCount + 1));
-    emit this->progress(percent);
-    emit progressDetail(filePath);
-
     QDateTime fileModifiedTime = QFileInfo(filePath).lastModified();
     bool datasetAlreadyInDatabase = this->ModifiedTimeForFilepath.contains(filePath);
     if (datasetAlreadyInDatabase && this->ModifiedTimeForFilepath[filePath] >= fileModifiedTime)
@@ -206,26 +213,79 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
       continue;
     }
     this->ModifiedTimeForFilepath[filePath] = fileModifiedTime;
+    filesToParse << filePath;
+    datasetsAlreadyInDatabase << datasetAlreadyInDatabase;
+  }
 
-    ctkDICOMDatabase::IndexingResult indexingResult;
-    indexingResult.dataset = QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
-    indexingResult.dataset->InitializeFromFile(filePath);
-    if (indexingResult.dataset->IsInitialized())
+  // Parse the files in parallel: parsing a file takes a few milliseconds of CPU time, which is most of the
+  // indexing time, while writing the results into the database is fast. The files are parsed in batches,
+  // so that progress is reported and results are written into the database while parsing continues.
+  const int threadCount = database.effectiveIndexingThreadCount();
+  const int batchSize = threadCount * 16;
+  const int totalFileCount = indexingRequest.inputFilesPath.size();
+  for (int batchStart = 0; batchStart < filesToParse.size(); batchStart += batchSize)
+  {
+    const int batchCount = qMin(batchSize, filesToParse.size() - batchStart);
+    std::vector< QSharedPointer<ctkDICOMItem> > datasets(batchCount);
+
+    // Each thread takes the next file of the batch that has not been parsed yet, until all are done
+    std::atomic<int> nextFileIndex(0);
+    auto parseFiles = [&]()
     {
-      indexingResult.filePath = filePath;
-      indexingResult.copyFile = indexingRequest.copyFile;
-      indexingResult.overwriteExistingDataset = datasetAlreadyInDatabase;
-      int resultsCount = this->RequestQueue->pushIndexingResult(indexingResult);
-      if (resultsCount >= REQUEST_RESULTS_CACHE_MAXIMUM_SIZE)
+      while (true)
       {
-        emit progressStep(ctkDICOMIndexer::tr("Updating database fields"));
-        this->writeIndexingResultsToDatabase(database);
-        emit progressStep(ctkDICOMIndexer::tr("Parsing DICOM files"));
+        const int index = nextFileIndex++;
+        if (index >= batchCount)
+        {
+          break;
+        }
+        QSharedPointer<ctkDICOMItem> dataset(new ctkDICOMItem);
+        dataset->InitializeFromFile(filesToParse[batchStart + index]);
+        datasets[index] = dataset;
       }
-    }
-    else
+    };
+
+    // Run on worker threads and on the current thread, then wait for all of them to finish
+    std::vector<std::thread> workerThreads;
+    for (int threadIndex = 1; threadIndex < threadCount && threadIndex < batchCount; ++threadIndex)
     {
-      logger.warn(QString("Could not read DICOM file:") + filePath);
+      workerThreads.emplace_back(parseFiles);
+    }
+    parseFiles();
+    for (std::thread& workerThread : workerThreads)
+    {
+      workerThread.join();
+    }
+
+    // Push the results in file order (progress reporting and the periodic writes into the database)
+    for (int index = 0; index < batchCount; ++index)
+    {
+      const QString& filePath = filesToParse[batchStart + index];
+      int percent = int(this->TimePercentageIndexing * (this->CompletedRequestCount
+        + double(alreadyAddedFileCount + currentFileIndex++) / double(totalFileCount))
+        / double(this->CompletedRequestCount + this->RemainingRequestCount + 1));
+      emit this->progress(percent);
+      emit progressDetail(filePath);
+
+      if (datasets[index]->IsInitialized())
+      {
+        ctkDICOMDatabase::IndexingResult indexingResult;
+        indexingResult.dataset = datasets[index];
+        indexingResult.filePath = filePath;
+        indexingResult.copyFile = indexingRequest.copyFile;
+        indexingResult.overwriteExistingDataset = datasetsAlreadyInDatabase[batchStart + index];
+        int resultsCount = this->RequestQueue->pushIndexingResult(indexingResult);
+        if (resultsCount >= REQUEST_RESULTS_CACHE_MAXIMUM_SIZE)
+        {
+          emit progressStep(ctkDICOMIndexer::tr("Updating database fields"));
+          this->writeIndexingResultsToDatabase(database);
+          emit progressStep(ctkDICOMIndexer::tr("Parsing DICOM files"));
+        }
+      }
+      else
+      {
+        logger.warn(QString("Could not read DICOM file:") + filePath);
+      }
     }
 
     if (this->RequestQueue->isStopRequested())
@@ -278,6 +338,10 @@ void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDataba
   database.insert(indexingResults);
   this->NumberOfInstancesToInsert = 0;
   this->NumberOfInstancesInserted = 0;
+
+  // Free the parsed datasets in a background thread: they were allocated by the parsing threads, and freeing
+  // memory that was allocated by another thread is slow (it would take as long as the database insert).
+  std::thread([](QList<ctkDICOMDatabase::IndexingResult> results) { results.clear(); }, std::move(indexingResults)).detach();
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
   logger.info(QString("DICOM indexer has successfully inserted %1 files [%2s]")
@@ -339,6 +403,8 @@ void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::Index
     }
     this->Database->allFilesModifiedTimes(modifiedTimeForFilepath);
     this->RequestQueue.setModifiedTimeForFilepath(modifiedTimeForFilepath);
+    // The worker thread uses its own database object, with the same number of threads
+    this->RequestQueue.setIndexingThreadCount(this->Database->indexingThreadCount());
     emit startWorker();
   }
 }

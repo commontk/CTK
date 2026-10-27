@@ -72,6 +72,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList loadedSeriesInstanceUIDs READ loadedSeriesInstanceUIDs WRITE setLoadedSeriesInstanceUIDs NOTIFY loadedSeriesInstanceUIDsChanged)
   Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath)
   Q_PROPERTY(bool useSystemFileCopy READ useSystemFileCopy WRITE setUseSystemFileCopy)
+  Q_PROPERTY(int indexingThreadCount READ indexingThreadCount WRITE setIndexingThreadCount)
+  Q_PROPERTY(int effectiveIndexingThreadCount READ effectiveIndexingThreadCount)
 
 public:
   struct IndexingResult
@@ -305,6 +307,16 @@ public:
   /// for better compatibility, unless it can be guaranteed that the file system can store full UIDs.
   void setUseShortStoragePath(bool useShort);
   bool useShortStoragePath()const;
+
+  /// Number of threads that read and parse files in parallel during indexing (ctkDICOMIndexer uses the setting of
+  /// its database). The best value depends on the storage that the files are read from.
+  /// If it is 0 (default) then the number is determined automatically (see effectiveIndexingThreadCount).
+  void setIndexingThreadCount(int indexingThreadCount);
+  int indexingThreadCount()const;
+  /// Number of threads that read and parse files: indexingThreadCount if it is set, otherwise 6, but at most
+  /// the number of logical processors minus 2 (to leave processing capacity for other activities) and at least 1.
+  /// The default suits hard disks; SSDs and network shares are faster with more threads.
+  int effectiveIndexingThreadCount()const;
 
   /// Set whether to use the operating system's file copy API (QFile::copy()) for file operations.
   /// If useSystemFileCopy is false (default), direct read/write with buffering is used, which is
