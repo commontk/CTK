@@ -976,7 +976,7 @@ bool ctkDICOMDatabasePrivate::uidsForDataSet(QString& patientsName, QString& pat
   {
     // Use study instance uid as patient id if patient id is empty - can happen on anonymized datasets
     // see: http://www.na-mic.org/Bug/view.php?id=2040
-    logger.warn(QString("Patient ID is empty, using studyInstanceUID (%1) as patient ID").arg(studyInstanceUID));
+    // (a warning is logged once per study by updateDisplayedFields, which processes all files of an import)
     patientID = studyInstanceUID;
   }
   if (patientsName.isEmpty() && !patientID.isEmpty())
@@ -4233,6 +4233,10 @@ void ctkDICOMDatabase::updateDisplayedFields()
   // Initialize rules for starting the update
   d->DisplayedFieldGenerator->startUpdate();
 
+  // Studies with empty patient ID: number of instances and an example instance, to log a single warning per study
+  // (all instances of an import are processed here at once)
+  QMap<QString /*StudyInstanceUID*/, QPair<int, QString /*SOPInstanceUID*/> > emptyPatientIDStudies;
+
   // Get display names for newly added files and add them into the display tables
   while (newFilesQuery.next())
   {
@@ -4245,6 +4249,14 @@ void ctkDICOMDatabase::updateDisplayedFields()
     QString patientsName = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientName)];
     QString patientID = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientID)];
     QString studyInstanceUID = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_StudyInstanceUID)];
+    if (patientID.isEmpty() && !studyInstanceUID.isEmpty())
+    {
+      QPair<int, QString>& study = emptyPatientIDStudies[studyInstanceUID];
+      if (study.first++ == 0)
+      {
+        study.second = sopInstanceUID;
+      }
+    }
     if (!d->uidsForDataSet(patientsName, patientID, studyInstanceUID))
     {
       // UIDs not valid, message is already logged
@@ -4290,6 +4302,12 @@ void ctkDICOMDatabase::updateDisplayedFields()
     displayedFieldsMapStudy[ displayedFieldsKeyForCurrentStudy ] = displayedFieldsForCurrentStudy;
     displayedFieldsMapPatient[ compositeId ] = displayedFieldsForCurrentPatient;
   } // For each instance
+
+  for (auto studyIt = emptyPatientIDStudies.constBegin(); studyIt != emptyPatientIDStudies.constEnd(); ++studyIt)
+  {
+    logger.warn(QString("Patient ID is empty in %1 file(s) of study %2 (for example %3), using the study instance UID as patient ID")
+      .arg(studyIt.value().first).arg(studyIt.key()).arg(this->fileForInstance(studyIt.value().second)));
+  }
 
   emit displayedFieldsUpdateProgress(++progressValue);
 
