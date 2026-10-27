@@ -4262,6 +4262,10 @@ void ctkDICOMDatabase::updateDisplayedFields()
       // UIDs not valid, message is already logged
       continue;
     }
+    // If the patient ID or name is empty then a substitute was used when the patient was inserted (see uidsForDataSet):
+    // use the same values in the displayed fields, otherwise the patient is not found when its fields are updated
+    cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientID)] = patientID;
+    cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientName)] = patientsName;
 
     QString patientsBirthDate = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientBirthDate)];
 
