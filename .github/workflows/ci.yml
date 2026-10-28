@@ -16,26 +16,36 @@ permissions:
 
 jobs:
   build:
+    name: "Qt ${{ matrix.qt-major-version }}, ${{ matrix.runs-on }}, CMake ${{ matrix.cmake-version }}, DCMTK STL ${{ matrix.dcmtk-enable-stl }}"
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
-        runs-on: ["ubuntu-latest"]
-        qt-major-version: [5, 6]
-        dcmtk-enable-stl: ["OFF"]
         include:
+          # Qt 5 is built on Ubuntu 24.04, because newer Ubuntu versions provide VTK only with Qt 6.
+          # It uses the minimum CMake version required by CTK.
+          - runs-on: "ubuntu-24.04"
+            qt-major-version: 5
+            dcmtk-enable-stl: "OFF"
+            cmake-version: "3.20.6"
+          # Qt 6 is built on the latest Ubuntu. Its Qt 6 requires CMake 3.22 or later.
+          - runs-on: "ubuntu-latest"
+            qt-major-version: 6
+            dcmtk-enable-stl: "OFF"
+            cmake-version: "3.22.6"
           # Projects embedding CTK may bring their own DCMTK built with STL
           # containers, which makes OFList and friends aliases of the STL types.
           - runs-on: "ubuntu-latest"
             qt-major-version: 6
             dcmtk-enable-stl: "ON"
+            cmake-version: "3.22.6"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
         with:
-          cmake-version: "3.20.6"
+          cmake-version: ${{ matrix.cmake-version }}
 
       - name: Display CMake version
         run: |
@@ -60,7 +70,7 @@ jobs:
             libxt-dev
 
       - name: Install VTK (Qt 5)
-        if: ${{ matrix.runs-on == 'ubuntu-latest' && matrix.qt-major-version == 5 }}
+        if: ${{ matrix.qt-major-version == 5 }}
         run: |
           sudo apt-get install -y \
             libvtk9-dev \
@@ -107,7 +117,7 @@ jobs:
             -B CTK-build \
             -S .
         env:
-          CTK_USE_VTK: "${{ matrix.runs-on == 'ubuntu-latest' && matrix.qt-major-version == 5 && 'ON' || 'OFF' }}"
+          CTK_USE_VTK: "${{ matrix.qt-major-version == 5 && 'ON' || 'OFF' }}"
 
       - name: Display Qt_DIR
         run: |
