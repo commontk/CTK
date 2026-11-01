@@ -26,7 +26,7 @@
 #include <dcmtk/dcmdata/dcostrmb.h>
 #include <dcmtk/dcmdata/dcistrmb.h>
 
-#include <QTextDecoder>
+#include <QTextCodec>
 
 #include <stdexcept>
 
@@ -375,16 +375,20 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
         vr == "UT" ) )
   {
     //std::cout << "Decode from encoding " << d->m_SpecificCharacterSet.toStdString() << std::endl;
-    static QMap<QString, QTextDecoder*> decoders;
-    static QMap<QString, QString> qtEncodingNamesForDICOMEncodingNames;
-
-    if (qtEncodingNamesForDICOMEncodingNames.isEmpty())
+    // Decode is called from multiple threads at once (the indexer extracts tag values in parallel).
+    // Therefore the map of encoding names is filled at the first call, by the thread-safe initialization
+    // of a static local variable, and is only read afterwards. The codec of each encoding is looked up
+    // at its first use and cached in each thread, so that no synchronization is needed afterwards.
+    // The codecs are owned by Qt and remain valid until application exit. Values are converted with the
+    // stateless QTextCodec::toUnicode, which can be called from any thread, unlike a QTextDecoder object,
+    // which keeps state between calls.
+    static const QMap<QString, QString> dicomToQtEncodingNames = []()
     {
-      // runs only once and fills up a map of encoding names that might be named in DICOM files.
+      // fills up a map of encoding names that might be named in DICOM files.
       // for each encoding we store the name that Qt uses for the same encoding.
       // This is because there is not yet a standard naming scheme but lots of aliases
       // out in the real world: e.g. http://www.openi18n.org/subgroups/sa/locnameguide/final/CodesetAliasTable.html
-
+      QMap<QString, QString> qtEncodingNamesForDICOMEncodingNames;
                                               //    DICOM        Qt
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 6", "UTF-8"); // actually ASCII, but ok
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 100", "ISO-8859-1");
@@ -410,37 +414,32 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
       {
         qtEncodingNamesForDICOMEncodingNames.insert( c.constData(), c.constData() );
       }
+      return qtEncodingNamesForDICOMEncodingNames;
+    }();
 
-    }
-
-    if ( qtEncodingNamesForDICOMEncodingNames.contains(d->m_SpecificCharacterSet) )
+    // Codec for each DICOM encoding name, or nullptr if the encoding is not known
+    thread_local QMap<QString, QTextCodec*> codecs;
+    auto codecIt = codecs.constFind(d->m_SpecificCharacterSet);
+    if (codecIt == codecs.constEnd())
     {
-      QString encodingName( qtEncodingNamesForDICOMEncodingNames[d->m_SpecificCharacterSet] );
-      if ( !decoders.contains( encodingName ) )
+      QTextCodec* codec = nullptr;
+      auto encodingNameIt = dicomToQtEncodingNames.constFind(d->m_SpecificCharacterSet);
+      if (encodingNameIt != dicomToQtEncodingNames.constEnd())
       {
-        QTextCodec* codec = QTextCodec::codecForName( encodingName.toLatin1() );
+        codec = QTextCodec::codecForName( encodingNameIt.value().toLatin1() );
         if (!codec)
         {
-          std::cerr << "Could not create QTextCodec object for '" << encodingName.toStdString() << "'. Using default encoding instead." << std::endl;
-          decoders.insert( encodingName, QTextCodec::codecForName("UTF-8")->makeDecoder() ); // uses Latin1
-        }
-        else
-        {
-          // initialize a QTextDecoder for given encoding
-          decoders.insert( encodingName, codec->makeDecoder() );
-          // We are responsible for deleting the QTextDecoder objects
-          // created by makeDecoder(). BUT as these objects are stored
-          // in a static map that lives until application end AND
-          // nothing application relevant happens during their
-          // destruction, we just let them be destructed by C++ on
-          // application exit.
-          // Any potential leaks that are found by this behavior can
-          // be suppressed.
+          std::cerr << "Could not create QTextCodec object for '" << encodingNameIt.value().toStdString() << "'. Using default encoding instead." << std::endl;
+          codec = QTextCodec::codecForName("UTF-8");
         }
       }
+      codecIt = codecs.insert(d->m_SpecificCharacterSet, codec);
+    }
 
-      //std::cout << "Decode '" <<  raw.c_str() << "' to '" << decoders[encodingName]->toUnicode( raw.c_str() ).toLocal8Bit().constData() << "'" << std::endl;
-      return decoders[encodingName]->toUnicode( raw.c_str() );
+    if (codecIt.value())
+    {
+      //std::cout << "Decode '" <<  raw.c_str() << "' to '" << codecIt.value()->toUnicode( raw.c_str() ).toLocal8Bit().constData() << "'" << std::endl;
+      return codecIt.value()->toUnicode( raw.c_str() );
     }
     else
     {
