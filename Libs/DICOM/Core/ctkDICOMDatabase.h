@@ -74,6 +74,12 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(bool useSystemFileCopy READ useSystemFileCopy WRITE setUseSystemFileCopy)
   Q_PROPERTY(int indexingThreadCount READ indexingThreadCount WRITE setIndexingThreadCount)
   Q_PROPERTY(int effectiveIndexingThreadCount READ effectiveIndexingThreadCount)
+  Q_PROPERTY(QStringList supportedModalities READ supportedModalities WRITE setSupportedModalities NOTIFY supportedModalitiesChanged)
+  Q_PROPERTY(QStringList defaultModalities READ defaultModalities WRITE setDefaultModalities NOTIFY defaultModalitiesChanged)
+  Q_PROPERTY(QStringList modalitiesExcludedFromThumbnailGeneration
+             READ modalitiesExcludedFromThumbnailGeneration
+             WRITE setModalitiesExcludedFromThumbnailGeneration
+             NOTIFY modalitiesExcludedFromThumbnailGenerationChanged)
 
 public:
   struct IndexingResult
@@ -263,6 +269,28 @@ public:
   /// By default, only PixelData tag is excluded from storage.
   void setTagsToExcludeFromStorage(const QStringList tags);
   const QStringList tagsToExcludeFromStorage();
+
+  /// \brief List of all DICOM modality codes the application knows about.
+  ///
+  /// Defaults to the full set of non-retired DICOM modality codes (DICOM PS3.16
+  /// Annex D). Applications can override this list to restrict the modalities
+  /// shown in the UI or to extend it with custom values.
+  Q_INVOKABLE QStringList supportedModalities() const;
+  Q_INVOKABLE void setSupportedModalities(const QStringList& modalities);
+
+  /// \brief List of modalities that are checked by default in modality filter UI.
+  ///
+  /// Defaults to a curated subset of common imaging modalities (CR, CT, DX,
+  /// MG, MR, NM, PT, RF, SEG, SR, US, XA).
+  Q_INVOKABLE QStringList defaultModalities() const;
+  Q_INVOKABLE void setDefaultModalities(const QStringList& modalities);
+
+  /// \brief List of modalities for which thumbnail generation should be skipped.
+  ///
+  /// Defaults to non-pixel data modalities (SEG, SR, RT*, PR, DOC, REG, ...)
+  /// that have no meaningful image preview.
+  Q_INVOKABLE QStringList modalitiesExcludedFromThumbnailGeneration() const;
+  Q_INVOKABLE void setModalitiesExcludedFromThumbnailGeneration(const QStringList& modalities);
 
   /// Insert into the database if not already existing.
   /// @param dataset The dataset to store into the database. Usually, this is
@@ -567,6 +595,13 @@ Q_SIGNALS:
 
   /// Indicate that the list of loaded seriesInstanceUIDs changed
   void loadedSeriesInstanceUIDsChanged(const QStringList&);
+
+  /// Indicate that the list of supported modalities changed
+  void supportedModalitiesChanged();
+  /// Indicate that the list of default (UI-checked) modalities changed
+  void defaultModalitiesChanged();
+  /// Indicate that the list of modalities excluded from thumbnail generation changed
+  void modalitiesExcludedFromThumbnailGenerationChanged();
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
