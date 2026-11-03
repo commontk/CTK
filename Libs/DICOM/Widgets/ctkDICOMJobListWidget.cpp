@@ -37,7 +37,7 @@
 #include "ctkDICOMJobListWidget.h"
 #include "ui_ctkDICOMJobListWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMJobListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.DICOMJobListWidget"))
 
 //----------------------------------------------------------------------------
 class ProgressBarDelegate : public QStyledItemDelegate {
@@ -151,7 +151,7 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
     switch (dicomLevel)
     {
       case ctkDICOMJob::DICOMLevels::None:
-        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        logger->warn("ctkDICOMScheduler : DICOMLevels was not set.");
         return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return ctkDICOMJobListWidget::tr("Query patients");
@@ -168,7 +168,7 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
     switch (dicomLevel)
     {
       case ctkDICOMJob::DICOMLevels::None:
-        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        logger->warn("ctkDICOMScheduler : DICOMLevels was not set.");
         return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return ctkDICOMJobListWidget::tr("Retrieve patients");

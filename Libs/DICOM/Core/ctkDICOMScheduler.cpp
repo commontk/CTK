@@ -23,6 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
+#include <QGlobalStatic>
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
@@ -44,7 +45,7 @@
 #include <dcmtk/oflog/oflog.h>
 #include "dcmtk/oflog/spi/logevent.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMScheduler" );
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.dicom.DICOMScheduler"))
 
 //------------------------------------------------------------------------------
 // JobAppender class (custom DCMTK Appender)
@@ -844,7 +845,7 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
 
   if (numberOfInputLists == 0)
   {
-    logger.warn("ctkDICOMScheduler::waitForFinishByDICOMUIDs failed: all the provided lists with UIDs are empty.");
+    logger->warn("ctkDICOMScheduler::waitForFinishByDICOMUIDs failed: all the provided lists with UIDs are empty.");
     return;
   }
 
@@ -920,7 +921,7 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
 
   if (numberOfInputLists == 0)
   {
-    logger.warn("ctkDICOMScheduler::getJobsByDICOMUIDs failed: all the provided lists with UIDs are empty.");
+    logger->warn("ctkDICOMScheduler::getJobsByDICOMUIDs failed: all the provided lists with UIDs are empty.");
     return jobs;
   }
 
@@ -938,7 +939,7 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        logger.debug("ctkDICOMScheduler::getJobsByDICOMUIDs: unexpected type of job.");
+        logger->debug("ctkDICOMScheduler::getJobsByDICOMUIDs: unexpected type of job.");
         continue;
       }
 
@@ -985,7 +986,7 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
 
   if (numberOfInputLists == 0)
   {
-    logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: all the provided lists with UIDs are empty.");
+    logger->debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: all the provided lists with UIDs are empty.");
     return;
   }
 
@@ -1005,7 +1006,7 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        logger.debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: unexpected type of job.");
+        logger->debug("ctkDICOMScheduler::stopJobsByDICOMUIDs: unexpected type of job.");
         continue;
       }
 
@@ -1047,7 +1048,7 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
       ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
       if (!dicomJob)
       {
-        logger.debug("ctkDICOMScheduler::raiseJobsPriorityForSeries: unexpected type of job.");
+        logger->debug("ctkDICOMScheduler::raiseJobsPriorityForSeries: unexpected type of job.");
         continue;
       }
 

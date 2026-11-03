@@ -40,7 +40,7 @@
 #include <cmath>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKMagnifyView");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKMagnifyView"))
 //--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------

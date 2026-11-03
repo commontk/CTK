@@ -45,7 +45,7 @@
 #include <vtkPiecewiseFunctionItem.h>
 
 //----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.visualization.vtk.widgets.ctkVTKScalarsToColorsWidget"))
 //----------------------------------------------------------------------------
 
 class ctkVTKScalarsToColorsWidgetPrivate:

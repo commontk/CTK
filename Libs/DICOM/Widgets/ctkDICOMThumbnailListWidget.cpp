@@ -53,7 +53,7 @@
 // DCMTK includes
 #include <dcmtk/dcmimgle/dcmimage.h>
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMThumbnailListWidget");
+Q_GLOBAL_STATIC_WITH_ARGS(ctkLogger, logger, ("org.commontk.DICOM.Widgets.DICOMThumbnailListWidget"))
 
 Q_DECLARE_METATYPE(QPersistentModelIndex);
 
@@ -157,7 +157,7 @@ void ctkDICOMThumbnailListWidgetPrivate
   model->fetchMore(seriesIndex);
 
   const int imageCount = model->rowCount(seriesIndex);
-  logger.debug(QString("Thumbs: %1").arg(imageCount));
+  logger->debug(QString("Thumbs: %1").arg(imageCount));
   for (int i = 0 ; i < imageCount ; i++ )
   {
     QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, i, 0);
@@ -195,7 +195,7 @@ void ctkDICOMThumbnailListWidgetPrivate
   QString widgetLabel = text;
   widget->setText( widgetLabel );
   QPixmap pix(thumbnailPath);
-  logger.debug("Setting pixmap to " + thumbnailPath);
+  logger->debug("Setting pixmap to " + thumbnailPath);
   if(this->ThumbnailSize.isValid())
   {
     widget->setFixedSize(this->ThumbnailSize);
