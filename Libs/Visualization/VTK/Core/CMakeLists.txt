@@ -94,7 +94,7 @@ endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   include_directories(
-    ${PYTHON_INCLUDE_DIRS}
+    ${Python3_INCLUDE_DIRS}
     ${PYTHONQT_INCLUDE_DIR}
     )
 endif()
