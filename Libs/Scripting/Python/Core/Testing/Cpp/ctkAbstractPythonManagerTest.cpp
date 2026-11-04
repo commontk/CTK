@@ -1,5 +1,6 @@
 
 // Qt includes
+#include <QFileInfo>
 #include <QTemporaryFile>
 #include <QTextStream>
 
@@ -52,6 +53,7 @@ private Q_SLOTS:
   void testExecuteFile_data();
 
   void testExecuteFileDoesNotLeakSysPath();
+  void testExecuteFileUsesMainGlobals();
 
   void testPythonAttributes();
   void testPythonAttributes_data();
@@ -64,6 +66,9 @@ private Q_SLOTS:
 
   void testPythonObject();
   void testPythonObject_data();
+
+  void testPythonModuleReferenceCount();
+  void testPythonAttributesReferenceCount();
 };
 
 Q_DECLARE_METATYPE(PyObject*)
@@ -303,6 +308,34 @@ void ctkAbstractPythonManagerTester::testExecuteFileDoesNotLeakSysPath()
         "'_ctk_executefile_dir' in globals()",
         ctkAbstractPythonManager::EvalInput);
   QCOMPARE(helperExists, QVariant(false));
+
+  QVariant updatedGlobalsExists = this->PythonManager.executeString(
+        "'_updated_globals' in globals()",
+        ctkAbstractPythonManager::EvalInput);
+  QCOMPARE(updatedGlobalsExists, QVariant(false));
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testExecuteFileUsesMainGlobals()
+{
+  QTemporaryFile pythonFile("testExecuteFileGlobals-XXXXXX.py");
+  QVERIFY(pythonFile.open());
+  QTextStream out(&pythonFile);
+  out << "execfile_counter = 0\n"
+         "def execfile_bump():\n"
+         "    global execfile_counter\n"
+         "    execfile_counter += 1\n"
+         "del execfile_removed\n";
+  pythonFile.close();
+
+  this->PythonManager.executeString("execfile_removed = 1");
+  this->PythonManager.executeFile(pythonFile.fileName());
+  QCOMPARE(this->PythonManager.pythonErrorOccured(), false);
+
+  this->PythonManager.executeString("execfile_bump()");
+  QCOMPARE(this->PythonManager.getVariable("execfile_counter"), QVariant(1));
+  QCOMPARE(this->PythonManager.executeString("'execfile_removed' in globals()",
+                                             ctkAbstractPythonManager::EvalInput), QVariant(false));
 }
 
 // ----------------------------------------------------------------------------
@@ -311,10 +344,8 @@ void ctkAbstractPythonManagerTester::testPythonAttributes()
   QFETCH(QString, pythonVariableName);
   QFETCH(QStringList, expectedAttributeList);
 
-  QString test_path = __FILE__; // return the local path of this source file
-  test_path.replace(test_path.lastIndexOf("/"),
-                         test_path.size() - test_path.lastIndexOf("/"),
-                         "/PythonAttributes-test.py");
+  QString test_path = QFileInfo(QString::fromUtf8(__FILE__)).absolutePath()
+      + "/PythonAttributes-test.py";
   this->PythonManager.executeFile(test_path);
 
   QStringList AttributeList = this->PythonManager.pythonAttributes(pythonVariableName, QString("__main__").toLatin1(), false);
@@ -377,10 +408,8 @@ void ctkAbstractPythonManagerTester::testPythonAttributeValues()
   QFETCH(QString, code);
   QFETCH(QVariant, expectedValue);
 
-  QString test_path = __FILE__; // return the local path of this source file
-  test_path.replace(test_path.lastIndexOf("/"),
-                         test_path.size() - test_path.lastIndexOf("/"),
-                         "/PythonAttributes-test.py");
+  QString test_path = QFileInfo(QString::fromUtf8(__FILE__)).absolutePath()
+      + "/PythonAttributes-test.py";
 
   this->PythonManager.executeFile(test_path);
   this->PythonManager.executeString(QString("value=%1").arg(code));
@@ -483,6 +512,80 @@ void ctkAbstractPythonManagerTester::testPythonModule_data()
   QTest::newRow("3") << ""
                      << "__main__.NOT_A_MODULE"
                      << "";
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonModuleReferenceCount()
+{
+  this->PythonManager.executeString(
+    "class RootModule:\n"
+    "    class SubModule:\n"
+    "        class LeafModule:\n"
+    "            pass\n"
+  );
+
+  PyObject* rootObj = this->PythonManager.pythonModule("__main__.RootModule");
+  QVERIFY(rootObj != nullptr);
+  Py_ssize_t rootRefBefore = Py_REFCNT(rootObj);
+  Py_DECREF(rootObj);
+
+  PyObject* subObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule");
+  QVERIFY(subObj != nullptr);
+  Py_ssize_t subRefBefore = Py_REFCNT(subObj);
+  Py_DECREF(subObj);
+
+  // Look up dotted module multiple times and ensure intermediate and leaf references do not leak
+  for (int i = 0; i < 10; ++i)
+  {
+    PyObject* leafObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule.LeafModule");
+    QVERIFY(leafObj != nullptr);
+    Py_DECREF(leafObj);
+  }
+
+  rootObj = this->PythonManager.pythonModule("__main__.RootModule");
+  QVERIFY(rootObj != nullptr);
+  Py_ssize_t rootRefAfter = Py_REFCNT(rootObj);
+  Py_DECREF(rootObj);
+
+  subObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule");
+  QVERIFY(subObj != nullptr);
+  Py_ssize_t subRefAfter = Py_REFCNT(subObj);
+  Py_DECREF(subObj);
+
+  QCOMPARE(rootRefAfter, rootRefBefore);
+  QCOMPARE(subRefAfter, subRefBefore);
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributesReferenceCount()
+{
+  this->PythonManager.executeString(
+    "class AttrTestModule:\n"
+    "    member_var = 42\n"
+    "    def member_func(self):\n"
+    "        pass\n"
+    "attr_test = AttrTestModule()\n"
+  );
+
+  PyObject* modObj = this->PythonManager.pythonObject("__main__.attr_test.member_var");
+  QVERIFY(modObj != nullptr);
+  Py_ssize_t modRefBefore = Py_REFCNT(modObj);
+  Py_DECREF(modObj);
+
+  for (int i = 0; i < 10; ++i)
+  {
+    QStringList attrs = this->PythonManager.pythonAttributes("attr_test", "__main__", false);
+    QVERIFY(!attrs.isEmpty());
+    QVERIFY(attrs.contains("member_var"));
+    QVERIFY(attrs.contains("member_func"));
+  }
+
+  modObj = this->PythonManager.pythonObject("__main__.attr_test.member_var");
+  QVERIFY(modObj != nullptr);
+  Py_ssize_t modRefAfter = Py_REFCNT(modObj);
+  Py_DECREF(modObj);
+
+  QCOMPARE(modRefAfter, modRefBefore);
 }
 
 //-----------------------------------------------------------------------------
