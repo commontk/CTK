@@ -66,6 +66,9 @@ private Q_SLOTS:
 
   void testPythonObject();
   void testPythonObject_data();
+
+  void testPythonModuleReferenceCount();
+  void testPythonAttributesReferenceCount();
 };
 
 Q_DECLARE_METATYPE(PyObject*)
@@ -509,6 +512,80 @@ void ctkAbstractPythonManagerTester::testPythonModule_data()
   QTest::newRow("3") << ""
                      << "__main__.NOT_A_MODULE"
                      << "";
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonModuleReferenceCount()
+{
+  this->PythonManager.executeString(
+    "class RootModule:\n"
+    "    class SubModule:\n"
+    "        class LeafModule:\n"
+    "            pass\n"
+  );
+
+  PyObject* rootObj = this->PythonManager.pythonModule("__main__.RootModule");
+  QVERIFY(rootObj != nullptr);
+  Py_ssize_t rootRefBefore = Py_REFCNT(rootObj);
+  Py_DECREF(rootObj);
+
+  PyObject* subObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule");
+  QVERIFY(subObj != nullptr);
+  Py_ssize_t subRefBefore = Py_REFCNT(subObj);
+  Py_DECREF(subObj);
+
+  // Look up dotted module multiple times and ensure intermediate and leaf references do not leak
+  for (int i = 0; i < 10; ++i)
+  {
+    PyObject* leafObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule.LeafModule");
+    QVERIFY(leafObj != nullptr);
+    Py_DECREF(leafObj);
+  }
+
+  rootObj = this->PythonManager.pythonModule("__main__.RootModule");
+  QVERIFY(rootObj != nullptr);
+  Py_ssize_t rootRefAfter = Py_REFCNT(rootObj);
+  Py_DECREF(rootObj);
+
+  subObj = this->PythonManager.pythonModule("__main__.RootModule.SubModule");
+  QVERIFY(subObj != nullptr);
+  Py_ssize_t subRefAfter = Py_REFCNT(subObj);
+  Py_DECREF(subObj);
+
+  QCOMPARE(rootRefAfter, rootRefBefore);
+  QCOMPARE(subRefAfter, subRefBefore);
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributesReferenceCount()
+{
+  this->PythonManager.executeString(
+    "class AttrTestModule:\n"
+    "    member_var = 42\n"
+    "    def member_func(self):\n"
+    "        pass\n"
+    "attr_test = AttrTestModule()\n"
+  );
+
+  PyObject* modObj = this->PythonManager.pythonObject("__main__.attr_test.member_var");
+  QVERIFY(modObj != nullptr);
+  Py_ssize_t modRefBefore = Py_REFCNT(modObj);
+  Py_DECREF(modObj);
+
+  for (int i = 0; i < 10; ++i)
+  {
+    QStringList attrs = this->PythonManager.pythonAttributes("attr_test", "__main__", false);
+    QVERIFY(!attrs.isEmpty());
+    QVERIFY(attrs.contains("member_var"));
+    QVERIFY(attrs.contains("member_func"));
+  }
+
+  modObj = this->PythonManager.pythonObject("__main__.attr_test.member_var");
+  QVERIFY(modObj != nullptr);
+  Py_ssize_t modRefAfter = Py_REFCNT(modObj);
+  Py_DECREF(modObj);
+
+  QCOMPARE(modRefAfter, modRefBefore);
 }
 
 //-----------------------------------------------------------------------------

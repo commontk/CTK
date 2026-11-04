@@ -522,30 +522,8 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 {
   PYTHONQT_GIL_SCOPE;
   Q_ASSERT(PyThreadState_GET()->interp);
-  PyObject* dict = PyImport_GetModuleDict();
 
-  // Split module by '.' and retrieve the object associated if the last module
-  QString precedingModule = module;
-  PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModule);
-  PyObject* prevObject = 0;
-  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QStringList moduleList = module.split(".", Qt::SkipEmptyParts);
-  #else
-  QStringList moduleList = module.split(".", QString::SkipEmptyParts);
-  #endif
-
-  foreach(const QString& module, moduleList)
-  {
-    object = PyDict_GetItemString(dict, module.toLatin1().data());
-    if (prevObject) { Py_DECREF(prevObject); }
-    if (!object)
-    {
-      break;
-    }
-    Py_INCREF(object);
-    dict = PyModule_GetDict(object);
-    prevObject = object;
-  }
+  PyObject* object = ctkAbstractPythonManager::pythonModule(module);
   if (!object)
   {
     PyErr_Clear();
@@ -605,6 +583,10 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
           // For example: code = '_ctkAbstractPythonManager_autocomplete_tmp = d.foo_class()'
           PyRun_SimpleString(code.toLatin1().data());
           line_code.append('.'); // add the point again in case we need to continue to fill line_code
+          if (object != main_object)
+          {
+            Py_DECREF(object);
+          }
           object = PyObject_GetAttrString(main_object,instantiated_class_name.toLatin1().data());
 
           if (object)
@@ -631,7 +613,10 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
         {
           object = PyObject_GetAttrString(object, tmpName.data());
         }
-        Py_DECREF(prevObj);
+        if (prevObj != main_object)
+        {
+          Py_DECREF(prevObj);
+        }
 
         if (object)
         {
@@ -653,7 +638,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
     results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
   }
 
-  if (object)
+  if (object && object != main_object)
   {
     Py_DECREF(object);
   }
@@ -663,6 +648,8 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   {
     PyObject_DelAttrString(main_object,instantiated_class_name.toLatin1().data());
   }
+
+  Py_DECREF(main_object);
 
   return results;
 }
@@ -754,7 +741,32 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
   }
   foreach(const QString& module, moduleList)
   {
-    object = PyDict_GetItemString(dict, module.toLatin1().data());
+    if (PyDict_Check(dict))
+    {
+      object = PyDict_GetItemString(dict, module.toLatin1().data());
+      Py_XINCREF(object);
+    }
+    else if (PyMapping_Check(dict))
+    {
+      object = PyMapping_GetItemString(dict, module.toLatin1().data());
+      if (!object)
+      {
+        PyErr_Clear();
+      }
+    }
+    else if (prevObject)
+    {
+      object = PyObject_GetAttrString(prevObject, module.toLatin1().data());
+      if (!object)
+      {
+        PyErr_Clear();
+      }
+    }
+    else
+    {
+      object = 0;
+    }
+
     if (prevObject)
     {
       Py_DECREF(prevObject);
@@ -763,7 +775,6 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
     {
       break;
     }
-    Py_INCREF(object); // This is required, otherwise python destroys object.
     if (PyObject_HasAttrString(object, "__dict__"))
     {
       PyObject* nextDict = PyObject_GetAttrString(object, "__dict__");

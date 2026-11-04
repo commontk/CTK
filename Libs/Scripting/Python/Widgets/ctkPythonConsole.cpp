@@ -241,19 +241,23 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedFunction(const QS
   PYTHONQT_GIL_SCOPE;
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
-  if (PyCallable_Check(pFunction))
+  if (pFunction)
   {
-    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
-    if (fc)
+    if (PyCallable_Check(pFunction))
     {
-      PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
-      if (ac)
+      PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+      if (fc)
       {
-        parameterCount = PyLong_AsLong(ac);
-        Py_DECREF(ac);
+        PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
+        if (ac)
+        {
+          parameterCount = PyLong_AsLong(ac);
+          Py_DECREF(ac);
+        }
+        Py_DECREF(fc);
       }
-      Py_DECREF(fc);
     }
+    Py_DECREF(pFunction);
   }
   return parameterCount;
 }
@@ -264,19 +268,23 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedClassFunction(con
   PYTHONQT_GIL_SCOPE;
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
-  if (PyCallable_Check(pFunction))
+  if (pFunction)
   {
-    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
-    if (fc)
+    if (PyCallable_Check(pFunction))
     {
-      PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
-      if (ac)
+      PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+      if (fc)
       {
-        parameterCount = PyLong_AsLong(ac);
-        Py_DECREF(ac);
+        PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
+        if (ac)
+        {
+          parameterCount = PyLong_AsLong(ac);
+          Py_DECREF(ac);
+        }
+        Py_DECREF(fc);
       }
-      Py_DECREF(fc);
     }
+    Py_DECREF(pFunction);
   }
   return parameterCount;
 }
