@@ -223,10 +223,9 @@ macro(ctkMacroBuildPlugin)
 
   # Add any other additional resource files
   if(_plugin_cached_resources_in_source_tree OR _plugin_cached_resources_in_binary_tree)
-    string(REPLACE "." "_" _plugin_symbolicname ${Plugin-SymbolicName})
     set(plugin_qrc_filepath)
     ctkMacroGeneratePluginResourcefile(plugin_qrc_filepath
-      NAME ${_plugin_symbolicname}_cached.qrc
+      NAME cached.qrc
       PREFIX ${Plugin-SymbolicName}
       RESOURCES ${_plugin_cached_resources_in_source_tree}
       BINARY_RESOURCES ${_plugin_cached_resources_in_binary_tree}
@@ -257,9 +256,19 @@ macro(ctkMacroBuildPlugin)
     HAVE_QT${CTK_QT_VERSION}
     )
 
+  # The autogen include directories of the dependencies are only needed to
+  # compile this plug-in. They must not become part of its exported interface:
+  # they contain $<CONFIG>, and a consumer generating configurations that were
+  # never built here would reference directories that do not exist, which CMake
+  # rejects when it reads the imported target.
+  set(my_autogen_includes ${my_includes})
+  list(FILTER my_autogen_includes INCLUDE REGEX "_autogen/include")
+  list(FILTER my_includes EXCLUDE REGEX "_autogen/include")
+
   target_include_directories(${lib_name}
     PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
            "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
+    PRIVATE ${my_autogen_includes}
     )
 
   # Configure CMake Qt automatic code generation
@@ -273,7 +282,14 @@ macro(ctkMacroBuildPlugin)
   endforeach()
   list(REMOVE_DUPLICATES uic_search_paths)
 
+  # A plug-in target name is derived from its symbolic name and is long, and
+  # the default autogen directory repeats it below a directory that already
+  # carries it. Together with the names of the generated sources this can
+  # exceed the 260 character path limit of the Windows toolchain. The autogen
+  # directory only has to be unique per target, and the plug-in's binary
+  # directory already is.
   set_target_properties(${lib_name} PROPERTIES
+    AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/autogen"
     AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
