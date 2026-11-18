@@ -499,6 +499,11 @@ option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
 mark_as_superbuild(CTK_BUILD_QTDESIGNER_PLUGINS)
 
+# Source groups
+option(CTK_NO_SOURCE_GROUPS "Do not categorize sources into source groups" OFF)
+mark_as_advanced(CTK_NO_SOURCE_GROUPS)
+mark_as_superbuild(CTK_NO_SOURCE_GROUPS)
+
 #-----------------------------------------------------------------------------
 # CTK Libraries
 #
