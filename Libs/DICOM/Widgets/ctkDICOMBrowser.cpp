@@ -1103,20 +1103,12 @@ bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(QStringList uids)
   confirmDeleteDialog.setText(message);
   confirmDeleteDialog.setIcon(QMessageBox::Question);
 
-  confirmDeleteDialog.addButton(tr("Delete"), QMessageBox::AcceptRole);
+  QAbstractButton* deleteButton = confirmDeleteDialog.addButton(tr("Delete"), QMessageBox::AcceptRole);
   confirmDeleteDialog.addButton(tr("Cancel"), QMessageBox::RejectRole);
   confirmDeleteDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmDeleteSelected");
 
-  int response = confirmDeleteDialog.exec();
-
-  if (response == QMessageBox::AcceptRole)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  confirmDeleteDialog.exec();
+  return confirmDeleteDialog.clickedButton() == deleteButton;
 }
 
 //----------------------------------------------------------------------------
