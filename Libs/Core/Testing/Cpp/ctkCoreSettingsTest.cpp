@@ -169,7 +169,6 @@ int ctkCoreSettingsTest(int argc, char* argv[])
   app.setApplicationName("CTK");
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
-  QTEST_DISABLE_KEYPAD_NAVIGATION
   ctkCoreSettingsTester tc;
   return QTest::qExec(&tc, argc, argv);
 }

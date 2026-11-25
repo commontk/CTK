@@ -41,7 +41,6 @@ int TestObject(int argc, char *argv[]) \
   int TestObject(int argc, char *argv[]) \
   { \
     QApplication app(argc, argv); \
-    QTEST_DISABLE_KEYPAD_NAVIGATION \
     TestObject##er tc; \
     return QTest::qExec(&tc, argc, argv); \
   }
