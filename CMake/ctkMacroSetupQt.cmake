@@ -37,6 +37,7 @@ macro(ctkMacroSetupQt)
     # See https://github.com/commontk/CTK/wiki/Maintenance#updates-of-required-qt-components
 
     if(CTK_LIB_Widgets
+      OR CTK_LIB_DICOM/Core
       OR CTK_LIB_DICOM/Widgets
       )
       list(APPEND CTK_QT_COMPONENTS Svg)
@@ -135,10 +136,6 @@ macro(ctkMacroSetupQt)
       OR CTK_PLUGIN_org.commontk.dah.hostedapp
       )
       list(APPEND CTK_QT_COMPONENTS Network)
-    endif()
-
-    if(CTK_LIB_DICOM/Core)
-      list(APPEND CTK_QT_COMPONENTS Svg)
     endif()
 
     if(CTK_QT_VERSION VERSION_EQUAL "5")
