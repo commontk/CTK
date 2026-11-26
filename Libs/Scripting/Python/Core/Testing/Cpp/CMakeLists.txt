@@ -2,6 +2,7 @@ set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkAbstractPythonManagerTest.cpp
+  ctkAbstractPythonManagerThreadTest.cpp
   #EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -29,3 +30,5 @@ set_target_properties(${KIT}CppTests PROPERTIES
 #
 
 SIMPLE_TEST( ctkAbstractPythonManagerTest )
+SIMPLE_TEST( ctkAbstractPythonManagerThreadTest )
+set_property(TEST ctkAbstractPythonManagerThreadTest PROPERTY TIMEOUT 20)

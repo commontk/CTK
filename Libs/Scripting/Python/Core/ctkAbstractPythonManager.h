@@ -38,6 +38,12 @@ class PythonQtForeignWrapperFactory;
 class PythonQtObjectPtr;
 
 /// \ingroup Scripting_Python_Core
+/// Base manager class for PythonQt initialization and script execution.
+///
+/// \note When thread support is enabled (see \a setThreadSupportEnabled), the Python GIL
+/// is released after manager operations. Caller code that uses, accesses, or destructs
+/// Python objects (such as \c PythonQtObjectPtr, raw \c PyObject*, or \c QVariant wrapping
+/// Python objects) must acquire the GIL (e.g. using \c PYTHONQT_GIL_SCOPE).
 class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 {
   Q_OBJECT
@@ -58,14 +64,28 @@ public:
   /// \sa setInitializationFlags
   int initializationFlags()const;
 
+  /// Return true if PythonQt thread support is enabled.
+  /// \sa setThreadSupportEnabled
+  bool threadSupportEnabled()const;
+
+  /// Enable or disable PythonQt thread support.
+  /// Must be called before PythonQt is initialized; changes after initialization are ignored.
+  /// \sa threadSupportEnabled
+  void setThreadSupportEnabled(bool enabled);
+
   /// Initialize python context considering the initializationFlags.
   /// Return \a True if python has been successfully initialized.
+  /// \param enableThreadSupport If true, enable PythonQt thread support (false by default).
   /// \sa setInitializationFlags, mainContext, isPythonInitialized
   /// \sa preInitialization, executeInitializationScripts, pythonPreInitialized, pythonInitialized
+  bool initialize(bool enableThreadSupport);
+
+  /// \sa initialize(bool)
   bool initialize();
 
   /// Return a reference to the python main context.
   /// Calling this function implicitly call initialize() if it hasn't been done.
+  /// Returned Python references and variants containing Python objects require the GIL while in use.
   PythonQtObjectPtr mainContext();
 
   void addObjectToPythonMain(const QString& name, QObject* obj);
@@ -100,10 +120,12 @@ public:
 
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.
+  /// \note Accessing or destroying Python objects contained in the returned QVariant requires the GIL when threading is enabled.
   Q_INVOKABLE QVariant executeString(const QString& code, ExecuteStringMode mode = FileInput);
 
   /// Gets the value of the variable looking in the __main__ module.
   /// If the variable is not found returns a default initialized QVariant.
+  /// \note Accessing or destroying Python objects contained in the returned QVariant requires the GIL when threading is enabled.
   QVariant getVariable(const QString& varName);
 
   /// Execute a python script with the given filename.
@@ -116,6 +138,7 @@ public:
   /// Given a python object, lookup its attributes and return them in a string list.
   /// If the argument \c appendParenthesis is set to True, "()" will be appended to attributes
   /// being Python callable.
+  /// \note Requires the caller to hold the GIL.
   static QStringList dir_object(PyObject* object,
                                 bool appendParenthesis = false);
 
@@ -135,9 +158,11 @@ public:
                                bool appendParenthesis = false) const;
 
   /// Given a string of the form "<modulename1>[.<modulenameN>...]" containing modules, return the final module as a PyObject*
+  /// \note Caller must hold the GIL while using or releasing the returned PyObject*.
   static PyObject* pythonModule(const QString &module);
 
   /// Given a string of the form "<modulename1>[.<modulenameN>...].correspondingObject, return the final object as a PyObject*
+  /// \note Caller must hold the GIL while using or releasing the returned PyObject*.
   /// \sa pythonModule
   static PyObject* pythonObject(const QString& variableNameAndFunction);
 

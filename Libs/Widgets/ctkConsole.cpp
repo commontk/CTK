@@ -63,6 +63,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QRegularExpression>
 #include <QTextBlock>
 #include <QTextCursor>
+#include <QThread>
 #include <QVBoxLayout>
 #include <QScrollBar>
 #include <QDebug>
@@ -1513,6 +1514,10 @@ QString ctkConsole::stdInRedirectCallBack(void * callData)
   ctkConsole * self = reinterpret_cast<ctkConsole*>(callData);
   Q_ASSERT(self);
   if (!self)
+  {
+    return QLatin1String("");
+  }
+  if (QThread::currentThread() != self->thread())
   {
     return QLatin1String("");
   }
